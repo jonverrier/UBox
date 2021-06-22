@@ -43,8 +43,16 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\Localisation.tsx" />
+    <TypeScriptCompile Include="src\Range.tsx" />
+    <TypeScriptCompile Include="src\Quantity.tsx" />
     <TypeScriptCompile Include="src\Persistence.tsx" />
     <TypeScriptCompile Include="test\test-localisation.tsx" />
+    <TypeScriptCompile Include="test\test-range.tsx">
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="test\test-quantity.tsx">
+      <TestFramework>mocha</TestFramework>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-persistence.tsx" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
