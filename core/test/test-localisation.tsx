@@ -7,6 +7,8 @@ var expect = require("chai").expect;
 enum TestStrings { Test = 1 };
 
 class TestStringLocaliser implements ITextLocaliser {
+   lowestValue() { return 1 };
+   highestValue() { return 1 };
 
    load(id: number, language: ELanguage): string {
       if (id === 1 && language === ELanguage.EnglishUK)

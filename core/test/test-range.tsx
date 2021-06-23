@@ -1,6 +1,6 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { InvalidUnitError, EWeightUnits, Quantity } from '../src/Quantity';
+import { EWeightUnits, Quantity } from '../src/Quantity';
 import { Range } from '../src/Range';
 
 var expect = require("chai").expect;

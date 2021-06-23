@@ -22,7 +22,7 @@ export class Range<Unit> {
          throw new InvalidUnitError ();
 
       // low bar must be lower than or equal to high bar
-      if (lo.unit > hi.unit)
+      if (lo.amount > hi.amount)
          throw new RangeError();
 
       this._lo = lo;
@@ -70,7 +70,7 @@ export class Range<Unit> {
     */
    includes(value: Quantity<Unit>): boolean {
 
-      if (value > this._lo && value < this._hi)
+      if (value.amount > this._lo.amount && value.amount < this._hi.amount)
          return true;
 
       if (this._loInclEq && value.equals(this._lo))
