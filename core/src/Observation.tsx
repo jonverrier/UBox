@@ -9,9 +9,7 @@ export enum EPositiveTrend { Up, Down }
 
 export enum EMeasurementType {
    Snatch, Clean, Jerk, CleanAndJerk,
-   RowDistance, RowCalories,
-   SkiDistance, SkiCalories,
-   RunDistance
+   Row500m, Row1000m
 }
 
 export class MeasurementTypeOf<Unit> {
