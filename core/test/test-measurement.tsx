@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { EWeightUnits, Quantity } from '../src/Quantity';
-import { EPositiveTrend, EMeasurementType, Measurement } from '../src/Observation';
+import { EWeightUnits, QuantityOf } from '../src/Quantity';
+import { EPositiveTrend, EMeasurementType, MeasurementOf } from '../src/Observation';
 import { SnatchMeasurementType, CleanMeasurementType} from '../src/FitnessObservations'
 
 var expect = require("chai").expect;
@@ -33,9 +33,9 @@ describe("MeasurementType", function () {
 describe("Measurement", function () {
 
    it("Needs to construct correctly", function () {
-      let quantity = new Quantity<EWeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
       let snatch = new SnatchMeasurementType ();
-      let measurement = new Measurement<EWeightUnits>("id", 1, 2, quantity, 0, snatch);
+      let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, snatch);
 
       expect(measurement.id).to.equal("id");
       expect(measurement.schemaVersion).to.equal(1);
@@ -47,13 +47,13 @@ describe("Measurement", function () {
    });
 
    it("Needs to test for equality", function () {
-      let quantity = new Quantity<EWeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
       let snatch = new SnatchMeasurementType();
       let clean = new CleanMeasurementType();
-      let measurement1 = new Measurement<EWeightUnits>("id", 1, 2, quantity, 0, snatch);
-      let measurement2 = new Measurement<EWeightUnits>("id", 1, 2, quantity, 1, snatch);
-      let measurement3 = new Measurement<EWeightUnits>("id", 1, 2, quantity, 0, snatch);
-      let measurement4 = new Measurement<EWeightUnits>("id", 1, 2, quantity, 1, clean);
+      let measurement1 = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, snatch);
+      let measurement2 = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 1, snatch);
+      let measurement3 = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, snatch);
+      let measurement4 = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 1, clean);
 
       expect(measurement1.equals(measurement2)).to.equal(false);
       expect(measurement1.equals(measurement3)).to.equal(true);

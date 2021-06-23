@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2021 */
 
-import { Quantity } from "./Quantity";
-import { Range } from "./Range";
+import { QuantityOf } from "./Quantity";
+import { RangeOf } from "./Range";
 import { Persistence } from "./Persistence";
 
 // This enum is used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing 
@@ -14,9 +14,9 @@ export enum EMeasurementType {
    RunDistance
 }
 
-export class MeasurementType<Unit> {
+export class MeasurementTypeOf<Unit> {
    private _measurmentType: EMeasurementType;
-   private _range: Range<Unit>;
+   private _range: RangeOf<Unit>;
    private _trend: EPositiveTrend;
 
    /**
@@ -25,7 +25,7 @@ export class MeasurementType<Unit> {
     * @param range - acceptable range of values
     * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
     */
-   constructor(measurementType: EMeasurementType, range: Range<Unit>, trend: EPositiveTrend) {
+   constructor(measurementType: EMeasurementType, range: RangeOf<Unit>, trend: EPositiveTrend) {
 
       this._measurmentType = measurementType;
       this._range = range;
@@ -39,7 +39,7 @@ export class MeasurementType<Unit> {
       return this._measurmentType;
    }
 
-   get range(): Range<Unit> {
+   get range(): RangeOf<Unit> {
       return this._range;
    }
 
@@ -52,7 +52,7 @@ export class MeasurementType<Unit> {
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
     */
-   equals(rhs: MeasurementType<Unit>): boolean {
+   equals(rhs: MeasurementTypeOf<Unit>): boolean {
 
       return (this._measurmentType === rhs._measurmentType && 
          this._range.equals(rhs._range) &&
@@ -60,10 +60,10 @@ export class MeasurementType<Unit> {
    }
 }
 
-export class Measurement<Unit> extends Persistence {
-   private _quantity: Quantity<Unit>;
+export class MeasurementOf<Unit> extends Persistence {
+   private _quantity: QuantityOf<Unit>;
    private _cohortPeriod: number;
-   private _measurementType: MeasurementType<Unit>;
+   private _measurementType: MeasurementTypeOf<Unit>;
 
 /**
  * Create a Measurement object - a quantity, with a range of validity, and a marker of the positive trend (is it good if quantity goes up, or down)
@@ -75,7 +75,7 @@ export class Measurement<Unit> extends Persistence {
  * @param measurementType - reference to the class that defines the type of measurement
  */
    constructor(_id: any, schemaVersion: number, objectVersion: number,
-      quantity: Quantity<Unit>, cohortPeriod: number, measurementType: MeasurementType<Unit>) {
+      quantity: QuantityOf<Unit>, cohortPeriod: number, measurementType: MeasurementTypeOf<Unit>) {
 
       super(_id, schemaVersion, objectVersion);
 
@@ -93,7 +93,7 @@ export class Measurement<Unit> extends Persistence {
    * set of 'getters' for private variables
    */
 
-   get quantity(): Quantity<Unit> {
+   get quantity(): QuantityOf<Unit> {
       return this._quantity;
    }
 
@@ -101,7 +101,7 @@ export class Measurement<Unit> extends Persistence {
       return this._cohortPeriod;
    }
 
-   get measurementType(): MeasurementType<Unit> {
+   get measurementType(): MeasurementTypeOf<Unit> {
       return this._measurementType;
    }
 
@@ -110,7 +110,7 @@ export class Measurement<Unit> extends Persistence {
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
     */
-   equals(rhs: Measurement<Unit> ) : boolean {
+   equals(rhs: MeasurementOf<Unit> ) : boolean {
 
       return (super.equals (rhs) && 
          this._quantity.equals(rhs._quantity) &&

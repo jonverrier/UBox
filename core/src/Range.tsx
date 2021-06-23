@@ -1,10 +1,10 @@
 /*! Copyright TXPCo, 2021 */
 
-import { InvalidUnitError, Quantity } from './Quantity';
+import { InvalidUnitError, QuantityOf } from './Quantity';
 
-export class Range<Unit> { 
-   private _lo: Quantity<Unit>;
-   private _hi: Quantity<Unit>;
+export class RangeOf<Unit> { 
+   private _lo: QuantityOf<Unit>;
+   private _hi: QuantityOf<Unit>;
    private _loInclEq: boolean;
    private _hiInclEq: boolean;
 
@@ -15,7 +15,7 @@ export class Range<Unit> {
  * @param hi - the unit in which the scalar value is measured
  * @param hiEq - does the the high end of the range include equality test
  */
-   constructor(lo: Quantity<Unit>, loEq: boolean, hi: Quantity<Unit>, hiEq: boolean) {
+   constructor(lo: QuantityOf<Unit>, loEq: boolean, hi: QuantityOf<Unit>, hiEq: boolean) {
 
       // TODO - Currently we dont handle conversion, should allow conversion between units via a UnitConverter class
       if (lo.unit != hi.unit)
@@ -34,11 +34,11 @@ export class Range<Unit> {
    /**
    * set of 'getters' for private variables
    */
-   get low(): Quantity<Unit> {
+   get low(): QuantityOf<Unit> {
       return this._lo;
    }
 
-   get high(): Quantity<Unit> {
+   get high(): QuantityOf<Unit> {
       return this._hi;
    }
 
@@ -55,7 +55,7 @@ export class Range<Unit> {
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
     */
-   equals(rhs: Range<Unit> ) : boolean {
+   equals(rhs: RangeOf<Unit> ) : boolean {
 
       return (
          (this._lo.equals (rhs._lo)) &&
@@ -68,7 +68,7 @@ export class Range<Unit> {
     * test for wether the range includes the value
     * @param value - the object to test 
     */
-   includes(value: Quantity<Unit>): boolean {
+   includes(value: QuantityOf<Unit>): boolean {
 
       if (value.amount > this._lo.amount && value.amount < this._hi.amount)
          return true;

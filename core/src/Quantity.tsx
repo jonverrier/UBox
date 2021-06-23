@@ -13,7 +13,7 @@ export class InvalidUnitError extends Error {
    }
 }
 
-export class Quantity<Unit> { 
+export class QuantityOf<Unit> { 
    private _amount: number;
    private _unit: Unit;
 
@@ -43,7 +43,7 @@ export class Quantity<Unit> {
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
     */
-   equals(rhs: Quantity<Unit> ) : boolean {
+   equals(rhs: QuantityOf<Unit> ) : boolean {
 
       return (
          (this._amount === rhs._amount) &&
