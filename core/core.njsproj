@@ -33,8 +33,10 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="app.ts" />
+    <Content Include=".nycrc" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="test\mocha.opts" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>

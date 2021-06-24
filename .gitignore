@@ -15,5 +15,7 @@ core/src/*.js
 core/src/*.js.map
 core/test/*.js
 core/test/*.js.map
+core/coverage/*
+core/.nyc_output/*
 client/node_modules/*
 server/node_modules/*
