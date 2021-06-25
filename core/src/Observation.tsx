@@ -78,8 +78,6 @@ export class MeasurementOf<Unit> extends Persistence {
       super(_id, schemaVersion, objectVersion);
 
       if (!measurementType.range.includes(quantity)) {
-         console.log(measurementType);
-         console.log(quantity);
          throw RangeError();
       }
       this._quantity = quantity;
@@ -117,3 +115,10 @@ export class MeasurementOf<Unit> extends Persistence {
    }
 }
 
+export interface IMeasurementLoaderFor<Unit> {
+   load(): MeasurementOf<Unit>;
+}
+
+export interface IMeasurementStorerFor<Unit> {
+   save(measurement: MeasurementOf<Unit>);
+}

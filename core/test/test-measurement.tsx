@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { EWeightUnits, ETimeUnits, EDistanceUnits, QuantityOf } from '../src/Quantity';
-import { EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf } from '../src/Observation';
+import { EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IMeasurementLoaderFor, IMeasurementStorerFor} from '../src/Observation';
 import {
    SnatchMeasurementType, CleanMeasurementType, JerkMeasurementType, CleanAndJerkMeasurementType,
    Row500mMeasurementType, Row1000mMeasurementType
@@ -132,5 +132,66 @@ describe("Measurement", function () {
       testEquals(quantity, measurement);
    });
 
+   it("Needs to throw out of range error", function () {
+      let quantity = new QuantityOf<EWeightUnits>(600, EWeightUnits.Kg); // 600 kg snatch is impossible
+      let measurementType = new SnatchMeasurementType();
+      let caught = false;
+
+      try {
+         let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, measurementType);
+      } catch {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
 });
 
+class StubLoader implements IMeasurementLoaderFor<EWeightUnits> {
+   load(): MeasurementOf<EWeightUnits> {
+      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg); // 600 kg snatch is impossible
+      let measurementType = new SnatchMeasurementType();
+      return new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, measurementType);
+   }
+}
+
+class StubStorer implements IMeasurementStorerFor<EWeightUnits> {
+   save(measurement: MeasurementOf<EWeightUnits>) {
+   }
+}
+
+describe("MeasurementLoader", function () {
+
+   it("Needs to load a Measurement.", function () {
+
+      let loader = new StubLoader;
+
+      let measurement = loader.load();
+
+      expect(measurement).to.not.equal(null);
+   });
+
+});
+
+describe("MeasurementStorer", function () {
+
+   it("Needs to save a Measurement.", function () {
+
+      let storer = new StubStorer;
+      let caught = false;
+
+      try {
+         let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg); // 600 kg snatch is impossible
+         let measurementType = new SnatchMeasurementType();
+         let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, measurementType);
+
+         storer.save(measurement);
+      } catch {
+         caught = true;
+      }
+
+      expect(caught).to.equal(false);
+
+   });
+
+});

@@ -58,5 +58,35 @@ describe("Range", function () {
 
       expect(range.includes(quantityHi)).to.equal(false);
    });
+
+   it("Needs to throw mis-match error if units are incompatible..", function () {
+
+      let quantityLo = new QuantityOf<EWeightUnits>(1, EWeightUnits.Kg);
+      let quantityHi = new QuantityOf<EWeightUnits>(2, EWeightUnits.Lbs); // we dont currently auto translate between units. 
+      let caught = false;
+
+      try {
+         let range = new RangeOf<EWeightUnits>(quantityLo, false, quantityHi, false);
+      } catch {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
+   it("Needs to throw range error .", function () {
+
+      let quantityLo = new QuantityOf<EWeightUnits>(1, EWeightUnits.Kg);
+      let quantityHi = new QuantityOf<EWeightUnits>(2, EWeightUnits.Kg);
+      let caught = false;
+
+      try {
+         // call below has lo range > hi range, which is out of bounds
+         let range = new RangeOf<EWeightUnits>(quantityHi, false, quantityLo, false);
+      } catch {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
 });
 

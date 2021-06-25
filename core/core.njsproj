@@ -36,7 +36,6 @@
     <Content Include=".nycrc" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Content Include="test\mocha.opts" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +46,7 @@
     <TypeScriptCompile Include="src\Localisation.tsx" />
     <TypeScriptCompile Include="src\FitnessObservations.tsx" />
     <TypeScriptCompile Include="src\Observation.tsx" />
+    <TypeScriptCompile Include="src\Person.tsx" />
     <TypeScriptCompile Include="src\Range.tsx" />
     <TypeScriptCompile Include="src\Quantity.tsx" />
     <TypeScriptCompile Include="src\Persistence.tsx" />
@@ -54,6 +54,7 @@
     <TypeScriptCompile Include="test\test-measurement.tsx">
       <TestFramework>mocha</TestFramework>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\test-person.tsx" />
     <TypeScriptCompile Include="test\test-range.tsx">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
