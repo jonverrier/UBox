@@ -4,15 +4,6 @@ export enum EWeightUnits { Kg, Lbs }
 export enum EDistanceUnits { Metres }
 export enum ETimeUnits { Seconds }
 
-export class InvalidUnitError extends Error {
-   constructor(message?: string) {
-      super(message);
-      // see: typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
-      Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-      this.name = InvalidUnitError.name; // stack traces display correctly now
-   }
-}
-
 export class QuantityOf<Unit> { 
    private _amount: number;
    private _unit: Unit;

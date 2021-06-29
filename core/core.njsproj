@@ -47,8 +47,9 @@
     <TypeScriptCompile Include="src\FitnessObservations.tsx" />
     <TypeScriptCompile Include="src\Observation.tsx" />
     <TypeScriptCompile Include="src\Person.tsx" />
-    <TypeScriptCompile Include="src\Range.tsx" />
     <TypeScriptCompile Include="src\Quantity.tsx" />
+    <TypeScriptCompile Include="src\Range.tsx" />
+    <TypeScriptCompile Include="src\Error.tsx" />
     <TypeScriptCompile Include="src\Persistence.tsx" />
     <TypeScriptCompile Include="test\test-localisation.tsx" />
     <TypeScriptCompile Include="test\test-measurement.tsx">
