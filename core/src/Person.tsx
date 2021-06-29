@@ -258,6 +258,18 @@ export class Person  {
    get authCode(): string {
       return this._authCode;
    }
+   set nickName(nickName: NickName) {
+      this._nickName = nickName;
+   } 
+   set name(name: Name) {
+      this._name = name;
+   }
+   set email(email: EmailAddress) {
+      this._email = email;
+   }
+   set thumbnailUrl(thumbnailUrl: Url) {
+      this._thumbnailUrl = thumbnailUrl;
+   }
 
    /**
     * test for equality - checks all fields are the same. 

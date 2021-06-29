@@ -212,6 +212,23 @@ describe("Person", function () {
       expect(person1.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
       expect(person1.authCode).to.equal("1234");
    });
+
+   it("Needs to correctly change attributes", function () {
+
+      let newMail = new EmailAddress("new@New.com", false);
+      let newUrl = new Url("https://jo.newpics.com", false);
+      let newName = new Name("NewJoe");
+      let newNickName = new NickName("NewJoe");
+      person1.email = newMail;
+      person1.thumbnailUrl = newUrl;
+      person1.name = newName;
+      person1.nickName = newNickName;
+
+      expect(person1.email).to.equal(newMail);
+      expect(person1.thumbnailUrl).to.equal(newUrl);
+      expect(person1.name).to.equal(newName);
+      expect(person1.nickName).to.equal(newNickName);
+   });
 });
 
 describe("PersonLoader", function () {
