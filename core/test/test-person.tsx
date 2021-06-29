@@ -7,7 +7,7 @@ var expect = require("chai").expect;
 class StubLoader implements IPersonLoader {
    load(): Person {
       return new Person(1, "123", new NickName("Joester"), new Name ("Joe"),
-         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), "1234");
+         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false));
    }
 }
 
@@ -190,10 +190,10 @@ describe("Person", function () {
    
    beforeEach(function () {
       person1 = new Person(1, "123", new NickName("Joester"), new Name("Joe"),
-         new EmailAddress("Joe@mail.com", true), new Url ("https://jo.pics.com", false), "1234");
+         new EmailAddress("Joe@mail.com", true), new Url ("https://jo.pics.com", false));
 
       person2 = new Person(2, "123", new NickName("Joedog"), new Name("Joe"),
-         new EmailAddress ("Joe@mail.com", true), new Url ("https://jo.pics.com", false), "5678");
+         new EmailAddress ("Joe@mail.com", true), new Url ("https://jo.pics.com", false));
    });
    
    it("Needs to compare for equality and inequality", function () {
@@ -210,7 +210,6 @@ describe("Person", function () {
       expect(person1.name.equals(new Name("Joe"))).to.equal(true);
       expect(person1.email.equals(new EmailAddress("Joe@mail.com", true))).to.equal(true);
       expect(person1.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
-      expect(person1.authCode).to.equal("1234");
    });
 
    it("Needs to correctly change attributes", function () {
@@ -253,7 +252,7 @@ describe("PersonStorer", function () {
 
       try {
          storer.save(new Person(1, "123", new NickName("Joester"), new Name("Joe"),
-            new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), "1234"));
+            new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false)));
       } catch {
          caught = true;
       }

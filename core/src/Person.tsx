@@ -212,7 +212,6 @@ export class Person  {
    private _name: Name;
    private _email: EmailAddress;
    private _thumbnailUrl: Url;
-   private _authCode: string;
 
 /**
  * Create a Person object
@@ -222,16 +221,14 @@ export class Person  {
  * @param name - plain text user name
  * @param email - user email
  * @param thumbnailUrl - URL to thumbnail image
- * @param authCode - provided by underlying identity system when user logs in
  */
-   constructor(_id: any, externalId: string, nickName: NickName, name: Name, email: EmailAddress, thumbnailUrl: Url, lastAuthCode:string) {
+   constructor(_id: any, externalId: string, nickName: NickName, name: Name, email: EmailAddress, thumbnailUrl: Url) {
       this._id = _id;
       this._externalId = externalId;
       this._nickName = nickName;
       this._name = name;
       this._email = email;
       this._thumbnailUrl = thumbnailUrl;
-      this._authCode = lastAuthCode;
    }
 
    /**
@@ -254,9 +251,6 @@ export class Person  {
    }
    get thumbnailUrl(): Url {
       return this._thumbnailUrl;
-   }
-   get authCode(): string {
-      return this._authCode;
    }
    set nickName(nickName: NickName) {
       this._nickName = nickName;
@@ -283,8 +277,7 @@ export class Person  {
          (this._nickName.equals(rhs._nickName)) &&
          (this._name.equals (rhs._name)) &&
          (this._email.equals(rhs._email)) &&
-         (this._thumbnailUrl.equals (rhs._thumbnailUrl)) &&
-         (this._authCode === rhs._authCode));
+         (this._thumbnailUrl.equals (rhs._thumbnailUrl)));
    };
 };
 
