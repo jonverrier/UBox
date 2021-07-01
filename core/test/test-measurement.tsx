@@ -35,7 +35,7 @@ describe("MeasurementType", function () {
 function testConstruct<Units>(quantity: QuantityOf<Units>,
                               measurementType: MeasurementTypeOf<Units>) {
 
-   let measurement = new MeasurementOf<Units>("id", 1, 2, quantity, 0, measurementType);
+   let measurement = new MeasurementOf<Units>("id", 1, 2, 3, quantity, 0, measurementType);
 
    expect(measurement.id).to.equal("id");
    expect(measurement.schemaVersion).to.equal(1);
@@ -49,9 +49,9 @@ function testConstruct<Units>(quantity: QuantityOf<Units>,
 function testEquals <Units>(quantity: QuantityOf<Units>,
    measurementType: MeasurementTypeOf<Units>) {
 
-   let measurement1 = new MeasurementOf<Units>("id", 1, 2, quantity, 0, measurementType);
-   let measurement2 = new MeasurementOf<Units>("id", 1, 2, quantity, 1, measurementType);
-   let measurement3 = new MeasurementOf<Units>("id", 1, 2, quantity, 0, measurementType);
+   let measurement1 = new MeasurementOf<Units>("id", 1, 2, 3, quantity, 0, measurementType);
+   let measurement2 = new MeasurementOf<Units>("id", 1, 2, 3, quantity, 1, measurementType);
+   let measurement3 = new MeasurementOf<Units>("id", 1, 2, 3, quantity, 0, measurementType);
 
    expect(measurement1.equals(measurement1)).to.equal(true);
    expect(measurement1.equals(measurement2)).to.equal(false);
@@ -138,7 +138,7 @@ describe("Measurement", function () {
       let caught = false;
 
       try {
-         let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, measurementType);
+         let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, 3, quantity, 0, measurementType);
       } catch {
          caught = true;
       }
@@ -151,7 +151,7 @@ class StubLoader implements IMeasurementLoaderFor<EWeightUnits> {
    load(): MeasurementOf<EWeightUnits> {
       let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg); // 600 kg snatch is impossible
       let measurementType = new SnatchMeasurementType();
-      return new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, measurementType);
+      return new MeasurementOf<EWeightUnits>("id", 1, 2, 3, quantity, 0, measurementType);
    }
 }
 
@@ -183,7 +183,7 @@ describe("MeasurementStorer", function () {
       try {
          let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg); // 600 kg snatch is impossible
          let measurementType = new SnatchMeasurementType();
-         let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, measurementType);
+         let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, 3, quantity, 0, measurementType);
 
          storer.save(measurement);
       } catch {

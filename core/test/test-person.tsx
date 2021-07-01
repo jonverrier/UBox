@@ -1,12 +1,12 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { EmailAddress, Url, NickName, Name, Person, IPersonLoader, IPersonStorer } from '../src/Person';
+import { EmailAddress, Url, Name, Person, IPersonLoader, IPersonStorer } from '../src/Person';
 
 var expect = require("chai").expect;
 
 class StubLoader implements IPersonLoader {
    load(): Person {
-      return new Person(1, "123", new NickName("Joester"), new Name ("Joe"),
+      return new Person(1, 1, 1, 1, "123", new Name ("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false));
    }
 }
@@ -48,41 +48,6 @@ describe("Name", function () {
    it("Needs to correctly store attributes", function () {
 
       expect(name1.name).to.equal("Joe");
-   });
-});
-
-describe("NickName", function () {
-   var name1: NickName, name2: NickName, name3: NickName;
-
-   beforeEach(function () {
-      name1 = new NickName("Joe");
-      name2 = new NickName("Bill");
-      name3 = new NickName("Joe");
-   });
-
-   it("Needs to compare for equality and inequality", function () {
-
-      expect(name1.equals(name1)).to.equal(true);
-      expect(name1.equals(name2)).to.equal(false);
-      expect(name1.equals(name3)).to.equal(true);
-   });
-
-   it("Needs to catch invalid name", function () {
-
-      let caught = false;
-
-      try {
-         let name4 = new NickName("");
-      }
-      catch {
-         caught = true;
-      }
-      expect(caught).to.equal(true);
-   });
-
-   it("Needs to correctly store attributes", function () {
-
-      expect(name1.nickName).to.equal("Joe");
    });
 });
 
@@ -189,10 +154,10 @@ describe("Person", function () {
    var person1, person2;
    
    beforeEach(function () {
-      person1 = new Person(1, "123", new NickName("Joester"), new Name("Joe"),
+      person1 = new Person(1, 1, 1, 1, "123", new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url ("https://jo.pics.com", false));
 
-      person2 = new Person(2, "123", new NickName("Joedog"), new Name("Joe"),
+      person2 = new Person(1, 1, 1, 1, "1234", new Name("Joe"),
          new EmailAddress ("Joe@mail.com", true), new Url ("https://jo.pics.com", false));
    });
    
@@ -203,10 +168,8 @@ describe("Person", function () {
    });
    
    it("Needs to correctly store attributes", function () {
-      
-      expect(person1.id).to.equal(1);    
+         
       expect(person1.externalId).to.equal("123");
-      expect(person1.nickName.equals (new NickName ("Joester"))).to.equal (true);
       expect(person1.name.equals(new Name("Joe"))).to.equal(true);
       expect(person1.email.equals(new EmailAddress("Joe@mail.com", true))).to.equal(true);
       expect(person1.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
@@ -217,16 +180,13 @@ describe("Person", function () {
       let newMail = new EmailAddress("new@New.com", false);
       let newUrl = new Url("https://jo.newpics.com", false);
       let newName = new Name("NewJoe");
-      let newNickName = new NickName("NewJoe");
       person1.email = newMail;
       person1.thumbnailUrl = newUrl;
       person1.name = newName;
-      person1.nickName = newNickName;
 
       expect(person1.email).to.equal(newMail);
       expect(person1.thumbnailUrl).to.equal(newUrl);
       expect(person1.name).to.equal(newName);
-      expect(person1.nickName).to.equal(newNickName);
    });
 });
 
@@ -251,7 +211,7 @@ describe("PersonStorer", function () {
       let caught = false;
 
       try {
-         storer.save(new Person(1, "123", new NickName("Joester"), new Name("Joe"),
+         storer.save(new Person(1, 1, 1, 1, "123", new Name("Joe"),
             new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false)));
       } catch {
          caught = true;

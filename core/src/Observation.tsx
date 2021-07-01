@@ -68,14 +68,15 @@ export class MeasurementOf<Unit> extends Persistence {
  * @param _id - (from Persistence) for the database to use and assign
  * @param schemaVersion - (from Persistence)  schema version used - allows upgrades on the fly when loading old format data
  * @param objectVersion - (from Persistence)  used to manage concurrent updates, latest version wins, and used to optimise write operations - only save when amended
+ * @param sequenceNumber - (from Persistence) used to allow clients to specify the last object they have when re-synching with server
  * @param quantity - the value of the measurement (amount and units)
  * @param cohortPeriod - the period in which the measurement was taken
  * @param measurementType - reference to the class that defines the type of measurement
  */
-   constructor(_id: any, schemaVersion: number, objectVersion: number,
+   constructor(_id: any, schemaVersion: number, objectVersion: number, sequenceNumber: number,
       quantity: QuantityOf<Unit>, cohortPeriod: number, measurementType: MeasurementTypeOf<Unit>) {
 
-      super(_id, schemaVersion, objectVersion);
+      super(_id, schemaVersion, objectVersion, sequenceNumber);
 
       if (!measurementType.range.includes(quantity)) {
          throw RangeError();

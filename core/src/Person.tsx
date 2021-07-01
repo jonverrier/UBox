@@ -1,51 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { URL } from 'url'
 import { InvalidParameterError } from './error';
-
-export class NickName {
-   private _nickName: string;
-
-   /**
-    * Create a NickName object
-    * @param nickName - user email
-    */
-   constructor(nickName: string) {
-
-      if (!NickName.isValidNickName(nickName)) {
-         throw new InvalidParameterError();
-      }
-
-      this._nickName = nickName;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get nickName(): string {
-      return this._nickName;
-   }
-
-   /**
- * test for equality - checks all fields are the same. 
- * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
- * @param rhs - the object to compare this one to.  
- */
-   equals(rhs: NickName): boolean {
-
-      return (this._nickName === rhs._nickName);
-   }
-
-   /**
-    * test for valid nickName 
-    * @param nickName - the string to test
-    */
-   static isValidNickName(nickName: string): boolean {
-      if (nickName === null || nickName.length === 0)
-         return false;
-
-      return (true);
-   }
-}
+import { Persistence } from "./Persistence";
 
 export class Name {
    private _name: string;
@@ -205,27 +161,30 @@ export class Url {
    }
 }
 
-export class Person  {
-   private _id: any; 
+export class Person extends Persistence {
    private _externalId: string;
-   private _nickName: NickName;
    private _name: Name;
    private _email: EmailAddress;
    private _thumbnailUrl: Url;
 
 /**
  * Create a Person object
- * @param _id - ID assigned by database
+ * @param _id - (from Persistence) for the database to use and assign
+ * @param schemaVersion - (from Persistence)  schema version used - allows upgrades on the fly when loading old format data
+ * @param objectVersion - (from Persistence)  used to manage concurrent updates, latest version wins, and used to optimise write operations - only save when amended
+ * @param sequenceNumber - (from Persistence) used to allow clients to specify the last object they have when re-synching with server
  * @param externalId - ID assigned by external system (like facebook)
  * @param alias - Alias entered by users of the system e.g 'Jon V' if full name / email is not known
  * @param name - plain text user name
  * @param email - user email
  * @param thumbnailUrl - URL to thumbnail image
  */
-   constructor(_id: any, externalId: string, nickName: NickName, name: Name, email: EmailAddress, thumbnailUrl: Url) {
-      this._id = _id;
+   constructor(_id: any, schemaVersion: number, objectVersion: number, sequenceNumber: number,
+      externalId: string, name: Name, email: EmailAddress, thumbnailUrl: Url) {
+
+      super(_id, schemaVersion, objectVersion, sequenceNumber);
+
       this._externalId = externalId;
-      this._nickName = nickName;
       this._name = name;
       this._email = email;
       this._thumbnailUrl = thumbnailUrl;
@@ -234,14 +193,8 @@ export class Person  {
    /**
    * set of 'getters' for private variables
    */
-   get id(): any {
-      return this._id;
-   }
    get externalId(): string {
       return this._externalId;
-   }
-   get nickName(): NickName {
-      return this._nickName;
    }
    get name(): Name {
       return this._name;
@@ -252,9 +205,6 @@ export class Person  {
    get thumbnailUrl(): Url {
       return this._thumbnailUrl;
    }
-   set nickName(nickName: NickName) {
-      this._nickName = nickName;
-   } 
    set name(name: Name) {
       this._name = name;
    }
@@ -272,9 +222,8 @@ export class Person  {
     */
     equals (rhs: Person) : boolean {
 
-      return ((this._id === rhs._id) &&
+       return ((super.equals(rhs)) &&
          (this._externalId === rhs._externalId) &&
-         (this._nickName.equals(rhs._nickName)) &&
          (this._name.equals (rhs._name)) &&
          (this._email.equals(rhs._email)) &&
          (this._thumbnailUrl.equals (rhs._thumbnailUrl)));
