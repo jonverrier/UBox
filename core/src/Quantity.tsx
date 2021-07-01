@@ -1,7 +1,6 @@
 /*! Copyright TXPCo, 2021 */
 
 export enum EWeightUnits { Kg, Lbs }
-export enum EDistanceUnits { Metres }
 export enum ETimeUnits { Seconds }
 
 export class QuantityOf<Unit> { 

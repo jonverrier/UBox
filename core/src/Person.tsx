@@ -5,17 +5,20 @@ import { Persistence } from "./Persistence";
 
 export class Name {
    private _name: string;
+   private _surname: string;
 
    /**
     * Create a Name object
     * @param name - user email
+    * @param surname - user surbane, can be null
     */
-   constructor(name: string) {
+   constructor(name: string, surname: string | null = null ) {
       if (!Name.isValidName (name)) {
          throw new InvalidParameterError();
       }
 
       this._name = name;
+      this._surname = surname;
    }
 
    /**
@@ -23,6 +26,9 @@ export class Name {
    */
    get name(): string {
       return this._name;
+   }
+   get surname(): string {
+      return this._surname;
    }
 
    /**
@@ -32,7 +38,8 @@ export class Name {
  */
    equals(rhs: Name): boolean {
 
-      return (this._name === rhs._name);
+      return (this._name === rhs._name &&
+         ((this._surname === rhs._surname)));
    }
 
    /**
@@ -171,7 +178,6 @@ export class Person extends Persistence {
  * Create a Person object
  * @param _id - (from Persistence) for the database to use and assign
  * @param schemaVersion - (from Persistence)  schema version used - allows upgrades on the fly when loading old format data
- * @param objectVersion - (from Persistence)  used to manage concurrent updates, latest version wins, and used to optimise write operations - only save when amended
  * @param sequenceNumber - (from Persistence) used to allow clients to specify the last object they have when re-synching with server
  * @param externalId - ID assigned by external system (like facebook)
  * @param alias - Alias entered by users of the system e.g 'Jon V' if full name / email is not known
@@ -179,10 +185,10 @@ export class Person extends Persistence {
  * @param email - user email
  * @param thumbnailUrl - URL to thumbnail image
  */
-   constructor(_id: any, schemaVersion: number, objectVersion: number, sequenceNumber: number,
+   constructor(_id: any, schemaVersion: number, sequenceNumber: number,
       externalId: string, name: Name, email: EmailAddress, thumbnailUrl: Url) {
 
-      super(_id, schemaVersion, objectVersion, sequenceNumber);
+      super(_id, schemaVersion, sequenceNumber);
 
       this._externalId = externalId;
       this._name = name;
@@ -227,9 +233,23 @@ export class Person extends Persistence {
          (this._name.equals (rhs._name)) &&
          (this._email.equals(rhs._email)) &&
          (this._thumbnailUrl.equals (rhs._thumbnailUrl)));
-   };
-};
+   }
+}
 
+
+export function personArraysAreEqual (lhs: Array < Person >, rhs: Array<Person>): boolean {
+
+   // if we have mis-matched false values, return false
+   if (lhs && !rhs || !lhs && rhs)
+      return false;
+
+   for (var i = 0; i < lhs.length; i++) {
+      if (!lhs[i].equals(rhs[i])) {
+         return false;
+      }
+   }
+   return true;
+}
 
 export interface IPersonLoader {
    load(): Person;

@@ -1,7 +1,10 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { EWeightUnits, ETimeUnits, EDistanceUnits, QuantityOf } from '../src/Quantity';
-import { EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IMeasurementLoaderFor, IMeasurementStorerFor} from '../src/Observation';
+import { EWeightUnits, ETimeUnits, QuantityOf } from '../src/Quantity';
+import {
+   EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IMeasurementLoaderFor, IMeasurementStorerFor,
+   weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual
+} from '../src/Observation';
 import {
    SnatchMeasurementType, CleanMeasurementType, JerkMeasurementType, CleanAndJerkMeasurementType,
    Row500mMeasurementType, Row1000mMeasurementType
@@ -30,28 +33,66 @@ describe("MeasurementType", function () {
       expect(snatch.equals(snatch2)).to.equal(true);
    });
 
+   it("Needs to test weight array compare", function () {
+      let snatch = new SnatchMeasurementType();
+      let clean = new CleanMeasurementType();
+      let snatches = new Array<MeasurementTypeOf<EWeightUnits>>();
+      let moreSnatches = new Array<MeasurementTypeOf<EWeightUnits>>();
+      let variedLifts = new Array<MeasurementTypeOf<EWeightUnits>>();
+      snatches.push(snatch);
+      moreSnatches.push(snatch);
+      moreSnatches.push(snatch);
+      variedLifts.push(snatch);
+      variedLifts.push(clean);
+
+      expect(weightMeasurementTypeArraysAreEqual(snatches, snatches)).to.equal(true);
+      expect(weightMeasurementTypeArraysAreEqual(snatches, null)).to.equal(false);
+      expect(weightMeasurementTypeArraysAreEqual(null, snatches)).to.equal(false);
+      expect(weightMeasurementTypeArraysAreEqual(moreSnatches, snatches)).to.equal(false);
+      expect(weightMeasurementTypeArraysAreEqual(moreSnatches, variedLifts)).to.equal(false);
+   });
+
+   it("Needs to test time array compare", function () {
+      let row500 = new Row500mMeasurementType();
+      let row1000 = new Row1000mMeasurementType();
+      let rows = new Array<MeasurementTypeOf<ETimeUnits>>();
+      let moreRows = new Array<MeasurementTypeOf<ETimeUnits>>();
+      let variedRows = new Array<MeasurementTypeOf<ETimeUnits>>();
+      rows.push(row500);
+      moreRows.push(row500);
+      moreRows.push(row500);
+      variedRows.push(row500);
+      variedRows.push(row1000);
+
+      expect(timeMeasurementTypeArraysAreEqual(rows, rows)).to.equal(true);
+      expect(timeMeasurementTypeArraysAreEqual(rows, null)).to.equal(false);
+      expect(timeMeasurementTypeArraysAreEqual(null, rows)).to.equal(false);
+      expect(timeMeasurementTypeArraysAreEqual(moreRows, rows)).to.equal(false);
+      expect(timeMeasurementTypeArraysAreEqual(moreRows, variedRows)).to.equal(false);
+   });
 });
 
 function testConstruct<Units>(quantity: QuantityOf<Units>,
                               measurementType: MeasurementTypeOf<Units>) {
 
-   let measurement = new MeasurementOf<Units>("id", 1, 2, 3, quantity, 0, measurementType);
+   let measurement = new MeasurementOf<Units>("id", 1, 2, quantity, 0, measurementType, "1234");
 
    expect(measurement.id).to.equal("id");
    expect(measurement.schemaVersion).to.equal(1);
-   expect(measurement.objectVersion).to.equal(2);
+   expect(measurement.sequenceNumber).to.equal(2);
 
    expect(measurement.quantity.equals(quantity)).to.equal(true);
    expect(measurement.cohortPeriod).to.equal(0);
    expect(measurement.measurementType.equals(measurementType)).to.equal(true);
+   expect(measurement.subjectExternalId).to.equal("1234");
 }
 
 function testEquals <Units>(quantity: QuantityOf<Units>,
    measurementType: MeasurementTypeOf<Units>) {
 
-   let measurement1 = new MeasurementOf<Units>("id", 1, 2, 3, quantity, 0, measurementType);
-   let measurement2 = new MeasurementOf<Units>("id", 1, 2, 3, quantity, 1, measurementType);
-   let measurement3 = new MeasurementOf<Units>("id", 1, 2, 3, quantity, 0, measurementType);
+   let measurement1 = new MeasurementOf<Units>("id", 1, 2, quantity, 0, measurementType, "1234");
+   let measurement2 = new MeasurementOf<Units>("id", 1, 2, quantity, 1, measurementType, "1234");
+   let measurement3 = new MeasurementOf<Units>("id", 1, 2, quantity, 0, measurementType, "1234");
 
    expect(measurement1.equals(measurement1)).to.equal(true);
    expect(measurement1.equals(measurement2)).to.equal(false);
@@ -138,7 +179,7 @@ describe("Measurement", function () {
       let caught = false;
 
       try {
-         let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, 3, quantity, 0, measurementType);
+         let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, measurementType, "1234");
       } catch {
          caught = true;
       }
@@ -151,7 +192,7 @@ class StubLoader implements IMeasurementLoaderFor<EWeightUnits> {
    load(): MeasurementOf<EWeightUnits> {
       let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg); // 600 kg snatch is impossible
       let measurementType = new SnatchMeasurementType();
-      return new MeasurementOf<EWeightUnits>("id", 1, 2, 3, quantity, 0, measurementType);
+      return new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, measurementType, "1234");
    }
 }
 
@@ -183,7 +224,7 @@ describe("MeasurementStorer", function () {
       try {
          let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg); // 600 kg snatch is impossible
          let measurementType = new SnatchMeasurementType();
-         let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, 3, quantity, 0, measurementType);
+         let measurement = new MeasurementOf<EWeightUnits>("id", 1, 2, quantity, 0, measurementType, "1234");
 
          storer.save(measurement);
       } catch {
@@ -191,7 +232,6 @@ describe("MeasurementStorer", function () {
       }
 
       expect(caught).to.equal(false);
-
    });
 
 });

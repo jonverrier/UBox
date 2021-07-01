@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2021 */
 
-import { EWeightUnits, EDistanceUnits, ETimeUnits, QuantityOf } from "./Quantity";
+import { EWeightUnits, ETimeUnits, QuantityOf } from "./Quantity";
 import { RangeOf } from "./Range";
 import { EMeasurementType, EPositiveTrend, MeasurementTypeOf, MeasurementOf } from './Observation';
 

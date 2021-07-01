@@ -1,12 +1,12 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { EmailAddress, Url, Name, Person, IPersonLoader, IPersonStorer } from '../src/Person';
+import { EmailAddress, Url, Name, Person, personArraysAreEqual, IPersonLoader, IPersonStorer } from '../src/Person';
 
 var expect = require("chai").expect;
 
 class StubLoader implements IPersonLoader {
    load(): Person {
-      return new Person(1, 1, 1, 1, "123", new Name ("Joe"),
+      return new Person(1, 1, 1, "123", new Name ("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false));
    }
 }
@@ -20,9 +20,9 @@ describe("Name", function () {
    var name1: Name, name2: Name, name3: Name;
 
    beforeEach(function () {
-      name1 = new Name("Joe");
+      name1 = new Name("Joe", "Smith");
       name2 = new Name("Bill");
-      name3 = new Name("Joe");
+      name3 = new Name("Joe", "Smith");
    });
 
    it("Needs to compare for equality and inequality", function () {
@@ -48,6 +48,7 @@ describe("Name", function () {
    it("Needs to correctly store attributes", function () {
 
       expect(name1.name).to.equal("Joe");
+      expect(name1.surname).to.equal("Smith");
    });
 });
 
@@ -154,10 +155,10 @@ describe("Person", function () {
    var person1, person2;
    
    beforeEach(function () {
-      person1 = new Person(1, 1, 1, 1, "123", new Name("Joe"),
+      person1 = new Person(1, 1, 1, "123", new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url ("https://jo.pics.com", false));
 
-      person2 = new Person(1, 1, 1, 1, "1234", new Name("Joe"),
+      person2 = new Person(1, 1, 1, "1234", new Name("Joe"),
          new EmailAddress ("Joe@mail.com", true), new Url ("https://jo.pics.com", false));
    });
    
@@ -186,7 +187,24 @@ describe("Person", function () {
 
       expect(person1.email).to.equal(newMail);
       expect(person1.thumbnailUrl).to.equal(newUrl);
-      expect(person1.name).to.equal(newName);
+      expect(person1.name.equals(newName)).to.equal(true);
+   });
+
+   it("Needs to compare arrays", function () {
+
+      let people = new Array<Person>();
+      people.push(person1);
+      let people2 = new Array<Person>();
+      people2.push(person2);
+      let people3 = new Array<Person>();
+      people3.push(person2);
+      people3.push(person2);
+
+      expect(personArraysAreEqual(people, people)).to.equal(true);
+      expect(personArraysAreEqual(people, null)).to.equal(false);
+      expect(personArraysAreEqual(null, people)).to.equal(false);
+      expect(personArraysAreEqual(people2, people)).to.equal(false);
+      expect(personArraysAreEqual(people3, people)).to.equal(false);
    });
 });
 
@@ -211,7 +229,7 @@ describe("PersonStorer", function () {
       let caught = false;
 
       try {
-         storer.save(new Person(1, 1, 1, 1, "123", new Name("Joe"),
+         storer.save(new Person(1, 1, 1, "123", new Name("Joe"),
             new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false)));
       } catch {
          caught = true;

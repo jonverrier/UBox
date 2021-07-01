@@ -43,6 +43,7 @@
     <Folder Include="test\" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="src\Cohort.tsx" />
     <TypeScriptCompile Include="src\Localisation.tsx" />
     <TypeScriptCompile Include="src\FitnessObservations.tsx" />
     <TypeScriptCompile Include="src\Observation.tsx" />
@@ -51,6 +52,9 @@
     <TypeScriptCompile Include="src\Range.tsx" />
     <TypeScriptCompile Include="src\Error.tsx" />
     <TypeScriptCompile Include="src\Persistence.tsx" />
+    <TypeScriptCompile Include="test\test-cohort.tsx">
+      <TestFramework>mocha</TestFramework>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-localisation.tsx" />
     <TypeScriptCompile Include="test\test-measurement.tsx">
       <TestFramework>mocha</TestFramework>
