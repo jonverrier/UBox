@@ -20,4 +20,13 @@ core/.nyc_output/*
 app/node_modules/*
 app/.vs/*
 app/*
-server/node_modules/*
+apisrv/node_modules/*
+apisrv/.vs/*
+apisrv/*.js
+apisrv/*.js.map
+apisrv/src/*.js
+apisrv/src/*.js.map
+apisrv/test/*.js
+apisrv/test/*.js.map
+apisrv/coverage/*
+apisrv/.nyc_output/*
