@@ -17,9 +17,6 @@ core/test/*.js
 core/test/*.js.map
 core/coverage/*
 core/.nyc_output/*
-app/node_modules/*
-app/.vs/*
-app/*
 apisrv/node_modules/*
 apisrv/.vs/*
 apisrv/*.js
@@ -30,3 +27,17 @@ apisrv/test/*.js
 apisrv/test/*.js.map
 apisrv/coverage/*
 apisrv/.nyc_output/*
+uiapp/node_modules/*
+uiapp/.vs/*
+uiapp/.jest/
+uiapp/*.js.map
+uiapp/App.js
+uiapp/Theme.js
+uiapp/ios/*
+uiapp/android
+uiapp/windows
+uiapp/*.binlog
+uiapp/__tests__/*.js
+uiapp/__tests__/*.js.map
+
+

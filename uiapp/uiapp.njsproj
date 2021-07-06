@@ -2,19 +2,16 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <Name>core</Name>
-    <RootNamespace>core</RootNamespace>
-    <JavaScriptTestRoot>./test</JavaScriptTestRoot>
-    <JavaScriptTestFramework>mocha</JavaScriptTestFramework>
-    <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
+    <Name>uiapp</Name>
+    <RootNamespace>uiapp</RootNamespace>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>c1a8c623-73f8-43e2-90ff-979fa2111a07</ProjectGuid>
+    <ProjectGuid>d4fccc93-4fce-4ab5-8860-cbc2325e549b</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>app.ts</StartupFile>
+    <StartupFile>App.tsx</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -23,7 +20,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
     <EnableTypeScript>true</EnableTypeScript>
-    <StartWebBrowser>False</StartWebBrowser>
+    <StartWebBrowser>false</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,43 +29,31 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="app.ts" />
-    <Content Include=".nycrc" />
+    <None Include="App.tsx" />
+    <Content Include=".buckconfig" />
+    <Content Include=".editorconfig" />
+    <Content Include=".eslintrc.js" />
+    <Content Include=".flowconfig" />
+    <Content Include=".gitattributes" />
+    <Content Include=".prettierrc.js" />
+    <Content Include=".watchmanconfig" />
+    <Content Include="app.json" />
+    <Content Include="babel.config.js" />
+    <Content Include="index.js" />
+    <Content Include="metro.config.js" />
+    <Content Include="msbuild.binlog" />
+    <Content Include="package-lock.json" />
     <Content Include="package.json" />
-    <Content Include="..\uiapp\README.md">
-      <Link>README.md</Link>
-    </Content>
+    <Content Include="README.md" />
+    <Content Include="rn-cli.config.js" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\" />
-    <Folder Include="test\" />
+    <Folder Include="__tests__\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\Cohort.tsx" />
-    <TypeScriptCompile Include="src\Localisation.tsx" />
-    <TypeScriptCompile Include="src\FitnessObservations.tsx" />
-    <TypeScriptCompile Include="src\Observation.tsx" />
-    <TypeScriptCompile Include="src\Person.tsx" />
-    <TypeScriptCompile Include="src\Quantity.tsx" />
-    <TypeScriptCompile Include="src\Range.tsx" />
-    <TypeScriptCompile Include="src\Error.tsx" />
-    <TypeScriptCompile Include="src\Persistence.tsx" />
-    <TypeScriptCompile Include="test\test-cohort.tsx">
-      <TestFramework>mocha</TestFramework>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-localisation.tsx" />
-    <TypeScriptCompile Include="test\test-measurement.tsx">
-      <TestFramework>mocha</TestFramework>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-person.tsx" />
-    <TypeScriptCompile Include="test\test-range.tsx">
-      <TestFramework>Mocha</TestFramework>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-quantity.tsx">
-      <TestFramework>mocha</TestFramework>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-persistence.tsx" />
+    <TypeScriptCompile Include="Theme.ts" />
+    <TypeScriptCompile Include="__tests__\App-test.tsx" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
