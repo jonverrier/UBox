@@ -1,17 +1,33 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { ITextLocaliser, ELanguage } from '../src/Localisation';
+import { InvalidParameterError } from '../src/Error';
 
 var expect = require("chai").expect;
 
 enum TestStrings { Test = 1 };
 
 class TestStringLocaliser implements ITextLocaliser {
-   lowestValue() { return 1 };
-   highestValue() { return 1 };
+   private _language: ELanguage;
 
-   load(id: number, language: ELanguage): string {
-      if (id === 1 && language === ELanguage.EnglishUK)
+   constructor(language: ELanguage) {
+      if (language !== ELanguage.EnglishUK)
+         throw new InvalidParameterError();
+      this._language = language;
+   }
+
+   /**
+   * set of 'getters' and setters for private variables
+   */
+   get language(): ELanguage {
+      return this._language;
+   }
+
+   get lowestValue() : number { return 1 }
+   get highestValue() : number { return 1 }
+
+   load(id: number): string {
+      if (id === 1 && this._language === ELanguage.EnglishUK)
          return "Test";
       else
          throw new RangeError();
@@ -21,10 +37,10 @@ class TestStringLocaliser implements ITextLocaliser {
 
 describe("Localisation", function () {
 
-   var testStringLocaliser: TestStringLocaliser = new TestStringLocaliser;
+   var testStringLocaliser: TestStringLocaliser = new TestStringLocaliser(ELanguage.EnglishUK);
    
    it("Needs to return a valid localised string", function () {
-      let localisedString = testStringLocaliser.load(1, ELanguage.EnglishUK);
+      let localisedString = testStringLocaliser.load(1);
 
       expect(localisedString).to.equal("Test");
    });
@@ -34,7 +50,7 @@ describe("Localisation", function () {
       var caught: boolean = false;
 
       try {
-         let localisedString = testStringLocaliser.load(2, ELanguage.EnglishUK);
+         testStringLocaliser.load(2);
       } catch (ex) {
          caught = true
       }
@@ -47,7 +63,7 @@ describe("Localisation", function () {
       var caught: boolean = false;
 
       try {
-         let localisedString = testStringLocaliser.load(1, 3);
+         var testStringLocaliser: TestStringLocaliser = new TestStringLocaliser(ELanguage.French);
       } catch (ex) {
          caught = true
       }

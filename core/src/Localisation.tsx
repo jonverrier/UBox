@@ -8,13 +8,17 @@ export enum ELanguage {
 
 export interface ITextLocaliser {
 
+   /**
+   * set of 'getters' and setters for private variables
+   */
+   // Language enum used by the localiser
+   get language(): ELanguage;
    // Lowest value mapped by the localiser - can be used by derived classes to map lookups to various different localisers, one per library
-   lowestValue(): number;
-
+   get lowestValue(): number;
    // highest value mapped by the localiser - can be used by derived classes to map lookups to various different localisers, one per library
-   highestValue(): number;
+   get highestValue(): number;
 
-   // Load the string with 'id' in the specified langauge
-   load(id: number, language: ELanguage): string;
+   // Load the string with 'id' in the langauge. Language is normally passed in to the localiser in its constructir
+   load(id: number): string;
 }
 
