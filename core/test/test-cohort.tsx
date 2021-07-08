@@ -3,9 +3,8 @@
 
 import { SnatchMeasurementType, CleanMeasurementType, Row500mMeasurementType, Row1000mMeasurementType} from '../src/FitnessObservations'
 import { EmailAddress, Url, Name, Person, personArraysAreEqual} from '../src/Person';
-import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual } from "../src/Observation";
-import { MeasurementTypeOf } from '../src/Observation';
-import { CohortName, Cohort } from '../src/Cohort';
+import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
+import { CohortName, CohortTimePeriod, Cohort, ECohortPeriod } from '../src/Cohort';
 import { ETimeUnits, EWeightUnits } from '../src/Quantity';
 
 var expect = require("chai").expect;
@@ -45,9 +44,84 @@ describe("CohortName", function () {
    });
 });
 
+describe("CohortTimePeriod", function () {
+   var period1: CohortTimePeriod, period2: CohortTimePeriod, period3: CohortTimePeriod;
+   let now = new Date();
+   if (now.getMonth() === 0) // Need month to be > 0 to force validation error
+      now.setMonth(1); // january has 31 days so daye cant be invalid
+
+   beforeEach(function () {
+      period1 = new CohortTimePeriod(now, ECohortPeriod.Week, 1);
+      period2 = new CohortTimePeriod(now, ECohortPeriod.FourWeeks, 1);
+      period3 = new CohortTimePeriod(now, ECohortPeriod.Week, 1);
+   });
+
+   it("Needs to compare for equality and inequality", function () {
+
+      expect(period1.equals(period1)).to.equal(true);
+      expect(period1.equals(period2)).to.equal(false);
+      expect(period1.equals(period3)).to.equal(true);
+   });
+
+   it("Needs to catch zero period", function () {
+
+      let caught = false;
+
+      try {
+         let period4 = new CohortTimePeriod(now, ECohortPeriod.Week, 0);
+      }
+      catch {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+   it("Needs to catch negative period", function () {
+
+      let caught = false;
+
+      try {
+         let period4 = new CohortTimePeriod(now, ECohortPeriod.Week, -1);
+      }
+      catch {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+   it("Needs to catch invalid year", function () {
+
+      let caught = false;
+
+      try {
+         let period4 = new CohortTimePeriod(new Date(1900), ECohortPeriod.Week, -1);
+      }
+      catch {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+   it("Needs to catch invalid month", function () {
+
+      let caught = false;
+
+      try {
+         let period4 = new CohortTimePeriod(new Date(now.getFullYear(), now.getMonth() -1), ECohortPeriod.Week, -1);
+      }
+      catch {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+   it("Needs to correctly store attributes", function () {
+
+      expect(period1.startDate).to.equal(now);
+      expect(period1.period).to.equal(ECohortPeriod.Week);
+      expect(period1.numberOfPeriods).to.equal(1);
+   });
+});
+
 describe("Cohort", function () {
    let cohort1, cohort2;
-
+   let period = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 1);
    
    beforeEach(function () {
       let weightMeasurement = new SnatchMeasurementType();
@@ -67,12 +141,16 @@ describe("Cohort", function () {
       cohort1 = new Cohort("id", 1, 1,
          new CohortName("Joe"),
          people,
+         period,
+         true,
          weightMeasurements,
          timeMeasurements);
 
       cohort2 = new Cohort("id", 1, 1,
          new CohortName("Bill"),
          people,
+         period,
+         true,
          weightMeasurements,
          timeMeasurements);
    });
@@ -87,6 +165,8 @@ describe("Cohort", function () {
 
       expect(cohort1.name.equals(new CohortName("Joe"))).to.equal(true);
       expect(personArraysAreEqual(cohort1.people, cohort2.people)).to.equal(true);
+      expect(cohort1.isActive === true).to.equal(true);
+      expect(cohort1.period.equals (period)).to.equal(true);
       expect(weightMeasurementTypeArraysAreEqual(cohort1.weightMeasurements, cohort2.weightMeasurements)).to.equal(true);
       expect(timeMeasurementTypeArraysAreEqual(cohort1.timeMeasurements, cohort2.timeMeasurements)).to.equal(true);
    });
@@ -109,13 +189,19 @@ describe("Cohort", function () {
       let people = new Array<Person>();
       people.push(person);
 
+      let newPeriod = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 2);
+
       cohort1.name = newName;
       cohort1.people = people;
       cohort1.weightMeasurements = weightMeasurements;
       cohort1.timeMeasurements = timeMeasurements;
+      cohort1.period = newPeriod;
+      cohort1.isActive = false;
 
       expect(cohort1.name.equals(newName)).to.equal(true);
       expect(personArraysAreEqual(cohort1.people, people)).to.equal(true);
+      expect(cohort1.isActive === false).to.equal(true);
+      expect(cohort1.period.equals(newPeriod)).to.equal(true);
       expect(weightMeasurementTypeArraysAreEqual(cohort1.weightMeasurements, weightMeasurements)).to.equal(true);
       expect(timeMeasurementTypeArraysAreEqual(cohort1.timeMeasurements, timeMeasurements)).to.equal(true);
    });

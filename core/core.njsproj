@@ -55,20 +55,26 @@
     <TypeScriptCompile Include="src\Error.tsx" />
     <TypeScriptCompile Include="src\Persistence.tsx" />
     <TypeScriptCompile Include="test\test-cohort.tsx">
-      <TestFramework>mocha</TestFramework>
+      <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-localisation.tsx" />
+    <TypeScriptCompile Include="test\test-localisation.tsx">
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-measurement.tsx">
-      <TestFramework>mocha</TestFramework>
+      <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-person.tsx" />
+    <TypeScriptCompile Include="test\test-person.tsx">
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-range.tsx">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-quantity.tsx">
-      <TestFramework>mocha</TestFramework>
+      <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-persistence.tsx" />
+    <TypeScriptCompile Include="test\test-persistence.tsx">
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
