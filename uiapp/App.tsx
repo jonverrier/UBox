@@ -8,14 +8,21 @@
 
 import * as React from 'react';
 import { StyleSheet, Text, SafeAreaView } from 'react-native';
-import { Provider as PaperProvider, Title, BottomNavigation } from "react-native-paper";
+import { Provider as PaperProvider, Appbar, BottomNavigation } from "react-native-paper";
 import theme from "./Theme";
+
+const TopBar = () => (
+   <Appbar style={styles.topbar}>
+      <Appbar.Content titleStyle={{ textAlign: 'center' }} title="UltraBox" />
+   </Appbar>
+);
 
 export class ProfileScreen extends React.Component {
 
    render() {
       return (
          <SafeAreaView style={styles.container}>
+            <TopBar/>
             <Text style={styles.welcome}>
                React Native Profile Page!
             </Text>
@@ -29,6 +36,7 @@ export class HomeScreen extends React.Component {
    render() {
       return (
          <SafeAreaView style={styles.container}>
+            <TopBar />
             <Text style={styles.welcome}>
                React Native Home Page!
             </Text>
@@ -49,7 +57,7 @@ const ProfileRoute = () => (
 const MainScreen = () => {
    const [index, setIndex] = React.useState(0);
    const [routes] = React.useState([
-      { key: "home", title: "Home", icon: "home" },
+      { key: "home", title: "Home", icon: 'home' },
       { key: "profile", title: "Profile", icon: "home-account" },
    ]);
 
@@ -81,6 +89,15 @@ export class App extends React.Component {
 
 // styles
 const styles = StyleSheet.create({
+   topbar: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      alignItems: "center",
+      textAlign: 'center',
+      justifyContent: "center"
+   },
    container: {
       flex: 1,
       backgroundColor: "#fff",
