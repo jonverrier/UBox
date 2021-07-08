@@ -170,8 +170,8 @@ export class Url {
 
 export class Person extends Persistence {
    private _externalId: string;
-   private _name: Name;
-   private _email: EmailAddress;
+   private _name: Name | null;
+   private _email: EmailAddress | null;
    private _thumbnailUrl: Url;
 
 /**
@@ -182,11 +182,11 @@ export class Person extends Persistence {
  * @param externalId - ID assigned by external system (like facebook)
  * @param alias - Alias entered by users of the system e.g 'Jon V' if full name / email is not known
  * @param name - plain text user name
- * @param email - user email
- * @param thumbnailUrl - URL to thumbnail image
+ * @param email - user email, can be null if not provided
+ * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
  */
    constructor(_id: any, schemaVersion: number, sequenceNumber: number,
-      externalId: string, name: Name, email: EmailAddress, thumbnailUrl: Url) {
+      externalId: string, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null) {
 
       super(_id, schemaVersion, sequenceNumber);
 
@@ -205,10 +205,10 @@ export class Person extends Persistence {
    get name(): Name {
       return this._name;
    }
-   get email(): EmailAddress {
+   get email(): EmailAddress | null {
       return this._email;
    }
-   get thumbnailUrl(): Url {
+   get thumbnailUrl(): Url | null {
       return this._thumbnailUrl;
    }
    set name(name: Name) {
@@ -231,8 +231,8 @@ export class Person extends Persistence {
        return ((super.equals(rhs)) &&
          (this._externalId === rhs._externalId) &&
          (this._name.equals (rhs._name)) &&
-         (this._email.equals(rhs._email)) &&
-         (this._thumbnailUrl.equals (rhs._thumbnailUrl)));
+         (this._email ? this._email.equals(rhs._email) : (rhs.email === null)) &&
+         (this._thumbnailUrl ? this._thumbnailUrl.equals(rhs._thumbnailUrl) : (rhs.thumbnailUrl === null)));
    }
 }
 

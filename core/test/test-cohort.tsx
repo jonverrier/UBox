@@ -92,7 +92,7 @@ describe("CohortTimePeriod", function () {
       let caught = false;
 
       try {
-         let period4 = new CohortTimePeriod(new Date(1900), ECohortPeriod.Week, -1);
+         let period4 = new CohortTimePeriod(new Date(1900, 0), ECohortPeriod.Week, 1);
       }
       catch {
          caught = true;
@@ -104,7 +104,7 @@ describe("CohortTimePeriod", function () {
       let caught = false;
 
       try {
-         let period4 = new CohortTimePeriod(new Date(now.getFullYear(), now.getMonth() -1), ECohortPeriod.Week, -1);
+         let period4 = new CohortTimePeriod(new Date(now.getFullYear(), now.getMonth() -1), ECohortPeriod.Week, 1);
       }
       catch {
          caught = true;

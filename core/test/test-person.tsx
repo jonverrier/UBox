@@ -161,7 +161,25 @@ describe("Person", function () {
       person2 = new Person(1, 1, 1, "1234", new Name("Joe"),
          new EmailAddress ("Joe@mail.com", true), new Url ("https://jo.pics.com", false));
    });
-   
+
+   it("Needs to construct with null email", function () {
+
+      let nullperson = new Person(1, 1, 1, "1234", new Name("Joe"),
+         null, new Url("https://jo.pics.com", false));
+
+      expect(nullperson.email).to.equal(null);
+      expect(nullperson.equals(nullperson)).to.equal(true);
+   });
+
+   it("Needs to construct with null Url ", function () {
+
+      let nullperson = new Person(1, 1, 1, "1234", new Name("Joe"),
+         new EmailAddress("Joe@mail.com", true), null);
+
+      expect(nullperson.thumbnailUrl).to.equal(null);
+      expect(nullperson.equals(nullperson)).to.equal(true);
+   });
+
    it("Needs to compare for equality and inequality", function () {
       
       expect(person1.equals(person1)).to.equal(true);
