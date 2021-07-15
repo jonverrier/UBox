@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 
-import { SnatchMeasurementType, CleanMeasurementType, Row500mMeasurementType, Row1000mMeasurementType} from '../src/FitnessObservations'
+import { SnatchMeasurementType, CleanMeasurementType, RowSprintMeasurementType, RunSprintMeasurementType} from '../src/FitnessObservations'
 import { EmailAddress, Url, Name, Person, personArraysAreEqual} from '../src/Person';
 import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
 import { CohortName, CohortTimePeriod, Cohort, ECohortPeriod } from '../src/Cohort';
@@ -122,24 +122,31 @@ describe("CohortTimePeriod", function () {
 describe("Cohort", function () {
    let cohort1, cohort2;
    let period = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 1);
-   
+
+   let person = new Person(1, 1, 1, "123", new Name("Joe"),
+      new EmailAddress("Joe@mail.com", true),
+      new Url("https://jo.pics.com", false), null);
+
+   let person2 = new Person(1, 1, 1, "123", new Name("Jenny"),
+      new EmailAddress("Jenny@mail.com", true),
+      new Url("https://jo.pics.com", false),
+      null);
+
    beforeEach(function () {
       let weightMeasurement = new SnatchMeasurementType();
       let weightMeasurements = new Array < MeasurementTypeOf<EWeightUnits>>();
       weightMeasurements.push(weightMeasurement);
 
-      let timeMeasurement = new Row500mMeasurementType();
+      let timeMeasurement = new RowSprintMeasurementType();
       let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 
-      let person = new Person(1, 1, 1, "123", new Name("Joe"),
-         new EmailAddress("Joe@mail.com", true),
-         new Url("https://jo.pics.com", false));
       let people = new Array<Person>();
       people.push(person);
 
       cohort1 = new Cohort("id", 1, 1,
          new CohortName("Joe"),
+         people,
          people,
          period,
          true,
@@ -148,6 +155,7 @@ describe("Cohort", function () {
 
       cohort2 = new Cohort("id", 1, 1,
          new CohortName("Bill"),
+         people,
          people,
          period,
          true,
@@ -164,7 +172,8 @@ describe("Cohort", function () {
    it("Needs to correctly store attributes", function () {
 
       expect(cohort1.name.equals(new CohortName("Joe"))).to.equal(true);
-      expect(personArraysAreEqual(cohort1.people, cohort2.people)).to.equal(true);
+      expect(personArraysAreEqual(cohort1.members, cohort2.members)).to.equal(true);
+      expect(personArraysAreEqual(cohort1.administrators, cohort2.members)).to.equal(true);
       expect(cohort1.isActive === true).to.equal(true);
       expect(cohort1.period.equals (period)).to.equal(true);
       expect(weightMeasurementTypeArraysAreEqual(cohort1.weightMeasurements, cohort2.weightMeasurements)).to.equal(true);
@@ -179,31 +188,42 @@ describe("Cohort", function () {
       let weightMeasurements = new Array<MeasurementTypeOf<EWeightUnits>>();
       weightMeasurements.push(weightMeasurement);
 
-      let timeMeasurement = new Row1000mMeasurementType();
+      let timeMeasurement = new RunSprintMeasurementType();
       let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 
-      let person = new Person(1, 1, 1, "123", new Name("Jenny"),
-         new EmailAddress("Joe@mail.com", true),
-         new Url("https://jo.pics.com", false));
       let people = new Array<Person>();
-      people.push(person);
+      people.push(person2);
 
       let newPeriod = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 2);
 
       cohort1.name = newName;
-      cohort1.people = people;
+      cohort1.members = people;
+      cohort1.administrators = people;
       cohort1.weightMeasurements = weightMeasurements;
       cohort1.timeMeasurements = timeMeasurements;
       cohort1.period = newPeriod;
       cohort1.isActive = false;
 
       expect(cohort1.name.equals(newName)).to.equal(true);
-      expect(personArraysAreEqual(cohort1.people, people)).to.equal(true);
+      expect(personArraysAreEqual(cohort1.members, people)).to.equal(true);
+      expect(personArraysAreEqual(cohort1.administrators, people)).to.equal(true);
       expect(cohort1.isActive === false).to.equal(true);
       expect(cohort1.period.equals(newPeriod)).to.equal(true);
       expect(weightMeasurementTypeArraysAreEqual(cohort1.weightMeasurements, weightMeasurements)).to.equal(true);
       expect(timeMeasurementTypeArraysAreEqual(cohort1.timeMeasurements, timeMeasurements)).to.equal(true);
+   });
+
+   it("Needs to test membership", function () {
+
+      expect(cohort1.includesMember(person)).to.equal(true);
+      expect(cohort1.includesAdministrator(person)).to.equal(true);
+      expect(cohort1.includesMember(person2)).to.equal(false);
+      expect(cohort1.includesAdministrator(person2)).to.equal(false);
+      expect(cohort1.includesMemberEmail(person.email)).to.equal(true);
+      expect(cohort1.includesAdministratorEmail(person.email)).to.equal(true);
+      expect(cohort1.includesMemberEmail(person2.email)).to.equal(false);
+      expect(cohort1.includesAdministratorEmail(person2.email)).to.equal(false);
    });
 });
 

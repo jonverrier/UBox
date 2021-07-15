@@ -9,7 +9,7 @@ export enum EPositiveTrend { Up, Down }
 
 export enum EMeasurementType {
    Snatch, Clean, Jerk, CleanAndJerk,
-   Row500m, Row1000m
+   Row, Run
 }
 
 export class MeasurementTypeOf<Unit> {
@@ -70,7 +70,7 @@ function measurementTypeArraysAreEqual<Units>(lhs: Array<MeasurementTypeOf<Units
       return false;
 
    for (var i = 0; i < lhs.length; i++) {
-      if (!lhs[i].equals(rhs[i])) {
+      if (! (lhs[i].equals(rhs[i]))) {
          return false;
       }
    }
@@ -89,10 +89,11 @@ export function timeMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<E
    return  measurementTypeArraysAreEqual(lhs, rhs);;
 }
 
-export class MeasurementOf<Unit> extends Persistence {
-   private _quantity: QuantityOf<Unit>;
+export class MeasurementOf<measuredUnit, repeatUnit> extends Persistence {
+   private _quantity: QuantityOf<measuredUnit>;
+   private _repeats: QuantityOf<repeatUnit>;
    private _cohortPeriod: number;
-   private _measurementType: MeasurementTypeOf<Unit>;
+   private _measurementType: MeasurementTypeOf<measuredUnit>;
    private _subjectExternalId: string; 
 
 /**
@@ -101,12 +102,13 @@ export class MeasurementOf<Unit> extends Persistence {
  * @param schemaVersion - (from Persistence)  schema version used - allows upgrades on the fly when loading old format data
  * @param sequenceNumber - (from Persistence) used to allow clients to specify the last object they have when re-synching with server
  * @param quantity - the value of the measurement (amount and units)
+ * @param repeats - the number of reps (for weight), number of distance units (for time measurements)
  * @param cohortPeriod - the period in which the measurement was taken
  * @param measurementType - reference to the class that defines the type of measurement
  * @param subjectExternalId - reference to the entity to which the measurement applies  - usually a Person
  */
    constructor(_id: any, schemaVersion: number, sequenceNumber: number,
-      quantity: QuantityOf<Unit>, cohortPeriod: number, measurementType: MeasurementTypeOf<Unit>, subjectExternalId: string) {
+      quantity: QuantityOf<measuredUnit>, repeats: QuantityOf<repeatUnit>, cohortPeriod: number, measurementType: MeasurementTypeOf<measuredUnit>, subjectExternalId: string) {
 
       super(_id, schemaVersion, sequenceNumber);
 
@@ -114,6 +116,7 @@ export class MeasurementOf<Unit> extends Persistence {
          throw RangeError();
       }
       this._quantity = quantity;
+      this._repeats = repeats;
       this._cohortPeriod = cohortPeriod;
       this._measurementType = measurementType;
       this._subjectExternalId = subjectExternalId;
@@ -122,13 +125,16 @@ export class MeasurementOf<Unit> extends Persistence {
    /**
    * set of 'getters' for private variables
    */
-   get quantity(): QuantityOf<Unit> {
+   get quantity(): QuantityOf<measuredUnit> {
       return this._quantity;
+   }
+   get repeats(): QuantityOf<repeatUnit> {
+      return this._repeats;
    }
    get cohortPeriod(): number {
       return this._cohortPeriod;
    }
-   get measurementType(): MeasurementTypeOf<Unit> {
+   get measurementType(): MeasurementTypeOf<measuredUnit> {
       return this._measurementType;
    }
    get subjectExternalId(): string {
@@ -140,20 +146,21 @@ export class MeasurementOf<Unit> extends Persistence {
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
     */
-   equals(rhs: MeasurementOf<Unit> ) : boolean {
+   equals(rhs: MeasurementOf<measuredUnit, repeatUnit> ) : boolean {
 
       return (super.equals (rhs) && 
          this._quantity.equals(rhs._quantity) &&
+         this._repeats === rhs._repeats &&
          this._cohortPeriod === rhs._cohortPeriod &&
          this._measurementType.equals(rhs.measurementType) &&
          this._subjectExternalId === rhs._subjectExternalId);
    }
 }
 
-export interface IMeasurementLoaderFor<Unit> {
-   load(): MeasurementOf<Unit>;
+export interface IMeasurementLoaderFor<measuredUnit, repeatUnit> {
+   load(): MeasurementOf<measuredUnit, repeatUnit>;
 }
 
-export interface IMeasurementStorerFor<Unit> {
-   save(measurement: MeasurementOf<Unit>);
+export interface IMeasurementStorerFor<measuredUnit, repeatUnit> {
+   save(measurement: MeasurementOf<measuredUnit, repeatUnit>);
 }

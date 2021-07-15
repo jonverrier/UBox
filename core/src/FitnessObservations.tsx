@@ -2,7 +2,7 @@
 
 import { EWeightUnits, ETimeUnits, QuantityOf } from "./Quantity";
 import { RangeOf } from "./Range";
-import { EMeasurementType, EPositiveTrend, MeasurementTypeOf, MeasurementOf } from './Observation';
+import { EMeasurementType, EPositiveTrend, MeasurementTypeOf} from './Observation';
 
 
 // ====================
@@ -85,24 +85,24 @@ export class SpeedMeasurementType extends MeasurementTypeOf<ETimeUnits> {
 
 }
 
-export class Row500mMeasurementType extends SpeedMeasurementType {
+export class RowSprintMeasurementType extends SpeedMeasurementType {
 
    /**
     * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 500m row
     */
    constructor() {
-      super(EMeasurementType.Row500m, 60, 300);
+      super(EMeasurementType.Row, 5, 500);
    }
 
 }
 
-export class Row1000mMeasurementType extends SpeedMeasurementType {
+export class RunSprintMeasurementType extends SpeedMeasurementType {
 
    /**
-    * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 1000m row
+    * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 500m row
     */
    constructor() {
-      super(EMeasurementType.Row1000m, 60, 300);
+      super(EMeasurementType.Run, 5, 500);
    }
 
 }

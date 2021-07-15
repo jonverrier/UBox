@@ -3,6 +3,10 @@ import { URL } from 'url'
 import { InvalidParameterError } from './error';
 import { Persistence } from "./Persistence";
 
+export enum ERoleType {
+   Prospect, Member, Coach
+}
+
 export class Name {
    private _name: string;
    private _surname: string;
@@ -168,11 +172,83 @@ export class Url {
    }
 }
 
+export class Roles {
+   private _roles: Array<ERoleType>;
+
+   /**
+    * Create a Roles object
+    * @param roles - list of roles to initialise
+    */
+   constructor(roles: Array<ERoleType>) {
+
+      if (!Roles.isValidRoleList(roles)) {
+         throw new InvalidParameterError();
+      }
+
+      // Sort the list as we do an item by item equality test
+      roles.sort();
+      this._roles = roles;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get roles(): Array<ERoleType> {
+      return this._roles;
+   }
+
+   /**
+    * test if a person has a given role  
+    * @param role - the roles to check 
+    */
+   includesRole(role: ERoleType): boolean {
+
+      return (this._roles.includes(role));
+   }
+
+   /**
+    * test for valid list of roles
+    * @param roles - the string to test 
+    */
+   static isValidRoleList(roles): boolean {
+      if (new Set(roles).size !== roles.length)
+         return false;
+
+      return (true);
+   }
+
+   /**
+    * test for equality - checks all fields are the same. 
+    * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
+    * @param rhs - the object to compare this one to.  
+    */
+   static rolesArraysAreEqual(lhs: Array<ERoleType>,
+                              rhs: Array<ERoleType>): boolean {
+
+   // compare lengths - can save a lot of time 
+   if (lhs.length != rhs.length)
+      return false;
+
+   for (var i = 0; i < lhs.length; i++) {
+      if (lhs[i] !== (rhs[i])) {
+         return false;
+      }
+   }
+   return true;
+}
+
+   equals(rhs: Roles): boolean {
+
+      return (Roles.rolesArraysAreEqual(this._roles, rhs._roles));
+   }
+}
+
 export class Person extends Persistence {
    private _externalId: string;
    private _name: Name | null;
    private _email: EmailAddress | null;
    private _thumbnailUrl: Url;
+   private _roles: Roles | null;
 
 /**
  * Create a Person object
@@ -180,13 +256,13 @@ export class Person extends Persistence {
  * @param schemaVersion - (from Persistence)  schema version used - allows upgrades on the fly when loading old format data
  * @param sequenceNumber - (from Persistence) used to allow clients to specify the last object they have when re-synching with server
  * @param externalId - ID assigned by external system (like facebook)
- * @param alias - Alias entered by users of the system e.g 'Jon V' if full name / email is not known
  * @param name - plain text user name
  * @param email - user email, can be null if not provided
  * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
+ * @param roles - list of roles the Person plays
  */
    constructor(_id: any, schemaVersion: number, sequenceNumber: number,
-      externalId: string, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null) {
+      externalId: string, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null) {
 
       super(_id, schemaVersion, sequenceNumber);
 
@@ -194,6 +270,7 @@ export class Person extends Persistence {
       this._name = name;
       this._email = email;
       this._thumbnailUrl = thumbnailUrl;
+      this._roles = roles;
    }
 
    /**
@@ -211,6 +288,9 @@ export class Person extends Persistence {
    get thumbnailUrl(): Url | null {
       return this._thumbnailUrl;
    }
+   get roles(): Roles | null {
+      return this._roles;
+   }
    set name(name: Name) {
       this._name = name;
    }
@@ -219,6 +299,18 @@ export class Person extends Persistence {
    }
    set thumbnailUrl(thumbnailUrl: Url) {
       this._thumbnailUrl = thumbnailUrl;
+   }
+   set roles(roles: Roles) {
+      this._roles = roles;
+   }
+
+   /**
+    * test if a person has a given role  
+    * @param role - the roles to check 
+    */
+   hasRole(role: ERoleType): boolean {
+
+      return (this._roles.includesRole(role));
    }
 
    /**
@@ -232,12 +324,14 @@ export class Person extends Persistence {
          (this._externalId === rhs._externalId) &&
          (this._name.equals (rhs._name)) &&
          (this._email ? this._email.equals(rhs._email) : (rhs.email === null)) &&
-         (this._thumbnailUrl ? this._thumbnailUrl.equals(rhs._thumbnailUrl) : (rhs.thumbnailUrl === null)));
+         (this._thumbnailUrl ? this._thumbnailUrl.equals(rhs._thumbnailUrl) : (rhs.thumbnailUrl === null)) &&
+         (this._roles ? this._roles.equals(rhs._roles) : (rhs._roles === null))
+         );
    }
 }
 
 
-export function personArraysAreEqual (lhs: Array < Person >, rhs: Array<Person>): boolean {
+export function personArraysAreEqual(lhs: Array<Person>, rhs: Array<Person>): boolean {
 
    // if we have mis-matched false values, return false
    if (lhs && !rhs || !lhs && rhs)

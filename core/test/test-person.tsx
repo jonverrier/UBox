@@ -1,13 +1,13 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { EmailAddress, Url, Name, Person, personArraysAreEqual, IPersonLoader, IPersonStorer } from '../src/Person';
+import { EmailAddress, Url, Name, Roles, Person, personArraysAreEqual, IPersonLoader, IPersonStorer, ERoleType } from '../src/Person';
 
 var expect = require("chai").expect;
 
 class StubLoader implements IPersonLoader {
    load(): Person {
       return new Person(1, 1, 1, "123", new Name ("Joe"),
-         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false));
+         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
    }
 }
 
@@ -151,21 +151,75 @@ describe("EmailAddress", function () {
    });
 });
 
+describe("Roles", function () {
+   var roles1: Roles, roles2: Roles, roles3: Roles,
+      rolesMulti1: Roles, rolesNull: Roles;
+
+   beforeEach(function () {
+      roles1 = new Roles([ERoleType.Member]);
+      roles2 = new Roles([ERoleType.Coach]);
+      roles3 = new Roles([ERoleType.Member]);
+      rolesMulti1 = new Roles([ERoleType.Member, ERoleType.Coach]);
+      rolesNull = new Roles([]);
+   });
+
+   it("Needs to compare for equality and inequality", function () {
+
+      expect(roles1.equals(roles1)).to.equal(true);
+      expect(roles1.equals(roles2)).to.equal(false);
+      expect(roles1.equals(roles3)).to.equal(true);
+      expect(roles1.equals(rolesMulti1)).to.equal(false);
+      expect(roles1.equals(rolesNull)).to.equal(false);
+   });
+
+   it("Needs to catch invalid role list", function () {
+
+      let caught = false;
+
+      try {
+         let roles4 = new Roles(new Array<ERoleType>(ERoleType.Member, ERoleType.Member));
+      }
+      catch {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
+
+   it("Needs to catch empty role list", function () {
+
+      let caught = false;
+
+      try {
+         let roles4 = new Roles (null);
+      }
+      catch {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
+   it("Needs to correctly store attributes", function () {
+
+      expect(roles1.roles).to.equal(roles1.roles);
+   });
+});
+
 describe("Person", function () {
    var person1, person2;
    
    beforeEach(function () {
       person1 = new Person(1, 1, 1, "123", new Name("Joe"),
-         new EmailAddress("Joe@mail.com", true), new Url ("https://jo.pics.com", false));
+         new EmailAddress("Joe@mail.com", true), new Url ("https://jo.pics.com", false), null);
 
       person2 = new Person(1, 1, 1, "1234", new Name("Joe"),
-         new EmailAddress ("Joe@mail.com", true), new Url ("https://jo.pics.com", false));
+         new EmailAddress ("Joe@mail.com", true), new Url ("https://jo.pics.com", false), null);
    });
 
    it("Needs to construct with null email", function () {
 
       let nullperson = new Person(1, 1, 1, "1234", new Name("Joe"),
-         null, new Url("https://jo.pics.com", false));
+         null, new Url("https://jo.pics.com", false), null);
 
       expect(nullperson.email).to.equal(null);
       expect(nullperson.equals(nullperson)).to.equal(true);
@@ -174,10 +228,21 @@ describe("Person", function () {
    it("Needs to construct with null Url ", function () {
 
       let nullperson = new Person(1, 1, 1, "1234", new Name("Joe"),
-         new EmailAddress("Joe@mail.com", true), null);
+         new EmailAddress("Joe@mail.com", true), null, null);
 
       expect(nullperson.thumbnailUrl).to.equal(null);
       expect(nullperson.equals(nullperson)).to.equal(true);
+   });
+
+   it("Needs to construct with a role list ", function () {
+
+      let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
+      let roleperson = new Person(1, 1, 1, "1234", new Name("Joe"),
+         new EmailAddress("Joe@mail.com", true), null, roles);
+
+      expect(roleperson.equals(roleperson)).to.equal(true);
+      expect(roleperson.hasRole(ERoleType.Member)).to.equal(true);
+      expect(roleperson.hasRole(ERoleType.Prospect)).to.equal(false);
    });
 
    it("Needs to compare for equality and inequality", function () {
@@ -192,6 +257,7 @@ describe("Person", function () {
       expect(person1.name.equals(new Name("Joe"))).to.equal(true);
       expect(person1.email.equals(new EmailAddress("Joe@mail.com", true))).to.equal(true);
       expect(person1.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
+      expect(person1.roles).to.equal(null);
    });
 
    it("Needs to correctly change attributes", function () {
@@ -199,13 +265,17 @@ describe("Person", function () {
       let newMail = new EmailAddress("new@New.com", false);
       let newUrl = new Url("https://jo.newpics.com", false);
       let newName = new Name("NewJoe");
+      let newRoles = new Roles([]);
+
       person1.email = newMail;
       person1.thumbnailUrl = newUrl;
       person1.name = newName;
+      person1.roles = newRoles;
 
       expect(person1.email).to.equal(newMail);
       expect(person1.thumbnailUrl).to.equal(newUrl);
       expect(person1.name.equals(newName)).to.equal(true);
+      expect(person1.roles.equals(newRoles)).to.equal(true);
    });
 
    it("Needs to compare arrays", function () {
@@ -248,7 +318,7 @@ describe("PersonStorer", function () {
 
       try {
          storer.save(new Person(1, 1, 1, "123", new Name("Joe"),
-            new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false)));
+            new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null));
       } catch {
          caught = true;
       }

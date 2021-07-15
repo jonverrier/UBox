@@ -2,6 +2,8 @@
 
 export enum EWeightUnits { Kg, Lbs }
 export enum ETimeUnits { Seconds }
+export enum EDistanceUnits { Metres }
+export enum ERepUnits { Reps }
 
 export class QuantityOf<Unit> { 
    private _amount: number;
