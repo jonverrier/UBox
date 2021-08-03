@@ -1,5 +1,6 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
+import { PersistenceDetails } from "../src/Persistence";
 import { EWeightUnits, ETimeUnits, QuantityOf, ERepUnits, EDistanceUnits } from '../src/Quantity';
 import {
    EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IMeasurementLoaderFor, IMeasurementStorerFor,
@@ -76,11 +77,11 @@ function testConstruct<measuredUnit, repeatUnit>(quantity: QuantityOf<measuredUn
                               repeats: QuantityOf<repeatUnit>,
                               measurementType: MeasurementTypeOf<measuredUnit>) {
 
-   let measurement = new MeasurementOf<measuredUnit, repeatUnit>("id", 1, 2, quantity, repeats, 0, measurementType, "1234");
+   let measurement = new MeasurementOf<measuredUnit, repeatUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
 
-   expect(measurement.id).to.equal("id");
-   expect(measurement.schemaVersion).to.equal(1);
-   expect(measurement.sequenceNumber).to.equal(2);
+   expect(measurement.persistenceDetails.id).to.equal("id");
+   expect(measurement.persistenceDetails.schemaVersion).to.equal(1);
+   expect(measurement.persistenceDetails.sequenceNumber).to.equal(2);
 
    expect(measurement.quantity.equals(quantity)).to.equal(true);
    expect(measurement.repeats.equals(repeats)).to.equal(true);
@@ -93,9 +94,9 @@ function testEquals<measuredUnit, repeatUnit>(quantity: QuantityOf<measuredUnit>
    repeats: QuantityOf<repeatUnit>,
    measurementType: MeasurementTypeOf<measuredUnit>) {
 
-   let measurement1 = new MeasurementOf<measuredUnit, repeatUnit>("id", 1, 2, quantity, repeats, 0, measurementType, "1234");
-   let measurement2 = new MeasurementOf<measuredUnit, repeatUnit>("id", 1, 2, quantity, repeats, 1, measurementType, "1234");
-   let measurement3 = new MeasurementOf<measuredUnit, repeatUnit>("id", 1, 2, quantity, repeats, 0, measurementType, "1234");
+   let measurement1 = new MeasurementOf<measuredUnit, repeatUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+   let measurement2 = new MeasurementOf<measuredUnit, repeatUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 1, measurementType, "1234");
+   let measurement3 = new MeasurementOf<measuredUnit, repeatUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
 
    expect(measurement1.equals(measurement1)).to.equal(true);
    expect(measurement1.equals(measurement2)).to.equal(false);
@@ -195,7 +196,7 @@ describe("Measurement", function () {
       let caught = false;
 
       try {
-         let measurement = new MeasurementOf<EWeightUnits, ERepUnits>("id", 1, 2, quantity, repeats, 0, measurementType, "1234");
+         let measurement = new MeasurementOf<EWeightUnits, ERepUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
       } catch {
          caught = true;
       }
@@ -209,7 +210,7 @@ class StubLoader implements IMeasurementLoaderFor<EWeightUnits, ERepUnits> {
       let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
       let repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
       let measurementType = new SnatchMeasurementType();
-      return new MeasurementOf<EWeightUnits, ERepUnits>("id", 1, 2, quantity, repeats, 0, measurementType, "1234");
+      return new MeasurementOf<EWeightUnits, ERepUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
    }
 }
 
@@ -242,7 +243,8 @@ describe("MeasurementStorer", function () {
          let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
          let repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
          let measurementType = new SnatchMeasurementType();
-         let measurement = new MeasurementOf<EWeightUnits, ERepUnits>("id", 1, 2, quantity, repeats, 0, measurementType, "1234");
+         let measurement = new MeasurementOf<EWeightUnits, ERepUnits>(new PersistenceDetails("id", 1, 2),
+            quantity, repeats, 0, measurementType, "1234");
 
          storer.save(measurement);
       } catch {

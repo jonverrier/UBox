@@ -1,10 +1,10 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { URL } from 'url'
 import { InvalidParameterError } from './error';
-import { Persistence } from "./Persistence";
+import { PersistenceDetails, Persistence } from "./Persistence";
 
 export enum ERoleType {
-   Prospect, Member, Coach
+   Prospect = "Prospect", Member = "Member", Coach = "Coach"
 }
 
 export class Name {
@@ -13,8 +13,8 @@ export class Name {
 
    /**
     * Create a Name object
-    * @param name - user email
-    * @param surname - user surbane, can be null
+    * @param name - user first name
+    * @param surname - user family name, can be null
     */
    constructor(name: string, surname: string | null = null ) {
       if (!Name.isValidName (name)) {
@@ -208,9 +208,9 @@ export class Roles {
 
    /**
     * test for valid list of roles
-    * @param roles - the string to test 
+    * @param roles - the list to test 
     */
-   static isValidRoleList(roles): boolean {
+   static isValidRoleList(roles: Array<ERoleType>): boolean {
       if (new Set(roles).size !== roles.length)
          return false;
 
@@ -245,26 +245,24 @@ export class Roles {
 
 export class Person extends Persistence {
    private _externalId: string;
-   private _name: Name | null;
+   private _name: Name;
    private _email: EmailAddress | null;
-   private _thumbnailUrl: Url;
+   private _thumbnailUrl: Url | null;
    private _roles: Roles | null;
 
 /**
  * Create a Person object
- * @param _id - (from Persistence) for the database to use and assign
- * @param schemaVersion - (from Persistence)  schema version used - allows upgrades on the fly when loading old format data
- * @param sequenceNumber - (from Persistence) used to allow clients to specify the last object they have when re-synching with server
+ * @param persistenceDetails - (from Persistence) for the database layer to use and assign
  * @param externalId - ID assigned by external system (like facebook)
  * @param name - plain text user name
  * @param email - user email, can be null if not provided
  * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
- * @param roles - list of roles the Person plays
+ * @param roles - list of roles the Person plays, can be null
  */
-   constructor(_id: any, schemaVersion: number, sequenceNumber: number,
+   constructor(persistenceDetails: PersistenceDetails,
       externalId: string, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null) {
 
-      super(_id, schemaVersion, sequenceNumber);
+      super(persistenceDetails);
 
       this._externalId = externalId;
       this._name = name;

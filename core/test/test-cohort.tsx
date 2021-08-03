@@ -1,6 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 
+import { PersistenceDetails } from "../src/Persistence";
 import { SnatchMeasurementType, CleanMeasurementType, RowSprintMeasurementType, RunSprintMeasurementType} from '../src/FitnessObservations'
 import { EmailAddress, Url, Name, Person, personArraysAreEqual} from '../src/Person';
 import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
@@ -123,11 +124,11 @@ describe("Cohort", function () {
    let cohort1, cohort2;
    let period = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 1);
 
-   let person = new Person(1, 1, 1, "123", new Name("Joe"),
+   let person = new Person(new PersistenceDetails (1, 1, 1), "123", new Name("Joe"),
       new EmailAddress("Joe@mail.com", true),
       new Url("https://jo.pics.com", false), null);
 
-   let person2 = new Person(1, 1, 1, "123", new Name("Jenny"),
+   let person2 = new Person(new PersistenceDetails(1, 1, 1), "123", new Name("Jenny"),
       new EmailAddress("Jenny@mail.com", true),
       new Url("https://jo.pics.com", false),
       null);
@@ -144,7 +145,7 @@ describe("Cohort", function () {
       let people = new Array<Person>();
       people.push(person);
 
-      cohort1 = new Cohort("id", 1, 1,
+      cohort1 = new Cohort(new PersistenceDetails("id", 1, 1),
          new CohortName("Joe"),
          people,
          people,
@@ -153,7 +154,7 @@ describe("Cohort", function () {
          weightMeasurements,
          timeMeasurements);
 
-      cohort2 = new Cohort("id", 1, 1,
+      cohort2 = new Cohort(new PersistenceDetails("id", 1, 1),
          new CohortName("Bill"),
          people,
          people,

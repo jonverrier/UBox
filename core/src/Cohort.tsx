@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import { InvalidParameterError } from './error';
-import { Persistence } from "./Persistence";
+import { PersistenceDetails, Persistence } from "./Persistence";
 import { EmailAddress, Person, personArraysAreEqual } from "./Person";
 import { MeasurementTypeOf, weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual } from "./Observation";
 import { EWeightUnits, ETimeUnits } from '../src/Quantity';
@@ -139,9 +139,7 @@ export class Cohort extends Persistence {
 
 /**
  * Create a Cohort object
- * @param _id - (from Persistence) for the database to use and assign
- * @param schemaVersion - (from Persistence)  schema version used - allows upgrades on the fly when loading old format data
- * @param sequenceNumber - (from Persistence) used to allow clients to specify the last object they have when re-synching with server
+ * @param persistenceDetails - (from Persistence) for the database layer to use and assign
  * @param name - plain text name for the cohort
  * @param administrators - array of People
  * @param members - array of People
@@ -150,13 +148,13 @@ export class Cohort extends Persistence {
  * @param weightMeasurements - array of weight measurements
  * @param timeMeasurements - array of time measurements
  */
-   constructor(_id: any, schemaVersion: number, sequenceNumber: number,
+   constructor(persistenceDetails: PersistenceDetails,
       name: CohortName, administrators: Array<Person>, members: Array<Person>,
       period: CohortTimePeriod, isActive: boolean,
       weightMeasurements: Array<MeasurementTypeOf<EWeightUnits>>,
       timeMeasurements: Array<MeasurementTypeOf<ETimeUnits>>) {
 
-      super(_id, schemaVersion, sequenceNumber);
+      super(persistenceDetails);
 
       this._name = name;
       this._administrators = administrators;

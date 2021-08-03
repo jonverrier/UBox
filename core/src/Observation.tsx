@@ -2,7 +2,7 @@
 
 import { ETimeUnits, EWeightUnits, QuantityOf } from "./Quantity";
 import { RangeOf } from "./Range";
-import { Persistence } from "./Persistence";
+import { PersistenceDetails, Persistence } from "./Persistence";
 
 // This enum is used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing 
 export enum EPositiveTrend { Up, Down }
@@ -98,19 +98,17 @@ export class MeasurementOf<measuredUnit, repeatUnit> extends Persistence {
 
 /**
  * Create a Measurement object - a quantity, with a range of validity, and a marker of the positive trend (is it good if quantity goes up, or down)
- * @param _id - (from Persistence) for the database to use and assign
- * @param schemaVersion - (from Persistence)  schema version used - allows upgrades on the fly when loading old format data
- * @param sequenceNumber - (from Persistence) used to allow clients to specify the last object they have when re-synching with server
+ * @param persistenceDetails - (from Persistence) for the database layer to use and assign
  * @param quantity - the value of the measurement (amount and units)
  * @param repeats - the number of reps (for weight), number of distance units (for time measurements)
  * @param cohortPeriod - the period in which the measurement was taken
  * @param measurementType - reference to the class that defines the type of measurement
  * @param subjectExternalId - reference to the entity to which the measurement applies  - usually a Person
  */
-   constructor(_id: any, schemaVersion: number, sequenceNumber: number,
+   constructor(persistenceDetails: PersistenceDetails,
       quantity: QuantityOf<measuredUnit>, repeats: QuantityOf<repeatUnit>, cohortPeriod: number, measurementType: MeasurementTypeOf<measuredUnit>, subjectExternalId: string) {
 
-      super(_id, schemaVersion, sequenceNumber);
+      super(persistenceDetails);
 
       if (!measurementType.range.includes(quantity)) {
          throw RangeError();

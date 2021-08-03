@@ -1,12 +1,13 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
+import { PersistenceDetails } from "../src/Persistence";
 import { EmailAddress, Url, Name, Roles, Person, personArraysAreEqual, IPersonLoader, IPersonStorer, ERoleType } from '../src/Person';
 
 var expect = require("chai").expect;
 
 class StubLoader implements IPersonLoader {
    load(): Person {
-      return new Person(1, 1, 1, "123", new Name ("Joe"),
+      return new Person(new PersistenceDetails(1, 1, 1), "123", new Name ("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
    }
 }
@@ -209,16 +210,19 @@ describe("Person", function () {
    var person1, person2;
    
    beforeEach(function () {
-      person1 = new Person(1, 1, 1, "123", new Name("Joe"),
+      person1 = new Person(new PersistenceDetails(1, 1, 1),
+         "123", new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url ("https://jo.pics.com", false), null);
 
-      person2 = new Person(1, 1, 1, "1234", new Name("Joe"),
+      person2 = new Person(new PersistenceDetails(1, 1, 1),
+         "1234", new Name("Joe"),
          new EmailAddress ("Joe@mail.com", true), new Url ("https://jo.pics.com", false), null);
    });
 
    it("Needs to construct with null email", function () {
 
-      let nullperson = new Person(1, 1, 1, "1234", new Name("Joe"),
+      let nullperson = new Person(new PersistenceDetails(1, 1, 1),
+         "1234", new Name("Joe"),
          null, new Url("https://jo.pics.com", false), null);
 
       expect(nullperson.email).to.equal(null);
@@ -227,7 +231,7 @@ describe("Person", function () {
 
    it("Needs to construct with null Url ", function () {
 
-      let nullperson = new Person(1, 1, 1, "1234", new Name("Joe"),
+      let nullperson = new Person(new PersistenceDetails(1, 1, 1), "1234", new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), null, null);
 
       expect(nullperson.thumbnailUrl).to.equal(null);
@@ -237,7 +241,8 @@ describe("Person", function () {
    it("Needs to construct with a role list ", function () {
 
       let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
-      let roleperson = new Person(1, 1, 1, "1234", new Name("Joe"),
+      let roleperson = new Person(new PersistenceDetails(1, 1, 1),
+         "1234", new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), null, roles);
 
       expect(roleperson.equals(roleperson)).to.equal(true);
@@ -317,7 +322,8 @@ describe("PersonStorer", function () {
       let caught = false;
 
       try {
-         storer.save(new Person(1, 1, 1, "123", new Name("Joe"),
+         storer.save(new Person(new PersistenceDetails(1, 1, 1),
+            "123", new Name("Joe"),
             new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null));
       } catch {
          caught = true;
