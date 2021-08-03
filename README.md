@@ -8,13 +8,13 @@
 ## General info
 UltraBox creates tools to help boutique gym operators create engaging online experiences for their members. 
 
-Work in progress for a multo-user app to support:
-- Cohort-based training - such as an 8-week PowerLifting block, with metrics defined by core lists such as deadlify, back squat, bench. 
+Work in progress for a multi-user app to support:
+- Cohort-based training - such as an 8-week PowerLifting block, with metrics defined by  lifts such as deadlift, back squat, bench. 
 - Throwdowns, where participants from multiple gyms complete the same series of workouts though heats to final.
 
 ## Technologies
 
-Typescript only. Intentionally no environment dependencies such as DB, React, node modules etc. 
+Typescript on server and client, node.js & Mongo on server. 
 
 ## Licence
 
