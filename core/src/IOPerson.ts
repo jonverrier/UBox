@@ -2,7 +2,7 @@
 
 import { PersistenceDetails } from './Persistence';
 import { EmailAddress, Name, Url, Roles, Person, ERoleType } from "./Person";
-import { decodeWith, encodeWith, createEnumType, ICodec, PersistenceDetailsCodec} from '../src/IOCommon';
+import { decodeWith, encodeWith, createEnumType, ICodec, persistenceCodecType} from '../src/IOCommon';
 
 import * as T from 'io-ts';
 
@@ -84,11 +84,14 @@ export class UrlCodec implements ICodec<Url> {
 // Roles Codec
 // ==========
 
-const rolesCodecType = T.type({
-   roles: T.union([T.array(createEnumType<ERoleType>(ERoleType, 'ERoleType')),
+const rolesArrayCodecType = T.type({
+   roles: T.union([
+      T.null,
       T.undefined,
-      T.null]) // Either an enum list, or null / undefined
+      T.array(createEnumType<ERoleType>(ERoleType, 'ERoleType'))]) // Either an enum list, or null / undefined
 });
+
+const rolesCodecType = T.union([T.null, T.undefined, rolesArrayCodecType]);  // Either an enum list, or null / undefined
 
 export class RolesCodec implements ICodec<Roles> {
 
@@ -106,3 +109,38 @@ export class RolesCodec implements ICodec<Roles> {
    }
 }
 
+// Person Codec
+// ==========
+
+const personCodecType = T.type({
+   persistenceDetails: persistenceCodecType,
+   externalId: T.string,
+   name: nameCodecType,
+   email: emailCodecType,
+   thumbnailUrl: urlCodecType,
+   roles: rolesCodecType
+});
+
+export class PersonCodec implements ICodec<Person> {
+
+   decode(data: any): any {
+
+      return decodeWith(personCodecType)(data);
+   }
+
+   encode(data: Person): any {
+      return encodeWith(personCodecType)(data);
+   }
+
+   tryCreateFrom(data: any): Person {
+
+      let temp = decodeWith(personCodecType)(data); // If types dont match an exception will be thrown here
+
+      return new Person(new PersistenceDetails(temp.persistenceDetails.id, temp.persistenceDetails.schemaVersion, temp.persistenceDetails.sequenceNumber),
+         temp.externalId,
+         new Name(temp.name.name, temp.name.surname),
+         temp.email ? new EmailAddress(temp.email.email, temp.email.isEmailVerified) : null,
+         temp.thumbnailUrl ? new Url(temp.thumbnailUrl.url, temp.thumbnailUrl.isUrlVerified) : null,
+         temp.roles ? new Roles(temp.roles.roles) : null);
+   }
+}

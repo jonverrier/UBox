@@ -3,11 +3,11 @@
 import { PersistenceDetails } from '../src/Persistence';
 import { PersistenceDetailsCodec } from '../src/IOCommon';
 import { EmailAddress, Url, Name, Roles, Person, ERoleType } from '../src/Person';
-import { NameCodec, EmailAddressCodec, UrlCodec, RolesCodec } from '../src/IOPerson';
+import { NameCodec, EmailAddressCodec, UrlCodec, RolesCodec, PersonCodec } from '../src/IOPerson';
 
 var expect = require("chai").expect;
 
-describe("NameIO", function () {
+describe("IOName", function () {
 
 
    var codec: NameCodec;
@@ -95,7 +95,7 @@ describe("NameIO", function () {
    });
 });
 
-describe("EmailIO", function () {
+describe("IOEmail", function () {
 
    var codec: EmailAddressCodec;
 
@@ -162,7 +162,7 @@ describe("EmailIO", function () {
 
 });
 
-describe("UrlIO", function () {
+describe("IOUrl", function () {
 
    var codec: UrlCodec;
 
@@ -229,7 +229,7 @@ describe("UrlIO", function () {
 
 });
 
-describe("RolesIO", function () {
+describe("IORoles", function () {
 
    var codec: RolesCodec;
 
@@ -285,7 +285,7 @@ describe("RolesIO", function () {
 
 });
 
-describe("PersistenceDetailsIO", function () {
+describe("IOPersistenceDetails", function () {
 
 
    var codec: PersistenceDetailsCodec;
@@ -327,6 +327,68 @@ describe("PersistenceDetailsIO", function () {
       try {
          decoded = codec.tryCreateFrom(encoded);
       } catch (e) {
+         caught = true;
+      }
+
+      expect(caught).to.equal(false);
+      expect(decoded.equals(initial)).to.equal(true);
+   });
+});
+
+describe("IOPerson", function () {
+
+
+   var codec: PersonCodec;
+
+   beforeEach(function () {
+      codec = new PersonCodec();
+   });
+
+   it("Needs to decode Person from clean input.", function () {
+
+      var caught: boolean = false;
+
+      try {
+         codec.decode({
+            persistenceDetails: { id: "Joe", schemaVersion: 0, sequenceNumber: 0 },
+            externalId: "123",
+            name: { name: "Joe", surname: "Bloggs" },
+            email: { email: "Joe@mail.com", isEmailVerified: false },
+            thumbnailUrl: { url: "https://jo.pics.com", isUrlVerified: true },
+            roles: { roles: null } // {roles: new Array<ERoleType>(ERoleType.Coach, ERoleType.Member) }
+         });
+      } catch (e) {
+         caught = true;
+      }
+
+      expect(caught).to.equal(false);
+   });
+
+   it("Needs to encode Person.", function () {
+
+      let encoded = codec.encode(new Person(new PersistenceDetails(1, 1, 1),
+         "123", new Name("Joe"),
+         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null));
+
+      expect(encoded.persistenceDetails.id).to.equal(1);
+      expect(encoded.persistenceDetails.schemaVersion).to.equal(1);
+      expect(encoded.persistenceDetails.sequenceNumber).to.equal(1);
+   });
+
+   it("Needs to encode then decode Person.", function () {
+
+      let initial = new Person(new PersistenceDetails(1, 1, 1),
+         "123", new Name("Joe"),
+         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
+      let encoded = codec.encode(initial);
+      let decoded: Person;
+
+      var caught: boolean = false;
+
+      try {
+         decoded = codec.tryCreateFrom(encoded);
+      } catch (e) {
+         console.log(e.toString());
          caught = true;
       }
 

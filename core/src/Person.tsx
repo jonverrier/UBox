@@ -18,7 +18,7 @@ export class Name {
     */
    constructor(name: string, surname: string | null = null ) {
       if (!Name.isValidName (name)) {
-         throw new InvalidParameterError();
+         throw new InvalidParameterError("Name");
       }
 
       this._name = name;
@@ -70,7 +70,7 @@ export class EmailAddress {
    constructor(email: string, isEmailVerified: boolean) {
 
       if (!EmailAddress.isValidEmailAddress(email)) {
-         throw new InvalidParameterError();
+         throw new InvalidParameterError("Email");
       }
       this._email = email;
       this._isEmailVerified = isEmailVerified;
@@ -125,7 +125,7 @@ export class Url {
    constructor(url: string, isUrlVerified: boolean) {
 
       if (!Url.isValidUrl(url)) {
-         throw new InvalidParameterError();
+         throw new InvalidParameterError("Url");
       }
       this._url = url;
       this._isUrlVerified = isUrlVerified;
@@ -182,7 +182,7 @@ export class Roles {
    constructor(roles: Array<ERoleType>) {
 
       if (!Roles.isValidRoleList(roles)) {
-         throw new InvalidParameterError();
+         throw new InvalidParameterError("Roles");
       }
 
       // Sort the list as we do an item by item equality test
