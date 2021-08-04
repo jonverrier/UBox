@@ -1,19 +1,27 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { EmailAddress, Url, Name, Roles, Person, personArraysAreEqual, ERoleType } from '../src/Person';
-import { decodeWith, encodeWith } from '../src/PersistenceIO';
-import { nameCodec, tryNameDecode, emailCodec, tryEmailDecode, urlCodec, tryUrlDecode, rolesCodec, tryRolesDecode } from '../src/PersonIO';
+import { PersistenceDetails } from '../src/Persistence';
+import { PersistenceDetailsCodec } from '../src/IOCommon';
+import { EmailAddress, Url, Name, Roles, Person, ERoleType } from '../src/Person';
+import { NameCodec, EmailAddressCodec, UrlCodec, RolesCodec } from '../src/IOPerson';
 
 var expect = require("chai").expect;
 
 describe("NameIO", function () {
+
+
+   var codec: NameCodec;
+
+   beforeEach(function () {
+      codec = new NameCodec();
+   });
 
    it("Needs to decode a name from clean name & null surname input.", function () {
 
       var caught: boolean = false;
 
       try {
-         decodeWith(nameCodec)({ name: "Joe", surname: null });
+         codec.decode ({ name: "Joe", surname: null });
       } catch (e) {
          caught = true;
       }
@@ -26,7 +34,7 @@ describe("NameIO", function () {
       var caught: boolean = false;
 
       try {
-         decodeWith(nameCodec)({ name: "Joe"});
+         codec.decode({ name: "Joe"});
       } catch (e) {
          caught = true;
       }
@@ -39,7 +47,7 @@ describe("NameIO", function () {
       var caught: boolean = false;
 
       try {
-         decodeWith(nameCodec)({ name: "Joe", surname: "Bloggs" });
+         codec.decode({ name: "Joe", surname: "Bloggs" });
       } catch (e) {
          caught = true;
       }
@@ -52,7 +60,7 @@ describe("NameIO", function () {
       var caught: boolean = false;
 
       try {
-         decodeWith(nameCodec)({ name: null, surname: "Bloggs" });
+         codec.decode({ name: null, surname: "Bloggs" });
       } catch (e) {
          caught = true;
       }
@@ -62,7 +70,7 @@ describe("NameIO", function () {
 
    it("Needs to encode a Name.", function () {
 
-      let encoded = encodeWith(nameCodec)(new Name ("Joe", "Bloggs"));
+      let encoded = codec.encode (new Name ("Joe", "Bloggs"));
 
       expect(encoded.name).to.equal("Joe");
       expect(encoded.surname).to.equal("Bloggs");
@@ -71,13 +79,13 @@ describe("NameIO", function () {
    it("Needs to encode then decode a Name.", function () {
 
       let initial = new Name("Joe", "Bloggs");
-      let encoded = encodeWith(nameCodec)(initial);
+      let encoded = codec.encode (initial);
       let decoded: Name;
 
       var caught: boolean = false;
 
       try {
-         decoded = tryNameDecode(encoded);
+         decoded = codec.tryCreateFrom (encoded);
       } catch (e) {
          caught = true;
       }
@@ -89,13 +97,18 @@ describe("NameIO", function () {
 
 describe("EmailIO", function () {
 
+   var codec: EmailAddressCodec;
+
+   beforeEach(function () {
+      codec = new EmailAddressCodec();
+   });
 
    it("Needs to decode a name from clean email & isEmailVerified input.", function () {
 
       var caught: boolean = false;
 
       try {
-         decodeWith(emailCodec)({ email: "Joe", isEmailVerified: true });
+         codec.decode ({ email: "Joe", isEmailVerified: true });
       } catch (e) {
          caught = true;
       }
@@ -108,7 +121,7 @@ describe("EmailIO", function () {
       var caught: boolean = false;
 
       try {
-         decodeWith(emailCodec)({ email: null, isEmailVerified: true });
+         codec.decode({ email: null, isEmailVerified: true });
       } catch (e) {
          caught = true;
       }
@@ -121,7 +134,7 @@ describe("EmailIO", function () {
       var caught: boolean = false;
 
       try {
-         decodeWith(emailCodec)({ email: "Joe", isEmailVerified: null });
+         codec.decode({ email: "Joe", isEmailVerified: null });
       } catch (e) {
          caught = true;
       }
@@ -132,13 +145,13 @@ describe("EmailIO", function () {
    it("Needs to encode then decode an EmailAddress.", function () {
 
       let initial = new EmailAddress ("Joe@mail.com", true);
-      let encoded = encodeWith(emailCodec)(initial);
+      let encoded = codec.encode (initial);
       let decoded: EmailAddress;
 
       var caught: boolean = false;
 
       try {
-         decoded = tryEmailDecode(encoded);
+         decoded = codec.tryCreateFrom(encoded);
       } catch (e) {
          caught = true;
       }
@@ -151,13 +164,18 @@ describe("EmailIO", function () {
 
 describe("UrlIO", function () {
 
+   var codec: UrlCodec;
+
+   beforeEach(function () {
+      codec = new UrlCodec();
+   });
 
    it("Needs to decode a name from clean URL & isUrlVerified input.", function () {
 
       var caught: boolean = false;
 
       try {
-         decodeWith(urlCodec)({ url: "Joe", isUrlVerified: true });
+         codec.decode ({ url: "Joe", isUrlVerified: true });
       } catch (e) {
          caught = true;
       }
@@ -170,7 +188,7 @@ describe("UrlIO", function () {
       var caught: boolean = false;
 
       try {
-         decodeWith(urlCodec)({ url: null, isUrlVerified: true });
+         codec.decode ({ url: null, isUrlVerified: true });
       } catch (e) {
          caught = true;
       }
@@ -183,7 +201,7 @@ describe("UrlIO", function () {
       var caught: boolean = false;
 
       try {
-         decodeWith(urlCodec)({ url: "Joe", isUrlVerified: null });
+         codec.decode({ url: "Joe", isUrlVerified: null });
       } catch (e) {
          caught = true;
       }
@@ -194,13 +212,13 @@ describe("UrlIO", function () {
    it("Needs to encode then decode a Url.", function () {
 
       let initial = new Url("https://jo.pics.com", true);
-      let encoded = encodeWith(urlCodec)(initial);
+      let encoded = codec.encode (initial);
       let decoded: Url;
 
       var caught: boolean = false;
 
       try {
-         decoded = tryUrlDecode(encoded);
+         decoded = codec.tryCreateFrom (encoded);
       } catch (e) {
          caught = true;
       }
@@ -213,6 +231,11 @@ describe("UrlIO", function () {
 
 describe("RolesIO", function () {
 
+   var codec: RolesCodec;
+
+   beforeEach(function () {
+      codec = new RolesCodec();
+   });
 
    it("Needs to decode roles from clean input.", function () {
 
@@ -220,7 +243,7 @@ describe("RolesIO", function () {
       var caught: boolean = false;
 
       try {
-         decodeWith(rolesCodec)(initial);
+         codec.decode (initial);
       } catch (e) {
          caught = true;
       }
@@ -233,7 +256,7 @@ describe("RolesIO", function () {
       var caught: boolean = false;
 
       try {
-         decodeWith(rolesCodec)([1, 2]);
+         codec.decode([1, 2]);
       } catch (e) {
          caught = true;
       }
@@ -244,13 +267,13 @@ describe("RolesIO", function () {
    it("Needs to encode then decode Roles.", function () {
 
       let initial = new Roles(new Array<ERoleType>(ERoleType.Coach, ERoleType.Member));
-      let encoded = encodeWith(rolesCodec)(initial);
+      let encoded = codec.encode (initial);
       let decoded: Roles;
 
       var caught: boolean = false;
 
       try {
-         decoded = tryRolesDecode(encoded);
+         decoded = codec.tryCreateFrom(encoded);
       } catch (e) {
          console.log(e);
          caught = true;
@@ -260,4 +283,54 @@ describe("RolesIO", function () {
       expect(decoded.equals(initial)).to.equal(true);
    });
 
+});
+
+describe("PersistenceDetailsIO", function () {
+
+
+   var codec: PersistenceDetailsCodec;
+
+   beforeEach(function () {
+      codec = new PersistenceDetailsCodec();
+   });
+
+   it("Needs to decode PersistenceDetails from clean input.", function () {
+
+      var caught: boolean = false;
+
+      try {
+         codec.decode({ id: "Joe", schemaVersion: 0, sequenceNumber: 0 });
+      } catch (e) {
+         caught = true;
+      }
+
+      expect(caught).to.equal(false);
+   });
+
+   it("Needs to encode PersistenceDetails.", function () {
+
+      let encoded = codec.encode(new PersistenceDetails("Joe", 0, 0));
+
+      expect(encoded.id).to.equal("Joe");
+      expect(encoded.schemaVersion).to.equal(0);
+      expect(encoded.sequenceNumber).to.equal(0);
+   });
+
+   it("Needs to encode then decode PersistenceDetails.", function () {
+
+      let initial = new PersistenceDetails("Joe", 0, 0);
+      let encoded = codec.encode(initial);
+      let decoded: PersistenceDetails;
+
+      var caught: boolean = false;
+
+      try {
+         decoded = codec.tryCreateFrom(encoded);
+      } catch (e) {
+         caught = true;
+      }
+
+      expect(caught).to.equal(false);
+      expect(decoded.equals(initial)).to.equal(true);
+   });
 });

@@ -7,12 +7,12 @@ export class PersistenceDetails {
 
    /**
     * Create a PersistenceDetails object - all persistence objects derive from this.
-    * @param _id - for the database to use and assign
+    * @param id - for the database to use and assign
     * @param schemaVersion - schema version used - allows upgrades on the fly when loading old format data
     * @param sequenceNumber - used to allow idempotent queries (all objects in a sequence range)
     */
-   constructor(_id: any, schemaVersion: number, sequenceNumber: number) {
-      this._id = _id;
+   constructor(id: any, schemaVersion: number, sequenceNumber: number) {
+      this._id = id;
       this._schemaVersion = schemaVersion;
       this._sequenceNumber = sequenceNumber;
    }
