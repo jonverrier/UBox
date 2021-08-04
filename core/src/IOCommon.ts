@@ -78,7 +78,7 @@ export interface ICodec<Target> {
 
 // Persistence Codec
 // ==========
-export const persistenceCodecType = IoTs.type({
+export const persistenceDetailsIoType = IoTs.type({
    id: IoTs.unknown, // name must be non-null
    schemaVersion: IoTs.number,
    sequenceNumber: IoTs.number
@@ -87,19 +87,19 @@ export const persistenceCodecType = IoTs.type({
 export class PersistenceDetailsCodec implements ICodec<PersistenceDetails> {
 
    decode(data: any): any {
-      return decodeWith(persistenceCodecType)(data);
+      return decodeWith(persistenceDetailsIoType)(data);
    }
 
    encode(data: PersistenceDetails): any {
-      return encodeWith(persistenceCodecType)(data);
+      return encodeWith(persistenceDetailsIoType)(data);
    }
 
    tryCreateFrom(data: any): PersistenceDetails  {
-      let temp = decodeWith(persistenceCodecType)(data); // If types dont match an exception will be thrown here
+      let temp = decodeWith(persistenceDetailsIoType)(data); // If types dont match an exception will be thrown here
       return new PersistenceDetails(temp.id, temp.schemaVersion, temp.sequenceNumber);
    }
 
    static typeDefinition(): IoTs.TypeC<IoTs.Props> {
-      return persistenceCodecType;
+      return persistenceDetailsIoType;
    }
 }

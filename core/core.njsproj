@@ -45,39 +45,39 @@
     <Folder Include="test\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\Cohort.tsx" />
-    <TypeScriptCompile Include="src\Localisation.tsx" />
-    <TypeScriptCompile Include="src\FitnessObservations.tsx" />
-    <TypeScriptCompile Include="src\Observation.tsx" />
+    <TypeScriptCompile Include="src\Cohort.ts" />
+    <TypeScriptCompile Include="src\Localisation.ts" />
+    <TypeScriptCompile Include="src\FitnessObservations.ts" />
+    <TypeScriptCompile Include="src\Observation.ts" />
     <TypeScriptCompile Include="src\IOCommon.ts" />
-    <TypeScriptCompile Include="src\Person.tsx" />
+    <TypeScriptCompile Include="src\Person.ts" />
     <TypeScriptCompile Include="src\IOPerson.ts" />
-    <TypeScriptCompile Include="src\Quantity.tsx" />
-    <TypeScriptCompile Include="src\Range.tsx" />
-    <TypeScriptCompile Include="src\Error.tsx" />
-    <TypeScriptCompile Include="src\Persistence.tsx" />
-    <TypeScriptCompile Include="test\test-cohort.tsx">
+    <TypeScriptCompile Include="src\Quantity.ts" />
+    <TypeScriptCompile Include="src\Range.ts" />
+    <TypeScriptCompile Include="src\Error.ts" />
+    <TypeScriptCompile Include="src\Persistence.ts" />
+    <TypeScriptCompile Include="test\test-cohort.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-localisation.tsx">
+    <TypeScriptCompile Include="test\test-localisation.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-measurement.tsx">
+    <TypeScriptCompile Include="test\test-measurement.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-person.tsx">
+    <TypeScriptCompile Include="test\test-person.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-IOperson.ts">
       <TestFramework>mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-range.tsx">
+    <TypeScriptCompile Include="test\test-range.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-quantity.tsx">
+    <TypeScriptCompile Include="test\test-quantity.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="test\test-persistence.tsx">
+    <TypeScriptCompile Include="test\test-persistence.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
   </ItemGroup>

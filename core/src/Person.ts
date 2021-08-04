@@ -254,7 +254,7 @@ export class Person extends Persistence {
  * Create a Person object
  * @param persistenceDetails - (from Persistence) for the database layer to use and assign
  * @param externalId - ID assigned by external system (like facebook)
- * @param name - plain text user name
+ * @param name - plain text user name. Cannot be null. 
  * @param email - user email, can be null if not provided
  * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
  * @param roles - list of roles the Person plays, can be null
