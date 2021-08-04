@@ -54,7 +54,7 @@
     <TypeScriptCompile Include="src\IOPerson.ts" />
     <TypeScriptCompile Include="src\Quantity.ts" />
     <TypeScriptCompile Include="src\Range.ts" />
-    <TypeScriptCompile Include="src\Error.ts" />
+    <TypeScriptCompile Include="src\CoreError.ts" />
     <TypeScriptCompile Include="src\Persistence.ts" />
     <TypeScriptCompile Include="test\test-cohort.ts">
       <TestFramework>Mocha</TestFramework>

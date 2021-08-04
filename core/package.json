@@ -15,7 +15,7 @@
    "nyc": {
       "include": [],
       "extension": [
-         ".tsx"
+         ".ts"
       ],
       "require": [
          "ts-node/register"

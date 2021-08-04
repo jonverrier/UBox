@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { ITextLocaliser, ELanguage } from '../src/Localisation';
-import { InvalidParameterError } from '../src/Error';
+import { InvalidParameterError } from '../src/CoreError';
 
 var expect = require("chai").expect;
 

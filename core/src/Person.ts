@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { URL } from 'url'
-import { InvalidParameterError } from './error';
+import { InvalidParameterError } from './CoreError';
 import { PersistenceDetails, Persistence } from "./Persistence";
 
 export enum ERoleType {

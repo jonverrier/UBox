@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { InvalidParameterError } from './error';
+import { InvalidParameterError } from './CoreError';
 import { PersistenceDetails, Persistence } from "./Persistence";
 import { EmailAddress, Person, personArraysAreEqual } from "./Person";
 import { MeasurementTypeOf, weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual } from "./Observation";

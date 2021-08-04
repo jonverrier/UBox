@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2021 */
 
 import { QuantityOf } from './Quantity';
-import { InvalidUnitError } from './error';
+import { InvalidUnitError } from './CoreError';
 
 export class RangeOf<Unit> { 
    private _lo: QuantityOf<Unit>;

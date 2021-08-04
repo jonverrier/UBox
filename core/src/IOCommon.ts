@@ -7,7 +7,7 @@ import { failure } from "io-ts/PathReporter";
 import { pipe } from "fp-ts/pipeable";
 
 import { PersistenceDetails } from './Persistence';
-import { InvalidFormatError } from './error';
+import { InvalidFormatError } from './CoreError';
 
 /**
  * helper class to decode from JSON using a ts-io codec
@@ -97,9 +97,5 @@ export class PersistenceDetailsCodec implements ICodec<PersistenceDetails> {
    tryCreateFrom(data: any): PersistenceDetails  {
       let temp = decodeWith(persistenceDetailsIoType)(data); // If types dont match an exception will be thrown here
       return new PersistenceDetails(temp.id, temp.schemaVersion, temp.sequenceNumber);
-   }
-
-   static typeDefinition(): IoTs.TypeC<IoTs.Props> {
-      return persistenceDetailsIoType;
    }
 }

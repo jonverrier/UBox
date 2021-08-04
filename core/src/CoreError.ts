@@ -23,6 +23,6 @@ export class InvalidFormatError extends Error {
       super(message);
       // see: typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
       Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-      this.name = InvalidParameterError.name; // stack traces display correctly now
+      this.name = InvalidFormatError.name; // stack traces display correctly now
    }
 }
