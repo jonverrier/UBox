@@ -1,1 +1,1 @@
-web:npm run apisrv
+web:npm run start
