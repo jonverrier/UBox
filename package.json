@@ -7,14 +7,13 @@
     "name": ""
   },
   "scripts": {
-     "apisrv": "ts-node apisrv/src/app.ts",
-     "build": "cd core && npm run build && cd ../apisrv && npm run build"
+    "apisrv": "ts-node apisrv/src/app.ts",
+    "build": "cd core && npm run build && cd ../apisrv && npm run build"
   },
   "devDependencies": {
-    "typescript": "^4.0.5"
+    "typescript": "^4.3.5"
   },
-   "dependencies": {
-      "typescript": "^4.0.5",
-      "ts-node": "^10.1.0"
-   }
+  "dependencies": {
+    "ts-node": "^10.1.0"
+  }
 }
