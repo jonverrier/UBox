@@ -1,1 +1,1 @@
-web:ts-node/apisrv/src/app.ts
+web:node apisrv/src/app.js

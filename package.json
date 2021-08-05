@@ -7,7 +7,7 @@
     "name": ""
   },
   "scripts": {
-    "start": "ts-node apisrv/src/app.ts",
+    "start": "node apisrv/src/app.js",
     "build": "cd apisrv && npm run build && cd .."
   },
   "devDependencies": {
