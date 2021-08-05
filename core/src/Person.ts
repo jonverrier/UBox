@@ -7,6 +7,10 @@ export enum ERoleType {
    Prospect = "Prospect", Member = "Member", Coach = "Coach"
 }
 
+export enum ELoginProvider {
+   Apple = "Apple", Google = "Google", Private = "Private"
+}
+
 export class Name {
    private _name: string;
    private _surname: string;
@@ -52,6 +56,59 @@ export class Name {
     */
    static isValidName(name: string): boolean {
       if (name === null || name.length === 0)
+         return false;
+
+      return (true);
+   }
+}
+
+export class LoginDetails {
+   private _provider: ELoginProvider;
+   private _token: string;
+
+   /**
+    * Create a LoginDetails object
+    * @param provider - which login provider was used 
+    * @param token - token provided by the external provider 
+    */
+   constructor(provider: ELoginProvider, token: string) {
+
+      if (!LoginDetails.isValidLoginDetails(token)) {
+         throw new InvalidParameterError("LoginDetails");
+      }
+
+      this._provider = provider;
+      this._token = token;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get provider(): ELoginProvider {
+      return this._provider;
+   }
+   get token(): string {
+      return this._token;
+   }
+
+   /**
+    * test for equality - checks all fields are the same. 
+    * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
+    * @param rhs - the object to compare this one to.  
+    */
+   equals(rhs: LoginDetails): boolean {
+
+      return (
+         (this._provider === rhs._provider) &&
+         (this._token === rhs._token));
+   }
+
+   /**
+    * test for valid login token 
+    * @param token - the string to test
+    */
+   static isValidLoginDetails(token: string): boolean {
+      if (token === null || token.length === 0)
          return false;
 
       return (true);
@@ -244,7 +301,7 @@ export class Roles {
 }
 
 export class Person extends Persistence {
-   private _externalId: string;
+   private _loginDetails: LoginDetails;
    private _name: Name;
    private _email: EmailAddress | null;
    private _thumbnailUrl: Url | null;
@@ -253,18 +310,18 @@ export class Person extends Persistence {
 /**
  * Create a Person object
  * @param persistenceDetails - (from Persistence) for the database layer to use and assign
- * @param externalId - ID assigned by external system (like facebook)
+ * @param loginDetails - ID assigned by external system (like facebook)
  * @param name - plain text user name. Cannot be null. 
  * @param email - user email, can be null if not provided
  * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
  * @param roles - list of roles the Person plays, can be null
  */
    constructor(persistenceDetails: PersistenceDetails,
-      externalId: string, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null) {
+      loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null) {
 
       super(persistenceDetails);
 
-      this._externalId = externalId;
+      this._loginDetails = loginDetails;
       this._name = name;
       this._email = email;
       this._thumbnailUrl = thumbnailUrl;
@@ -274,8 +331,8 @@ export class Person extends Persistence {
    /**
    * set of 'getters' for private variables
    */
-   get externalId(): string {
-      return this._externalId;
+   get loginDetails(): LoginDetails {
+      return this._loginDetails;
    }
    get name(): Name {
       return this._name;
@@ -319,7 +376,7 @@ export class Person extends Persistence {
     equals (rhs: Person) : boolean {
 
        return ((super.equals(rhs)) &&
-         (this._externalId === rhs._externalId) &&
+         (this._loginDetails.equals(rhs._loginDetails)) &&
          (this._name.equals (rhs._name)) &&
          (this._email ? this._email.equals(rhs._email) : (rhs.email === null)) &&
          (this._thumbnailUrl ? this._thumbnailUrl.equals(rhs._thumbnailUrl) : (rhs.thumbnailUrl === null)) &&

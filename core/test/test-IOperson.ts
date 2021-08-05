@@ -2,8 +2,8 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from '../src/Persistence';
 import { PersistenceDetailsCodec } from '../src/IOCommon';
-import { EmailAddress, Url, Name, Roles, Person, ERoleType } from '../src/Person';
-import { NameCodec, EmailAddressCodec, UrlCodec, RolesCodec, PersonCodec } from '../src/IOPerson';
+import { LoginDetails, EmailAddress, Url, Name, Roles, Person, ERoleType, ELoginProvider } from '../src/Person';
+import { NameCodec, LoginDetailsCodec, EmailAddressCodec, UrlCodec, RolesCodec, PersonCodec } from '../src/IOPerson';
 
 var expect = require("chai").expect;
 
@@ -86,6 +86,68 @@ describe("IOName", function () {
 
       try {
          decoded = codec.tryCreateFrom (encoded);
+      } catch (e) {
+         caught = true;
+      }
+
+      expect(caught).to.equal(false);
+      expect(decoded.equals(initial)).to.equal(true);
+   });
+});
+
+describe("IOLoginDetails", function () {
+
+
+   var codec: LoginDetailsCodec;
+
+   beforeEach(function () {
+      codec = new LoginDetailsCodec();
+   });
+
+   it("Needs to decode LoginDetails from clean input.", function () {
+
+      var caught: boolean = false;
+
+      try {
+         codec.decode({ provider: ELoginProvider.Apple, token: "123" });
+      } catch (e) {
+         caught = true;
+      }
+
+      expect(caught).to.equal(false);
+   });
+
+   it("Needs to throw exception if token is null.", function () {
+
+      var caught: boolean = false;
+
+      try {
+         codec.decode({ provider: ELoginProvider.Apple});
+      } catch (e) {
+         caught = true;
+      }
+
+      expect(caught).to.equal(true);
+   });
+
+   it("Needs to encode LoginDetails.", function () {
+
+      let encoded = codec.encode(new LoginDetails(ELoginProvider.Apple, "123"));
+
+      expect(encoded.provider).to.equal(ELoginProvider.Apple);
+      expect(encoded.token).to.equal("123");
+   });
+
+   it("Needs to encode then decode LoginDetails.", function () {
+
+      let initial = new LoginDetails(ELoginProvider.Apple, "123");
+      let encoded = codec.encode(initial);
+      let decoded: LoginDetails;
+
+      var caught: boolean = false;
+
+      try {
+         decoded = codec.tryCreateFrom(encoded);
       } catch (e) {
          caught = true;
       }
@@ -351,7 +413,7 @@ describe("IOPerson", function () {
       try {
          codec.decode({
             persistenceDetails: { id: "Joe", schemaVersion: 0, sequenceNumber: 0 },
-            externalId: "123",
+            loginDetails: { provider: ELoginProvider.Apple, token: "123" },
             name: { name: "Joe", surname: "Bloggs" },
             email: { email: "Joe@mail.com", isEmailVerified: false },
             thumbnailUrl: { url: "https://jo.pics.com", isUrlVerified: true },
@@ -367,7 +429,8 @@ describe("IOPerson", function () {
    it("Needs to encode Person.", function () {
 
       let encoded = codec.encode(new Person(new PersistenceDetails(1, 1, 1),
-         "123", new Name("Joe"),
+         new LoginDetails(ELoginProvider.Apple, "123"),
+         new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null));
 
       expect(encoded.persistenceDetails.id).to.equal(1);
@@ -378,7 +441,8 @@ describe("IOPerson", function () {
    it("Needs to encode then decode Person.", function () {
 
       let initial = new Person(new PersistenceDetails(1, 1, 1),
-         "123", new Name("Joe"),
+         new LoginDetails(ELoginProvider.Apple, "123"),
+         new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
       let encoded = codec.encode(initial);
       let decoded: Person;

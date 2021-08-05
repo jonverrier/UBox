@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import { PersistenceDetails } from './Persistence';
-import { EmailAddress, Name, Url, Roles, Person, ERoleType } from "./Person";
+import { LoginDetails, EmailAddress, Url, Name, Roles, Person, ERoleType, ELoginProvider } from "./Person";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 
 import * as IoTs from 'io-ts';
@@ -31,6 +31,28 @@ export class NameCodec implements ICodec<Name> {
    }
 }
 
+// LoginDetails Codec
+// ==========
+const loginIoType = IoTs.type({
+   provider: createEnumType<ELoginProvider>(ELoginProvider, 'ELoginProvider'),
+   token: IoTs.string // token must be non-null
+});
+
+export class LoginDetailsCodec implements ICodec<LoginDetails> {
+
+   decode(data: any): any {
+      return decodeWith(loginIoType)(data);
+   }
+
+   encode(data: LoginDetails): any {
+      return encodeWith(loginIoType)(data);
+   }
+
+   tryCreateFrom(data: any): LoginDetails {
+      let temp = decodeWith(loginIoType)(data); // If types dont match an exception will be thrown here
+      return new LoginDetails(temp.provider, temp.token);
+   }
+}
 
 // Email Codec
 // ==========
@@ -114,7 +136,7 @@ export class RolesCodec implements ICodec<Roles> {
 
 const personIoType = IoTs.type({
    persistenceDetails: persistenceDetailsIoType,
-   externalId: IoTs.string,
+   loginDetails: loginIoType,
    name: nameIoType,
    email: emailIoType,
    thumbnailUrl: urlIoType,
@@ -137,7 +159,7 @@ export class PersonCodec implements ICodec<Person> {
       let temp = decodeWith(personIoType)(data); // If types dont match an exception will be thrown here
 
       return new Person(new PersistenceDetails(temp.persistenceDetails.id, temp.persistenceDetails.schemaVersion, temp.persistenceDetails.sequenceNumber),
-         temp.externalId,
+         new LoginDetails(temp.loginDetails.provider, temp.loginDetails.token),
          new Name(temp.name.name, temp.name.surname),
          temp.email ? new EmailAddress(temp.email.email, temp.email.isEmailVerified) : null,
          temp.thumbnailUrl ? new Url(temp.thumbnailUrl.url, temp.thumbnailUrl.isUrlVerified) : null,

@@ -2,8 +2,8 @@
 // Copyright TXPCo ltd, 2021
 
 import { PersistenceDetails } from "../src/Persistence";
-import { SnatchMeasurementType, CleanMeasurementType, RowSprintMeasurementType, RunSprintMeasurementType} from '../src/FitnessObservations'
-import { EmailAddress, Url, Name, Person, personArraysAreEqual} from '../src/Person';
+import { SnatchMeasurementType, CleanMeasurementType, RowSprintMeasurementType, RunSprintMeasurementType } from '../src/FitnessObservations'
+import { Name, LoginDetails, EmailAddress, Url, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
 import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
 import { CohortName, CohortTimePeriod, Cohort, ECohortPeriod } from '../src/Cohort';
 import { ETimeUnits, EWeightUnits } from '../src/Quantity';
@@ -124,11 +124,15 @@ describe("Cohort", function () {
    let cohort1, cohort2;
    let period = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 1);
 
-   let person = new Person(new PersistenceDetails (1, 1, 1), "123", new Name("Joe"),
+   let person = new Person(new PersistenceDetails(1, 1, 1),
+      new LoginDetails(ELoginProvider.Apple, "xxx"),
+      new Name("Joe"),
       new EmailAddress("Joe@mail.com", true),
       new Url("https://jo.pics.com", false), null);
 
-   let person2 = new Person(new PersistenceDetails(1, 1, 1), "123", new Name("Jenny"),
+   let person2 = new Person(new PersistenceDetails(1, 1, 1),
+      new LoginDetails(ELoginProvider.Apple, "xxx"),
+      new Name("Jenny"),
       new EmailAddress("Jenny@mail.com", true),
       new Url("https://jo.pics.com", false),
       null);
