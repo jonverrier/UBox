@@ -11,12 +11,12 @@
     "build": "cd apisrv && npm run build && cd .."
   },
   "devDependencies": {
-    "typescript": "^4.3.5",
     "@types/express": "^4.17.12",
     "@types/node": "^14.17.4"
   },
-  "dependencies": {
-    "ts-node": "^10.1.0",
-    "express": "^4.17.1"
-  }
+   "dependencies": {
+      "typescript": "^4.3.5",
+      "ts-node": "^10.1.0",
+      "express": "^4.17.1"
+   }
 }
