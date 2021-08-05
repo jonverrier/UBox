@@ -6,7 +6,10 @@
       "sourceMap": true,
       "esModuleInterop": true
    },
-  "exclude": [
-    "node_modules"
-  ]
+   "include": [
+      "src/**/*.ts" /* Include every ts file in source folder */
+   ],
+   "exclude": [
+      "node_modules"
+   ]
 }
