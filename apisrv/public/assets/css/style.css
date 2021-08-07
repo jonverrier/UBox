@@ -736,8 +736,7 @@ section {
 
 #contact .email-form .sent-message {
   display: none;
-  color: #fff;
-  background: #18d26e;
+  color: #999;
   text-align: center;
   padding: 15px;
   font-weight: 600;

@@ -3,6 +3,7 @@ import express from 'express'
 import path from 'path';
 import errorHandler from 'errorhandler';
 import compression from 'compression';
+import bodyParser from 'body-parser';
 
 // Control variables for development / production
 var inDevelopment = false;
@@ -46,10 +47,20 @@ app.use(compression());
 // Allow files from ../public to be used 
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Parse body of API requests
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.text()); // for parsing application/json
+
 if (inDevelopment) {
    // Set error handler. 
    app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 }
+
+app.post('/contact', (req, res) => {
+   console.log(JSON.stringify(req.body));
+   res.send('OK')
+});
 
 app.get('/ping', (req, res) => {
    res.send('pong')

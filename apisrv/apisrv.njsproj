@@ -40,7 +40,7 @@
     <Content Include="public\assets\img\logo.png" />
     <Content Include="public\assets\img\tesseract.png" />
     <Content Include="public\assets\js\main.js" />
-    <Content Include="public\assets\js\validate.js" />
+    <Content Include="public\assets\js\contact.js" />
     <Content Include="public\assets\vendor\aos\aos.css" />
     <Content Include="public\assets\vendor\aos\aos.js" />
     <Content Include="public\assets\vendor\boxicons\css\animations.css" />
