@@ -84,7 +84,7 @@ if (inDevelopment) {
 app.post('/contact', (req, res) => {
 
    const params = {
-      secret: '6LezBOcbAAAAAHnDo0grpjkaq3sWbgpDJ26YWgnq',
+      secret: process.env.GOOGLE_RECAPTCHA_SECRET,
       response: req.body.recaptchaToken
    };
 
