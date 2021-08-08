@@ -27,7 +27,7 @@
       if(typeof grecaptcha !== "undefined" ) {
          grecaptcha.ready(function() {
             try {
-               grecaptcha.execute('6LezBOcbAAAAAG5mIV2Yx__MbAYYbGPgU7JEyOAK', { action: 'email_form_submit' })
+               grecaptcha.execute('6LfwYuobAAAAANkidB1EbtFgZIs1M-nIF19CX5hh', { action: 'email_form_submit' })
                   .then(token => {
                      formData.set('recaptchaToken', token);
                       email_form_submit(thisForm, action, formData);
