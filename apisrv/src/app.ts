@@ -1,9 +1,18 @@
 
-import express from 'express'
+// external modules
+import express from 'express';
 import path from 'path';
 import errorHandler from 'errorhandler';
 import compression from 'compression';
 import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import session from 'express-session';
+import connectMongo from 'connect-mongo';
+import axios from 'axios';
+import qs from 'qs';
+
+// Internal classes
+import { ContactDb } from './contactDb';
 
 // Control variables for development / production
 var inDevelopment = false;
@@ -52,14 +61,53 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.text()); // for parsing application/json
 
+app.use(                    // Use Mongo session store
+   session({
+      store: new connectMongo({
+         mongoUrl: process.env.MONGODB_URI,
+         ttl: 691200000 // = 8 days - if coach logs in weekly, session outlasts that -> fewer facebook login messes. 
+      }),
+      cookie: { maxAge: 691200000 },
+      secret: process.env.NODE_SESSION_SECRET,
+      saveUninitialized: true,
+      resave: true,
+      httpOnly: true,   // https://stormpath.com/blog/everything-you-ever-wanted-to-know-about-node-dot-js-sessions/
+      secure: true,     // use cookies only accessible from http, that get deleted when browser closes
+      ephemeral: true
+   }));
+
 if (inDevelopment) {
    // Set error handler. 
    app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 }
 
 app.post('/contact', (req, res) => {
-   console.log(JSON.stringify(req.body));
-   res.send('OK')
+
+   const params = {
+      secret: '6LezBOcbAAAAAHnDo0grpjkaq3sWbgpDJ26YWgnq',
+      response: req.body.recaptchaToken
+   };
+
+   const config = {
+      headers: {
+         'Content-Type': 'application/x-www-form-urlencoded'
+      }
+   };
+   const query: string = qs.stringify(params);
+
+   axios.post('https://www.google.com/recaptcha/api/siteverify', query, config)
+      .then(googleRes => {
+         console.log(googleRes.data);
+
+         let contactDb = new ContactDb();
+         contactDb.save(req.body.email, false);
+
+         res.send('OK');
+      })
+      .catch(err => {
+         console.log(err);
+         res.send('error');
+      });
 });
 
 app.get('/ping', (req, res) => {
@@ -68,6 +116,29 @@ app.get('/ping', (req, res) => {
 
 const port = process.env.PORT || 4000
 
-app.listen(port, () => {
-   console.log(`Server is listening on port ${port}`)
-})
+// Fix deprecation warning. This one is not a breaking change. 
+mongoose.set('useFindAndModify', false);
+
+const connect = async () => {
+   const dbConnection = mongoose.connection;
+
+   try {
+      // Connect to DB before we start listening
+      await mongoose.connect(process.env.MONGODB_URI, {
+         useNewUrlParser: true,
+         useUnifiedTopology: true
+      });
+
+      // If using sequence numbers, have to call out to initialise them here before we get incoming requests
+
+      // Listen once initialised
+      var server = app.listen(port, function () {
+         console.log(`Server is listening on port ${port}`);
+      });
+
+   } catch (error) {
+      console.log('Error:' + error);
+   }
+};
+
+connect();

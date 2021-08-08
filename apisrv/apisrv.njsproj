@@ -81,6 +81,9 @@
     <Folder Include="public\assets\vendor\purecounter\" />
     <Folder Include="src\" />
   </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="src\contactDb.ts" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
     <VisualStudio>

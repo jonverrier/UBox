@@ -24,22 +24,18 @@
 
       let formData = new FormData( thisForm );
 
-      if ( recaptcha ) {
-        if(typeof grecaptcha !== "undefined" ) {
-          grecaptcha.ready(function() {
+      if(typeof grecaptcha !== "undefined" ) {
+         grecaptcha.ready(function() {
             try {
-              grecaptcha.execute(recaptcha, {action: 'email_form_submit'})
-              .then(token => {
-                formData.set('recaptcha-response', token);
-                email_form_submit(thisForm, action, formData);
-              })
+               grecaptcha.execute('6LezBOcbAAAAAG5mIV2Yx__MbAYYbGPgU7JEyOAK', { action: 'email_form_submit' })
+                  .then(token => {
+                     formData.set('recaptchaToken', token);
+                      email_form_submit(thisForm, action, formData);
+                })
             } catch(error) {
               displayError(thisForm, error)
             }
-          });
-        } else {
-          displayError(thisForm, 'The reCaptcha javascript API url is not loaded!')
-        }
+          });      
       } else {
         email_form_submit(thisForm, action, formData);
       }
@@ -47,7 +43,6 @@
   });
 
    function email_form_submit(thisForm, action, formData) {
-    var email = formData.get ('email');
 
     fetch(action, {
       method: 'POST',
@@ -67,7 +62,7 @@
         thisForm.querySelector('.sent-message').classList.add('d-block');
         thisForm.reset(); 
       } else {
-        throw new Error(data ? data : 'Form submission failed and no error message returned from: ' + action); 
+         throw new Error(data ? data : 'Sorry, something went wrong. Please try again in a few minutes.');
       }
     })
     .catch((error) => {
