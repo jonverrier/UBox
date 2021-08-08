@@ -99,8 +99,11 @@ app.post('/contact', (req, res) => {
       .then(googleRes => {
          console.log(googleRes.data);
 
-         let contactDb = new ContactDb();
-         contactDb.save(req.body.email, false);
+         if (googleRes.data.success === true && googleRes.data.score >= 0.5) {
+            let contactDb = new ContactDb();
+            contactDb.save(req.body.email, false);
+            console.log('saved');
+         }
 
          res.send('OK');
       })
