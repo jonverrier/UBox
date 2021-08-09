@@ -11,6 +11,32 @@ export enum ELoginProvider {
    Apple = "Apple", Google = "Google", Private = "Private"
 }
 
+export class NameMemento {
+   _name: string;
+   _surname: string;
+
+   /**
+    * Create a NameMemento object
+    * @param name - user first name
+    * @param surname - user family name, can be null
+    */
+   constructor(name: string, surname: string | null = null) {
+
+      this._name = name;
+      this._surname = surname;
+   }
+   /**
+   * set of 'getters' for private variables
+   */
+   get name(): string {
+      return this._name;
+   }
+   get surname(): string | null {
+      return this._surname;
+   }
+
+}
+
 export class Name {
    private _name: string;
    private _surname: string;
@@ -37,6 +63,13 @@ export class Name {
    }
    get surname(): string {
       return this._surname;
+   }
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): NameMemento {
+      return new NameMemento(this._name, this._surname);
    }
 
    /**
@@ -300,6 +333,58 @@ export class Roles {
    }
 }
 
+export class PersonMemento {
+   _persistenceDetails: PersistenceDetails;
+   _loginDetails: LoginDetails;
+   _name: NameMemento;
+   _email: EmailAddress | null;
+   _thumbnailUrl: Url | null;
+   _roles: Roles | null;
+
+   /**
+    * Create a PersonMemento object
+    * @param persistenceDetails - (from Persistence) for the database layer to use and assign
+    * @param loginDetails - ID assigned by external system (like facebook)
+    * @param name - plain text user name. Cannot be null. 
+    * @param email - user email, can be null if not provided
+    * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
+    * @param roles - list of roles the Person plays, can be null
+    */
+   constructor(persistenceDetails: PersistenceDetails,
+      loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null) {
+
+      this._persistenceDetails = persistenceDetails;
+      this._loginDetails = loginDetails;
+      this._name = name.memento();
+      this._email = email;
+      this._thumbnailUrl = thumbnailUrl;
+      this._roles = roles;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get persistenceDetails(): PersistenceDetails {
+      return this._persistenceDetails;
+   }
+   get loginDetails(): LoginDetails {
+      return this._loginDetails;
+   }
+   get name(): NameMemento {
+      return this._name;
+   }
+   get email(): EmailAddress | null {
+      return this._email;
+   }
+   get thumbnailUrl(): Url | null {
+      return this._thumbnailUrl;
+   }
+   get roles(): Roles | null {
+      return this._roles;
+   }
+
+}
+
 export class Person extends Persistence {
    private _loginDetails: LoginDetails;
    private _name: Name;
@@ -357,6 +442,13 @@ export class Person extends Persistence {
    }
    set roles(roles: Roles) {
       this._roles = roles;
+   }
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): PersonMemento {
+      return new PersonMemento (this.persistenceDetails, this._loginDetails, this._name, this._email, this._thumbnailUrl, this._roles);
    }
 
    /**

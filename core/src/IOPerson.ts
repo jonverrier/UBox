@@ -11,8 +11,8 @@ import * as IoTs from 'io-ts';
 // Name Codec
 // ==========
 const nameIoType = IoTs.type({
-   name: IoTs.string, // name must be non-null
-   surname: IoTs.union([IoTs.string, IoTs.undefined, IoTs.null])
+   _name: IoTs.string, // name must be non-null
+   _surname: IoTs.union([IoTs.string, IoTs.undefined, IoTs.null])
 });
 
 export class NameCodec implements ICodec<Name> {
@@ -22,12 +22,12 @@ export class NameCodec implements ICodec<Name> {
    }
 
    encode(data: Name): any {
-      return encodeWith(nameIoType)(data);
+      return encodeWith(nameIoType)(data.memento());
    }
 
    tryCreateFrom(data: any): Name {
       let temp = decodeWith(nameIoType)(data); // If types dont match an exception will be thrown here 
-      return new Name(temp.name, temp.surname);
+      return new Name(temp._name, temp._surname);
    }
 }
 
@@ -151,7 +151,7 @@ export class PersonCodec implements ICodec<Person> {
    }
 
    encode(data: Person): any {
-      return encodeWith(personIoType)(data);
+      return encodeWith(personIoType)(data.memento());
    }
 
    tryCreateFrom(data: any): Person {
@@ -160,7 +160,7 @@ export class PersonCodec implements ICodec<Person> {
 
       return new Person(new PersistenceDetails(temp.persistenceDetails.id, temp.persistenceDetails.schemaVersion, temp.persistenceDetails.sequenceNumber),
          new LoginDetails(temp.loginDetails.provider, temp.loginDetails.token),
-         new Name(temp.name.name, temp.name.surname),
+         new Name(temp.name._name, temp.name._surname),
          temp.email ? new EmailAddress(temp.email.email, temp.email.isEmailVerified) : null,
          temp.thumbnailUrl ? new Url(temp.thumbnailUrl.url, temp.thumbnailUrl.isUrlVerified) : null,
          temp.roles ? new Roles(temp.roles.roles) : null);

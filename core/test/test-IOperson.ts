@@ -21,7 +21,7 @@ describe("IOName", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode ({ name: "Joe", surname: null });
+         codec.decode ({ _name: "Joe", _surname: null });
       } catch (e) {
          caught = true;
       }
@@ -34,7 +34,7 @@ describe("IOName", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ name: "Joe"});
+         codec.decode({ _name: "Joe"});
       } catch (e) {
          caught = true;
       }
@@ -47,7 +47,7 @@ describe("IOName", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ name: "Joe", surname: "Bloggs" });
+         codec.decode({ _name: "Joe", _surname: "Bloggs" });
       } catch (e) {
          caught = true;
       }
@@ -60,7 +60,7 @@ describe("IOName", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ name: null, surname: "Bloggs" });
+         codec.decode({ _name: null, _surname: "Bloggs" });
       } catch (e) {
          caught = true;
       }
@@ -80,7 +80,6 @@ describe("IOName", function () {
 
       let initial = new Name("Joe", "Bloggs");
       let encoded = codec.encode(initial);
-      console.log(encoded);
       let decoded: Name;
 
       var caught: boolean = false;
@@ -415,7 +414,7 @@ describe("IOPerson", function () {
          codec.decode({
             persistenceDetails: { id: "Joe", schemaVersion: 0, sequenceNumber: 0 },
             loginDetails: { provider: ELoginProvider.Apple, token: "123" },
-            name: { name: "Joe", surname: "Bloggs" },
+            name: { _name: "Joe", _surname: "Bloggs" },
             email: { email: "Joe@mail.com", isEmailVerified: false },
             thumbnailUrl: { url: "https://jo.pics.com", isUrlVerified: true },
             roles: { roles: null } // {roles: new Array<ERoleType>(ERoleType.Coach, ERoleType.Member) }
