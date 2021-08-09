@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 export class ContactDb {
 
-   save(email: string, deletionRequest: boolean = false) {
+   save(email: string, deletionRequest: boolean = false) : void {
       new contactModel({ email: email, deletionRequest: deletionRequest }).save();
    }
 }

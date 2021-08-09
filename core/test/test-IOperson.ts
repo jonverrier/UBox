@@ -79,7 +79,8 @@ describe("IOName", function () {
    it("Needs to encode then decode a Name.", function () {
 
       let initial = new Name("Joe", "Bloggs");
-      let encoded = codec.encode (initial);
+      let encoded = codec.encode(initial);
+      console.log(encoded);
       let decoded: Name;
 
       var caught: boolean = false;
