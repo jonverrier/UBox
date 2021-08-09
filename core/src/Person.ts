@@ -25,13 +25,14 @@ export class NameMemento {
       this._name = name;
       this._surname = surname;
    }
+
    /**
    * set of 'getters' for private variables
    */
    get name(): string {
       return this._name;
    }
-   get surname(): string | null {
+   get surname(): string {
       return this._surname;
    }
 
@@ -95,6 +96,32 @@ export class Name {
    }
 }
 
+export class LoginDetailsMemento {
+   _provider: ELoginProvider;
+   _token: string;
+
+   /**
+    * Create a LoginDetailsMemento object
+    * @param name - user first name
+    * @param surname - user family name, can be null
+    */
+   constructor(provider: ELoginProvider, token: string) {
+
+      this._provider = provider;
+      this._token = token;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get provider(): ELoginProvider {
+      return this._provider;
+   }
+   get token(): string {
+      return this._token;
+   }
+}
+
 export class LoginDetails {
    private _provider: ELoginProvider;
    private _token: string;
@@ -122,6 +149,13 @@ export class LoginDetails {
    }
    get token(): string {
       return this._token;
+   }
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): LoginDetailsMemento {
+      return new LoginDetailsMemento(this._provider, this._token);
    }
 
    /**
@@ -335,7 +369,7 @@ export class Roles {
 
 export class PersonMemento {
    _persistenceDetails: PersistenceDetails;
-   _loginDetails: LoginDetails;
+   _loginDetails: LoginDetailsMemento;
    _name: NameMemento;
    _email: EmailAddress | null;
    _thumbnailUrl: Url | null;
@@ -354,7 +388,7 @@ export class PersonMemento {
       loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null) {
 
       this._persistenceDetails = persistenceDetails;
-      this._loginDetails = loginDetails;
+      this._loginDetails = loginDetails.memento();
       this._name = name.memento();
       this._email = email;
       this._thumbnailUrl = thumbnailUrl;
@@ -364,10 +398,11 @@ export class PersonMemento {
    /**
    * set of 'getters' for private variables
    */
+
    get persistenceDetails(): PersistenceDetails {
       return this._persistenceDetails;
    }
-   get loginDetails(): LoginDetails {
+   get loginDetails(): LoginDetailsMemento {
       return this._loginDetails;
    }
    get name(): NameMemento {
@@ -401,16 +436,31 @@ export class Person extends Persistence {
  * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
  * @param roles - list of roles the Person plays, can be null
  */
-   constructor(persistenceDetails: PersistenceDetails,
-      loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null) {
+   public constructor(persistenceDetails: PersistenceDetails,
+      loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null);
+   public constructor(memento: PersonMemento);
+   public constructor(...myarray: any[]) {
 
-      super(persistenceDetails);
+      if (myarray.length === 1) {
 
-      this._loginDetails = loginDetails;
-      this._name = name;
-      this._email = email;
-      this._thumbnailUrl = thumbnailUrl;
-      this._roles = roles;
+         super(myarray[0]._persistenceDetails);
+
+         this._loginDetails = myarray[0]._loginDetails;
+         this._name = myarray[0]._name;
+         this._email = myarray[0]._email;
+         this._thumbnailUrl = myarray[0]._thumbnailUrl;
+         this._roles = myarray[0]._roles;
+
+      } else {
+
+         super(myarray[0]);
+
+         this._loginDetails = myarray[1];
+         this._name = myarray[2];
+         this._email = myarray[3];
+         this._thumbnailUrl = myarray[4];
+         this._roles = myarray[5];
+      }
    }
 
    /**

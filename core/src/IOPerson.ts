@@ -34,8 +34,8 @@ export class NameCodec implements ICodec<Name> {
 // LoginDetails Codec
 // ==========
 const loginIoType = IoTs.type({
-   provider: createEnumType<ELoginProvider>(ELoginProvider, 'ELoginProvider'),
-   token: IoTs.string // token must be non-null
+   _provider: createEnumType<ELoginProvider>(ELoginProvider, 'ELoginProvider'),
+   _token: IoTs.string // token must be non-null
 });
 
 export class LoginDetailsCodec implements ICodec<LoginDetails> {
@@ -45,12 +45,12 @@ export class LoginDetailsCodec implements ICodec<LoginDetails> {
    }
 
    encode(data: LoginDetails): any {
-      return encodeWith(loginIoType)(data);
+      return encodeWith(loginIoType)(data.memento());
    }
 
    tryCreateFrom(data: any): LoginDetails {
       let temp = decodeWith(loginIoType)(data); // If types dont match an exception will be thrown here
-      return new LoginDetails(temp.provider, temp.token);
+      return new LoginDetails(temp._provider, temp._token);
    }
 }
 
@@ -159,7 +159,7 @@ export class PersonCodec implements ICodec<Person> {
       let temp = decodeWith(personIoType)(data); // If types dont match an exception will be thrown here
 
       return new Person(new PersistenceDetails(temp.persistenceDetails.id, temp.persistenceDetails.schemaVersion, temp.persistenceDetails.sequenceNumber),
-         new LoginDetails(temp.loginDetails.provider, temp.loginDetails.token),
+         new LoginDetails(temp.loginDetails._provider, temp.loginDetails._token),
          new Name(temp.name._name, temp.name._surname),
          temp.email ? new EmailAddress(temp.email.email, temp.email.isEmailVerified) : null,
          temp.thumbnailUrl ? new Url(temp.thumbnailUrl.url, temp.thumbnailUrl.isUrlVerified) : null,

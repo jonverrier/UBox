@@ -72,6 +72,7 @@ describe("IOName", function () {
 
       let encoded = codec.encode (new Name ("Joe", "Bloggs"));
 
+      console.log(encoded);
       expect(encoded.name).to.equal("Joe");
       expect(encoded.surname).to.equal("Bloggs");
    });
@@ -109,7 +110,7 @@ describe("IOLoginDetails", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ provider: ELoginProvider.Apple, token: "123" });
+         codec.decode({ _provider: ELoginProvider.Apple, _token: "123" });
       } catch (e) {
          caught = true;
       }
@@ -122,7 +123,7 @@ describe("IOLoginDetails", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ provider: ELoginProvider.Apple});
+         codec.decode({ _provider: ELoginProvider.Apple});
       } catch (e) {
          caught = true;
       }
@@ -413,7 +414,7 @@ describe("IOPerson", function () {
       try {
          codec.decode({
             persistenceDetails: { id: "Joe", schemaVersion: 0, sequenceNumber: 0 },
-            loginDetails: { provider: ELoginProvider.Apple, token: "123" },
+            loginDetails: { _provider: ELoginProvider.Apple, _token: "123" },
             name: { _name: "Joe", _surname: "Bloggs" },
             email: { email: "Joe@mail.com", isEmailVerified: false },
             thumbnailUrl: { url: "https://jo.pics.com", isUrlVerified: true },

@@ -21,6 +21,7 @@ ApiRoutes.put('/api/person', function (req, res) {
 
    let name = new NameCodec().tryCreateFrom(encoded._name);
    let login = new LoginDetailsCodec().tryCreateFrom(encoded._loginDetails);
+
    let email = new EmailAddressCodec().tryCreateFrom(encoded._email);
    let thumb = new UrlCodec().tryCreateFrom(encoded._thumbnailUrl);
    let roles = new RolesCodec().tryCreateFrom(encoded._roles);
