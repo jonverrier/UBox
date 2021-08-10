@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2021 */
 
 import { ETimeUnits, EWeightUnits, QuantityOf } from "./Quantity";
-import { RangeOf } from "./Range";
+import { RangeOf, RangeMementoOf } from "./Range";
 import { PersistenceDetails, Persistence } from "./Persistence";
 
 // This enum is used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing 
@@ -11,6 +11,41 @@ export enum EMeasurementType {
    Snatch, Clean, Jerk, CleanAndJerk,
    Row, Run
 }
+
+export class MeasurementTypeMementoFor<Unit> {
+   _measurementType: EMeasurementType;
+   _range: RangeMementoOf<Unit>;
+   _trend: EPositiveTrend;
+
+   /**
+    * Create a MeasurementTypeMementoFor object - contains the statis elements that characterise a measurement
+    * @param measurementType - enum to say what is being measured
+    * @param range - acceptable range of values
+    * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
+    */
+   constructor(measurementType: EMeasurementType, range: RangeMementoOf<Unit>, trend: EPositiveTrend) {
+
+      this._measurementType = measurementType;
+      this._range = range;
+      this._trend = trend;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get measurmentType(): EMeasurementType {
+      return this._measurementType;
+   }
+
+   get range(): RangeMementoOf<Unit> {
+      return this._range;
+   }
+
+   get trend(): EPositiveTrend {
+      return this._trend;
+   }
+}
+
 
 export class MeasurementTypeOf<Unit> {
    private _measurmentType: EMeasurementType;
@@ -43,6 +78,13 @@ export class MeasurementTypeOf<Unit> {
 
    get trend(): EPositiveTrend {
       return this._trend;
+   }
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): MeasurementTypeMementoFor<Unit> {
+      return new MeasurementTypeMementoFor<Unit>(this._measurmentType, this._range.memento(), this._trend);
    }
 
    /**

@@ -13,8 +13,8 @@ describe("Range", function () {
 
       let range = new RangeOf<EWeightUnits>(quantityLo, true, quantityHi, false);
 
-      expect(range.low).to.equal(quantityLo);
-      expect(range.high).to.equal(quantityHi);
+      expect(range.lo).to.equal(quantityLo);
+      expect(range.hi).to.equal(quantityHi);
       expect(range.lowIncludesEqual).to.equal(true);
       expect(range.highIncludesEqual).to.equal(false);
    });

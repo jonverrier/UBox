@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\Cohort.ts" />
+    <TypeScriptCompile Include="src\IOObservation.ts" />
     <TypeScriptCompile Include="src\Localisation.ts" />
     <TypeScriptCompile Include="src\FitnessObservations.ts" />
     <TypeScriptCompile Include="src\Observation.ts" />

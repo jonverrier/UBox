@@ -5,6 +5,32 @@ export enum ETimeUnits { Seconds }
 export enum EDistanceUnits { Metres }
 export enum ERepUnits { Reps }
 
+export class QuantityMementoOf<Unit> {
+   _amount: number;
+   _unit: Unit;
+
+   /**
+    * Create a QuantityMementoOf object - an amount, with Units
+    * @param amount - the scalar value
+    * @param unit - the unit in which the scalar value is measured
+    */
+   constructor(amount: number, unit: Unit) {
+      this._amount = amount;
+      this._unit = unit;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get amount(): number {
+      return this._amount;
+   }
+
+   get unit(): Unit {
+      return this._unit;
+   }
+}
+
 export class QuantityOf<Unit> { 
    private _amount: number;
    private _unit: Unit;
@@ -28,6 +54,13 @@ export class QuantityOf<Unit> {
 
    get unit(): Unit {
       return this._unit;
+   }
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): QuantityMementoOf<Unit> {
+      return new QuantityMementoOf<Unit>(this._amount, this._unit);
    }
 
    /**

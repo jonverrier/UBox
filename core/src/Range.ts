@@ -1,7 +1,48 @@
 /*! Copyright TXPCo, 2021 */
 
-import { QuantityOf } from './Quantity';
+import { QuantityOf, QuantityMementoOf } from './Quantity';
 import { InvalidUnitError } from './CoreError';
+
+export class RangeMementoOf<Unit> {
+   _lo: QuantityMementoOf<Unit>;
+   _hi: QuantityMementoOf<Unit>;
+   _loInclEq: boolean;
+   _hiInclEq: boolean;
+
+   /**
+    * Create a RangeMementoFor object - a low and high scalar quality.
+    * @param low - the low range
+    * @param _loInclEq - does the the low end of the range include equality test
+    * @param hi - the unit in which the scalar value is measured
+    * @param _hiInclEq - does the the high end of the range include equality test
+    */
+   constructor(lo: QuantityMementoOf<Unit>, _loInclEq: boolean, hi: QuantityMementoOf<Unit>, _hiInclEq: boolean) {
+
+      this._lo = lo;
+      this._loInclEq = _loInclEq;
+      this._hi = hi;
+      this._hiInclEq = _hiInclEq;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get lo(): QuantityMementoOf<Unit> {
+      return this._lo;
+   }
+
+   get hi(): QuantityMementoOf<Unit> {
+      return this._hi;
+   }
+
+   get loInclEq(): boolean {
+      return this._loInclEq;
+   }
+
+   get hiInclEq(): boolean {
+      return this._hiInclEq;
+   }
+}
 
 export class RangeOf<Unit> { 
    private _lo: QuantityOf<Unit>;
@@ -11,12 +52,12 @@ export class RangeOf<Unit> {
 
 /**
  * Create a Range object - a low and high scalar quality.
- * @param low - the low range
- * @param loEq - does the the low end of the range include equality test 
+ * @param lo - the low range
+ * @param loInclEq - does the the low end of the range include equality test 
  * @param hi - the unit in which the scalar value is measured
- * @param hiEq - does the the high end of the range include equality test
+ * @param hiInclEq - does the the high end of the range include equality test
  */
-   constructor(lo: QuantityOf<Unit>, loEq: boolean, hi: QuantityOf<Unit>, hiEq: boolean) {
+   constructor(lo: QuantityOf<Unit>, loInclEq: boolean, hi: QuantityOf<Unit>, hiInclEq: boolean) {
 
       // TODO - Currently we dont handle conversion, should allow conversion between units via a UnitConverter class
       if (lo.unit != hi.unit)
@@ -27,19 +68,19 @@ export class RangeOf<Unit> {
          throw new RangeError();
 
       this._lo = lo;
-      this._loInclEq = loEq;
+      this._loInclEq = loInclEq;
       this._hi = hi;
-      this._hiInclEq = hiEq;
+      this._hiInclEq = hiInclEq;
    }
 
    /**
    * set of 'getters' for private variables
    */
-   get low(): QuantityOf<Unit> {
+   get lo(): QuantityOf<Unit> {
       return this._lo;
    }
 
-   get high(): QuantityOf<Unit> {
+   get hi(): QuantityOf<Unit> {
       return this._hi;
    }
 
@@ -49,6 +90,13 @@ export class RangeOf<Unit> {
 
    get highIncludesEqual(): boolean {
       return this._hiInclEq;
+   }
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): RangeMementoOf<Unit> {
+      return new RangeMementoOf<Unit>(this._lo.memento(), this._loInclEq, this._hi.memento(), this._hiInclEq);
    }
 
    /**
