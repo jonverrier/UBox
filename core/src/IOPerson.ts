@@ -1,12 +1,16 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { PersistenceDetails } from './Persistence';
+import { PersistenceDetails, PersistenceDetailsMemento } from './Persistence';
 import { LoginDetails, EmailAddress, Url, Name, Roles, Person, ERoleType, ELoginProvider } from "./Person";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 
 import * as IoTs from 'io-ts';
 
-
+// Rule summary for a Persistent Object: 
+// - derives from IPersistence, which contains a PersistentDetails member object. 
+// - can save itself to a Memento object, which contains internal state. 
+// - has a Codec class, which can transform to and from the Memento format. 
+// - Memento versions are transmitted over the wire, and stored in the database.
 
 // Name Codec
 // ==========
@@ -57,8 +61,8 @@ export class LoginDetailsCodec implements ICodec<LoginDetails> {
 // Email Codec
 // ==========
 const emailIoType = IoTs.type({
-   email: IoTs.string, // email must be non-null
-   isEmailVerified: IoTs.boolean
+   _email: IoTs.string, // email must be non-null
+   _isEmailVerified: IoTs.boolean
 });
 
 export class EmailAddressCodec implements ICodec<EmailAddress> {
@@ -68,12 +72,12 @@ export class EmailAddressCodec implements ICodec<EmailAddress> {
    }
 
    encode(data: EmailAddress): any {
-      return encodeWith(emailIoType)(data);
+      return encodeWith(emailIoType)(data.memento());
    }
 
    tryCreateFrom(data: any): EmailAddress {
       let temp = decodeWith(emailIoType)(data); // If types dont match an exception will be thrown here
-      return new EmailAddress(temp.email, temp.isEmailVerified);
+      return new EmailAddress(temp._email, temp._isEmailVerified);
    }
 }
 
@@ -81,8 +85,8 @@ export class EmailAddressCodec implements ICodec<EmailAddress> {
 // Url Codec
 // ==========
 export const urlIoType = IoTs.type({
-   url: IoTs.string, // URL must be non-null
-   isUrlVerified: IoTs.boolean
+   _url: IoTs.string, // URL must be non-null
+   _isUrlVerified: IoTs.boolean
 });
 
 export class UrlCodec implements ICodec<Url> {
@@ -92,12 +96,12 @@ export class UrlCodec implements ICodec<Url> {
    }
 
    encode(data: Url): any {
-      return encodeWith(urlIoType)(data);
+      return encodeWith(urlIoType)(data.memento());
    }
 
    tryCreateFrom(data: any): Url {
       let temp = decodeWith(urlIoType)(data); // If types dont match an exception will be thrown here
-      return new Url(temp.url, temp.isUrlVerified);
+      return new Url(temp._url, temp._isUrlVerified);
    }
 }
 
@@ -107,7 +111,7 @@ export class UrlCodec implements ICodec<Url> {
 // ==========
 
 const rolesArrayIoType = IoTs.type({
-   roles: IoTs.union([
+   _roles: IoTs.union([
       IoTs.null,
       IoTs.undefined,
       IoTs.array(createEnumType<ERoleType>(ERoleType, 'ERoleType'))]) // Either an enum list, or null / undefined
@@ -122,12 +126,12 @@ export class RolesCodec implements ICodec<Roles> {
    }
 
    encode(data: Roles): any {
-      return encodeWith(rolesIoType)(data);
+      return encodeWith(rolesIoType)(data.memento());
    }
 
    tryCreateFrom(data: any): Roles {
       let temp = decodeWith(rolesIoType)(data); // If types dont match an exception will be thrown here
-      return new Roles(temp.roles);
+      return new Roles(temp._roles);
    }
 }
 
@@ -135,12 +139,12 @@ export class RolesCodec implements ICodec<Roles> {
 // ==========
 
 const personIoType = IoTs.type({
-   persistenceDetails: persistenceDetailsIoType,
-   loginDetails: loginIoType,
-   name: nameIoType,
-   email: emailIoType,
-   thumbnailUrl: urlIoType,
-   roles: rolesIoType
+   _persistenceDetails: persistenceDetailsIoType,
+   _loginDetails: loginIoType,
+   _name: nameIoType,
+   _email: emailIoType,
+   _thumbnailUrl: urlIoType,
+   _roles: rolesIoType
 });
 
 export class PersonCodec implements ICodec<Person> {
@@ -158,11 +162,11 @@ export class PersonCodec implements ICodec<Person> {
 
       let temp = decodeWith(personIoType)(data); // If types dont match an exception will be thrown here
 
-      return new Person(new PersistenceDetails(temp.persistenceDetails.id, temp.persistenceDetails.schemaVersion, temp.persistenceDetails.sequenceNumber),
-         new LoginDetails(temp.loginDetails._provider, temp.loginDetails._token),
-         new Name(temp.name._name, temp.name._surname),
-         temp.email ? new EmailAddress(temp.email.email, temp.email.isEmailVerified) : null,
-         temp.thumbnailUrl ? new Url(temp.thumbnailUrl.url, temp.thumbnailUrl.isUrlVerified) : null,
-         temp.roles ? new Roles(temp.roles.roles) : null);
+      return new Person(new PersistenceDetails(temp._persistenceDetails._id, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
+         new LoginDetails(temp._loginDetails._provider, temp._loginDetails._token),
+         new Name(temp._name._name, temp._name._surname),
+         temp._email ? new EmailAddress(temp._email._email, temp._email._isEmailVerified) : null,
+         temp._thumbnailUrl ? new Url(temp._thumbnailUrl._url, temp._thumbnailUrl._isUrlVerified) : null,
+         temp._roles ? new Roles(temp._roles._roles) : null);
    }
 }

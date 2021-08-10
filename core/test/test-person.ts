@@ -1,21 +1,20 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
-import { Name, LoginDetails, EmailAddress, Url, Roles, Person, personArraysAreEqual, IPersonLoader, IPersonStorer, ERoleType, ELoginProvider } from '../src/Person';
+import { Name, LoginDetails, EmailAddress, Url, Roles, Person, personArraysAreEqual, IPersonStore, ERoleType, ELoginProvider } from '../src/Person';
 
 var expect = require("chai").expect;
 
-class StubLoader implements IPersonLoader {
-   load(): Person {
+class StubLoader implements IPersonStore {
+   async load(id: any): Promise<Person | null> {
       return new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
          new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
    }
-}
 
-class StubStorer implements IPersonStorer {
-   save(person: Person) {
+   async save(person: Person): Promise<Person | null> {
+      return person;
    }
 }
 
@@ -351,7 +350,7 @@ describe("PersonLoader", function () {
 
       let loader = new StubLoader;
 
-      let person = loader.load();
+      let person = loader.load('dummy');
 
       expect(person).to.not.equal(null);
    });
@@ -362,7 +361,7 @@ describe("PersonStorer", function () {
 
    it("Needs to save a Person.", function () {
 
-      let storer = new StubStorer;
+      let storer = new StubLoader;
       let caught = false;
 
       try {

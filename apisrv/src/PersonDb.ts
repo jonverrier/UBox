@@ -2,67 +2,113 @@
 // Copyright TXPCo ltd, 2020, 2021
 
 import mongoose from "mongoose";
-import { Person } from '../../core/src/Person';
+import { Person, IPersonStore } from '../../core/src/Person';
+import { PersonCodec } from '../../core/src/IOPerson';
 
-export class PersonDb {
 
-   save(person: Person) : void {
-      new personModel(person).save();
+export class PersonDb implements IPersonStore {
+   private _codec;
+
+   constructor() {
+      this._codec = new PersonCodec();;
+   }
+
+   async load (id: any): Promise<Person | null>  {
+
+      const result = await personModel.findOne().where('_id').eq(id).exec();
+
+      if (result) {
+         // If we saved a new document, copy the new Mongo ID to persistenceDetails
+         if (result._doc._persistenceDetails._id !== result._doc._id)
+            result._doc._persistenceDetails._id = result._doc._id;
+
+         return this._codec.tryCreateFrom(result._doc);
+      } else {
+         return null;
+      }
+   }
+
+   async save(person: Person): Promise<Person | null> {
+      try {
+         let result = await (new personModel(person)).save({ isNew: person.persistenceDetails._id ? true : false });
+
+         // If we saved a new document, copy the new Mongo ID to persistenceDetails
+         if (result._doc._persistenceDetails._id !== result._doc._id)
+            result._doc._persistenceDetails._id = result._doc._id;
+
+         return this._codec.tryCreateFrom(result._doc);
+      } catch (err) {
+         console.log("Save, from DB:" + JSON.stringify(err));
+         return null;
+      }
+
    }
 }
 
 const personSchema = new mongoose.Schema({
-   persistenceDetails: {
+   _persistenceDetails: {
+      _id: {
+         type: Object,
+         required: false
+      },
+      _schemaVersion: {
+         type: Number,
+         required: true
+      },
+      _sequenceNumber: {
+         type: Number,
+         required: true
+      }
    },
-   loginDetails: {
-      provider: {
+   _loginDetails: {
+      _provider: {
          type: String,
          enum: ["Apple", "Google", "Private"],
          required: true
       },
-      token: {
+      _token: {
          type: String,
          required: true,
          index: true
-      },
+      }
    },
-   name: {
-      name: {
+   _name: {
+      _name: {
          type: String,
          required: true,
          index: true
       },
-      surname: {
+      _surname: {
+         type: String,
+         required: false,
+         index: true
+      }
+   },
+   _email: {
+      _email: {
          type: String,
          required: false,
          index: true
       },
-   },
-   email: {
-      email: {
-         type: String,
-         required: true,
-         index: true
-      },
-      isEmailVerified: {
+      _isEmailVerified: {
          type: Boolean,
-         required: true
+         required: false
       }
    },
-   thumbnailUrl: {
-      url: {
+   _thumbnailUrl: {
+      _url: {
          type: String,
-         required: true
+         required: false
       },
-      isUrlVerified: {
+      _isUrlVerified: {
          type: Boolean,
-         required: true
+         required: false
       }
    },
    roles: {
       type: [String],
       enum: ["Prospect", "Member", "Coach"],
-      required: true
+      required: false
    }
 },
 {  // Enable timestamps for archival 

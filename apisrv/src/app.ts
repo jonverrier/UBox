@@ -4,6 +4,7 @@ import path from 'path';
 import errorHandler from 'errorhandler';
 import compression from 'compression';
 import bodyParser from 'body-parser';
+import queryString from 'querystring';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import connectMongo from 'connect-mongo';
