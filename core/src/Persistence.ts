@@ -1,4 +1,34 @@
 /*! Copyright TXPCo, 2021 */
+export class PersistenceDetailsMemento {
+   _id: any;
+   _schemaVersion: number;
+   _sequenceNumber: number;
+
+   /**
+    * Create a PersistenceDetailsMemento object 
+    * @param id - for the database to use and assign
+    * @param schemaVersion - schema version used - allows upgrades on the fly when loading old format data
+    * @param sequenceNumber - used to allow idempotent queries (all objects in a sequence range)
+    */
+   constructor(id: any, schemaVersion: number, sequenceNumber: number) {
+      this._id = id;
+      this._schemaVersion = schemaVersion;
+      this._sequenceNumber = sequenceNumber;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get id(): any {
+      return this._id;
+   }
+   get schemaVersion(): number {
+      return this._schemaVersion;
+   }
+   get sequenceNumber(): number {
+      return this._sequenceNumber;
+   }
+}
 
 export class PersistenceDetails {
    private _id: any;
@@ -28,6 +58,13 @@ export class PersistenceDetails {
    }
    get sequenceNumber(): number {
       return this._sequenceNumber;
+   }
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): PersistenceDetailsMemento {
+      return new PersistenceDetailsMemento(this._id, this._schemaVersion, this._sequenceNumber);
    }
 
    /**

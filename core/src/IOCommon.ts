@@ -1,5 +1,10 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
+// Rule summary for a Persistent Object: 
+// - derives from IPersistence, which contains a PersistentDetails member object. 
+// - can save itself to a Memento object, which contains internal state. 
+// - has a Codec class, which can transform to and from the Memento format. 
+// - Memento versions are transmitted over the wire, and stored in the database. 
 
 import * as IoTs from 'io-ts';
 import * as E from "fp-ts/Either";
@@ -79,9 +84,9 @@ export interface ICodec<Target> {
 // Persistence Codec
 // ==========
 export const persistenceDetailsIoType = IoTs.type({
-   id: IoTs.unknown, // name must be non-null
-   schemaVersion: IoTs.number,
-   sequenceNumber: IoTs.number
+   _id: IoTs.union([IoTs.null,IoTs.unknown]), 
+   _schemaVersion: IoTs.number,
+   _sequenceNumber: IoTs.number
 });
 
 export class PersistenceDetailsCodec implements ICodec<PersistenceDetails> {
@@ -91,11 +96,11 @@ export class PersistenceDetailsCodec implements ICodec<PersistenceDetails> {
    }
 
    encode(data: PersistenceDetails): any {
-      return encodeWith(persistenceDetailsIoType)(data);
+      return encodeWith(persistenceDetailsIoType)(data.memento());
    }
 
    tryCreateFrom(data: any): PersistenceDetails  {
       let temp = decodeWith(persistenceDetailsIoType)(data); // If types dont match an exception will be thrown here
-      return new PersistenceDetails(temp.id, temp.schemaVersion, temp.sequenceNumber);
+      return new PersistenceDetails(temp._id, temp._schemaVersion, temp._sequenceNumber);
    }
 }

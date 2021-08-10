@@ -1,18 +1,19 @@
-
 // external modules
 import express from 'express';
 import path from 'path';
 import errorHandler from 'errorhandler';
 import compression from 'compression';
 import bodyParser from 'body-parser';
+import queryString from 'querystring';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import connectMongo from 'connect-mongo';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import qs from 'qs';
 
 // Internal classes
-import { ContactDb } from './contactDb';
+import { ApiRoutes } from './ApiRoutes';
+import { ContactDb } from './ContactDb';
 
 // Control variables for development / production
 var inDevelopment = false;
@@ -81,6 +82,9 @@ if (inDevelopment) {
    app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 }
 
+// Routes for API endpoints
+app.use('/', ApiRoutes);
+
 app.post('/contact', (req, res) => {
 
    const params = {
@@ -88,7 +92,7 @@ app.post('/contact', (req, res) => {
       response: req.body.recaptchaToken
    };
 
-   const config = {
+   const config: AxiosRequestConfig = {
       headers: {
          'Content-Type': 'application/x-www-form-urlencoded'
       }

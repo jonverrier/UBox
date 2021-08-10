@@ -21,7 +21,7 @@ describe("IOName", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode ({ name: "Joe", surname: null });
+         codec.decode ({ _name: "Joe", _surname: null });
       } catch (e) {
          caught = true;
       }
@@ -34,7 +34,7 @@ describe("IOName", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ name: "Joe"});
+         codec.decode({ _name: "Joe"});
       } catch (e) {
          caught = true;
       }
@@ -47,7 +47,7 @@ describe("IOName", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ name: "Joe", surname: "Bloggs" });
+         codec.decode({ _name: "Joe", _surname: "Bloggs" });
       } catch (e) {
          caught = true;
       }
@@ -60,7 +60,7 @@ describe("IOName", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ name: null, surname: "Bloggs" });
+         codec.decode({ _name: null, _surname: "Bloggs" });
       } catch (e) {
          caught = true;
       }
@@ -72,6 +72,7 @@ describe("IOName", function () {
 
       let encoded = codec.encode (new Name ("Joe", "Bloggs"));
 
+      console.log(encoded);
       expect(encoded.name).to.equal("Joe");
       expect(encoded.surname).to.equal("Bloggs");
    });
@@ -79,7 +80,7 @@ describe("IOName", function () {
    it("Needs to encode then decode a Name.", function () {
 
       let initial = new Name("Joe", "Bloggs");
-      let encoded = codec.encode (initial);
+      let encoded = codec.encode(initial);
       let decoded: Name;
 
       var caught: boolean = false;
@@ -109,7 +110,7 @@ describe("IOLoginDetails", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ provider: ELoginProvider.Apple, token: "123" });
+         codec.decode({ _provider: ELoginProvider.Apple, _token: "123" });
       } catch (e) {
          caught = true;
       }
@@ -122,7 +123,7 @@ describe("IOLoginDetails", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ provider: ELoginProvider.Apple});
+         codec.decode({ _provider: ELoginProvider.Apple});
       } catch (e) {
          caught = true;
       }
@@ -170,7 +171,7 @@ describe("IOEmail", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode ({ email: "Joe", isEmailVerified: true });
+         codec.decode ({ _email: "Joe", _isEmailVerified: true });
       } catch (e) {
          caught = true;
       }
@@ -183,7 +184,7 @@ describe("IOEmail", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ email: null, isEmailVerified: true });
+         codec.decode({ _email: null, _isEmailVerified: true });
       } catch (e) {
          caught = true;
       }
@@ -196,7 +197,7 @@ describe("IOEmail", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ email: "Joe", isEmailVerified: null });
+         codec.decode({ _email: "Joe", _isEmailVerified: null });
       } catch (e) {
          caught = true;
       }
@@ -237,7 +238,7 @@ describe("IOUrl", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode ({ url: "Joe", isUrlVerified: true });
+         codec.decode ({ _url: "Joe", _isUrlVerified: true });
       } catch (e) {
          caught = true;
       }
@@ -250,7 +251,7 @@ describe("IOUrl", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode ({ url: null, isUrlVerified: true });
+         codec.decode ({ _url: null, _isUrlVerified: true });
       } catch (e) {
          caught = true;
       }
@@ -263,7 +264,7 @@ describe("IOUrl", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ url: "Joe", isUrlVerified: null });
+         codec.decode({ _url: "Joe", _isUrlVerified: null });
       } catch (e) {
          caught = true;
       }
@@ -361,7 +362,7 @@ describe("IOPersistenceDetails", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ id: "Joe", schemaVersion: 0, sequenceNumber: 0 });
+         codec.decode({ _id: "Joe", _schemaVersion: 0, _sequenceNumber: 0 });
       } catch (e) {
          caught = true;
       }
@@ -412,12 +413,12 @@ describe("IOPerson", function () {
 
       try {
          codec.decode({
-            persistenceDetails: { id: "Joe", schemaVersion: 0, sequenceNumber: 0 },
-            loginDetails: { provider: ELoginProvider.Apple, token: "123" },
-            name: { name: "Joe", surname: "Bloggs" },
-            email: { email: "Joe@mail.com", isEmailVerified: false },
-            thumbnailUrl: { url: "https://jo.pics.com", isUrlVerified: true },
-            roles: { roles: null } // {roles: new Array<ERoleType>(ERoleType.Coach, ERoleType.Member) }
+            _persistenceDetails: { _id: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
+            _loginDetails: { _provider: ELoginProvider.Apple, _token: "123" },
+            _name: { _name: "Joe", _surname: "Bloggs" },
+            _email: { _email: "Joe@mail.com", _isEmailVerified: false },
+            _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true },
+            _roles: { _roles: null } 
          });
       } catch (e) {
          caught = true;

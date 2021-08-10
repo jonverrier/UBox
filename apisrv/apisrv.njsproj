@@ -4,6 +4,8 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>apisrv</Name>
     <RootNamespace>apisrv</RootNamespace>
+    <NodejsPort>4000</NodejsPort>
+    <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -20,7 +22,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
     <EnableTypeScript>true</EnableTypeScript>
-    <StartWebBrowser>false</StartWebBrowser>
+    <StartWebBrowser>False</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -80,9 +82,15 @@
     <Folder Include="public\assets\vendor\isotope-layout\" />
     <Folder Include="public\assets\vendor\purecounter\" />
     <Folder Include="src\" />
+    <Folder Include="test\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\contactDb.ts" />
+    <TypeScriptCompile Include="src\ApiRoutes.ts" />
+    <TypeScriptCompile Include="src\ContactDb.ts" />
+    <TypeScriptCompile Include="src\PersonDb.ts" />
+    <TypeScriptCompile Include="test\test-person-api.ts">
+      <TestFramework>mocha</TestFramework>
+    </TypeScriptCompile>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>

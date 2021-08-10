@@ -1,7 +1,13 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { URL } from 'url'
 import { InvalidParameterError } from './CoreError';
-import { PersistenceDetails, Persistence } from "./Persistence";
+import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
+
+// Rule summary for a Persistent Object: 
+// - derives from IPersistence, which contains a PersistentDetails member object. 
+// - can save itself to a Memento object, which contains internal state. 
+// - has a Codec class, which can transform to and from the Memento format. 
+// - Memento versions are transmitted over the wire, and stored in the database.
 
 export enum ERoleType {
    Prospect = "Prospect", Member = "Member", Coach = "Coach"
@@ -9,6 +15,33 @@ export enum ERoleType {
 
 export enum ELoginProvider {
    Apple = "Apple", Google = "Google", Private = "Private"
+}
+
+export class NameMemento {
+   _name: string;
+   _surname: string;
+
+   /**
+    * Create a NameMemento object
+    * @param name - user first name
+    * @param surname - user family name, can be null
+    */
+   constructor(name: string, surname: string | null = null) {
+
+      this._name = name;
+      this._surname = surname;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get name(): string {
+      return this._name;
+   }
+   get surname(): string {
+      return this._surname;
+   }
+
 }
 
 export class Name {
@@ -40,6 +73,13 @@ export class Name {
    }
 
    /**
+   * memento() returns a copy of internal state
+   */
+   memento(): NameMemento {
+      return new NameMemento(this._name, this._surname);
+   }
+
+   /**
  * test for equality - checks all fields are the same. 
  * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
  * @param rhs - the object to compare this one to.  
@@ -59,6 +99,32 @@ export class Name {
          return false;
 
       return (true);
+   }
+}
+
+export class LoginDetailsMemento {
+   _provider: ELoginProvider;
+   _token: string;
+
+   /**
+    * Create a LoginDetailsMemento object
+    * @param name - user first name
+    * @param surname - user family name, can be null
+    */
+   constructor(provider: ELoginProvider, token: string) {
+
+      this._provider = provider;
+      this._token = token;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get provider(): ELoginProvider {
+      return this._provider;
+   }
+   get token(): string {
+      return this._token;
    }
 }
 
@@ -92,6 +158,13 @@ export class LoginDetails {
    }
 
    /**
+   * memento() returns a copy of internal state
+   */
+   memento(): LoginDetailsMemento {
+      return new LoginDetailsMemento(this._provider, this._token);
+   }
+
+   /**
     * test for equality - checks all fields are the same. 
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
@@ -112,6 +185,32 @@ export class LoginDetails {
          return false;
 
       return (true);
+   }
+}
+
+export class EmailAddressMemento {
+   _email: string;
+   _isEmailVerified: boolean;
+
+   /**
+    * Create an EmailAddressMemento object
+    * @param email - user email
+    * @param isEmailVefified - boolean to say if we know it is their email
+    */
+   constructor(email: string, isEmailVerified: boolean) {
+
+      this._email = email;
+      this._isEmailVerified = isEmailVerified;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get email(): string {
+      return this._email;
+   }
+   get isEmailVerified(): boolean {
+      return this._isEmailVerified;
    }
 }
 
@@ -158,6 +257,13 @@ export class EmailAddress {
    }
 
    /**
+   * memento() returns a copy of internal state
+   */
+   memento(): EmailAddressMemento {
+      return new EmailAddressMemento(this._email, this._isEmailVerified);
+   }
+
+   /**
     * test for equality - checks all fields are the same. 
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
@@ -167,6 +273,33 @@ export class EmailAddress {
       return (
          (this._email === rhs._email) &&
          (this._isEmailVerified === rhs._isEmailVerified));
+   }
+}
+
+export class UrlMemento {
+   _url: string;
+   _isUrlVerified: boolean;
+
+   /**
+    * Create a export class UrlMemento {
+ object
+    * @param url - user email
+    * @param isUrlVerified - boolean to say if we know URL is valid i.e we have retrieved it
+    */
+   constructor(url: string, isUrlVerified: boolean) {
+
+      this._url = url;
+      this._isUrlVerified = isUrlVerified;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get url(): string {
+      return this._url;
+   }
+   get isUrlVerified(): boolean {
+      return this._isUrlVerified;
    }
 }
 
@@ -217,6 +350,13 @@ export class Url {
    }
 
    /**
+   * memento() returns a copy of internal state
+   */
+   memento(): UrlMemento {
+      return new UrlMemento(this._url, this._isUrlVerified);
+   }
+
+   /**
     * test for equality - checks all fields are the same. 
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
@@ -226,6 +366,27 @@ export class Url {
       return (
          (this._url === rhs._url) &&
          (this._isUrlVerified === rhs._isUrlVerified));
+   }
+}
+
+export class RolesMemento {
+   _roles: Array<ERoleType>;
+
+   /**
+    * Create a RolesMemento {
+ object
+    * @param roles - list of roles to initialise
+    */
+   constructor(roles: Array<ERoleType>) {
+
+      this._roles = roles;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get roles(): Array<ERoleType> {
+      return this._roles;
    }
 }
 
@@ -282,22 +443,82 @@ export class Roles {
    static rolesArraysAreEqual(lhs: Array<ERoleType>,
                               rhs: Array<ERoleType>): boolean {
 
-   // compare lengths - can save a lot of time 
-   if (lhs.length != rhs.length)
-      return false;
-
-   for (var i = 0; i < lhs.length; i++) {
-      if (lhs[i] !== (rhs[i])) {
+      // compare lengths - can save a lot of time 
+      if (lhs.length != rhs.length)
          return false;
+
+      for (var i = 0; i < lhs.length; i++) {
+         if (lhs[i] !== (rhs[i])) {
+            return false;
+         }
       }
+      return true;
    }
-   return true;
-}
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): RolesMemento {
+      return new RolesMemento(this._roles);
+   }
 
    equals(rhs: Roles): boolean {
 
       return (Roles.rolesArraysAreEqual(this._roles, rhs._roles));
    }
+}
+
+export class PersonMemento {
+   _persistenceDetails: PersistenceDetailsMemento;
+   _loginDetails: LoginDetailsMemento;
+   _name: NameMemento;
+   _email: EmailAddressMemento | null;
+   _thumbnailUrl: UrlMemento | null;
+   _roles: RolesMemento | null;
+
+   /**
+    * Create a PersonMemento object
+    * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.
+    * @param loginDetails - ID assigned by external system (like facebook). Cannot be null. 
+    * @param name - plain text user name. Cannot be null. 
+    * @param email - user email, can be null if not provided
+    * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
+    * @param roles - list of roles the Person plays, can be null
+    */
+   constructor(persistenceDetails: PersistenceDetails,
+      loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null) {
+
+      this._persistenceDetails = persistenceDetails.memento();
+      this._loginDetails = loginDetails.memento();
+      this._name = name.memento();
+      this._email = email ? email.memento() : null;
+      this._thumbnailUrl = thumbnailUrl? thumbnailUrl.memento() : null;
+      this._roles = roles ? roles.memento() : null;
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+
+   get persistenceDetails(): PersistenceDetailsMemento {
+      return this._persistenceDetails;
+   }
+   get loginDetails(): LoginDetailsMemento {
+      return this._loginDetails;
+   }
+   get name(): NameMemento {
+      return this._name;
+   }
+   get email(): EmailAddressMemento | null {
+      return this._email;
+   }
+   get thumbnailUrl(): UrlMemento | null {
+      return this._thumbnailUrl;
+   }
+   get roles(): RolesMemento | null {
+      return this._roles;
+   }
+
 }
 
 export class Person extends Persistence {
@@ -309,23 +530,38 @@ export class Person extends Persistence {
 
 /**
  * Create a Person object
- * @param persistenceDetails - (from Persistence) for the database layer to use and assign
- * @param loginDetails - ID assigned by external system (like facebook)
- * @param name - plain text user name. Cannot be null. 
+ * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.
+ * @param loginDetails - ID assigned by external system (like facebook). Cannot be null.
+ * @param name - plain text user name. Cannot be null.
  * @param email - user email, can be null if not provided
  * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
  * @param roles - list of roles the Person plays, can be null
  */
-   constructor(persistenceDetails: PersistenceDetails,
-      loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null) {
+   public constructor(persistenceDetails: PersistenceDetails,
+      loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null);
+   public constructor(memento: PersonMemento);
+   public constructor(...myarray: any[]) {
 
-      super(persistenceDetails);
+      if (myarray.length === 1) {
 
-      this._loginDetails = loginDetails;
-      this._name = name;
-      this._email = email;
-      this._thumbnailUrl = thumbnailUrl;
-      this._roles = roles;
+         super(myarray[0]._persistenceDetails);
+
+         this._loginDetails = myarray[0]._loginDetails;
+         this._name = myarray[0]._name;
+         this._email = myarray[0]._email;
+         this._thumbnailUrl = myarray[0]._thumbnailUrl;
+         this._roles = myarray[0]._roles;
+
+      } else {
+
+         super(myarray[0]);
+
+         this._loginDetails = myarray[1];
+         this._name = myarray[2];
+         this._email = myarray[3];
+         this._thumbnailUrl = myarray[4];
+         this._roles = myarray[5];
+      }
    }
 
    /**
@@ -357,6 +593,13 @@ export class Person extends Persistence {
    }
    set roles(roles: Roles) {
       this._roles = roles;
+   }
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): PersonMemento {
+      return new PersonMemento (this.persistenceDetails, this._loginDetails, this._name, this._email, this._thumbnailUrl, this._roles);
    }
 
    /**
@@ -400,10 +643,7 @@ export function personArraysAreEqual(lhs: Array<Person>, rhs: Array<Person>): bo
    return true;
 }
 
-export interface IPersonLoader {
-   load(): Person;
-}
-
-export interface IPersonStorer {
-   save(person: Person);
+export interface IPersonStore {
+   load(id: any): Promise<Person | null>;
+   save(person: Person): Promise<Person | null>;
 }
