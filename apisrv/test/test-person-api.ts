@@ -1,6 +1,6 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";

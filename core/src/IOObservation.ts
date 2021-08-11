@@ -65,7 +65,7 @@ export class WeightMeasurementTypeCodec implements ICodec<MeasurementTypeOf<EWei
    }
 }
 
-// WeightMeasurementType Codec
+// WeightMeasurement Codec
 // ==========
 
 const weightMeasurementIoType = IoTs.type({

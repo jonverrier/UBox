@@ -2,6 +2,7 @@
 // Copyright TXPCo ltd, 2020, 2021
 
 import mongoose from "mongoose";
+import { Logger } from '../../core/src/Logger';
 import { Person, IPersonStore } from '../../core/src/Person';
 import { PersonCodec } from '../../core/src/IOPerson';
 
@@ -38,6 +39,8 @@ export class PersonDb implements IPersonStore {
 
          return this._codec.tryCreateFrom(result._doc);
       } catch (err) {
+         let logger: Logger = new Logger();
+         logger.logError("PersonDb", "save", "Error:", err);
          return null;
       }
 

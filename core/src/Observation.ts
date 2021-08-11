@@ -48,7 +48,7 @@ export class MeasurementTypeMementoOf<Unit> {
 
 
 export class MeasurementTypeOf<Unit> {
-   private _measurmentType: EMeasurementType;
+   private _measurementType: EMeasurementType;
    private _range: RangeOf<Unit>;
    private _trend: EPositiveTrend;
 
@@ -60,7 +60,7 @@ export class MeasurementTypeOf<Unit> {
     */
    constructor(measurementType: EMeasurementType, range: RangeOf<Unit>, trend: EPositiveTrend) {
 
-      this._measurmentType = measurementType;
+      this._measurementType = measurementType;
       this._range = range;
       this._trend = trend;
    }
@@ -69,7 +69,7 @@ export class MeasurementTypeOf<Unit> {
    * set of 'getters' for private variables
    */
    get measurementType(): EMeasurementType {
-      return this._measurmentType;
+      return this._measurementType;
    }
 
    get range(): RangeOf<Unit> {
@@ -84,7 +84,7 @@ export class MeasurementTypeOf<Unit> {
    * memento() returns a copy of internal state
    */
    memento(): MeasurementTypeMementoOf<Unit> {
-      return new MeasurementTypeMementoOf<Unit>(this._measurmentType, this._range.memento(), this._trend);
+      return new MeasurementTypeMementoOf<Unit>(this._measurementType, this._range.memento(), this._trend);
    }
 
    /**
@@ -94,7 +94,7 @@ export class MeasurementTypeOf<Unit> {
     */
    equals(rhs: MeasurementTypeOf<Unit>): boolean {
 
-      return (this._measurmentType === rhs._measurmentType && 
+      return (this._measurementType === rhs._measurementType && 
          this._range.equals(rhs._range) &&
          this._trend === rhs._trend);
    }
@@ -256,10 +256,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
    }
 }
 
-export interface IMeasurementLoaderFor<measuredUnit> {
-   load(): MeasurementOf<measuredUnit>;
-}
-
-export interface IMeasurementStorerFor<measuredUnit> {
-   save(measurement: MeasurementOf<measuredUnit>);
+export interface IWeightMeasurementStore {
+   load(id: any): Promise<MeasurementOf<EWeightUnits> | null>;
+   save(measurement: MeasurementOf<EWeightUnits>): Promise<MeasurementOf<EWeightUnits> | null>;
 }

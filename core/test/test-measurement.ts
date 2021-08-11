@@ -3,7 +3,7 @@
 import { PersistenceDetails } from "../src/Persistence";
 import { EWeightUnits, ETimeUnits, QuantityOf, ERepUnits, EDistanceUnits } from '../src/Quantity';
 import {
-   EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IMeasurementLoaderFor, IMeasurementStorerFor,
+   EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IWeightMeasurementStore,
    weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual
 } from '../src/Observation';
 import {
@@ -205,25 +205,26 @@ describe("Measurement", function () {
 
 });
 
-class StubLoader implements IMeasurementLoaderFor<EWeightUnits> {
-   load(): MeasurementOf<EWeightUnits> {
+class StubStore implements IWeightMeasurementStore {
+   async load(): Promise <MeasurementOf<EWeightUnits> | null>  {
       let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
       let repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
       let measurementType = new SnatchMeasurementType();
+
       return new MeasurementOf<EWeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+   }
+
+   async save(measurement: MeasurementOf<EWeightUnits>): Promise<MeasurementOf<EWeightUnits> | null > {
+      return measurement;
    }
 }
 
-class StubStorer implements IMeasurementStorerFor<EWeightUnits> {
-   save(measurement: MeasurementOf<EWeightUnits>) {
-   }
-}
 
 describe("MeasurementLoader", function () {
 
    it("Needs to load a Measurement.", function () {
 
-      let loader = new StubLoader;
+      let loader = new StubStore;
 
       let measurement = loader.load();
 
@@ -236,7 +237,7 @@ describe("MeasurementStorer", function () {
 
    it("Needs to save a Measurement.", function () {
 
-      let storer = new StubStorer;
+      let storer = new StubStore;
       let caught = false;
 
       try {
