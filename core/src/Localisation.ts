@@ -1,9 +1,9 @@
 /*! Copyright TXPCo, 2021 */
 
 export enum ELanguage {
-   EnglishUK,
-   EnglishUS,
-   French
+   EnglishUK = "EnglishUK",
+   EnglishUS = "EnglishUS",
+   French = "French"
 }
 
 export interface ITextLocaliser {

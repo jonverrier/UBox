@@ -6,7 +6,7 @@ import { EmailAddress, Person, personArraysAreEqual } from "./Person";
 import { MeasurementTypeOf, weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual } from "./Observation";
 import { EWeightUnits, ETimeUnits } from './Quantity';
 
-export enum ECohortPeriod { Week, TwoWeeks, ThreeWeeks, FourWeeks, Month };
+export enum ECohortPeriod { Week = "Week", TwoWeeks = "Twoweeks", ThreeWeeks = "ThreeWeeks", FourWeeks = "FourWeeks", Month = "Month"};
 
 export class CohortName {
    private _name: string;

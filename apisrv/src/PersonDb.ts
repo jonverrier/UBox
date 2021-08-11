@@ -38,7 +38,6 @@ export class PersonDb implements IPersonStore {
 
          return this._codec.tryCreateFrom(result._doc);
       } catch (err) {
-         console.log("Save, from DB:" + JSON.stringify(err));
          return null;
       }
 

@@ -8,7 +8,7 @@ import {
 } from '../src/Observation';
 import {
    SnatchMeasurementType, CleanMeasurementType, JerkMeasurementType, CleanAndJerkMeasurementType,
-   RowSprintMeasurementType, RunSprintMeasurementType
+   Row250mMeasurementType, Run100m
 } from '../src/FitnessObservations'
 
 var expect = require("chai").expect;
@@ -19,7 +19,7 @@ describe("MeasurementType", function () {
       let snatch = new SnatchMeasurementType();
       let snatch2 = new SnatchMeasurementType();
 
-      expect(snatch.measurmentType).to.equal(EMeasurementType.Snatch);
+      expect(snatch.measurementType).to.equal(EMeasurementType.Snatch);
       expect(snatch.range.equals(snatch2.range)).to.equal(true);
       expect(snatch.trend).to.equal(EPositiveTrend.Up);
    });
@@ -54,8 +54,8 @@ describe("MeasurementType", function () {
    });
 
    it("Needs to test time array compare", function () {
-      let row = new RowSprintMeasurementType();
-      let run = new RunSprintMeasurementType();
+      let row = new Row250mMeasurementType();
+      let run = new Run100m();
       let rows = new Array<MeasurementTypeOf<ETimeUnits>>();
       let moreRows = new Array<MeasurementTypeOf<ETimeUnits>>();
       let variedRows = new Array<MeasurementTypeOf<ETimeUnits>>();
@@ -73,11 +73,11 @@ describe("MeasurementType", function () {
    });
 });
 
-function testConstruct<measuredUnit, repeatUnit>(quantity: QuantityOf<measuredUnit>,
-                              repeats: QuantityOf<repeatUnit>,
-                              measurementType: MeasurementTypeOf<measuredUnit>) {
+function testConstruct<MeasuredUnit>(quantity: QuantityOf<MeasuredUnit>,
+                              repeats: QuantityOf<ERepUnits>,
+                              measurementType: MeasurementTypeOf<MeasuredUnit>) {
 
-   let measurement = new MeasurementOf<measuredUnit, repeatUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+   let measurement = new MeasurementOf<MeasuredUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
 
    expect(measurement.persistenceDetails.id).to.equal("id");
    expect(measurement.persistenceDetails.schemaVersion).to.equal(1);
@@ -90,13 +90,13 @@ function testConstruct<measuredUnit, repeatUnit>(quantity: QuantityOf<measuredUn
    expect(measurement.subjectExternalId).to.equal("1234");
 }
 
-function testEquals<measuredUnit, repeatUnit>(quantity: QuantityOf<measuredUnit>,
-   repeats: QuantityOf<repeatUnit>,
-   measurementType: MeasurementTypeOf<measuredUnit>) {
+function testEquals<MeasuredUnit>(quantity: QuantityOf<MeasuredUnit>,
+   repeats: QuantityOf<ERepUnits>,
+   measurementType: MeasurementTypeOf<MeasuredUnit>) {
 
-   let measurement1 = new MeasurementOf<measuredUnit, repeatUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
-   let measurement2 = new MeasurementOf<measuredUnit, repeatUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 1, measurementType, "1234");
-   let measurement3 = new MeasurementOf<measuredUnit, repeatUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+   let measurement1 = new MeasurementOf<MeasuredUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+   let measurement2 = new MeasurementOf<MeasuredUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 1, measurementType, "1234");
+   let measurement3 = new MeasurementOf<MeasuredUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
 
    expect(measurement1.equals(measurement1)).to.equal(true);
    expect(measurement1.equals(measurement2)).to.equal(false);
@@ -133,17 +133,17 @@ describe("Measurement", function () {
       testConstruct(quantity, repeats, measurement);
    });
 
-   it("Needs to construct RowSprint correctly", function () {
+   it("Needs to construct Row250m correctly", function () {
       let quantity = new QuantityOf<ETimeUnits>(120, ETimeUnits.Seconds);
-      let repeats = new QuantityOf<ERepUnits>(500, ERepUnits.Reps);
-      let measurement = new RowSprintMeasurementType();
+      let repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
+      let measurement = new Row250mMeasurementType();
       testConstruct(quantity, repeats, measurement);
    });
 
-   it("Needs to construct RowSprint correctly", function () {
+   it("Needs to construct Run100m correctly", function () {
       let quantity = new QuantityOf<ETimeUnits>(240, ETimeUnits.Seconds);
-      let repeats = new QuantityOf<EDistanceUnits>(1000, EDistanceUnits.Metres);
-      let measurement = new RunSprintMeasurementType();
+      let repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
+      let measurement = new Run100m();
       testConstruct(quantity, repeats, measurement);
    });
 
@@ -177,15 +177,15 @@ describe("Measurement", function () {
 
    it("Needs to test Row for equality", function () {
       let quantity = new QuantityOf<ETimeUnits>(60, ETimeUnits.Seconds);
-      let repeats = new QuantityOf<EDistanceUnits>(500, EDistanceUnits.Metres);
-      let measurement = new RowSprintMeasurementType();
+      let repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
+      let measurement = new Row250mMeasurementType();
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to test Run for equality", function () {
       let quantity = new QuantityOf<ETimeUnits>(60, ETimeUnits.Seconds);
-      let repeats = new QuantityOf<EDistanceUnits>(1000, EDistanceUnits.Metres);
-      let measurement = new RunSprintMeasurementType();
+      let repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
+      let measurement = new Run100m();
       testEquals(quantity, repeats, measurement);
    });
 
@@ -196,7 +196,7 @@ describe("Measurement", function () {
       let caught = false;
 
       try {
-         let measurement = new MeasurementOf<EWeightUnits, ERepUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+         let measurement = new MeasurementOf<EWeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
       } catch {
          caught = true;
       }
@@ -205,17 +205,17 @@ describe("Measurement", function () {
 
 });
 
-class StubLoader implements IMeasurementLoaderFor<EWeightUnits, ERepUnits> {
-   load(): MeasurementOf<EWeightUnits, ERepUnits> {
+class StubLoader implements IMeasurementLoaderFor<EWeightUnits> {
+   load(): MeasurementOf<EWeightUnits> {
       let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
       let repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
       let measurementType = new SnatchMeasurementType();
-      return new MeasurementOf<EWeightUnits, ERepUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+      return new MeasurementOf<EWeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
    }
 }
 
-class StubStorer implements IMeasurementStorerFor<EWeightUnits, ERepUnits> {
-   save(measurement: MeasurementOf<EWeightUnits, ERepUnits>) {
+class StubStorer implements IMeasurementStorerFor<EWeightUnits> {
+   save(measurement: MeasurementOf<EWeightUnits>) {
    }
 }
 
@@ -243,7 +243,7 @@ describe("MeasurementStorer", function () {
          let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
          let repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
          let measurementType = new SnatchMeasurementType();
-         let measurement = new MeasurementOf<EWeightUnits, ERepUnits>(new PersistenceDetails("id", 1, 2),
+         let measurement = new MeasurementOf<EWeightUnits>(new PersistenceDetails("id", 1, 2),
             quantity, repeats, 0, measurementType, "1234");
 
          storer.save(measurement);

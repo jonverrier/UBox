@@ -1,9 +1,9 @@
 /*! Copyright TXPCo, 2021 */
 
-export enum EWeightUnits { Kg, Lbs }
-export enum ETimeUnits { Seconds }
-export enum EDistanceUnits { Metres }
-export enum ERepUnits { Reps }
+export enum EWeightUnits { Kg = "Kg", Lbs = "Lbs"}
+export enum ETimeUnits { Seconds = "Seconds"}
+export enum EDistanceUnits { Metres = "Metres"}
+export enum ERepUnits { Reps = "Reps"}
 
 export class QuantityMementoOf<Unit> {
    _amount: number;
