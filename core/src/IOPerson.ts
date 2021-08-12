@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { PersistenceDetails, PersistenceDetailsMemento } from './Persistence';
+import { PersistenceDetails } from './Persistence';
 import { LoginDetails, EmailAddress, Url, Name, Roles, Person, ERoleType, ELoginProvider } from "./Person";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 

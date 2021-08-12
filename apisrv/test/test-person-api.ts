@@ -1,7 +1,8 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 
+import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { ELoginProvider, ERoleType, LoginDetails, Name, EmailAddress, Url, Roles, Person } from "../../core/src/Person";
 import { PersonCodec } from '../../core/src/IOPerson';
@@ -31,9 +32,10 @@ describe("PersonApi", function () {
          const response = await axios.put(saveUrl, encoded);
          let decoded = codec.decode(response.data);
          done();
-      } catch (err) {
-         console.log("Err " + JSON.stringify (err));
-         done(err);
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("PersonApi", "Save", "Error", e.toString());
+         done(e);
       }
 
    });
@@ -47,11 +49,11 @@ describe("PersonApi", function () {
          const response = await axios.put(saveUrl, encoded);
          let decoded = codec.decode(response.data);
          const response2 = await axios.get(queryUrl, { params: { _id: decoded._persistenceDetails._id.toString() } });
-         console.log("Query " + JSON.stringify(response2.data));
          done();
-      } catch (err) {
-         console.log("Err " + JSON.stringify(err));
-         done(err);
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("PersonApi", "Save-Load", "Error", e.toString());
+         done(e);
       }
 
    });

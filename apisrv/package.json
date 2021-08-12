@@ -27,6 +27,7 @@
     "errorhandler": "^1.5.1",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
+    "loglevel": "^1.7.1",
     "mongoose": "^5.13.5",
     "path": "^0.12.7",
     "qs": "^6.10.1",

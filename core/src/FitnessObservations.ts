@@ -85,7 +85,7 @@ export class SpeedMeasurementType extends MeasurementTypeOf<ETimeUnits> {
 
 }
 
-export class RowSprintMeasurementType extends SpeedMeasurementType {
+export class Row250mMeasurementType extends SpeedMeasurementType {
 
    /**
     * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 500m row
@@ -96,7 +96,7 @@ export class RowSprintMeasurementType extends SpeedMeasurementType {
 
 }
 
-export class RunSprintMeasurementType extends SpeedMeasurementType {
+export class Run100m extends SpeedMeasurementType {
 
    /**
     * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 500m row

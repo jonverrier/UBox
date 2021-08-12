@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 
 import { PersistenceDetails } from "../src/Persistence";
-import { SnatchMeasurementType, CleanMeasurementType, RowSprintMeasurementType, RunSprintMeasurementType } from '../src/FitnessObservations'
+import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run100m } from '../src/FitnessObservations'
 import { Name, LoginDetails, EmailAddress, Url, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
 import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
 import { CohortName, CohortTimePeriod, Cohort, ECohortPeriod } from '../src/Cohort';
@@ -142,7 +142,7 @@ describe("Cohort", function () {
       let weightMeasurements = new Array < MeasurementTypeOf<EWeightUnits>>();
       weightMeasurements.push(weightMeasurement);
 
-      let timeMeasurement = new RowSprintMeasurementType();
+      let timeMeasurement = new Row250mMeasurementType();
       let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 
@@ -193,7 +193,7 @@ describe("Cohort", function () {
       let weightMeasurements = new Array<MeasurementTypeOf<EWeightUnits>>();
       weightMeasurements.push(weightMeasurement);
 
-      let timeMeasurement = new RunSprintMeasurementType();
+      let timeMeasurement = new Run100m();
       let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 

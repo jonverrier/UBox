@@ -1,5 +1,6 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
+import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
 import { PersistenceDetailsCodec } from '../src/IOCommon';
 import { LoginDetails, EmailAddress, Url, Name, Roles, Person, ERoleType, ELoginProvider } from '../src/Person';
@@ -72,7 +73,6 @@ describe("IOName", function () {
 
       let encoded = codec.encode (new Name ("Joe", "Bloggs"));
 
-      console.log(encoded);
       expect(encoded.name).to.equal("Joe");
       expect(encoded.surname).to.equal("Bloggs");
    });
@@ -338,7 +338,8 @@ describe("IORoles", function () {
       try {
          decoded = codec.tryCreateFrom(encoded);
       } catch (e) {
-         console.log(e);
+         var logger = new Logger();
+         logger.logError("Roles", "Encode-Decode", "Error", e.toString());
          caught = true;
       }
 
@@ -453,7 +454,8 @@ describe("IOPerson", function () {
       try {
          decoded = codec.tryCreateFrom(encoded);
       } catch (e) {
-         console.log(e.toString());
+         var logger = new Logger();
+         logger.logError("Person", "Encode-Decode", "Error", e.toString());
          caught = true;
       }
 
