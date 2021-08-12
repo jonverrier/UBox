@@ -37,12 +37,9 @@
     <Content Include="public\assets\img\apple-touch-icon.png" />
     <Content Include="public\assets\img\coach.jpg" />
     <Content Include="public\assets\img\favicon.png" />
-    <Content Include="public\assets\img\hero-bg.jpg" />
     <Content Include="public\assets\img\hero.jpg" />
-    <Content Include="public\assets\img\logo.png" />
     <Content Include="public\assets\img\tesseract.png" />
     <Content Include="public\assets\js\main.js" />
-    <Content Include="public\assets\js\contact.js" />
     <Content Include="public\assets\vendor\aos\aos.css" />
     <Content Include="public\assets\vendor\aos\aos.js" />
     <Content Include="public\assets\vendor\boxicons\css\animations.css" />

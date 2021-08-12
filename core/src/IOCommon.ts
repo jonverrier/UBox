@@ -100,7 +100,7 @@ export class PersistenceDetailsCodec implements ICodec<PersistenceDetails> {
    }
 
    tryCreateFrom(data: any): PersistenceDetails  {
-      let temp = decodeWith(persistenceDetailsIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode (data); // If types dont match an exception will be thrown here
       return new PersistenceDetails(temp._id, temp._schemaVersion, temp._sequenceNumber);
    }
 }

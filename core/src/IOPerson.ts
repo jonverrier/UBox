@@ -30,7 +30,7 @@ export class NameCodec implements ICodec<Name> {
    }
 
    tryCreateFrom(data: any): Name {
-      let temp = decodeWith(nameIoType)(data); // If types dont match an exception will be thrown here 
+      let temp = this.decode (data); // If types dont match an exception will be thrown here 
       return new Name(temp._name, temp._surname);
    }
 }
@@ -53,7 +53,7 @@ export class LoginDetailsCodec implements ICodec<LoginDetails> {
    }
 
    tryCreateFrom(data: any): LoginDetails {
-      let temp = decodeWith(loginIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode (data); // If types dont match an exception will be thrown here
       return new LoginDetails(temp._provider, temp._token);
    }
 }
@@ -76,7 +76,7 @@ export class EmailAddressCodec implements ICodec<EmailAddress> {
    }
 
    tryCreateFrom(data: any): EmailAddress {
-      let temp = decodeWith(emailIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
       return new EmailAddress(temp._email, temp._isEmailVerified);
    }
 }
@@ -100,7 +100,7 @@ export class UrlCodec implements ICodec<Url> {
    }
 
    tryCreateFrom(data: any): Url {
-      let temp = decodeWith(urlIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
       return new Url(temp._url, temp._isUrlVerified);
    }
 }
@@ -130,7 +130,7 @@ export class RolesCodec implements ICodec<Roles> {
    }
 
    tryCreateFrom(data: any): Roles {
-      let temp = decodeWith(rolesIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode (data); // If types dont match an exception will be thrown here
       return new Roles(temp._roles);
    }
 }
@@ -138,7 +138,7 @@ export class RolesCodec implements ICodec<Roles> {
 // Person Codec
 // ==========
 
-const personIoType = IoTs.type({
+export const personIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
    _loginDetails: loginIoType,
    _name: nameIoType,
@@ -160,7 +160,7 @@ export class PersonCodec implements ICodec<Person> {
 
    tryCreateFrom(data: any): Person {
 
-      let temp = decodeWith(personIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode (data); // If types dont match an exception will be thrown here
 
       return new Person(new PersistenceDetails(temp._persistenceDetails._id, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
          new LoginDetails(temp._loginDetails._provider, temp._loginDetails._token),

@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { MeasurementOf, IWeightMeasurementStore } from '../../core/src/Observation';
+import { MeasurementOf } from '../../core/src/Observation';
 import { WeightMeasurementCodec } from '../../core/src/IOObservation';
 import { EWeightUnits, ERepUnits, QuantityOf } from "../../core/src/Quantity";
 import { SnatchMeasurementType } from '../../core/src/FitnessObservations';
@@ -21,9 +21,6 @@ describe("MeasurementApi", function () {
 
    var measurement1: MeasurementOf<EWeightUnits> = new MeasurementOf<EWeightUnits>(
       new PersistenceDetails(null, 1, 2), quantity, repeats, 0, measurementType, "1234");
-
-   beforeEach(function () {
-   });
 
    it("Needs to save a new Measurement", async function (done) {
 
@@ -42,7 +39,6 @@ describe("MeasurementApi", function () {
 
    });
 
-   /* 
    it("Needs to save and then retrieve an existing Measurement", async function (done) {
 
       let codec = new WeightMeasurementCodec();
@@ -60,7 +56,6 @@ describe("MeasurementApi", function () {
       }
 
    });
-   */
 });
 
 

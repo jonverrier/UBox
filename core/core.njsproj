@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\Cohort.ts" />
+    <TypeScriptCompile Include="src\IOCohort.ts" />
     <TypeScriptCompile Include="src\IOObservation.ts" />
     <TypeScriptCompile Include="src\Localisation.ts" />
     <TypeScriptCompile Include="src\FitnessObservations.ts" />
@@ -61,6 +62,7 @@
     <TypeScriptCompile Include="test\test-cohort.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\test-IOcohort.ts" />
     <TypeScriptCompile Include="test\test-IOobservation.ts" />
     <TypeScriptCompile Include="test\test-localisation.ts">
       <TestFramework>Mocha</TestFramework>
