@@ -104,3 +104,35 @@ export class PersistenceDetailsCodec implements ICodec<PersistenceDetails> {
       return new PersistenceDetails(temp._id, temp._schemaVersion, temp._sequenceNumber);
    }
 }
+
+// ID List - used to pass an array of parameters as a query string
+// ==========
+export class IdList {
+   public _ids: Array<string>;
+
+   constructor(ids: Array<string>) {
+      this._ids = ids;
+   }
+}
+
+// ID List Codec - IDs are sent over wire as a list of strings
+// ==========
+export const idListIoType = IoTs.type({
+   _ids: IoTs.array(IoTs.string)
+});
+
+export class IdListCodec implements ICodec<IdList> {
+
+   decode(data: any): any {
+      return decodeWith(idListIoType)(data);
+   }
+
+   encode(data: IdList): any {
+      return encodeWith(idListIoType)(data);
+   }
+
+   tryCreateFrom(data: any): IdList {
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
+      return new IdList (temp);
+   }
+}

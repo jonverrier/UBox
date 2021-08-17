@@ -14,7 +14,7 @@ export class PersonDb implements IPersonStore {
       this._codec = new PersonCodec();;
    }
 
-   async load (id: any): Promise<Person | null>  {
+   async loadOne (id: any): Promise<Person | null>  {
 
       const result = await personModel.findOne().where('_id').eq(id).exec();
 
@@ -27,6 +27,30 @@ export class PersonDb implements IPersonStore {
       } else {
          return null;
       }
+   }
+
+   async loadMany(ids: Array<any>): Promise<Array<Person>> {
+
+      const result = await personModel.find().where('_id').in(ids).exec();
+
+      if (result && result.length > 0) {
+         var i: number;
+         var people: Array<Person> = new Array<Person>();
+
+         for (i = 0; i < result.length; i++) {
+            // If we saved a new document, copy the new Mongo ID up to persistenceDetails
+            if (result[i]._doc._persistenceDetails._id !== result[i]._doc._id)
+               result[i]._doc._persistenceDetails._id = result[i]._doc._id;
+
+            people.push(this._codec.tryCreateFrom(result[i]._doc));
+         }
+
+         return people;
+      } else {
+         return null;
+      }
+
+      return new Array<Person>();
    }
 
    async save(person: Person): Promise<Person | null> {

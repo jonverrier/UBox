@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import { PersistenceDetails } from './Persistence';
-import { LoginDetails, EmailAddress, Url, Name, Roles, Person, ERoleType, ELoginProvider } from "./Person";
+import { LoginDetails, EmailAddress, Url, Name, Roles, Person, PersonMemento, ERoleType, ELoginProvider } from "./Person";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 
 import * as IoTs from 'io-ts';
@@ -162,11 +162,44 @@ export class PersonCodec implements ICodec<Person> {
 
       let temp = this.decode (data); // If types dont match an exception will be thrown here
 
-      return new Person(new PersistenceDetails(temp._persistenceDetails._id, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
-         new LoginDetails(temp._loginDetails._provider, temp._loginDetails._token),
-         new Name(temp._name._name, temp._name._surname),
-         temp._email ? new EmailAddress(temp._email._email, temp._email._isEmailVerified) : null,
-         temp._thumbnailUrl ? new Url(temp._thumbnailUrl._url, temp._thumbnailUrl._isUrlVerified) : null,
-         temp._roles ? new Roles(temp._roles._roles) : null);
+      return new Person(temp);
+   }
+}
+
+// People Codec
+// ==========
+
+export const peopleIoType = IoTs.array(personIoType);
+
+export class PeopleCodec implements ICodec<Array<Person>> {
+
+   decode(data: any): any {
+
+      return decodeWith(peopleIoType)(data);
+   }
+
+   encode(data: Array<Person>): any {
+      var i: number;
+      var mementos: Array<PersonMemento> = new Array<PersonMemento>();
+
+      for (i = 0; i < data.length; i++) {
+         mementos[i] = data[i].memento();
+      }
+      return encodeWith(peopleIoType)(mementos);
+   }
+
+   tryCreateFrom(data: any): Array<Person> {
+
+      var i: number;
+      var people: Array<Person> = new Array<Person>();
+
+      for (i = 0; i < data.length; i++) {
+
+         let temp = this.decode(data[i]); // If types dont match an exception will be thrown here
+
+         people[i] = new Person(temp); 
+      }
+
+      return people;
    }
 }

@@ -292,44 +292,45 @@ export class Cohort extends Persistence {
       weightMeasurements: Array<MeasurementTypeOf<EWeightUnits>>,
       timeMeasurements: Array<MeasurementTypeOf<ETimeUnits>>);
    public constructor(memento: CohortMemento);
-   public constructor(...paramArray: any[]) {
+   public constructor(...params: any[]) {
 
-      if (paramArray.length === 1) {
+      if (params.length === 1) {
          var i: number;
+         let memento: CohortMemento = params[0];
 
-         super(new PersistenceDetails(paramArray[0]._persistenceDetails._id,
-            paramArray[0]._persistenceDetails._schemaVersion,
-            paramArray[0]._persistenceDetails._sequenceNumber));
+         super(new PersistenceDetails(memento._persistenceDetails._id,
+            memento._persistenceDetails._schemaVersion,
+            memento._persistenceDetails._sequenceNumber));
 
-         this._name = new CohortName(paramArray[0]._name._name);
-         this._period = new CohortTimePeriod(paramArray[0]._period._startDate, paramArray[0]._period._period, paramArray[0]._period._number);
+         this._name = new CohortName(memento._name._name);
+         this._period = new CohortTimePeriod(memento._period._startDate, memento._period._period, memento._period.numberOfPeriods);
 
-         this._administrators = new Array<Person>(paramArray[0]._administrators.length);
-         for (i = 0; i < paramArray[0]._administrators.length; i++)
-            this._administrators[i] = new Person(paramArray[0]._administrators[i]);
+         this._administrators = new Array<Person>(memento._administrators.length);
+         for (i = 0; i < memento._administrators.length; i++)
+            this._administrators[i] = new Person(memento._administrators[i]);
 
-         this._members = new Array<Person>(paramArray[0]._members.length);
-         for (i = 0; i < paramArray[0]._members.length; i++)
-            this._members[i] = new Person(paramArray[0]._members[i]);
+         this._members = new Array<Person>(memento._members.length);
+         for (i = 0; i < memento._members.length; i++)
+            this._members[i] = new Person(memento._members[i]);
 
-         this._weightMeasurements = new Array<MeasurementTypeOf<EWeightUnits>>(paramArray[0].weightMeasurements.length);
-         for (i = 0; i < paramArray[0].weightMeasurements.length; i++)
-            this._weightMeasurements[i] = new MeasurementTypeOf<EWeightUnits>(paramArray[0].weightMeasurements[i]);
+         this._weightMeasurements = new Array<MeasurementTypeOf<EWeightUnits>>(memento.weightMeasurements.length);
+         for (i = 0; i < memento.weightMeasurements.length; i++)
+            this._weightMeasurements[i] = new MeasurementTypeOf<EWeightUnits>(memento.weightMeasurements[i]);
 
-         this._timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>(paramArray[0].timeMeasurements.length);
-         for (i = 0; i < paramArray[0].timeMeasurements.length; i++)
-            this._timeMeasurements[i] = new MeasurementTypeOf<ETimeUnits>(paramArray[0].timeMeasurements[i]);
+         this._timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>(memento.timeMeasurements.length);
+         for (i = 0; i < memento.timeMeasurements.length; i++)
+            this._timeMeasurements[i] = new MeasurementTypeOf<ETimeUnits>(memento.timeMeasurements[i]);
 
       } else {
 
-         super(paramArray[0]);
+         super(params[0]);
 
-         this._name = paramArray[1];
-         this._period = paramArray[2];
-         this._administrators = paramArray[3];
-         this._members = paramArray[4];
-         this._weightMeasurements = paramArray[5];
-         this._timeMeasurements = paramArray[6];
+         this._name = params[1];
+         this._period = params[2];
+         this._administrators = params[3];
+         this._members = params[4];
+         this._weightMeasurements = params[5];
+         this._timeMeasurements = params[6];
       }
    }
 

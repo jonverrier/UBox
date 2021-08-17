@@ -1,8 +1,8 @@
 /*! Copyright TXPCo, 2021 */
 
-import { ETimeUnits, EWeightUnits, ERepUnits, QuantityOf, QuantityMementoOf } from "./Quantity";
-import { RangeOf, RangeMementoOf } from "./Range";
-import { PersistenceDetails, Persistence, PersistenceDetailsMemento } from "./Persistence";
+import { Persistence, PersistenceDetails, PersistenceDetailsMemento } from "./Persistence";
+import { ERepUnits, ETimeUnits, EWeightUnits, QuantityMementoOf, QuantityOf } from "./Quantity";
+import { RangeMementoOf, RangeOf } from "./Range";
 
 // This enum is used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing 
 export enum EPositiveTrend { Up = "Up", Down = "Down"}
@@ -59,20 +59,22 @@ export class MeasurementTypeOf<Unit> {
     */
    constructor(measurementType: EMeasurementType, range: RangeOf<Unit>, trend: EPositiveTrend);
    public constructor(memento: MeasurementTypeMementoOf<Unit>);
-   public constructor(...paramArray: any[]) {
+   public constructor(...params: any[]) {
 
-      if (paramArray.length === 1) {
-         this._measurementType = paramArray[0]._measurementType;
-         this._range = new RangeOf<Unit>(new QuantityOf<Unit>(paramArray[0]._range._lo._amount, paramArray[0]._range._lo._unit),
-            paramArray[0]._range._loInclEq,
-            new QuantityOf<Unit>(paramArray[0]._range._hi._amount, paramArray[0]._range._hi._unit),
-            paramArray[0]._range._hiInclEq);
-         this._trend = paramArray[0]._trend;
+      if (params.length === 1) {
+
+         let memento: MeasurementTypeMementoOf<Unit> = params[0];
+         this._measurementType = memento._measurementType;
+         this._range = new RangeOf<Unit>(new QuantityOf<Unit>(memento._range._lo._amount, memento._range._lo._unit),
+            memento._range._loInclEq,
+            new QuantityOf<Unit>(memento._range._hi._amount, memento._range._hi._unit),
+            memento._range._hiInclEq);
+         this._trend = memento._trend;
       } else {
 
-         this._measurementType = paramArray[0];
-         this._range = paramArray[1];
-         this._trend = paramArray[2];
+         this._measurementType = params[0];
+         this._range = params[1];
+         this._trend = params[2];
       }
    }
 
@@ -162,8 +164,6 @@ export class MeasurementMementoOf<MeasuredUnit> {
    constructor(persistenceDetails: PersistenceDetails,
       quantity: QuantityOf<MeasuredUnit>, repeats: QuantityOf<ERepUnits>, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
    {
-
-
       this._persistenceDetails = persistenceDetails.memento();
       this._quantity = quantity.memento();
       this._repeats = repeats.memento();
@@ -214,36 +214,36 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
    constructor(persistenceDetails: PersistenceDetails,
       quantity: QuantityOf<MeasuredUnit>, repeats: QuantityOf<ERepUnits>, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
    public constructor(memento: MeasurementMementoOf<MeasuredUnit>);
-   public constructor(...paramArray: any[]) {
+   public constructor(...params: any[]) {
 
-      if (paramArray.length === 1) {
+      if (params.length === 1) {
 
-         super(new PersistenceDetails(paramArray[0]._persistenceDetails._id,
-            paramArray[0]._persistenceDetails._schemaVersion,
-            paramArray[0]._persistenceDetails._sequenceNumber));
+         let memento: MeasurementMementoOf<MeasuredUnit> = params[0];
 
-         this._quantity = new QuantityOf<MeasuredUnit>(paramArray[0]._quantity._amount,
-            paramArray[0]._quantity._unit);
-         this._repeats = new QuantityOf<ERepUnits>(paramArray[0]._repeats._amount,
-            paramArray[0]._repeats._unit);
-         this._cohortPeriod = paramArray[0]._cohortPeriod;
-         this._measurementType = new MeasurementTypeOf<MeasuredUnit>(paramArray[0]._measurementType._measurementType,
-            paramArray[0]._measurementType._range,
-            paramArray[0]._measurementType._trend);
-         this._subjectExternalId = paramArray[0]._subjectExternalId;
+         super(new PersistenceDetails(memento._persistenceDetails._id,
+            memento._persistenceDetails._schemaVersion,
+            memento._persistenceDetails._sequenceNumber));
+
+         this._quantity = new QuantityOf<MeasuredUnit>(memento._quantity._amount,
+            memento._quantity._unit);
+         this._repeats = new QuantityOf<ERepUnits>(memento._repeats._amount,
+            memento._repeats._unit);
+         this._cohortPeriod = memento._cohortPeriod;
+         this._measurementType = new MeasurementTypeOf<MeasuredUnit>(memento._measurementType);
+         this._subjectExternalId = memento._subjectExternalId;
 
       } else {
 
-         super(paramArray[0]);
+         super(params[0]);
 
-         if (!paramArray[4].range.includes(paramArray[1])) {
+         if (!params[4].range.includes(params[1])) {
             throw RangeError();
          }
-         this._quantity = paramArray[1];
-         this._repeats = paramArray[2];
-         this._cohortPeriod = paramArray[3];
-         this._measurementType = paramArray[4];
-         this._subjectExternalId = paramArray[5];
+         this._quantity = params[1];
+         this._repeats = params[2];
+         this._cohortPeriod = params[3];
+         this._measurementType = params[4];
+         this._subjectExternalId = params[5];
       }
    }
 

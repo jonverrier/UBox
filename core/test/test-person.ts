@@ -6,13 +6,16 @@ import { Name, LoginDetails, EmailAddress, Url, Roles, Person, personArraysAreEq
 var expect = require("chai").expect;
 
 class StubLoader implements IPersonStore {
-   async load(id: any): Promise<Person | null> {
+   async loadOne(id: any): Promise<Person | null> {
       return new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
          new Name("Joe", null),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
    }
 
+   async loadMany(ids: Array<any>): Promise<Array<Person>> | null {
+      return null;
+   }
    async save(person: Person): Promise<Person | null> {
       return person;
    }
@@ -350,7 +353,7 @@ describe("PersonLoader", function () {
 
       let loader = new StubLoader;
 
-      let person = loader.load('dummy');
+      let person = loader.loadOne('dummy');
 
       expect(person).to.not.equal(null);
    });

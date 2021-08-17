@@ -550,29 +550,31 @@ export class Person extends Persistence {
    public constructor(persistenceDetails: PersistenceDetails,
       loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null);
    public constructor(memento: PersonMemento);
-   public constructor(...paramArray: any[]) {
+   public constructor(...params: any[]) {
 
-      if (paramArray.length === 1) {
+      if (params.length === 1) {
 
-         super(new PersistenceDetails(paramArray[0]._persistenceDetails._id,
-            paramArray[0]._persistenceDetails._schemaVersion,
-            paramArray[0]._persistenceDetails._sequenceNumber));
+         let memento: PersonMemento = params[0];
 
-         this._loginDetails = new LoginDetails(paramArray[0]._loginDetails._provider, paramArray[0]._loginDetails._token);
-         this._name = new Name(paramArray[0]._name._name, paramArray[0]._name._surname); 
-         this._email = paramArray[0]._email ? new EmailAddress(paramArray[0]._email._email, paramArray[0]._email._isEmailVerified) : null;
-         this._thumbnailUrl = paramArray[0]._thumbnailUrl ? new Url(paramArray[0]._thumbnailUrl._url, paramArray[0]._thumbnailUrl._isUrlVerified) : null;
-         this._roles = paramArray[0]._roles ? new Roles(paramArray[0]._roles._roles) : null;
+         super(new PersistenceDetails(memento._persistenceDetails._id,
+            memento._persistenceDetails._schemaVersion,
+            memento._persistenceDetails._sequenceNumber));
+
+         this._loginDetails = new LoginDetails(memento._loginDetails._provider, memento._loginDetails._token);
+         this._name = new Name(memento._name._name, memento._name._surname); 
+         this._email = memento._email ? new EmailAddress(memento._email._email, memento._email._isEmailVerified) : null;
+         this._thumbnailUrl = memento._thumbnailUrl ? new Url(memento._thumbnailUrl._url, memento._thumbnailUrl._isUrlVerified) : null;
+         this._roles = memento._roles ? new Roles(memento._roles._roles) : null;
 
       } else {
 
-         super(paramArray[0]);
+         super(params[0]);
 
-         this._loginDetails = paramArray[1];
-         this._name = paramArray[2];
-         this._email = paramArray[3];
-         this._thumbnailUrl = paramArray[4];
-         this._roles = paramArray[5];
+         this._loginDetails = params[1];
+         this._name = params[2];
+         this._email = params[3];
+         this._thumbnailUrl = params[4];
+         this._roles = params[5];
       }
    }
 
@@ -656,6 +658,7 @@ export function personArraysAreEqual(lhs: Array<Person>, rhs: Array<Person>): bo
 }
 
 export interface IPersonStore {
-   load(id: any): Promise<Person | null>;
+   loadOne(id: any): Promise<Person | null>;
+   loadMany(ids: Array<any>): Promise <Array<Person>>;
    save(person: Person): Promise<Person | null>;
 }

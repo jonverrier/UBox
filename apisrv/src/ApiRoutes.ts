@@ -6,7 +6,9 @@ import { URL, URLSearchParams} from 'url';
 
 import { Logger } from '../../core/src/Logger';
 
-import { PersonCodec } from '../../core/src/IOPerson';
+import { IdListCodec, IdList } from '../../core/src/IOCommon';
+
+import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { PersonDb } from './PersonDb';
 
 import { WeightMeasurementCodec } from '../../core/src/IOObservation';
@@ -27,7 +29,7 @@ ApiRoutes.get('/api/personQuery', function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.load(params.get('_id'));
+      let result = db.loadOne(params.get('_id'));
       result.then(data => {
          res.send(codec.encode(data ? data : null));
       });
@@ -35,6 +37,32 @@ ApiRoutes.get('/api/personQuery', function (req, res) {
    } catch (e) {
       var logger = new Logger();
       logger.logError("Person", "Query", "Error", e.toString());
+      res.send(null);
+   }
+})
+
+// Retrieve multiple Person objects
+ApiRoutes.put('/api/peopleQuery', function (req, res) {
+
+   try {
+      let peopleCodec = new PeopleCodec();
+      let db = new PersonDb();
+
+      //let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
+      //let params = new URLSearchParams(url.search);
+
+      let idCodec = new IdListCodec();
+      //let paramString = decodeURIComponent (params.get('_idList'));
+      var ids: IdList = idCodec.decode(req.body);
+
+      let result = db.loadMany(ids._ids);
+      result.then(data => {
+         res.send(peopleCodec.encode(data ? data : null));
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("People", "Query", "Error", e.toString());
       res.send(null);
    }
 })
