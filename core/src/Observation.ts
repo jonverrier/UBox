@@ -46,7 +46,6 @@ export class MeasurementTypeMementoOf<Unit> {
    }
 }
 
-
 export class MeasurementTypeOf<Unit> {
    private _measurementType: EMeasurementType;
    private _range: RangeOf<Unit>;
@@ -58,11 +57,23 @@ export class MeasurementTypeOf<Unit> {
     * @param range - acceptable range of values
     * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
     */
-   constructor(measurementType: EMeasurementType, range: RangeOf<Unit>, trend: EPositiveTrend) {
+   constructor(measurementType: EMeasurementType, range: RangeOf<Unit>, trend: EPositiveTrend);
+   public constructor(memento: MeasurementTypeMementoOf<Unit>);
+   public constructor(...paramArray: any[]) {
 
-      this._measurementType = measurementType;
-      this._range = range;
-      this._trend = trend;
+      if (paramArray.length === 1) {
+         this._measurementType = paramArray[0]._measurementType;
+         this._range = new RangeOf<Unit>(new QuantityOf<Unit>(paramArray[0]._range._lo._amount, paramArray[0]._range._lo._unit),
+            paramArray[0]._range._loInclEq,
+            new QuantityOf<Unit>(paramArray[0]._range._hi._amount, paramArray[0]._range._hi._unit),
+            paramArray[0]._range._hiInclEq);
+         this._trend = paramArray[0]._trend;
+      } else {
+
+         this._measurementType = paramArray[0];
+         this._range = paramArray[1];
+         this._trend = paramArray[2];
+      }
    }
 
    /**
@@ -149,7 +160,8 @@ export class MeasurementMementoOf<MeasuredUnit> {
     * @param subjectExternalId - reference to the entity to which the measurement applies  - usually a Person
     */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: QuantityOf<MeasuredUnit>, repeats: QuantityOf<ERepUnits>, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string) {
+      quantity: QuantityOf<MeasuredUnit>, repeats: QuantityOf<ERepUnits>, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
+   {
 
 
       this._persistenceDetails = persistenceDetails.memento();
@@ -200,18 +212,39 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
  * @param subjectExternalId - reference to the entity to which the measurement applies  - usually a Person
  */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: QuantityOf<MeasuredUnit>, repeats: QuantityOf<ERepUnits>, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string) {
+      quantity: QuantityOf<MeasuredUnit>, repeats: QuantityOf<ERepUnits>, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
+   public constructor(memento: MeasurementMementoOf<MeasuredUnit>);
+   public constructor(...paramArray: any[]) {
 
-      super(persistenceDetails);
+      if (paramArray.length === 1) {
 
-      if (!measurementType.range.includes(quantity)) {
-         throw RangeError();
+         super(new PersistenceDetails(paramArray[0]._persistenceDetails._id,
+            paramArray[0]._persistenceDetails._schemaVersion,
+            paramArray[0]._persistenceDetails._sequenceNumber));
+
+         this._quantity = new QuantityOf<MeasuredUnit>(paramArray[0]._quantity._amount,
+            paramArray[0]._quantity._unit);
+         this._repeats = new QuantityOf<ERepUnits>(paramArray[0]._repeats._amount,
+            paramArray[0]._repeats._unit);
+         this._cohortPeriod = paramArray[0]._cohortPeriod;
+         this._measurementType = new MeasurementTypeOf<MeasuredUnit>(paramArray[0]._measurementType._measurementType,
+            paramArray[0]._measurementType._range,
+            paramArray[0]._measurementType._trend);
+         this._subjectExternalId = paramArray[0]._subjectExternalId;
+
+      } else {
+
+         super(paramArray[0]);
+
+         if (!paramArray[4].range.includes(paramArray[1])) {
+            throw RangeError();
+         }
+         this._quantity = paramArray[1];
+         this._repeats = paramArray[2];
+         this._cohortPeriod = paramArray[3];
+         this._measurementType = paramArray[4];
+         this._subjectExternalId = paramArray[5];
       }
-      this._quantity = quantity;
-      this._repeats = repeats;
-      this._cohortPeriod = cohortPeriod;
-      this._measurementType = measurementType;
-      this._subjectExternalId = subjectExternalId;
    }
 
    /**

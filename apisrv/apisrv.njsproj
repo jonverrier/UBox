@@ -83,9 +83,11 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\ApiRoutes.ts" />
+    <TypeScriptCompile Include="src\CohortDb.ts" />
     <TypeScriptCompile Include="src\ContactDb.ts" />
     <TypeScriptCompile Include="src\ObservationDb.ts" />
     <TypeScriptCompile Include="src\PersonDb.ts" />
+    <TypeScriptCompile Include="test\test-cohort-api.ts" />
     <TypeScriptCompile Include="test\test-measurement-api.ts" />
     <TypeScriptCompile Include="test\test-person-api.ts">
       <TestFramework>mocha</TestFramework>

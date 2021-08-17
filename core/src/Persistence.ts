@@ -41,10 +41,19 @@ export class PersistenceDetails {
     * @param schemaVersion - schema version used - allows upgrades on the fly when loading old format data
     * @param sequenceNumber - used to allow idempotent queries (all objects in a sequence range)
     */
-   constructor(id: any, schemaVersion: number, sequenceNumber: number) {
-      this._id = id;
-      this._schemaVersion = schemaVersion;
-      this._sequenceNumber = sequenceNumber;
+   public constructor(id: any, schemaVersion: number, sequenceNumber: number);
+   public constructor(memento: PersistenceDetailsMemento);
+   public constructor(...paramArray: any[]) {
+
+      if (paramArray.length === 1) {
+         this._id = paramArray[0]._id;
+         this._schemaVersion = paramArray[0]._schemaVersion;
+         this._sequenceNumber = paramArray[0]._sequenceNumber;
+      } else {
+         this._id = paramArray[0];
+         this._schemaVersion = paramArray[1];
+         this._sequenceNumber = paramArray[2];
+      }
    }
 
    /**

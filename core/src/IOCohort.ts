@@ -44,7 +44,7 @@ export class CohortNameCodec implements ICodec<CohortName> {
 // CohortTimePeriod Codec
 // ==========
 const cohortPeriodIoType = IoTs.type({
-   _startDate: IoTsTypes.date,
+   _startDate: IoTs.union ([IoTs.string, IoTsTypes.date]), // Mongoose seems to return dates as a string
    _period: createEnumType<ECohortPeriod>(ECohortPeriod, 'ECohortPeriod'),
    _numberOfPeriods: IoTs.number
 });
@@ -94,43 +94,23 @@ export class CohortCodec implements ICodec<Cohort> {
 
       let administrators = new Array<Person>(temp._administrators.length);
       for (i = 0; i < administrators.length; i++)
-         administrators[i] = new Person(new PersistenceDetails(temp._administrators[i]._persistenceDetails._id,
-            temp._administrators[i]._persistenceDetails._schemaVersion,
-            temp._administrators[i]._persistenceDetails._sequenceNumber),
-            new LoginDetails(temp._administrators[i]._loginDetails._provider, temp._administrators[i]._loginDetails._token),
-            new Name(temp._administrators[i]._name._name, temp._administrators[i]._name._surname),
-            temp._administrators[i]._email ? new EmailAddress(temp._administrators[i]._email._email, temp._administrators[i]._email._isEmailVerified) : null,
-            temp._administrators[i]._thumbnailUrl ? new Url(temp._administrators[i]._thumbnailUrl._url, temp._administrators[i]._thumbnailUrl._isUrlVerified) : null,
-            temp._administrators[i]._roles ? new Roles(temp._administrators[i]._roles._roles) : null);
+         administrators[i] = new Person(temp._administrators[i]);
 
       let members = new Array<Person>(temp._members.length);
-      for (i = 0; i < administrators.length; i++)
-         members[i] = new Person(new PersistenceDetails(temp._members[i]._persistenceDetails._id,
-            temp._members[i]._persistenceDetails._schemaVersion,
-            temp._members[i]._persistenceDetails._sequenceNumber),
-            new LoginDetails(temp._members[i]._loginDetails._provider, temp._members[i]._loginDetails._token),
-            new Name(temp._members[i]._name._name, temp._members[i]._name._surname),
-            temp._members[i]._email ? new EmailAddress(temp._members[i]._email._email, temp._members[i]._email._isEmailVerified) : null,
-            temp._members[i]._thumbnailUrl ? new Url(temp._members[i]._thumbnailUrl._url, temp._members[i]._thumbnailUrl._isUrlVerified) : null,
-            temp._members[i]._roles ? new Roles(temp._members[i]._roles._roles) : null);
+      for (i = 0; i < members.length; i++)
+         members[i] = new Person(temp._members[i]);
 
       let weightMeasurements = new Array<MeasurementTypeOf<EWeightUnits>>(temp._weightMeasurements.length);
       for (i = 0; i < weightMeasurements.length; i++)
-         weightMeasurements[i] = new MeasurementTypeOf<EWeightUnits>(temp._weightMeasurements[i]._measurementType,
-            new RangeOf<EWeightUnits>(new QuantityOf<EWeightUnits>(temp._weightMeasurements[i]._range._lo._amount, EWeightUnits.Kg), temp._weightMeasurements[i]._range._loInclEq,
-               new QuantityOf<EWeightUnits>(temp._weightMeasurements[i]._range._hi._amount, EWeightUnits.Kg), temp._weightMeasurements[i]._range._hiInclEq),
-            temp._weightMeasurements[i]._trend);
+         weightMeasurements[i] = new MeasurementTypeOf<EWeightUnits>(temp._weightMeasurements[i]);
 
       let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>(temp._timeMeasurements.length);
       for (i = 0; i < timeMeasurements.length; i++)
-         timeMeasurements[i] = new MeasurementTypeOf<ETimeUnits>(temp._timeMeasurements[i]._measurementType,
-            new RangeOf<ETimeUnits>(new QuantityOf<ETimeUnits>(temp._timeMeasurements[i]._range._lo._amount, ETimeUnits.Seconds), temp._timeMeasurements[i]._range._loInclEq,
-               new QuantityOf<ETimeUnits>(temp._timeMeasurements[i]._range._hi._amount, ETimeUnits.Seconds), temp._timeMeasurements[i]._range._hiInclEq),
-            temp._timeMeasurements[i]._trend);
+         timeMeasurements[i] = new MeasurementTypeOf<ETimeUnits>(temp._timeMeasurements[i]);     
 
       return new Cohort(new PersistenceDetails(temp._persistenceDetails._id, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
          new CohortName(temp._name._name),
-         new CohortTimePeriod(temp._period._startDate, temp._period._period, temp._period._numberOfPeriods),
+         new CohortTimePeriod(new Date(temp._period._startDate), temp._period._period, temp._period._numberOfPeriods),
          administrators,
          members,
          weightMeasurements,

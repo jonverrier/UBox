@@ -1,12 +1,12 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-
+import { ETimeUnits, EWeightUnits } from '../src/Quantity';
 import { PersistenceDetails } from "../src/Persistence";
 import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run100m } from '../src/FitnessObservations'
 import { Name, LoginDetails, EmailAddress, Url, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
 import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
 import { CohortName, CohortTimePeriod, Cohort, ECohortPeriod } from '../src/Cohort';
-import { ETimeUnits, EWeightUnits } from '../src/Quantity';
+
 
 var expect = require("chai").expect;
 
@@ -126,13 +126,13 @@ describe("Cohort", function () {
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe"),
+      new Name("Joe", null),
       new EmailAddress("Joe@mail.com", true),
       new Url("https://jo.pics.com", false), null);
 
    let person2 = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Jenny"),
+      new Name("Jenny", null),
       new EmailAddress("Jenny@mail.com", true),
       new Url("https://jo.pics.com", false),
       null);

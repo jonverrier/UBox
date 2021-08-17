@@ -123,7 +123,7 @@ describe("IOCohort", function () {
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe"),
+      new Name("Joe", null),
       new EmailAddress("Joe@mail.com", true),
       new Url("https://jo.pics.com", false), null);
 

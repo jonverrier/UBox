@@ -432,7 +432,7 @@ describe("IOPerson", function () {
 
       let encoded = codec.encode(new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe"),
+         new Name("Joe", null),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null));
 
       expect(encoded.persistenceDetails.id).to.equal(1);
@@ -444,7 +444,7 @@ describe("IOPerson", function () {
 
       let initial = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe"),
+         new Name("Joe", null),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
       let encoded = codec.encode(initial);
       let decoded: Person;
