@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\ApiRoutes.ts" />
+    <TypeScriptCompile Include="src\ApiUrls.ts" />
     <TypeScriptCompile Include="src\CohortDb.ts" />
     <TypeScriptCompile Include="src\ContactDb.ts" />
     <TypeScriptCompile Include="src\ObservationDb.ts" />

@@ -11,16 +11,18 @@ import { IdListCodec, IdList } from '../../core/src/IOCommon';
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { PersonDb } from './PersonDb';
 
-import { WeightMeasurementCodec } from '../../core/src/IOObservation';
-import { MeasurementDb } from './ObservationDb';
+import { WeightMeasurementCodec, WeightMeasurementsCodec } from '../../core/src/IOObservation';
+import { WeightMeasurementDb } from './ObservationDb';
 
 import { CohortCodec } from '../../core/src/IOCohort';
 import { CohortDb } from './CohortDb';
 
+import { EApiUrls } from './ApiUrls';
+
 export var ApiRoutes = express.Router();
 
 // Retrieve a Person
-ApiRoutes.get('/api/personQuery', function (req, res) {
+ApiRoutes.get(EApiUrls.QueryPerson, function (req, res) {
 
    try {
       let codec = new PersonCodec();
@@ -42,17 +44,15 @@ ApiRoutes.get('/api/personQuery', function (req, res) {
 })
 
 // Retrieve multiple Person objects
-ApiRoutes.put('/api/peopleQuery', function (req, res) {
+ApiRoutes.put(EApiUrls.QueryPeople, function (req, res) {
 
    try {
       let peopleCodec = new PeopleCodec();
       let db = new PersonDb();
 
-      //let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
-      //let params = new URLSearchParams(url.search);
 
       let idCodec = new IdListCodec();
-      //let paramString = decodeURIComponent (params.get('_idList'));
+
       var ids: IdList = idCodec.decode(req.body);
 
       let result = db.loadMany(ids._ids);
@@ -68,7 +68,7 @@ ApiRoutes.put('/api/peopleQuery', function (req, res) {
 })
 
 // Save a Person
-ApiRoutes.put('/api/personSave', function (req, res) {
+ApiRoutes.put(EApiUrls.SavePerson, function (req, res) {
 
    try {
       let codec = new PersonCodec();
@@ -89,11 +89,11 @@ ApiRoutes.put('/api/personSave', function (req, res) {
 });
 
 // Retrieve a Measurement
-ApiRoutes.get('/api/measurementQuery', function (req, res) {
+ApiRoutes.get(EApiUrls.QueryWeightMeasurement, function (req, res) {
 
    try {
       let codec = new WeightMeasurementCodec();
-      let db = new MeasurementDb();
+      let db = new WeightMeasurementDb();
 
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
@@ -111,11 +111,11 @@ ApiRoutes.get('/api/measurementQuery', function (req, res) {
 })
 
 // Save a Measurement
-ApiRoutes.put('/api/measurementSave', function (req, res) {
+ApiRoutes.put(EApiUrls.SaveWeightMeasurement, function (req, res) {
 
    try {
       let codec = new WeightMeasurementCodec();
-      let db = new MeasurementDb();
+      let db = new WeightMeasurementDb();
 
       let encoded = req.body;
       let decoded = codec.tryCreateFrom(encoded);
@@ -126,13 +126,37 @@ ApiRoutes.put('/api/measurementSave', function (req, res) {
       });
    } catch (e) {
       var logger = new Logger();
-      logger.logError("Measurement", "Save", "Error", e.toString());
+      logger.logError("Measurement", "SaveWeight", "Error", e.toString());
       res.send(null);
    }
 });
 
+// Retrieve multiple Measurement objects
+ApiRoutes.put(EApiUrls.QueryWeightMeasurements, function (req, res) {
+
+   try {
+      let weightsCodec = new WeightMeasurementsCodec();
+      let db = new WeightMeasurementDb();
+
+
+      let idCodec = new IdListCodec();
+
+      var ids: IdList = idCodec.decode(req.body);
+
+      let result = db.loadMany(ids._ids);
+      result.then(data => {
+         res.send(weightsCodec.encode(data ? data : null));
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("Measurements", "QueryWeight", "Error", e.toString());
+      res.send(null);
+   }
+})
+
 // Retrieve a Cohort
-ApiRoutes.get('/api/cohortQuery', function (req, res) {
+ApiRoutes.get(EApiUrls.QueryCohort, function (req, res) {
 
    try {
       let codec = new CohortCodec();
@@ -154,7 +178,7 @@ ApiRoutes.get('/api/cohortQuery', function (req, res) {
 })
 
 // Save a Cohort
-ApiRoutes.put('/api/cohortSave', function (req, res) {
+ApiRoutes.put(EApiUrls.SaveCohort, function (req, res) {
 
    try {
       let codec = new CohortCodec();

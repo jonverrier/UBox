@@ -6,6 +6,7 @@ import { Logger } from '../../core/src/Logger';
 import { Cohort, ICohortStore } from '../../core/src/Cohort';
 import { CohortCodec } from '../../core/src/IOCohort';
 
+import { PersonDb } from './PersonDb';
 
 export class CohortDb implements ICohortStore {
    private _codec;
@@ -31,6 +32,11 @@ export class CohortDb implements ICohortStore {
 
    async save(cohort: Cohort): Promise<Cohort | null> {
       try {
+         /* Calling this accessors forces the cohort to save Ids
+         let administratorIds = cohort.administratorIds;
+         let memberIds = cohort.memberIds;
+         */
+
          let result = await (new cohortModel(cohort)).save({ isNew: cohort.persistenceDetails._id ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails

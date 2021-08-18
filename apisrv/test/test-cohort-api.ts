@@ -13,8 +13,11 @@ import { CohortCodec } from '../../core/src/IOCohort'
 
 var expect = require("chai").expect;
 
-var saveUrl: string = 'http://localhost:4000/api/cohortSave';
-var queryUrl: string = 'http://localhost:4000/api/cohortQuery';
+import { EApiUrls } from '../src/ApiUrls';
+
+var root: string = 'http://localhost:4000';
+var saveUrl: string = root + EApiUrls.SaveCohort;
+var queryUrl: string = root + EApiUrls.QueryCohort;
 
 describe("CohortApi", function () {
    let cohort1;

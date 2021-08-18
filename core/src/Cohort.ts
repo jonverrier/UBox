@@ -6,7 +6,7 @@ import { EmailAddress, PersonMemento, Person, personArraysAreEqual } from "./Per
 import { MeasurementTypeMementoOf, MeasurementTypeOf, weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual } from "./Observation";
 import { EWeightUnits, ETimeUnits } from './Quantity';
 
-export enum ECohortPeriod { Week = "Week", TwoWeeks = "TwoWeeks", ThreeWeeks = "ThreeWeeks", FourWeeks = "FourWeeks", Month = "Month"};
+export enum ECohortPeriod { Week = "Week", TwoWeeks = "TwoWeeks", ThreeWeeks = "ThreeWeeks", FourWeeks = "FourWeeks", Month = "Month"}
 
 export class CohortNameMemento {
    _name: string;
@@ -267,14 +267,16 @@ export class CohortMemento {
       return this._timeMeasurements;
    }
 }
+
 export class Cohort extends Persistence {
    private _name: CohortName;
+   private _period: CohortTimePeriod;
    private _administrators: Array<Person>;
    private _members: Array<Person>;
    private _weightMeasurements: Array<MeasurementTypeOf<EWeightUnits>>;
    private _timeMeasurements: Array<MeasurementTypeOf<ETimeUnits>>;
-   private _period: CohortTimePeriod;
-
+   private _adminstratorIds: Array<string>;
+   private _memberIds: Array<string>;
 /**
  * Create a Cohort object
  * @param persistenceDetails - (from Persistence) for the database layer to use and assign
@@ -321,6 +323,9 @@ export class Cohort extends Persistence {
          for (i = 0; i < memento.timeMeasurements.length; i++)
             this._timeMeasurements[i] = new MeasurementTypeOf<ETimeUnits>(memento.timeMeasurements[i]);
 
+         this._adminstratorIds = null;
+         this._memberIds = null;
+
       } else {
 
          super(params[0]);
@@ -331,6 +336,8 @@ export class Cohort extends Persistence {
          this._members = params[4];
          this._weightMeasurements = params[5];
          this._timeMeasurements = params[6];
+         this._adminstratorIds = null;
+         this._memberIds = null;
       }
    }
 
@@ -355,8 +362,32 @@ export class Cohort extends Persistence {
    get timeMeasurements(): Array<MeasurementTypeOf<ETimeUnits>> {
       return this._timeMeasurements;
    }
+
+
+   private makeIds(people: Array<Person>): Array<string> {
+      var ids: Array<string> = new Array<string>();
+      var i: number;
+
+      for (i = 0; i < people.length; i++) {
+         ids.push(people[i].persistenceDetails.id);
+      }
+      return ids;
+
+   }
+   get administratorIds(): Array<string> {
+      this._adminstratorIds = this.makeIds(this._administrators);
+      return this._adminstratorIds;
+   }
+   get memberIds(): Array<string> {
+      this._memberIds = this.makeIds(this._members);
+      return this._memberIds;
+   }
+
    set name(name: CohortName) {
       this._name = name;
+   }
+   set period(period: CohortTimePeriod) {
+      this._period = period;
    }
    set administrators(people: Array<Person>) {
       this._administrators = people;
@@ -364,15 +395,13 @@ export class Cohort extends Persistence {
    set members(people: Array<Person>) {
       this._members = people;
    }
-   set period(period: CohortTimePeriod) {
-      this._period = period;
-   }
    set weightMeasurements(weightMeasurements: Array<MeasurementTypeOf<EWeightUnits>>)  {
       this._weightMeasurements = weightMeasurements;
    }
    set timeMeasurements(timeMeasurements: Array<MeasurementTypeOf<ETimeUnits>>) {
       this._timeMeasurements = timeMeasurements;
    }
+
 
    /**
    * memento() returns a copy of internal state

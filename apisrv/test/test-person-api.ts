@@ -10,9 +10,12 @@ import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 
 var expect = require("chai").expect;
 
-var saveUrl: string = 'http://localhost:4000/api/personSave';
-var queryUrl: string = 'http://localhost:4000/api/personQuery';
-var queryManyUrl: string = 'http://localhost:4000/api/peopleQuery';
+import { EApiUrls } from '../src/ApiUrls';
+
+var root: string = 'http://localhost:4000';
+var saveUrl: string = root + EApiUrls.SavePerson;
+var queryUrl: string = root + EApiUrls.QueryPerson;
+var queryManyUrl: string = root + EApiUrls.QueryPeople;
 
 describe("PersonApi", function () {
    var person1: Person;

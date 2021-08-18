@@ -49,8 +49,6 @@ export class PersonDb implements IPersonStore {
       } else {
          return null;
       }
-
-      return new Array<Person>();
    }
 
    async save(person: Person): Promise<Person | null> {

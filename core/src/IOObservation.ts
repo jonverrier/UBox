@@ -70,10 +70,7 @@ export class WeightMeasurementTypeCodec implements ICodec<MeasurementTypeOf<EWei
    tryCreateFrom(data: any): MeasurementTypeOf<EWeightUnits> {
       let temp = this.decode (data); // If types dont match an exception will be thrown here
 
-      return new MeasurementTypeOf<EWeightUnits>(temp._measurementType,
-         new RangeOf<EWeightUnits>(new QuantityOf<EWeightUnits>(temp._range._lo._amount, EWeightUnits.Kg), temp._range._loInclEq,
-            new QuantityOf<EWeightUnits>(temp._range._hi._amount, EWeightUnits.Kg), temp._range._hiInclEq),
-         temp._trend);
+      return new MeasurementTypeOf<EWeightUnits>(temp);
    }
 }
 
@@ -104,18 +101,44 @@ export class WeightMeasurementCodec implements ICodec<MeasurementOf<EWeightUnits
    tryCreateFrom(data: any): MeasurementOf<EWeightUnits> {
       let temp = this.decode(data); // If types dont match an exception will be thrown here
 
-      return new MeasurementOf<EWeightUnits>(
-         new PersistenceDetails(temp._persistenceDetails._id, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
-         new QuantityOf<EWeightUnits>(temp._quantity._amount, EWeightUnits.Kg),
-         new QuantityOf<ERepUnits>(temp._repeats._amount, ERepUnits.Reps),
-         temp._cohortPeriod,
-         new MeasurementTypeOf<EWeightUnits>(
-            temp._measurementType._measurementType,
-            new RangeOf<EWeightUnits>(
-               new QuantityOf<EWeightUnits>(temp._measurementType._range._lo._amount, EWeightUnits.Kg), temp._measurementType._range._loInclEq,
-               new QuantityOf<EWeightUnits>(temp._measurementType._range._hi._amount, EWeightUnits.Kg), temp._measurementType._range._hiInclEq),
-            temp._measurementType._trend),
-         temp._subjectExternalId);
+      return new MeasurementOf<EWeightUnits>(temp);
+   }
+}
+
+// weightMeasurements (plural) Codec
+// ==========
+
+export const weightMeasurementsIoType = IoTs.array(weightMeasurementIoType);
+
+export class WeightMeasurementsCodec implements ICodec<Array<MeasurementOf<EWeightUnits>>> {
+
+   decode(data: any): any {
+      return decodeWith(weightMeasurementsIoType)(data);
+   }
+
+   encode(data: Array<MeasurementOf<EWeightUnits>>): any {
+      var i: number;
+      var mementos: Array<MeasurementMementoOf<EWeightUnits>> = new Array<MeasurementMementoOf<EWeightUnits>>();
+
+      for (i = 0; i < data.length; i++) {
+         mementos[i] = data[i].memento();
+      }
+      return encodeWith(weightMeasurementsIoType)(mementos);
+   }
+
+   tryCreateFrom(data: any): Array<MeasurementOf<EWeightUnits>> {
+
+      var i: number;
+      var measurements: Array<MeasurementOf<EWeightUnits>> = new Array<MeasurementOf<EWeightUnits>>();
+
+      for (i = 0; i < data.length; i++) {
+
+         let temp = this.decode(data[i]); // If types dont match an exception will be thrown here
+
+         measurements[i] = new MeasurementOf<EWeightUnits>(temp);
+      }
+
+      return measurements;
    }
 }
 
@@ -143,10 +166,7 @@ export class TimeMeasurementTypeCodec implements ICodec<MeasurementTypeOf<ETimeU
    tryCreateFrom(data: any): MeasurementTypeOf<ETimeUnits> {
       let temp = this.decode(data); // If types dont match an exception will be thrown here
 
-      return new MeasurementTypeOf<ETimeUnits>(temp._measurementType,
-         new RangeOf<ETimeUnits>(new QuantityOf<ETimeUnits>(temp._range._lo._amount, ETimeUnits.Seconds), temp._range._loInclEq,
-            new QuantityOf<ETimeUnits>(temp._range._hi._amount, ETimeUnits.Seconds), temp._range._hiInclEq),
-         temp._trend);
+      return new MeasurementTypeOf<ETimeUnits>(temp);
    }
 }
 
@@ -177,17 +197,6 @@ export class TimeMeasurementCodec implements ICodec<MeasurementOf<ETimeUnits>> {
    tryCreateFrom(data: any): MeasurementOf<ETimeUnits> {
       let temp = this.decode(data); // If types dont match an exception will be thrown here
 
-      return new MeasurementOf<ETimeUnits>(
-         new PersistenceDetails(temp._persistenceDetails._id, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
-         new QuantityOf<ETimeUnits>(temp._quantity._amount, ETimeUnits.Seconds),
-         new QuantityOf<ERepUnits>(temp._repeats._amount, ERepUnits.Reps),
-         temp._cohortPeriod,
-         new MeasurementTypeOf<ETimeUnits>(
-            temp._measurementType._measurementType,
-            new RangeOf<ETimeUnits>(
-               new QuantityOf<ETimeUnits>(temp._measurementType._range._lo._amount, ETimeUnits.Seconds), temp._measurementType._range._loInclEq,
-               new QuantityOf<ETimeUnits>(temp._measurementType._range._hi._amount, ETimeUnits.Seconds), temp._measurementType._range._hiInclEq),
-            temp._measurementType._trend),
-         temp._subjectExternalId);
+      return new MeasurementOf<ETimeUnits>(temp);
    }
 }
