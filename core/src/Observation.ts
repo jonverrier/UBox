@@ -5,11 +5,13 @@ import { ERepUnits, ETimeUnits, EWeightUnits, QuantityMementoOf, QuantityOf } fr
 import { RangeMementoOf, RangeOf } from "./Range";
 
 // This enum is used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing 
+// Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EPositiveTrend { Up = "Up", Down = "Down"}
 
+// Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EMeasurementType {
    Snatch = "Snatch", Clean = "Clean", Jerk = "Jerk", CleanAndJerk = "CleanAndJerk",
-   Row="Row", Run="Run"
+   Row250="Row250", Run250="Run250"
 }
 
 export class MeasurementTypeMementoOf<Unit> {

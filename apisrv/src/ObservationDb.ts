@@ -3,9 +3,9 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { MeasurementOf, IWeightMeasurementStore } from '../../core/src/Observation';
+import { MeasurementOf, IWeightMeasurementStore, EMeasurementType, EPositiveTrend } from '../../core/src/Observation';
 import { WeightMeasurementCodec } from '../../core/src/IOObservation';
-import { EWeightUnits } from "../../core/src/Quantity";
+import { ETimeUnits, EWeightUnits } from "../../core/src/Quantity";
 
 
 export class WeightMeasurementDb implements IWeightMeasurementStore {
@@ -81,6 +81,96 @@ export class WeightMeasurementDb implements IWeightMeasurementStore {
    }
 }
 
+export const weightMeasurementTypeSchema = new mongoose.Schema({
+   _measurementType: {
+      type: String,
+      enum: [EMeasurementType.Snatch, EMeasurementType.Clean, EMeasurementType.Jerk, EMeasurementType.CleanAndJerk],
+      required: true
+   },
+   _range: {
+      _lo: {
+         _amount: {
+            type: Number,
+            required: true
+         },
+         _unit: {
+            type: String,
+            enum: [EWeightUnits.Kg, EWeightUnits.Lbs],
+            required: true
+         },
+      },
+      _loInclEq: {
+         type: Boolean,
+         required: true
+      },
+      _hi: {
+         _amount: {
+            type: Number,
+            required: true
+         },
+         _unit: {
+            type: String,
+            enum: [EWeightUnits.Kg, EWeightUnits.Lbs],
+            required: true
+         },
+      },
+      _hiInclEq: {
+         type: Boolean,
+         required: true
+      },
+   },
+   _trend: {
+      type: String,
+      enum: [EPositiveTrend.Up, EPositiveTrend.Down],
+      required: true
+   }
+});
+
+export const timeMeasurementTypeSchema = new mongoose.Schema({
+   _measurementType: {
+      type: String,
+      enum: [EMeasurementType.Row250, EMeasurementType.Run250],
+      required: true
+   },
+   _range: {
+      _lo: {
+         _amount: {
+            type: Number,
+            required: true
+         },
+         _unit: {
+            type: String,
+            enum: [ETimeUnits.Seconds],
+            required: true
+         },
+      },
+      _loInclEq: {
+         type: Boolean,
+         required: true
+      },
+      _hi: {
+         _amount: {
+            type: Number,
+            required: true
+         },
+         _unit: {
+            type: String,
+            enum: [ETimeUnits.Seconds],
+            required: true
+         },
+      },
+      _hiInclEq: {
+         type: Boolean,
+         required: true
+      },
+   },
+   _trend: {
+      type: String,
+      enum: [EPositiveTrend.Up, EPositiveTrend.Down],
+      required: true
+   }
+});
+
 const weightMeasurementSchema = new mongoose.Schema({
    _persistenceDetails: {
       _id: {
@@ -122,50 +212,7 @@ const weightMeasurementSchema = new mongoose.Schema({
        type: Number,
        required: true
    },
-   _measurementType: {
-      _measurementType: {
-         type: String,
-         enum: ["Snatch", "Clean", "Jerk", "CleanAndJerk", "Row", "Run"],
-         required: true
-      },
-      _range: {
-         _lo: {
-            _amount: {
-               type: Number,
-               required: true
-            },
-            _unit: {
-               type: String,
-               enum: ["Kg", "Lbs"],
-               required: true
-            },
-         },
-         _loInclEq: {
-            type: Boolean,
-            required: true
-         },
-         _hi: {
-            _amount: {
-               type: Number,
-               required: true
-            },
-            _unit: {
-               type: String,
-               enum: ["Kg", "Lbs"],
-               required: true
-            },
-         },
-         _hiInclEq: {
-            type: Boolean,
-            required: true
-         },
-      },
-      _trend: {
-         type: String,
-         enum: ["Up", "Down"],
-         required: true
-      }
-   },
+   _measurementType: weightMeasurementTypeSchema,
    _subjectExternalId: {
       type: String,
       required: true

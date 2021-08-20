@@ -5,9 +5,9 @@ import axios from 'axios';
 import { ETimeUnits, EWeightUnits } from '../../core/src/Quantity';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { ELoginProvider, ERoleType, LoginDetails, Name, EmailAddress, Url, Roles, Person } from "../../core/src/Person";
-import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../../core/src/Observation";
-import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run100m } from '../../core/src/FitnessObservations';
+import { ELoginProvider, LoginDetails, Name, EmailAddress, Url, Person } from "../../core/src/Person";
+import { MeasurementTypeOf } from "../../core/src/Observation";
+import { SnatchMeasurementType, Row250mMeasurementType } from '../../core/src/FitnessObservations';
 import { ECohortPeriod, CohortName, CohortTimePeriod, Cohort } from "../../core/src/Cohort";
 import { CohortCodec } from '../../core/src/IOCohort'
 
@@ -32,16 +32,16 @@ describe("CohortApi", function () {
    beforeEach(function () {
       let weightMeasurement = new SnatchMeasurementType();
       let weightMeasurements = new Array<MeasurementTypeOf<EWeightUnits>>();
-      //weightMeasurements.push(weightMeasurement); // TODO - restore
+      weightMeasurements.push(weightMeasurement); 
 
       let timeMeasurement = new Row250mMeasurementType();
       let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>();
-      //timeMeasurements.push(timeMeasurement); // TODO - restore
+      timeMeasurements.push(timeMeasurement);
 
       let people = new Array<Person>();
-      //people.push(person); // TODO - restore
+      people.push(person); 
 
-      cohort1 = new Cohort(new PersistenceDetails("id", 1, 1),
+      cohort1 = new Cohort(new PersistenceDetails(null, 1, 1),
          new CohortName("Joe"),
          period,
          people,
@@ -69,7 +69,7 @@ describe("CohortApi", function () {
    });
 
    
-   it("Needs to save and then retrieve an existing Person", async function (done) {
+   it("Needs to save and then retrieve an existing Cohort", async function (done) {
 
       let codec = new CohortCodec();
       let encoded = codec.encode(cohort1);

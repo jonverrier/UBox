@@ -202,6 +202,11 @@ export class CohortMemento {
    _weightMeasurements: Array<MeasurementTypeMementoOf<EWeightUnits>>;
    _timeMeasurements: Array<MeasurementTypeMementoOf<ETimeUnits>>;
 
+   // These are used to allow the Db layer to switch object references to string Ids on save, and the reverse on load
+   // so separate documents/tables can be used in the DB
+   _administratorIds: Array<string>;
+   _memberIds: Array<string>;
+
    /**
     * Create a CohortMemento object
     * @param persistenceDetails - (from Persistence) for the database layer to use and assign
@@ -240,6 +245,9 @@ export class CohortMemento {
       this._timeMeasurements = new Array<MeasurementTypeMementoOf<ETimeUnits>>(timeMeasurements.length);
       for (i = 0; i < timeMeasurements.length; i++)
          this._timeMeasurements[i] = timeMeasurements[i].memento();
+
+      this._administratorIds = null;
+      this._memberIds = null;
    }
 
    /**
@@ -361,26 +369,6 @@ export class Cohort extends Persistence {
    }
    get timeMeasurements(): Array<MeasurementTypeOf<ETimeUnits>> {
       return this._timeMeasurements;
-   }
-
-
-   private makeIds(people: Array<Person>): Array<string> {
-      var ids: Array<string> = new Array<string>();
-      var i: number;
-
-      for (i = 0; i < people.length; i++) {
-         ids.push(people[i].persistenceDetails.id);
-      }
-      return ids;
-
-   }
-   get administratorIds(): Array<string> {
-      this._adminstratorIds = this.makeIds(this._administrators);
-      return this._adminstratorIds;
-   }
-   get memberIds(): Array<string> {
-      this._memberIds = this.makeIds(this._members);
-      return this._memberIds;
    }
 
    set name(name: CohortName) {
