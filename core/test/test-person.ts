@@ -6,13 +6,16 @@ import { Name, LoginDetails, EmailAddress, Url, Roles, Person, personArraysAreEq
 var expect = require("chai").expect;
 
 class StubLoader implements IPersonStore {
-   async load(id: any): Promise<Person | null> {
+   async loadOne(id: any): Promise<Person | null> {
       return new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe"),
+         new Name("Joe", null),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
    }
 
+   async loadMany(ids: Array<any>): Promise<Array<Person>> | null {
+      return null;
+   }
    async save(person: Person): Promise<Person | null> {
       return person;
    }
@@ -23,7 +26,7 @@ describe("Name", function () {
 
    beforeEach(function () {
       name1 = new Name("Joe", "Smith");
-      name2 = new Name("Bill");
+      name2 = new Name("Bill", null);
       name3 = new Name("Joe", "Smith");
    });
 
@@ -39,7 +42,7 @@ describe("Name", function () {
       let caught = false;
 
       try {
-         let name4 = new Name("");
+         let name4 = new Name("", null);
       }
       catch {
          caught = true;
@@ -249,12 +252,12 @@ describe("Person", function () {
    beforeEach(function () {
       person1 = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe"),
+         new Name("Joe", null),
          new EmailAddress("Joe@mail.com", true), new Url ("https://jo.pics.com", false), null);
 
       person2 = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "1234"),
-         new Name("Joe"),
+         new Name("Joe", null),
          new EmailAddress ("Joe@mail.com", true), new Url ("https://jo.pics.com", false), null);
    });
 
@@ -262,7 +265,7 @@ describe("Person", function () {
 
       let nullperson = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "1234"),
-         new Name("Joe"),
+         new Name("Joe", null),
          null, new Url("https://jo.pics.com", false), null);
 
       expect(nullperson.email).to.equal(null);
@@ -273,7 +276,7 @@ describe("Person", function () {
 
       let nullperson = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "1234"),
-         new Name("Joe"),
+         new Name("Joe", null),
          new EmailAddress("Joe@mail.com", true), null, null);
 
       expect(nullperson.thumbnailUrl).to.equal(null);
@@ -285,7 +288,7 @@ describe("Person", function () {
       let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
       let roleperson = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "1234"),
-         new Name("Joe"),
+         new Name("Joe", null),
          new EmailAddress("Joe@mail.com", true), null, roles);
 
       expect(roleperson.equals(roleperson)).to.equal(true);
@@ -302,7 +305,7 @@ describe("Person", function () {
    it("Needs to correctly store attributes", function () {
          
       expect(person1.loginDetails.equals(new LoginDetails(ELoginProvider.Apple, "123")) ).to.equal(true);
-      expect(person1.name.equals(new Name("Joe"))).to.equal(true);
+      expect(person1.name.equals(new Name("Joe", null))).to.equal(true);
       expect(person1.email.equals(new EmailAddress("Joe@mail.com", true))).to.equal(true);
       expect(person1.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
       expect(person1.roles).to.equal(null);
@@ -312,7 +315,7 @@ describe("Person", function () {
 
       let newMail = new EmailAddress("new@New.com", false);
       let newUrl = new Url("https://jo.newpics.com", false);
-      let newName = new Name("NewJoe");
+      let newName = new Name("NewJoe", null);
       let newRoles = new Roles([]);
 
       person1.email = newMail;
@@ -350,7 +353,7 @@ describe("PersonLoader", function () {
 
       let loader = new StubLoader;
 
-      let person = loader.load('dummy');
+      let person = loader.loadOne('dummy');
 
       expect(person).to.not.equal(null);
    });
@@ -367,7 +370,7 @@ describe("PersonStorer", function () {
       try {
          storer.save(new Person(new PersistenceDetails(1, 1, 1),
             new LoginDetails(ELoginProvider.Apple, "123"),
-            new Name("Joe"),
+            new Name("Joe", null),
             new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null));
       } catch {
          caught = true;

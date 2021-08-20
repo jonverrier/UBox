@@ -37,12 +37,9 @@
     <Content Include="public\assets\img\apple-touch-icon.png" />
     <Content Include="public\assets\img\coach.jpg" />
     <Content Include="public\assets\img\favicon.png" />
-    <Content Include="public\assets\img\hero-bg.jpg" />
     <Content Include="public\assets\img\hero.jpg" />
-    <Content Include="public\assets\img\logo.png" />
     <Content Include="public\assets\img\tesseract.png" />
     <Content Include="public\assets\js\main.js" />
-    <Content Include="public\assets\js\contact.js" />
     <Content Include="public\assets\vendor\aos\aos.css" />
     <Content Include="public\assets\vendor\aos\aos.js" />
     <Content Include="public\assets\vendor\boxicons\css\animations.css" />
@@ -86,9 +83,12 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\ApiRoutes.ts" />
+    <TypeScriptCompile Include="src\ApiUrls.ts" />
+    <TypeScriptCompile Include="src\CohortDb.ts" />
     <TypeScriptCompile Include="src\ContactDb.ts" />
     <TypeScriptCompile Include="src\ObservationDb.ts" />
     <TypeScriptCompile Include="src\PersonDb.ts" />
+    <TypeScriptCompile Include="test\test-cohort-api.ts" />
     <TypeScriptCompile Include="test\test-measurement-api.ts" />
     <TypeScriptCompile Include="test\test-person-api.ts">
       <TestFramework>mocha</TestFramework>

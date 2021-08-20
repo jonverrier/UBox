@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import { PersistenceDetails } from './Persistence';
-import { LoginDetails, EmailAddress, Url, Name, Roles, Person, ERoleType, ELoginProvider } from "./Person";
+import { LoginDetails, EmailAddress, Url, Name, Roles, Person, PersonMemento, ERoleType, ELoginProvider } from "./Person";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 
 import * as IoTs from 'io-ts';
@@ -30,7 +30,7 @@ export class NameCodec implements ICodec<Name> {
    }
 
    tryCreateFrom(data: any): Name {
-      let temp = decodeWith(nameIoType)(data); // If types dont match an exception will be thrown here 
+      let temp = this.decode (data); // If types dont match an exception will be thrown here 
       return new Name(temp._name, temp._surname);
    }
 }
@@ -53,7 +53,7 @@ export class LoginDetailsCodec implements ICodec<LoginDetails> {
    }
 
    tryCreateFrom(data: any): LoginDetails {
-      let temp = decodeWith(loginIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode (data); // If types dont match an exception will be thrown here
       return new LoginDetails(temp._provider, temp._token);
    }
 }
@@ -76,7 +76,7 @@ export class EmailAddressCodec implements ICodec<EmailAddress> {
    }
 
    tryCreateFrom(data: any): EmailAddress {
-      let temp = decodeWith(emailIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
       return new EmailAddress(temp._email, temp._isEmailVerified);
    }
 }
@@ -100,7 +100,7 @@ export class UrlCodec implements ICodec<Url> {
    }
 
    tryCreateFrom(data: any): Url {
-      let temp = decodeWith(urlIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
       return new Url(temp._url, temp._isUrlVerified);
    }
 }
@@ -130,7 +130,7 @@ export class RolesCodec implements ICodec<Roles> {
    }
 
    tryCreateFrom(data: any): Roles {
-      let temp = decodeWith(rolesIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode (data); // If types dont match an exception will be thrown here
       return new Roles(temp._roles);
    }
 }
@@ -138,7 +138,7 @@ export class RolesCodec implements ICodec<Roles> {
 // Person Codec
 // ==========
 
-const personIoType = IoTs.type({
+export const personIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
    _loginDetails: loginIoType,
    _name: nameIoType,
@@ -160,13 +160,46 @@ export class PersonCodec implements ICodec<Person> {
 
    tryCreateFrom(data: any): Person {
 
-      let temp = decodeWith(personIoType)(data); // If types dont match an exception will be thrown here
+      let temp = this.decode (data); // If types dont match an exception will be thrown here
 
-      return new Person(new PersistenceDetails(temp._persistenceDetails._id, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
-         new LoginDetails(temp._loginDetails._provider, temp._loginDetails._token),
-         new Name(temp._name._name, temp._name._surname),
-         temp._email ? new EmailAddress(temp._email._email, temp._email._isEmailVerified) : null,
-         temp._thumbnailUrl ? new Url(temp._thumbnailUrl._url, temp._thumbnailUrl._isUrlVerified) : null,
-         temp._roles ? new Roles(temp._roles._roles) : null);
+      return new Person(temp);
+   }
+}
+
+// People Codec
+// ==========
+
+export const peopleIoType = IoTs.array(personIoType);
+
+export class PeopleCodec implements ICodec<Array<Person>> {
+
+   decode(data: any): any {
+
+      return decodeWith(peopleIoType)(data);
+   }
+
+   encode(data: Array<Person>): any {
+      var i: number;
+      var mementos: Array<PersonMemento> = new Array<PersonMemento>();
+
+      for (i = 0; i < data.length; i++) {
+         mementos[i] = data[i].memento();
+      }
+      return encodeWith(peopleIoType)(mementos);
+   }
+
+   tryCreateFrom(data: any): Array<Person> {
+
+      var i: number;
+      var people: Array<Person> = new Array<Person>();
+
+      for (i = 0; i < data.length; i++) {
+
+         let temp = this.decode(data[i]); // If types dont match an exception will be thrown here
+
+         people[i] = new Person(temp); 
+      }
+
+      return people;
    }
 }

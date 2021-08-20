@@ -1,5 +1,6 @@
 /*! Copyright TXPCo, 2021 */
 
+// Whenever any of these are changed, the schema in ObservationDb must be changed to match
 export enum EWeightUnits { Kg = "Kg", Lbs = "Lbs"}
 export enum ETimeUnits { Seconds = "Seconds"}
 export enum EDistanceUnits { Metres = "Metres"}

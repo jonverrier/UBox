@@ -91,7 +91,7 @@ export class Row250mMeasurementType extends SpeedMeasurementType {
     * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 500m row
     */
    constructor() {
-      super(EMeasurementType.Row, 5, 500);
+      super(EMeasurementType.Row250, 5, 500);
    }
 
 }
@@ -102,7 +102,7 @@ export class Run100m extends SpeedMeasurementType {
     * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 500m row
     */
    constructor() {
-      super(EMeasurementType.Run, 5, 500);
+      super(EMeasurementType.Run250, 5, 500);
    }
 
 }

@@ -53,13 +53,23 @@ export class Name {
     * @param name - user first name
     * @param surname - user family name, can be null
     */
-   constructor(name: string, surname: string | null = null ) {
-      if (!Name.isValidName (name)) {
-         throw new InvalidParameterError("Name");
-      }
+   public constructor(name: string, surname: string | null);
+   public constructor(memento: NameMemento);
+   public constructor(...paramArray: any[]) {
 
-      this._name = name;
-      this._surname = surname;
+      if (paramArray.length === 1) {
+         if (!Name.isValidName(paramArray[0]._name)) {
+            throw new InvalidParameterError("Name");
+         }
+         this._name = paramArray[0]._name;
+         this._surname = paramArray[0]._surname;
+      } else {
+         if (!Name.isValidName(paramArray[0])) {
+            throw new InvalidParameterError("Name");
+         }
+         this._name = paramArray[0];
+         this._surname = paramArray[1];
+      }
    }
 
    /**
@@ -540,27 +550,31 @@ export class Person extends Persistence {
    public constructor(persistenceDetails: PersistenceDetails,
       loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null);
    public constructor(memento: PersonMemento);
-   public constructor(...myarray: any[]) {
+   public constructor(...params: any[]) {
 
-      if (myarray.length === 1) {
+      if (params.length === 1) {
 
-         super(myarray[0]._persistenceDetails);
+         let memento: PersonMemento = params[0];
 
-         this._loginDetails = myarray[0]._loginDetails;
-         this._name = myarray[0]._name;
-         this._email = myarray[0]._email;
-         this._thumbnailUrl = myarray[0]._thumbnailUrl;
-         this._roles = myarray[0]._roles;
+         super(new PersistenceDetails(memento._persistenceDetails._id,
+            memento._persistenceDetails._schemaVersion,
+            memento._persistenceDetails._sequenceNumber));
+
+         this._loginDetails = new LoginDetails(memento._loginDetails._provider, memento._loginDetails._token);
+         this._name = new Name(memento._name._name, memento._name._surname); 
+         this._email = memento._email ? new EmailAddress(memento._email._email, memento._email._isEmailVerified) : null;
+         this._thumbnailUrl = memento._thumbnailUrl ? new Url(memento._thumbnailUrl._url, memento._thumbnailUrl._isUrlVerified) : null;
+         this._roles = memento._roles ? new Roles(memento._roles._roles) : null;
 
       } else {
 
-         super(myarray[0]);
+         super(params[0]);
 
-         this._loginDetails = myarray[1];
-         this._name = myarray[2];
-         this._email = myarray[3];
-         this._thumbnailUrl = myarray[4];
-         this._roles = myarray[5];
+         this._loginDetails = params[1];
+         this._name = params[2];
+         this._email = params[3];
+         this._thumbnailUrl = params[4];
+         this._roles = params[5];
       }
    }
 
@@ -644,6 +658,7 @@ export function personArraysAreEqual(lhs: Array<Person>, rhs: Array<Person>): bo
 }
 
 export interface IPersonStore {
-   load(id: any): Promise<Person | null>;
+   loadOne(id: any): Promise<Person | null>;
+   loadMany(ids: Array<any>): Promise <Array<Person>>;
    save(person: Person): Promise<Person | null>;
 }
