@@ -80,7 +80,7 @@ export class WeightMeasurementTypeCodec implements ICodec<MeasurementTypeOf<EWei
 export const weightMeasurementIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
    _quantity: weightQuantityIoType,
-   _repeats: repQuantityIoType,
+   _repeats: IoTs.number,
    _cohortPeriod: IoTs.number,
    _measurementType: weightMeasurementTypeIoType,
    _subjectExternalId: IoTs.string
@@ -176,7 +176,7 @@ export class TimeMeasurementTypeCodec implements ICodec<MeasurementTypeOf<ETimeU
 export const timeMeasurementIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
    _quantity: timeQuantityIoType,
-   _repeats: repQuantityIoType,
+   _repeats: IoTs.number,
    _cohortPeriod: IoTs.number,
    _measurementType: timeMeasurementTypeIoType,
    _subjectExternalId: IoTs.string

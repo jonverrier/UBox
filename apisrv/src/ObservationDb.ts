@@ -193,20 +193,13 @@ const weightMeasurementSchema = new mongoose.Schema({
       },
       _unit: {
          type: String,
-         enum: ["Kg", "Lbs"],
+         enum: [EWeightUnits.Kg, EWeightUnits.Lbs],
          required: true
       },
    },
    _repeats: {
-      _amount: {
-         type: Number,
-         required: true
-      },
-      _unit: {
-         type: String,
-         enum: ["Reps"],
-         required: true
-      },
+      type: Number,
+      required: true
    },
    _cohortPeriod: {
        type: Number,

@@ -21,7 +21,7 @@ var queryManyUrl: string = root + EApiUrls.QueryWeightMeasurements;
 
 describe("MeasurementApi - weight", function () {
    let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
-   let repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
+   let repeats = 1;
    let measurementType = new SnatchMeasurementType();
 
    var measurement1: MeasurementOf<EWeightUnits> = new MeasurementOf<EWeightUnits>(

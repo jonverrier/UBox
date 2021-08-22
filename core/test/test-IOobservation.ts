@@ -78,7 +78,7 @@ describe("IOWeightMeasurementType", function () {
 describe("IOWeightMeasurement", function () {
 
    var quantity = new QuantityOf<EWeightUnits>(10, EWeightUnits.Kg);
-   var repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
+   var repeats = 1;
    var codec: WeightMeasurementCodec = new WeightMeasurementCodec();
    var measurementType: MeasurementTypeOf<EWeightUnits> = new CleanMeasurementType();
    var measurement: MeasurementOf<EWeightUnits> = new MeasurementOf<EWeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
@@ -243,7 +243,7 @@ describe("IOTimeMeasurementType", function () {
 describe("IOTimeMeasurement", function () {
 
    var quantity = new QuantityOf<ETimeUnits>(10, ETimeUnits.Seconds);
-   var repeats = new QuantityOf<ERepUnits>(1, ERepUnits.Reps);
+   var repeats = 1;
    var codec: TimeMeasurementCodec = new TimeMeasurementCodec();
    var measurementType: MeasurementTypeOf<ETimeUnits> = new Row250mMeasurementType();
    var measurement: MeasurementOf<ETimeUnits> = new MeasurementOf<ETimeUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;

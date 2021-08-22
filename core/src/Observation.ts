@@ -149,7 +149,7 @@ export function timeMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<E
 export class MeasurementMementoOf<MeasuredUnit> {
    _persistenceDetails: PersistenceDetailsMemento;
    _quantity: QuantityMementoOf<MeasuredUnit>;
-   _repeats: QuantityMementoOf<ERepUnits>;
+   _repeats: number;
    _cohortPeriod: number;
    _measurementType: MeasurementTypeMementoOf<MeasuredUnit>;
    _subjectExternalId: string;
@@ -164,11 +164,11 @@ export class MeasurementMementoOf<MeasuredUnit> {
     * @param subjectExternalId - reference to the entity to which the measurement applies  - usually a Person
     */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: QuantityOf<MeasuredUnit>, repeats: QuantityOf<ERepUnits>, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
+      quantity: QuantityOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
    {
       this._persistenceDetails = persistenceDetails.memento();
       this._quantity = quantity.memento();
-      this._repeats = repeats.memento();
+      this._repeats = repeats;
       this._cohortPeriod = cohortPeriod;
       this._measurementType = measurementType.memento();
       this._subjectExternalId = subjectExternalId;
@@ -183,7 +183,7 @@ export class MeasurementMementoOf<MeasuredUnit> {
    get quantity(): QuantityMementoOf<MeasuredUnit> {
       return this._quantity;
    }
-   get repeats(): QuantityMementoOf<ERepUnits> {
+   get repeats(): number {
       return this._repeats;
    }
    get cohortPeriod(): number {
@@ -199,7 +199,7 @@ export class MeasurementMementoOf<MeasuredUnit> {
 
 export class MeasurementOf<MeasuredUnit> extends Persistence {
    private _quantity: QuantityOf<MeasuredUnit>;
-   private _repeats: QuantityOf<ERepUnits>;
+   private _repeats: number;
    private _cohortPeriod: number;
    private _measurementType: MeasurementTypeOf<MeasuredUnit>;
    private _subjectExternalId: string; 
@@ -214,7 +214,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
  * @param subjectExternalId - reference to the entity to which the measurement applies  - usually a Person
  */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: QuantityOf<MeasuredUnit>, repeats: QuantityOf<ERepUnits>, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
+      quantity: QuantityOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
    public constructor(memento: MeasurementMementoOf<MeasuredUnit>);
    public constructor(...params: any[]) {
 
@@ -228,8 +228,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
 
          this._quantity = new QuantityOf<MeasuredUnit>(memento._quantity._amount,
             memento._quantity._unit);
-         this._repeats = new QuantityOf<ERepUnits>(memento._repeats._amount,
-            memento._repeats._unit);
+         this._repeats = memento._repeats;
          this._cohortPeriod = memento._cohortPeriod;
          this._measurementType = new MeasurementTypeOf<MeasuredUnit>(memento._measurementType);
          this._subjectExternalId = memento._subjectExternalId;
@@ -255,7 +254,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
    get quantity(): QuantityOf<MeasuredUnit> {
       return this._quantity;
    }
-   get repeats(): QuantityOf<ERepUnits> {
+   get repeats(): number {
       return this._repeats;
    }
    get cohortPeriod(): number {
@@ -284,7 +283,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
 
       return (super.equals (rhs) && 
          this._quantity.equals(rhs._quantity) &&
-         this._repeats.equals(rhs._repeats) &&
+         this._repeats === rhs._repeats &&
          this._cohortPeriod === rhs._cohortPeriod &&
          this._measurementType.equals(rhs.measurementType) &&
          this._subjectExternalId === rhs._subjectExternalId);
