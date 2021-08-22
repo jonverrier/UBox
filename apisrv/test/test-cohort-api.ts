@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import axios from 'axios';
 
-import { ETimeUnits, EWeightUnits } from '../../core/src/Quantity';
+import { TimeUnits, WeightUnits } from '../../core/src/Quantity';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { ELoginProvider, LoginDetails, Name, EmailAddress, Url, Person } from "../../core/src/Person";
@@ -31,11 +31,11 @@ describe("CohortApi", function () {
 
    beforeEach(function () {
       let weightMeasurement = new SnatchMeasurementType();
-      let weightMeasurements = new Array<MeasurementTypeOf<EWeightUnits>>();
+      let weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>();
       weightMeasurements.push(weightMeasurement); 
 
       let timeMeasurement = new Row250mMeasurementType();
-      let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>();
+      let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 
       let people = new Array<Person>();

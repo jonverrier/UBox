@@ -3,7 +3,7 @@
 import * as IoTs from 'io-ts';
 import * as IoTsTypes from 'io-ts-types';
 
-import { EWeightUnits, ETimeUnits, QuantityOf } from '../src/Quantity';
+import { WeightUnits, TimeUnits, QuantityOf } from '../src/Quantity';
 import { RangeOf } from '../src/Range';
 import { Name, LoginDetails, EmailAddress, Url, Roles, Person } from '../src/Person';
 import { MeasurementTypeOf } from '../src/Observation';
@@ -100,13 +100,13 @@ export class CohortCodec implements ICodec<Cohort> {
       for (i = 0; i < members.length; i++)
          members[i] = new Person(temp._members[i]);
 
-      let weightMeasurements = new Array<MeasurementTypeOf<EWeightUnits>>(temp._weightMeasurements.length);
+      let weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>(temp._weightMeasurements.length);
       for (i = 0; i < weightMeasurements.length; i++)
-         weightMeasurements[i] = new MeasurementTypeOf<EWeightUnits>(temp._weightMeasurements[i]);
+         weightMeasurements[i] = new MeasurementTypeOf<WeightUnits>(temp._weightMeasurements[i]);
 
-      let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>(temp._timeMeasurements.length);
+      let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>(temp._timeMeasurements.length);
       for (i = 0; i < timeMeasurements.length; i++)
-         timeMeasurements[i] = new MeasurementTypeOf<ETimeUnits>(temp._timeMeasurements[i]);     
+         timeMeasurements[i] = new MeasurementTypeOf<TimeUnits>(temp._timeMeasurements[i]);     
 
       return new Cohort(new PersistenceDetails(temp._persistenceDetails._id, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
          new CohortName(temp._name._name),

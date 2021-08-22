@@ -3,7 +3,7 @@
 
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
-import { ERepUnits, ETimeUnits, EWeightUnits, QuantityOf } from '../src/Quantity';
+import { TimeUnits, ETimeUnits, WeightUnits, EWeightUnits, QuantityOf } from '../src/Quantity';
 import { RangeOf } from '../src/Range';
 import { WeightMeasurementTypeCodec, WeightMeasurementCodec, TimeMeasurementTypeCodec, TimeMeasurementCodec } from '../src/IOObservation';
 import { CleanMeasurementType, Row250mMeasurementType } from '../src/FitnessObservations';
@@ -44,10 +44,10 @@ describe("IOWeightMeasurementType", function () {
    it("Needs to encode WeightMeasurementType.", function () {
 
       let encoded = codec.encode(measurementType);
-      let encodedRange = new RangeOf<EWeightUnits>(
-         new QuantityOf<EWeightUnits>(encoded._range._lo.amount, encoded._range._lo._unit),
+      let encodedRange = new RangeOf<WeightUnits>(
+         new QuantityOf<WeightUnits>(encoded._range._lo.amount, encoded._range._lo._unit),
          encoded._range._loInclEq,
-         new QuantityOf<EWeightUnits>(encoded._range._hi.amount, encoded._range._hi._unit),
+         new QuantityOf<WeightUnits>(encoded._range._hi.amount, encoded._range._hi._unit),
          encoded._range._hiInclEq);       
 
       expect(encoded._measurementType).to.equal(measurementType.measurementType);
@@ -77,11 +77,11 @@ describe("IOWeightMeasurementType", function () {
 
 describe("IOWeightMeasurement", function () {
 
-   var quantity = new QuantityOf<EWeightUnits>(10, EWeightUnits.Kg);
+   var quantity = new QuantityOf<WeightUnits>(10, EWeightUnits.Kg);
    var repeats = 1;
    var codec: WeightMeasurementCodec = new WeightMeasurementCodec();
-   var measurementType: MeasurementTypeOf<EWeightUnits> = new CleanMeasurementType();
-   var measurement: MeasurementOf<EWeightUnits> = new MeasurementOf<EWeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
+   var measurementType: MeasurementTypeOf<WeightUnits> = new CleanMeasurementType();
+   var measurement: MeasurementOf<WeightUnits> = new MeasurementOf<WeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
 
    beforeEach(function () {
 
@@ -133,7 +133,7 @@ describe("IOWeightMeasurement", function () {
    it("Needs to encode then decode WeightMeasurement.", function () {
 
       let encoded = codec.encode(measurement);
-      let decoded: MeasurementOf<EWeightUnits>;
+      let decoded: MeasurementOf<WeightUnits>;
 
       var caught: boolean = false;
 
@@ -183,10 +183,10 @@ describe("IOWeightMeasurementType", function () {
    it("Needs to encode WeightMeasurementType.", function () {
 
       let encoded = codec.encode(measurementType);
-      let encodedRange = new RangeOf<EWeightUnits>(
-         new QuantityOf<EWeightUnits>(encoded._range._lo.amount, encoded._range._lo._unit),
+      let encodedRange = new RangeOf<WeightUnits>(
+         new QuantityOf<WeightUnits>(encoded._range._lo.amount, encoded._range._lo._unit),
          encoded._range._loInclEq,
-         new QuantityOf<EWeightUnits>(encoded._range._hi.amount, encoded._range._hi._unit),
+         new QuantityOf<WeightUnits>(encoded._range._hi.amount, encoded._range._hi._unit),
          encoded._range._hiInclEq);
 
       expect(encoded._measurementType).to.equal(measurementType.measurementType);
@@ -242,16 +242,16 @@ describe("IOTimeMeasurementType", function () {
 
 describe("IOTimeMeasurement", function () {
 
-   var quantity = new QuantityOf<ETimeUnits>(10, ETimeUnits.Seconds);
+   var quantity = new QuantityOf<TimeUnits>(10, ETimeUnits.Seconds);
    var repeats = 1;
    var codec: TimeMeasurementCodec = new TimeMeasurementCodec();
-   var measurementType: MeasurementTypeOf<ETimeUnits> = new Row250mMeasurementType();
-   var measurement: MeasurementOf<ETimeUnits> = new MeasurementOf<ETimeUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
+   var measurementType: MeasurementTypeOf<TimeUnits> = new Row250mMeasurementType();
+   var measurement: MeasurementOf<TimeUnits> = new MeasurementOf<TimeUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
 
    it("Needs to encode then decode WeightMeasurement.", function () {
 
       let encoded = codec.encode(measurement);
-      let decoded: MeasurementOf<ETimeUnits>;
+      let decoded: MeasurementOf<TimeUnits>;
 
       var caught: boolean = false;
 

@@ -7,7 +7,7 @@ import { CohortNameCodec, CohortTimePeriodCodec, CohortCodec } from '../src/IOCo
 import { Name, LoginDetails, EmailAddress, Url, Person, ELoginProvider} from '../src/Person';
 import { CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from '../src/Cohort';
 import { MeasurementTypeOf } from '../src/Observation';
-import { ETimeUnits, EWeightUnits } from '../src/Quantity';
+import { TimeUnits, WeightUnits } from '../src/Quantity';
 import { SnatchMeasurementType, Row250mMeasurementType } from '../src/FitnessObservations'
 
 var expect = require("chai").expect;
@@ -131,11 +131,11 @@ describe("IOCohort", function () {
    people.push(person);
 
    let weightMeasurement = new SnatchMeasurementType();
-   let weightMeasurements = new Array<MeasurementTypeOf<EWeightUnits>>();
+   let weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>();
    weightMeasurements.push(weightMeasurement);
 
    let timeMeasurement = new Row250mMeasurementType();
-   let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>();
+   let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
    timeMeasurements.push(timeMeasurement);
 
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),

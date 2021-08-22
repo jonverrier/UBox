@@ -6,16 +6,39 @@ export enum ETimeUnits { Seconds = "Seconds"}
 export enum EDistanceUnits { Metres = "Metres"}
 export enum ERepUnits { Reps = "Reps"}
 
+export interface IUnit {
+   allowedValues(): Array<string>;
+}
+
+export class WeightUnits implements IUnit {
+   allowedValues(): Array<string> {
+      return Object.values(EWeightUnits);
+   }
+
+   static allowedValues(): Array<string> {
+      return Object.values(EWeightUnits);
+   }
+}
+
+export class TimeUnits implements IUnit {
+   allowedValues(): Array<string> {
+      return Object.values(ETimeUnits);
+   }
+   static allowedValues(): Array<string> {
+      return Object.values(ETimeUnits);
+   }
+}
+
 export class QuantityMementoOf<Unit> {
    _amount: number;
-   _unit: Unit;
+   _unit: string;
 
    /**
     * Create a QuantityMementoOf object - an amount, with Units
     * @param amount - the scalar value
     * @param unit - the unit in which the scalar value is measured
     */
-   constructor(amount: number, unit: Unit) {
+   constructor(amount: number, unit: string) {
       this._amount = amount;
       this._unit = unit;
    }
@@ -27,21 +50,21 @@ export class QuantityMementoOf<Unit> {
       return this._amount;
    }
 
-   get unit(): Unit {
+   get unit(): string {
       return this._unit;
    }
 }
 
 export class QuantityOf<Unit> { 
    private _amount: number;
-   private _unit: Unit;
+   private _unit: string;
 
 /**
  * Create a Quantity object - an amount, with Units
  * @param amount - the scalar value
  * @param unit - the unit in which the scalar value is measured
  */
-   constructor(amount: number, unit: Unit) {
+   constructor(amount: number, unit: string) {
       this._amount = amount;
       this._unit = unit;
    }
@@ -53,7 +76,7 @@ export class QuantityOf<Unit> {
       return this._amount;
    }
 
-   get unit(): Unit {
+   get unit(): string {
       return this._unit;
    }
 

@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2021 */
 
 import { Persistence, PersistenceDetails, PersistenceDetailsMemento } from "./Persistence";
-import { ERepUnits, ETimeUnits, EWeightUnits, QuantityMementoOf, QuantityOf } from "./Quantity";
+import { ERepUnits, TimeUnits, WeightUnits, QuantityMementoOf, QuantityOf } from "./Quantity";
 import { RangeMementoOf, RangeOf } from "./Range";
 
 // This enum is used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing 
@@ -134,14 +134,14 @@ function measurementTypeArraysAreEqual<Units>(lhs: Array<MeasurementTypeOf<Units
    return true;
 }
 
-export function weightMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<EWeightUnits>>,
-   rhs: Array<MeasurementTypeOf<EWeightUnits>>): boolean {
+export function weightMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<WeightUnits>>,
+   rhs: Array<MeasurementTypeOf<WeightUnits>>): boolean {
 
    return measurementTypeArraysAreEqual(lhs, rhs);
 }
 
-export function timeMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<ETimeUnits>>,
-   rhs: Array<MeasurementTypeOf<ETimeUnits>>): boolean {
+export function timeMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<TimeUnits>>,
+   rhs: Array<MeasurementTypeOf<TimeUnits>>): boolean {
 
    return  measurementTypeArraysAreEqual(lhs, rhs);;
 }
@@ -291,6 +291,6 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
 }
 
 export interface IWeightMeasurementStore {
-   load(id: any): Promise<MeasurementOf<EWeightUnits> | null>;
-   save(measurement: MeasurementOf<EWeightUnits>): Promise<MeasurementOf<EWeightUnits> | null>;
+   load(id: any): Promise<MeasurementOf<WeightUnits> | null>;
+   save(measurement: MeasurementOf<WeightUnits>): Promise<MeasurementOf<WeightUnits> | null>;
 }

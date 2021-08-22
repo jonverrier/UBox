@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
-import { EWeightUnits, ETimeUnits, QuantityOf, ERepUnits, EDistanceUnits } from '../src/Quantity';
+import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, QuantityOf, ERepUnits, EDistanceUnits } from '../src/Quantity';
 import {
    EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IWeightMeasurementStore,
    weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual
@@ -37,9 +37,9 @@ describe("MeasurementType", function () {
    it("Needs to test weight array compare", function () {
       let snatch = new SnatchMeasurementType();
       let clean = new CleanMeasurementType();
-      let snatches = new Array<MeasurementTypeOf<EWeightUnits>>();
-      let moreSnatches = new Array<MeasurementTypeOf<EWeightUnits>>();
-      let variedLifts = new Array<MeasurementTypeOf<EWeightUnits>>();
+      let snatches = new Array<MeasurementTypeOf<WeightUnits>>();
+      let moreSnatches = new Array<MeasurementTypeOf<WeightUnits>>();
+      let variedLifts = new Array<MeasurementTypeOf<WeightUnits>>();
       snatches.push(snatch);
       moreSnatches.push(snatch);
       moreSnatches.push(snatch);
@@ -56,9 +56,9 @@ describe("MeasurementType", function () {
    it("Needs to test time array compare", function () {
       let row = new Row250mMeasurementType();
       let run = new Run100m();
-      let rows = new Array<MeasurementTypeOf<ETimeUnits>>();
-      let moreRows = new Array<MeasurementTypeOf<ETimeUnits>>();
-      let variedRows = new Array<MeasurementTypeOf<ETimeUnits>>();
+      let rows = new Array<MeasurementTypeOf<TimeUnits>>();
+      let moreRows = new Array<MeasurementTypeOf<TimeUnits>>();
+      let variedRows = new Array<MeasurementTypeOf<TimeUnits>>();
       rows.push(row);
       moreRows.push(row);
       moreRows.push(row);
@@ -106,97 +106,97 @@ function testEquals<MeasuredUnit>(quantity: QuantityOf<MeasuredUnit>,
 describe("Measurement", function () {
 
    it("Needs to construct Snatch correctly", function () {
-      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
       let measurement = new SnatchMeasurementType();
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to construct Clean correctly", function () {
-      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
       let measurement = new CleanMeasurementType();
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to construct Jerk correctly", function () {
-      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
       let measurement = new JerkMeasurementType();
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to construct Clean&Jerk correctly", function () {
-      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
       let measurement = new CleanAndJerkMeasurementType();
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to construct Row250m correctly", function () {
-      let quantity = new QuantityOf<ETimeUnits>(120, ETimeUnits.Seconds);
+      let quantity = new QuantityOf<TimeUnits>(120, ETimeUnits.Seconds);
       let repeats = 1;
       let measurement = new Row250mMeasurementType();
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to construct Run100m correctly", function () {
-      let quantity = new QuantityOf<ETimeUnits>(240, ETimeUnits.Seconds);
+      let quantity = new QuantityOf<TimeUnits>(240, ETimeUnits.Seconds);
       let repeats = 1;
       let measurement = new Run100m();
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to test Snatch for equality", function () {
-      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
       let measurement = new SnatchMeasurementType();
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to test Clean for equality", function () {
-      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
       let measurement = new CleanMeasurementType();
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to test Jerk for equality", function () {
-      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
       let measurement = new JerkMeasurementType();
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to test Clean&Jerk for equality", function () {
-      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let measurement = new CleanAndJerkMeasurementType();
       let repeats = 1;
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to test Row for equality", function () {
-      let quantity = new QuantityOf<ETimeUnits>(60, ETimeUnits.Seconds);
+      let quantity = new QuantityOf<TimeUnits>(60, ETimeUnits.Seconds);
       let repeats = 1;
       let measurement = new Row250mMeasurementType();
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to test Run for equality", function () {
-      let quantity = new QuantityOf<ETimeUnits>(60, ETimeUnits.Seconds);
+      let quantity = new QuantityOf<TimeUnits>(60, ETimeUnits.Seconds);
       let repeats = 1;
       let measurement = new Run100m();
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to throw out of range error", function () {
-      let quantity = new QuantityOf<EWeightUnits>(600, EWeightUnits.Kg); // 600 kg snatch is impossible
+      let quantity = new QuantityOf<WeightUnits>(600, EWeightUnits.Kg); // 600 kg snatch is impossible
       let repeats = 1;
       let measurementType = new SnatchMeasurementType();
       let caught = false;
 
       try {
-         let measurement = new MeasurementOf<EWeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+         let measurement = new MeasurementOf<WeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
       } catch {
          caught = true;
       }
@@ -206,15 +206,15 @@ describe("Measurement", function () {
 });
 
 class StubStore implements IWeightMeasurementStore {
-   async load(): Promise <MeasurementOf<EWeightUnits> | null>  {
-      let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+   async load(): Promise <MeasurementOf<WeightUnits> | null>  {
+      let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
       let measurementType = new SnatchMeasurementType();
 
-      return new MeasurementOf<EWeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+      return new MeasurementOf<WeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
    }
 
-   async save(measurement: MeasurementOf<EWeightUnits>): Promise<MeasurementOf<EWeightUnits> | null > {
+   async save(measurement: MeasurementOf<WeightUnits>): Promise<MeasurementOf<WeightUnits> | null > {
       return measurement;
    }
 }
@@ -241,10 +241,10 @@ describe("MeasurementStorer", function () {
       let caught = false;
 
       try {
-         let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+         let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
          let repeats = 1;
          let measurementType = new SnatchMeasurementType();
-         let measurement = new MeasurementOf<EWeightUnits>(new PersistenceDetails("id", 1, 2),
+         let measurement = new MeasurementOf<WeightUnits>(new PersistenceDetails("id", 1, 2),
             quantity, repeats, 0, measurementType, "1234");
 
          storer.save(measurement);

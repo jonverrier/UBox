@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2021 */
 
-import { EWeightUnits, ETimeUnits, QuantityOf } from "./Quantity";
+import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, QuantityOf } from "./Quantity";
 import { RangeOf } from "./Range";
 import { EMeasurementType, EPositiveTrend, MeasurementTypeOf} from './Observation';
 
@@ -8,15 +8,15 @@ import { EMeasurementType, EPositiveTrend, MeasurementTypeOf} from './Observatio
 // ====================
 // Weight Measurements
 // ====================
-export class LiftMeasurementType extends MeasurementTypeOf<EWeightUnits> {
+export class LiftMeasurementType extends MeasurementTypeOf<WeightUnits> {
 
    /**
     * Create a SnatchMeasurementType object - contains the static elements that characterise measurement of a snatch
     */
    constructor(lift: EMeasurementType, lowBar: number, highBar: number) {
-      let lo = new QuantityOf<EWeightUnits>(lowBar, EWeightUnits.Kg);
-      let hi = new QuantityOf<EWeightUnits>(highBar, EWeightUnits.Kg);
-      let range = new RangeOf<EWeightUnits>(lo, true, hi, true);
+      let lo = new QuantityOf<WeightUnits>(lowBar, EWeightUnits.Kg);
+      let hi = new QuantityOf<WeightUnits>(highBar, EWeightUnits.Kg);
+      let range = new RangeOf<WeightUnits>(lo, true, hi, true);
 
       super(lift, range, EPositiveTrend.Up);
    }
@@ -70,15 +70,15 @@ export class CleanAndJerkMeasurementType extends LiftMeasurementType {
 // ====================
 // Speed Measurements
 // ====================
-export class SpeedMeasurementType extends MeasurementTypeOf<ETimeUnits> {
+export class SpeedMeasurementType extends MeasurementTypeOf<TimeUnits> {
 
    /**
     * Create a RowDistanceMeasurementType object - contains the static elements that characterise measurement of a row distance
     */
    constructor(mono: EMeasurementType, lowBar: number, highBar: number, ) {
-      let lo = new QuantityOf<ETimeUnits>(lowBar, ETimeUnits.Seconds);
-      let hi = new QuantityOf<ETimeUnits>(highBar, ETimeUnits.Seconds);
-      let range = new RangeOf<ETimeUnits>(lo, true, hi, true);
+      let lo = new QuantityOf<TimeUnits>(lowBar, ETimeUnits.Seconds);
+      let hi = new QuantityOf<TimeUnits>(highBar, ETimeUnits.Seconds);
+      let range = new RangeOf<TimeUnits>(lo, true, hi, true);
 
       super(mono, range, EPositiveTrend.Down);
    }

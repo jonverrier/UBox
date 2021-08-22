@@ -7,7 +7,7 @@ import { PersistenceDetails } from "../../core/src/Persistence";
 import { MeasurementOf } from '../../core/src/Observation';
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
 import { WeightMeasurementCodec, WeightMeasurementsCodec} from '../../core/src/IOObservation';
-import { EWeightUnits, ERepUnits, QuantityOf } from "../../core/src/Quantity";
+import { WeightUnits, EWeightUnits, QuantityOf } from "../../core/src/Quantity";
 import { SnatchMeasurementType } from '../../core/src/FitnessObservations';
 
 var expect = require("chai").expect;
@@ -20,11 +20,11 @@ var queryUrl: string = root + EApiUrls.QueryWeightMeasurement;
 var queryManyUrl: string = root + EApiUrls.QueryWeightMeasurements;
 
 describe("MeasurementApi - weight", function () {
-   let quantity = new QuantityOf<EWeightUnits>(60, EWeightUnits.Kg);
+   let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
    let repeats = 1;
    let measurementType = new SnatchMeasurementType();
 
-   var measurement1: MeasurementOf<EWeightUnits> = new MeasurementOf<EWeightUnits>(
+   var measurement1: MeasurementOf<WeightUnits> = new MeasurementOf<WeightUnits>(
       new PersistenceDetails(null, 1, 2), quantity, repeats, 0, measurementType, "1234");
 
    it("Needs to save a new Measurement", async function (done) {
@@ -84,10 +84,10 @@ describe("MeasurementApi - weight", function () {
          let weightCodec = new WeightMeasurementsCodec();
          let decodedMeasurements = weightCodec.decode(response2.data);
 
-         let personReturned = new MeasurementOf<EWeightUnits> (decodedMeasurements[0]);
+         let personReturned = new MeasurementOf<WeightUnits> (decodedMeasurements[0]);
 
          // test is that we get the same Measurement back as array[0] as we got from the specific query
-         if (personReturned.equals(new MeasurementOf<EWeightUnits>(decoded))) {
+         if (personReturned.equals(new MeasurementOf<WeightUnits>(decoded))) {
             done();
          } else {
             var logger = new Logger();
