@@ -7,7 +7,7 @@ import { TimeUnits, ETimeUnits, WeightUnits, EWeightUnits, QuantityOf } from '..
 import { RangeOf } from '../src/Range';
 import { WeightMeasurementTypeCodec, WeightMeasurementCodec, TimeMeasurementTypeCodec, TimeMeasurementCodec } from '../src/IOObservation';
 import { CleanMeasurementType, Row250mMeasurementType } from '../src/FitnessObservations';
-import { MeasurementTypeOf, MeasurementOf} from '../src/Observation';
+import { MeasurementTypeOf, MeasurementOf, EMeasurementUnitType} from '../src/Observation';
 
 var expect = require("chai").expect;
 
@@ -30,6 +30,7 @@ describe("IOWeightMeasurementType", function () {
 
          codec.decode({
             _measurementType: measurementType.measurementType,
+            _unitType: EMeasurementUnitType.Weight,
             _range: measurementType.range,
             _trend: measurementType.trend
          });
@@ -100,6 +101,7 @@ describe("IOWeightMeasurement", function () {
             _cohortPeriod: 1,
             _measurementType: {
                _measurementType: measurementType.measurementType,
+               _unitType: EMeasurementUnitType.Weight,
                _range: measurementType.range,
                _trend: measurementType.trend
             },

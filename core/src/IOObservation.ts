@@ -1,8 +1,8 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 
-import { WeightUnits, ERepUnits, TimeUnits } from './Quantity'; 
-import { EMeasurementType, EPositiveTrend, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
+import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, ERepUnits} from './Quantity';
+import { EMeasurementType, EMeasurementUnitType, EPositiveTrend, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from '../src/IOCommon';
 
 import * as IoTs from 'io-ts';
@@ -17,17 +17,17 @@ import * as IoTs from 'io-ts';
 // ==========
 const weightQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: IoTs.string
+   _unit: IoTs.string // Todo - work out how to constrain to valid values
 });
 
 const timeQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: IoTs.string
+   _unit: IoTs.string // Todo - work out how to constrain to valid values
 });
 
 const repQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: IoTs.string
+   _unit: IoTs.string // Todo - work out how to constrain to valid values
 });
 
 const weightRangeIoType = IoTs.type({
@@ -49,6 +49,7 @@ const timeRangeIoType = IoTs.type({
 
 export const weightMeasurementTypeIoType = IoTs.type({
    _measurementType: createEnumType<EMeasurementType>(EMeasurementType, 'EMeasurementType'),
+   _unitType: createEnumType<EMeasurementUnitType>(EMeasurementUnitType, 'EMeasurementUnitType'),
    _range: weightRangeIoType,
    _trend: createEnumType<EPositiveTrend>(EPositiveTrend, 'EPositiveTrend')
 });
@@ -145,6 +146,7 @@ export class WeightMeasurementsCodec implements ICodec<Array<MeasurementOf<Weigh
 
 export const timeMeasurementTypeIoType = IoTs.type({
    _measurementType: createEnumType<EMeasurementType>(EMeasurementType, 'EMeasurementType'),
+   _unitType: createEnumType<EMeasurementUnitType>(EMeasurementUnitType, 'EMeasurementUnitType'),
    _range: timeRangeIoType,
    _trend: createEnumType<EPositiveTrend>(EPositiveTrend, 'EPositiveTrend')
 });

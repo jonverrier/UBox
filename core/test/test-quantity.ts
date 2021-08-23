@@ -1,6 +1,6 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { WeightUnits, EWeightUnits, QuantityOf} from '../src/Quantity';
+import { WeightUnits, TimeUnits, EWeightUnits, ETimeUnits, QuantityOf} from '../src/Quantity';
 
 var expect = require("chai").expect;
 
@@ -21,6 +21,22 @@ describe("Quantity", function () {
       expect(quantity1.equals(quantity1)).to.equal(true);
       expect(quantity1.equals(quantity2)).to.equal(false);
       expect(quantity1.equals(quantity3)).to.equal(true);
+   });
+
+   it("Needs to test weight unit membership  correctly", function () {
+      var isMember: string = EWeightUnits.Kg;
+      var notMember: string = "Banana";
+
+      expect(WeightUnits.isAllowedValue(isMember)).to.equal(true);
+      expect(WeightUnits.isAllowedValue(notMember)).to.equal(false);
+   });
+
+   it("Needs to test time unit membership  correctly", function () {
+      var isMember: string = ETimeUnits.Seconds;
+      var notMember: string = "Banana";
+
+      expect(TimeUnits.isAllowedValue(isMember)).to.equal(true);
+      expect(TimeUnits.isAllowedValue(notMember)).to.equal(false);
    });
 
 });

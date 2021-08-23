@@ -3,22 +3,22 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { MeasurementOf, IWeightMeasurementStore, EMeasurementType, EPositiveTrend } from '../../core/src/Observation';
+import { MeasurementOf, IMeasurementStore, EMeasurementType, EMeasurementUnitType, EPositiveTrend } from '../../core/src/Observation';
 import { WeightMeasurementCodec } from '../../core/src/IOObservation';
-import { TimeUnits, WeightUnits } from "../../core/src/Quantity";
+import { TimeUnits, WeightUnits, RepUnits } from "../../core/src/Quantity";
 
 
-export class WeightMeasurementDb implements IWeightMeasurementStore {
+export class MeasurementDb implements IMeasurementStore {
    private _codec;
 
    constructor() {
       this._codec = new WeightMeasurementCodec();;
    }
 
-   async load(id: any): Promise<MeasurementOf<WeightUnits> | null>  {
+   async load(id: any): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> |null>  {
 
       try {
-         const result = await weightMeasurementModel.findOne().where('_id').eq(id).exec();
+         const result = await measurementModel.findOne().where('_id').eq(id).exec();
 
          if (result) {
             // If we saved a new document, copy the new Mongo ID to persistenceDetails
@@ -36,24 +36,24 @@ export class WeightMeasurementDb implements IWeightMeasurementStore {
       }
    }
 
-   async loadMany(ids: Array<any>): Promise<Array<MeasurementOf<WeightUnits>>> {
+   async loadMany(ids: Array<any>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
 
       try {
-         const result = await weightMeasurementModel.find().where('_id').in(ids).exec();
+         const result = await measurementModel.find().where('_id').in(ids).exec();
 
          if (result && result.length > 0) {
             var i: number;
-            var people: Array<MeasurementOf<WeightUnits>> = new Array<MeasurementOf<WeightUnits>>();
+            var measurements: Array<MeasurementOf<WeightUnits>> = new Array<MeasurementOf<WeightUnits>>();
 
             for (i = 0; i < result.length; i++) {
                // If we saved a new document, copy the new Mongo ID up to persistenceDetails
                if (result[i]._doc._persistenceDetails._id !== result[i]._doc._id)
                   result[i]._doc._persistenceDetails._id = result[i]._doc._id;
 
-               people.push(this._codec.tryCreateFrom(result[i]._doc));
+               measurements.push(this._codec.tryCreateFrom(result[i]._doc));
             }
 
-            return people;
+            return measurements;
          } else {
             return null;
          }
@@ -64,9 +64,10 @@ export class WeightMeasurementDb implements IWeightMeasurementStore {
       }
    }
 
-   async save(measurement: MeasurementOf<WeightUnits>): Promise<MeasurementOf<WeightUnits> | null> {
+
+   async save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
       try {
-         let result = await (new weightMeasurementModel(measurement)).save({ isNew: measurement.persistenceDetails._id ? true : false });
+         let result = await (new measurementModel(measurement)).save({ isNew: measurement.persistenceDetails._id ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
          if (result._doc._persistenceDetails._id !== result._doc._id)
@@ -81,12 +82,23 @@ export class WeightMeasurementDb implements IWeightMeasurementStore {
    }
 }
 
-export const weightMeasurementTypeSchema = new mongoose.Schema({
+
+const measurementTypeValues: Array<string> = (Object.values(EMeasurementType));
+const measurementUnitTypeValues: Array<string> = (Object.values(EMeasurementUnitType));
+const allUnitValues: Array<string> = WeightUnits.allowedValues().concat(TimeUnits.allowedValues()).concat(RepUnits.allowedValues());
+const trendValues: Array<string> = (Object.values(EPositiveTrend));
+
+export const measurementTypeSchema = new mongoose.Schema({
    _measurementType: {
       type: String,
-      enum: [EMeasurementType.Snatch, EMeasurementType.Clean, EMeasurementType.Jerk, EMeasurementType.CleanAndJerk],
+      enum: measurementTypeValues,
       required: true
    },
+   _unitType: {
+      type: String,
+      enum: measurementUnitTypeValues,
+      required: true
+   }, 
    _range: {
       _lo: {
          _amount: {
@@ -95,7 +107,7 @@ export const weightMeasurementTypeSchema = new mongoose.Schema({
          },
          _unit: {
             type: String,
-            enum: WeightUnits.allowedValues(),
+            enum: allUnitValues,
             required: true
          },
       },
@@ -110,7 +122,7 @@ export const weightMeasurementTypeSchema = new mongoose.Schema({
          },
          _unit: {
             type: String,
-            enum: WeightUnits.allowedValues(),
+            enum: allUnitValues,
             required: true
          },
       },
@@ -121,57 +133,12 @@ export const weightMeasurementTypeSchema = new mongoose.Schema({
    },
    _trend: {
       type: String,
-      enum: [EPositiveTrend.Up, EPositiveTrend.Down],
+      enum: trendValues,
       required: true
    }
 });
 
-export const timeMeasurementTypeSchema = new mongoose.Schema({
-   _measurementType: {
-      type: String,
-      enum: [EMeasurementType.Row250, EMeasurementType.Run250],
-      required: true
-   },
-   _range: {
-      _lo: {
-         _amount: {
-            type: Number,
-            required: true
-         },
-         _unit: {
-            type: String,
-            enum: TimeUnits.allowedValues(),
-            required: true
-         },
-      },
-      _loInclEq: {
-         type: Boolean,
-         required: true
-      },
-      _hi: {
-         _amount: {
-            type: Number,
-            required: true
-         },
-         _unit: {
-            type: String,
-            enum: TimeUnits.allowedValues(),
-            required: true
-         },
-      },
-      _hiInclEq: {
-         type: Boolean,
-         required: true
-      },
-   },
-   _trend: {
-      type: String,
-      enum: [EPositiveTrend.Up, EPositiveTrend.Down],
-      required: true
-   }
-});
-
-const weightMeasurementSchema = new mongoose.Schema({
+const measurementSchema = new mongoose.Schema({
    _persistenceDetails: {
       _id: {
          type: Object,
@@ -193,7 +160,7 @@ const weightMeasurementSchema = new mongoose.Schema({
       },
       _unit: {
          type: String,
-         enum: WeightUnits.allowedValues(),
+         enum: allUnitValues,
          required: true
       },
    },
@@ -205,7 +172,7 @@ const weightMeasurementSchema = new mongoose.Schema({
        type: Number,
        required: true
    },
-   _measurementType: weightMeasurementTypeSchema,
+   _measurementType: measurementTypeSchema,
    _subjectExternalId: {
       type: String,
       required: true
@@ -215,4 +182,4 @@ const weightMeasurementSchema = new mongoose.Schema({
       timestamps: true
 });
 
-const weightMeasurementModel = mongoose.model("WeightMeasurement", weightMeasurementSchema);
+const measurementModel = mongoose.model("Measurement", measurementSchema);

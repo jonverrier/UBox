@@ -8,6 +8,8 @@ export enum ERepUnits { Reps = "Reps"}
 
 export interface IUnit {
    allowedValues(): Array<string>;
+
+   isAllowedValue(value: string): boolean;
 }
 
 export class WeightUnits implements IUnit {
@@ -15,8 +17,18 @@ export class WeightUnits implements IUnit {
       return Object.values(EWeightUnits);
    }
 
+   isAllowedValue(value: string): boolean {
+      var values: Array<string> = this.allowedValues();
+      return values.indexOf(value) !== -1;
+   }
+
    static allowedValues(): Array<string> {
       return Object.values(EWeightUnits);
+   }
+
+   static isAllowedValue(value: string): boolean {
+      var values: Array<string> = WeightUnits.allowedValues();
+      return values.indexOf(value) !== -1;
    }
 }
 
@@ -24,8 +36,37 @@ export class TimeUnits implements IUnit {
    allowedValues(): Array<string> {
       return Object.values(ETimeUnits);
    }
+
+   isAllowedValue(value: string): boolean {
+      var values: Array<string> = this.allowedValues();
+      return values.indexOf(value) !== -1;
+   }
+
    static allowedValues(): Array<string> {
       return Object.values(ETimeUnits);
+   }
+   static isAllowedValue(value: string): boolean {
+      var values: Array<string> = TimeUnits.allowedValues();
+      return values.indexOf(value) !== -1;
+   }
+}
+
+export class RepUnits implements IUnit {
+   allowedValues(): Array<string> {
+      return Object.values(ERepUnits);
+   }
+
+   isAllowedValue(value: string): boolean {
+      var values: Array<string> = this.allowedValues();
+      return values.indexOf(value) !== -1;
+   }
+
+   static allowedValues(): Array<string> {
+      return Object.values(ERepUnits);
+   }
+   static isAllowedValue(value: string): boolean {
+      var values: Array<string> = RepUnits.allowedValues();
+      return values.indexOf(value) !== -1;
    }
 }
 
@@ -65,6 +106,7 @@ export class QuantityOf<Unit> {
  * @param unit - the unit in which the scalar value is measured
  */
    constructor(amount: number, unit: string) {
+
       this._amount = amount;
       this._unit = unit;
    }

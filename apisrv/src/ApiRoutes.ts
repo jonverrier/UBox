@@ -12,7 +12,7 @@ import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { PersonDb } from './PersonDb';
 
 import { WeightMeasurementCodec, WeightMeasurementsCodec } from '../../core/src/IOObservation';
-import { WeightMeasurementDb } from './ObservationDb';
+import { MeasurementDb } from './ObservationDb';
 
 import { CohortCodec } from '../../core/src/IOCohort';
 import { CohortDb } from './CohortDb';
@@ -93,7 +93,7 @@ ApiRoutes.get(EApiUrls.QueryWeightMeasurement, function (req, res) {
 
    try {
       let codec = new WeightMeasurementCodec();
-      let db = new WeightMeasurementDb();
+      let db = new MeasurementDb();
 
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
@@ -115,7 +115,7 @@ ApiRoutes.put(EApiUrls.SaveWeightMeasurement, function (req, res) {
 
    try {
       let codec = new WeightMeasurementCodec();
-      let db = new WeightMeasurementDb();
+      let db = new MeasurementDb();
 
       let encoded = req.body;
       let decoded = codec.tryCreateFrom(encoded);
@@ -136,7 +136,7 @@ ApiRoutes.put(EApiUrls.QueryWeightMeasurements, function (req, res) {
 
    try {
       let weightsCodec = new WeightMeasurementsCodec();
-      let db = new WeightMeasurementDb();
+      let db = new MeasurementDb();
 
 
       let idCodec = new IdListCodec();

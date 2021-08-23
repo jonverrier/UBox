@@ -7,7 +7,7 @@ import { Cohort, ICohortStore } from '../../core/src/Cohort';
 import { Person, PersonMemento } from '../../core/src/Person';
 import { CohortCodec } from '../../core/src/IOCohort';
 import { PersonDb } from './PersonDb';
-import { weightMeasurementTypeSchema, timeMeasurementTypeSchema } from './ObservationDb';
+import { measurementTypeSchema } from './ObservationDb';
 
 
 export class CohortDb implements ICohortStore {
@@ -136,8 +136,8 @@ const cohortSchema = new mongoose.Schema({
       type: [String],
       required: true
    },
-   _weightMeasurements: [weightMeasurementTypeSchema],
-   _timeMeasurements: [timeMeasurementTypeSchema]
+   _weightMeasurements: [measurementTypeSchema],
+   _timeMeasurements: [measurementTypeSchema]
 },
 {  // Enable timestamps for archival 
       timestamps: true

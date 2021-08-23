@@ -2,7 +2,7 @@
 
 import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, QuantityOf } from "./Quantity";
 import { RangeOf } from "./Range";
-import { EMeasurementType, EPositiveTrend, MeasurementTypeOf} from './Observation';
+import { EMeasurementType, EMeasurementUnitType, EPositiveTrend, MeasurementTypeOf} from './Observation';
 
 
 // ====================
@@ -18,7 +18,7 @@ export class LiftMeasurementType extends MeasurementTypeOf<WeightUnits> {
       let hi = new QuantityOf<WeightUnits>(highBar, EWeightUnits.Kg);
       let range = new RangeOf<WeightUnits>(lo, true, hi, true);
 
-      super(lift, range, EPositiveTrend.Up);
+      super(lift, EMeasurementUnitType.Weight, range, EPositiveTrend.Up);
    }
 
 }
@@ -80,7 +80,7 @@ export class SpeedMeasurementType extends MeasurementTypeOf<TimeUnits> {
       let hi = new QuantityOf<TimeUnits>(highBar, ETimeUnits.Seconds);
       let range = new RangeOf<TimeUnits>(lo, true, hi, true);
 
-      super(mono, range, EPositiveTrend.Down);
+      super(mono, EMeasurementUnitType.Time, range, EPositiveTrend.Down);
    }
 
 }

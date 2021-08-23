@@ -3,7 +3,7 @@
 import { PersistenceDetails } from "../src/Persistence";
 import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, QuantityOf, ERepUnits, EDistanceUnits } from '../src/Quantity';
 import {
-   EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IWeightMeasurementStore,
+   EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IMeasurementStore,
    weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual
 } from '../src/Observation';
 import {
@@ -205,8 +205,8 @@ describe("Measurement", function () {
 
 });
 
-class StubStore implements IWeightMeasurementStore {
-   async load(): Promise <MeasurementOf<WeightUnits> | null>  {
+class StubStore implements IMeasurementStore {
+   async load(): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>  {
       let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
       let measurementType = new SnatchMeasurementType();
@@ -214,9 +214,14 @@ class StubStore implements IWeightMeasurementStore {
       return new MeasurementOf<WeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
    }
 
-   async save(measurement: MeasurementOf<WeightUnits>): Promise<MeasurementOf<WeightUnits> | null > {
+   async save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
       return measurement;
    }
+
+   loadMany(ids: Array<any>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
+      return null;
+   }
+
 }
 
 

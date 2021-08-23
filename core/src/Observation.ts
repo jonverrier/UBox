@@ -8,6 +8,8 @@ import { RangeMementoOf, RangeOf } from "./Range";
 // Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EPositiveTrend { Up = "Up", Down = "Down"}
 
+export enum EMeasurementUnitType { Weight = "Weight", Time = "Time", Reps = "Reps" };
+
 // Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EMeasurementType {
    Snatch = "Snatch", Clean = "Clean", Jerk = "Jerk", CleanAndJerk = "CleanAndJerk",
@@ -16,18 +18,21 @@ export enum EMeasurementType {
 
 export class MeasurementTypeMementoOf<Unit> {
    _measurementType: EMeasurementType;
+   _unitType: EMeasurementUnitType;
    _range: RangeMementoOf<Unit>;
    _trend: EPositiveTrend;
 
    /**
     * Create a MeasurementTypeMementoFor object - contains the statis elements that characterise a measurement
-    * @param measurementType - enum to say what is being measured
+    * @param measurementType - defines the type of the measurement 
+    * @param measurementUnitType - unit typ (weight/time/reps)
     * @param range - acceptable range of values
     * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
     */
-   constructor(measurementType: EMeasurementType, range: RangeMementoOf<Unit>, trend: EPositiveTrend) {
+   constructor(measurementType: EMeasurementType, unitType: EMeasurementUnitType, range: RangeMementoOf<Unit>, trend: EPositiveTrend) {
 
       this._measurementType = measurementType;
+      this._unitType = unitType;
       this._range = range;
       this._trend = trend;
    }
@@ -37,6 +42,10 @@ export class MeasurementTypeMementoOf<Unit> {
    */
    get measurementType(): EMeasurementType {
       return this._measurementType;
+   }
+
+   get unitType(): EMeasurementUnitType {
+      return this._unitType;
    }
 
    get range(): RangeMementoOf<Unit> {
@@ -50,16 +59,18 @@ export class MeasurementTypeMementoOf<Unit> {
 
 export class MeasurementTypeOf<Unit> {
    private _measurementType: EMeasurementType;
+   private _unitType: EMeasurementUnitType;
    private _range: RangeOf<Unit>;
    private _trend: EPositiveTrend;
 
    /**
     * Create a MeasurementType object - contains the statis elements that characterise a measurement 
-    * @param measurementType - enum to say what is being measured
+    * @param measurementType - defines characteristics of what is being measured
+    * @param measurementUnitType - unit typ (weight/time/reps)*
     * @param range - acceptable range of values
     * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
     */
-   constructor(measurementType: EMeasurementType, range: RangeOf<Unit>, trend: EPositiveTrend);
+   constructor(measurementType: EMeasurementType, unitType: EMeasurementUnitType, range: RangeOf<Unit>, trend: EPositiveTrend);
    public constructor(memento: MeasurementTypeMementoOf<Unit>);
    public constructor(...params: any[]) {
 
@@ -67,6 +78,7 @@ export class MeasurementTypeOf<Unit> {
 
          let memento: MeasurementTypeMementoOf<Unit> = params[0];
          this._measurementType = memento._measurementType;
+         this._unitType = memento._unitType;
          this._range = new RangeOf<Unit>(new QuantityOf<Unit>(memento._range._lo._amount, memento._range._lo._unit),
             memento._range._loInclEq,
             new QuantityOf<Unit>(memento._range._hi._amount, memento._range._hi._unit),
@@ -75,8 +87,9 @@ export class MeasurementTypeOf<Unit> {
       } else {
 
          this._measurementType = params[0];
-         this._range = params[1];
-         this._trend = params[2];
+         this._unitType = params[1];
+         this._range = params[2];
+         this._trend = params[3];
       }
    }
 
@@ -85,6 +98,10 @@ export class MeasurementTypeOf<Unit> {
    */
    get measurementType(): EMeasurementType {
       return this._measurementType;
+   }
+
+   get unitType(): EMeasurementUnitType {
+      return this._unitType;
    }
 
    get range(): RangeOf<Unit> {
@@ -99,7 +116,7 @@ export class MeasurementTypeOf<Unit> {
    * memento() returns a copy of internal state
    */
    memento(): MeasurementTypeMementoOf<Unit> {
-      return new MeasurementTypeMementoOf<Unit>(this._measurementType, this._range.memento(), this._trend);
+      return new MeasurementTypeMementoOf<Unit>(this._measurementType, this._unitType, this._range.memento(), this._trend);
    }
 
    /**
@@ -109,7 +126,8 @@ export class MeasurementTypeOf<Unit> {
     */
    equals(rhs: MeasurementTypeOf<Unit>): boolean {
 
-      return (this._measurementType === rhs._measurementType && 
+      return (this._measurementType === rhs._measurementType &&
+         this._unitType === rhs._unitType && 
          this._range.equals(rhs._range) &&
          this._trend === rhs._trend);
    }
@@ -290,7 +308,8 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
    }
 }
 
-export interface IWeightMeasurementStore {
-   load(id: any): Promise<MeasurementOf<WeightUnits> | null>;
-   save(measurement: MeasurementOf<WeightUnits>): Promise<MeasurementOf<WeightUnits> | null>;
+export interface IMeasurementStore {
+   load(id: any): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
+   loadMany(ids: Array<any>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>>;
+   save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
 }
