@@ -171,6 +171,7 @@ describe("IOWeightMeasurementType", function () {
 
          codec.decode({
             _measurementType: measurementType.measurementType,
+            _unitType: EMeasurementUnitType.Weight,
             _range: measurementType.range,
             _trend: measurementType.trend
          });
@@ -222,7 +223,7 @@ describe("IOTimeMeasurementType", function () {
    var codec: TimeMeasurementTypeCodec = new TimeMeasurementTypeCodec();
    var measurementType: Row250mMeasurementType = new Row250mMeasurementType();
 
-   it("Needs to encode then decode TimeMeasurementType.", function () {
+   it("Needs to encode then decode a TimeMeasurementType.", function () {
 
       let encoded = codec.encode(measurementType);
       let decoded: Row250mMeasurementType;
@@ -250,7 +251,7 @@ describe("IOTimeMeasurement", function () {
    var measurementType: MeasurementTypeOf<TimeUnits> = new Row250mMeasurementType();
    var measurement: MeasurementOf<TimeUnits> = new MeasurementOf<TimeUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
 
-   it("Needs to encode then decode WeightMeasurement.", function () {
+   it("Needs to encode then decode a TimeMeasurement.", function () {
 
       let encoded = codec.encode(measurement);
       let decoded: MeasurementOf<TimeUnits>;

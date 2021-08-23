@@ -1,20 +1,28 @@
 'use strict';
 // Copyright TXPCo ltd, 2020, 2021
+// Implements IMeasurementStore over a Mongo DB schema
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { MeasurementOf, IMeasurementStore, EMeasurementType, EMeasurementUnitType, EPositiveTrend } from '../../core/src/Observation';
-import { WeightMeasurementCodec } from '../../core/src/IOObservation';
+import { MeasurementUnitType, MeasurementOf, IMeasurementStore, EMeasurementType, EMeasurementUnitType, EPositiveTrend } from '../../core/src/Observation';
+import { WeightMeasurementCodec, TimeMeasurementCodec } from '../../core/src/IOObservation';
 import { TimeUnits, WeightUnits, RepUnits } from "../../core/src/Quantity";
 
 
 export class MeasurementDb implements IMeasurementStore {
-   private _codec;
+   private _weightCodec: WeightMeasurementCodec;
+   private _timeCodec: TimeMeasurementCodec;
 
    constructor() {
-      this._codec = new WeightMeasurementCodec();;
+      this._weightCodec = new WeightMeasurementCodec();
+      this._timeCodec = new TimeMeasurementCodec();
    }
 
+   /**
+    * load a measurement object async
+    * @param id - id for the object to load
+    * @returns - a constructed object or null if not found. 
+    */
    async load(id: any): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> |null>  {
 
       try {
@@ -25,7 +33,12 @@ export class MeasurementDb implements IMeasurementStore {
             if (result._doc._persistenceDetails._id !== result._doc._id)
                result._doc._persistenceDetails._id = result._doc._id;
 
-            return this._codec.tryCreateFrom(result._doc);
+            if (MeasurementUnitType.isWeightUnitType(result._doc._measurementType._unitType)) {
+               return this._weightCodec.tryCreateFrom(result._doc);
+            }
+            else {
+               return this._timeCodec.tryCreateFrom(result._doc);
+            }
          } else {
             return null;
          }
@@ -36,6 +49,11 @@ export class MeasurementDb implements IMeasurementStore {
       }
    }
 
+   /**
+    * load multiple measurement objects
+    * @param ids - an array of ids for the objects to load
+    * @returns - an array of constructed object or null if not found.
+    */
    async loadMany(ids: Array<any>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
 
       try {
@@ -50,7 +68,14 @@ export class MeasurementDb implements IMeasurementStore {
                if (result[i]._doc._persistenceDetails._id !== result[i]._doc._id)
                   result[i]._doc._persistenceDetails._id = result[i]._doc._id;
 
-               measurements.push(this._codec.tryCreateFrom(result[i]._doc));
+               var measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>;
+               if (MeasurementUnitType.isWeightUnitType(result[i]._doc._measurementType._unitType)) {
+                  measurement = this._weightCodec.tryCreateFrom(result[i]._doc);
+               }
+               else {
+                  measurement = this._timeCodec.tryCreateFrom(result[i]._doc);
+               }
+               measurements.push(measurement);
             }
 
             return measurements;
@@ -64,7 +89,11 @@ export class MeasurementDb implements IMeasurementStore {
       }
    }
 
-
+   /**
+    * save a measurement object
+    * @param measurement - the object to save
+    * @returns - a copy of what was saved - useful if saving a new object, as the store will assign a new _id
+    */
    async save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
       try {
          let result = await (new measurementModel(measurement)).save({ isNew: measurement.persistenceDetails._id ? true : false });
@@ -73,7 +102,10 @@ export class MeasurementDb implements IMeasurementStore {
          if (result._doc._persistenceDetails._id !== result._doc._id)
             result._doc._persistenceDetails._id = result._doc._id;
 
-         return this._codec.tryCreateFrom(result._doc);
+         if (measurement.measurementType.unitType === EMeasurementUnitType.Weight)
+            return this._weightCodec.tryCreateFrom(result._doc);
+         else
+            return this._timeCodec.tryCreateFrom(result._doc);
       } catch (err) {
          let logger: Logger = new Logger();
          logger.logError("MeasurementDb", "save", "Error:", err);

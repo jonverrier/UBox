@@ -1,8 +1,8 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-
+import { InvalidUnitError } from './CoreError';
 import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, ERepUnits} from './Quantity';
-import { EMeasurementType, EMeasurementUnitType, EPositiveTrend, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
+import { EMeasurementType, EMeasurementUnitType, EPositiveTrend, MeasurementUnitType, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from '../src/IOCommon';
 
 import * as IoTs from 'io-ts';
@@ -17,17 +17,17 @@ import * as IoTs from 'io-ts';
 // ==========
 const weightQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: IoTs.string // Todo - work out how to constrain to valid values
+   _unit: IoTs.string 
 });
 
 const timeQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: IoTs.string // Todo - work out how to constrain to valid values
+   _unit: IoTs.string 
 });
 
 const repQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: IoTs.string // Todo - work out how to constrain to valid values
+   _unit: IoTs.string 
 });
 
 const weightRangeIoType = IoTs.type({
@@ -98,46 +98,14 @@ export class WeightMeasurementCodec implements ICodec<MeasurementOf<WeightUnits>
    }
 
    tryCreateFrom(data: any): MeasurementOf<WeightUnits> {
-      let temp = this.decode(data); // If types dont match an exception will be thrown here
+
+      let temp: MeasurementMementoOf<WeightUnits> = this.decode(data); // If types dont match an exception will be thrown here
+
+      // for later - can this be moved to the IO type ?
+      if (! MeasurementUnitType.isWeightUnitType (temp._measurementType._unitType))
+         throw new InvalidUnitError("Expected weight unit type.");
 
       return new MeasurementOf<WeightUnits>(temp);
-   }
-}
-
-// weightMeasurements (plural) Codec
-// ==========
-
-export const weightMeasurementsIoType = IoTs.array(weightMeasurementIoType);
-
-export class WeightMeasurementsCodec implements ICodec<Array<MeasurementOf<WeightUnits>>> {
-
-   decode(data: any): any {
-      return decodeWith(weightMeasurementsIoType)(data);
-   }
-
-   encode(data: Array<MeasurementOf<WeightUnits>>): any {
-      var i: number;
-      var mementos: Array<MeasurementMementoOf<WeightUnits>> = new Array<MeasurementMementoOf<WeightUnits>>();
-
-      for (i = 0; i < data.length; i++) {
-         mementos[i] = data[i].memento();
-      }
-      return encodeWith(weightMeasurementsIoType)(mementos);
-   }
-
-   tryCreateFrom(data: any): Array<MeasurementOf<WeightUnits>> {
-
-      var i: number;
-      var measurements: Array<MeasurementOf<WeightUnits>> = new Array<MeasurementOf<WeightUnits>>();
-
-      for (i = 0; i < data.length; i++) {
-
-         let temp = this.decode(data[i]); // If types dont match an exception will be thrown here
-
-         measurements[i] = new MeasurementOf<WeightUnits>(temp);
-      }
-
-      return measurements;
    }
 }
 
@@ -164,7 +132,8 @@ export class TimeMeasurementTypeCodec implements ICodec<MeasurementTypeOf<TimeUn
    }
 
    tryCreateFrom(data: any): MeasurementTypeOf<TimeUnits> {
-      let temp = this.decode(data); // If types dont match an exception will be thrown here
+
+      let temp: MeasurementTypeMementoOf<TimeUnits> = this.decode(data); // If types dont match an exception will be thrown here
 
       return new MeasurementTypeOf<TimeUnits>(temp);
    }
@@ -195,8 +164,53 @@ export class TimeMeasurementCodec implements ICodec<MeasurementOf<TimeUnits>> {
    }
 
    tryCreateFrom(data: any): MeasurementOf<TimeUnits> {
-      let temp = this.decode(data); // If types dont match an exception will be thrown here
+
+      let temp:MeasurementMementoOf<TimeUnits> = this.decode(data); // If types dont match an exception will be thrown here
+
+      // for later - can this be moved to the IO type ?
+      if (!MeasurementUnitType.isTimeUnitType(temp._measurementType._unitType))
+         throw new InvalidUnitError("Expected time unit type.");
 
       return new MeasurementOf<TimeUnits>(temp);
+   }
+}
+
+// measurements (plural) Codec
+// ==========
+
+export const measurementsIoType = IoTs.array(IoTs.union ([weightMeasurementIoType, timeMeasurementIoType]));
+
+export class MeasurementsCodec implements ICodec<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
+
+   decode(data: any): any {
+      return decodeWith(measurementsIoType)(data);
+   }
+
+   encode(data: Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>): any {
+      var i: number;
+      var mementos: Array<MeasurementMementoOf<WeightUnits> | MeasurementMementoOf<TimeUnits>> =
+         new Array<MeasurementMementoOf<WeightUnits> | MeasurementMementoOf<TimeUnits>>();
+
+      for (i = 0; i < data.length; i++) {
+         mementos[i] = data[i].memento();
+      }
+      return encodeWith(measurementsIoType)(mementos);
+   }
+
+   tryCreateFrom(data: any): Array<MeasurementOf<WeightUnits>> {
+
+      var i: number;
+      var measurements: Array<MeasurementOf<WeightUnits>> = new Array<MeasurementOf<WeightUnits>>();
+      let temp: Array<MeasurementMementoOf<WeightUnits>> = this.decode(data); // If types dont match an exception will be thrown here
+
+      for (i = 0; i < temp.length; i++) {
+
+         if (MeasurementUnitType.isWeightUnitType(temp[i]._measurementType._unitType))
+            measurements[i] = new MeasurementOf<WeightUnits>(temp[i]);
+         else
+            measurements[i] = new MeasurementOf<TimeUnits>(temp[i]);
+      }
+
+      return measurements;
    }
 }

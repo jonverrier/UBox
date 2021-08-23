@@ -5,9 +5,9 @@ export enum EApiUrls {
    QueryPerson = "/api/queryPerson",
    QueryPeople = "/api/queryPeople",
    SavePerson = "/api/savePerson",
-   QueryWeightMeasurement = "/api/queryWeightMeasurement",
-   QueryWeightMeasurements = "/api/queryWeightMeasurements",
-   SaveWeightMeasurement = "/api/saveWeightMeasurement",
+   QueryMeasurement = "/api/queryMeasurement",
+   QueryMeasurements = "/api/queryMeasurements",
+   SaveMeasurement = "/api/saveMeasurement",
    QueryCohort = "/api/queryCohort",
    SaveCohort = "/api/saveCohort"
 }

@@ -88,7 +88,7 @@ export class SpeedMeasurementType extends MeasurementTypeOf<TimeUnits> {
 export class Row250mMeasurementType extends SpeedMeasurementType {
 
    /**
-    * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 500m row
+    * Create a Row250mMeasurementType object - contains the static elements that characterise measurement of a 250m row
     */
    constructor() {
       super(EMeasurementType.Row250, 5, 500);
@@ -99,7 +99,7 @@ export class Row250mMeasurementType extends SpeedMeasurementType {
 export class Run100m extends SpeedMeasurementType {
 
    /**
-    * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 500m row
+    * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 100m run
     */
    constructor() {
       super(EMeasurementType.Run250, 5, 500);

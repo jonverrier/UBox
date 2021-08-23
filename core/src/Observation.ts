@@ -1,14 +1,14 @@
 /*! Copyright TXPCo, 2021 */
 
 import { Persistence, PersistenceDetails, PersistenceDetailsMemento } from "./Persistence";
-import { ERepUnits, TimeUnits, WeightUnits, QuantityMementoOf, QuantityOf } from "./Quantity";
+import { TimeUnits, WeightUnits, QuantityMementoOf, QuantityOf } from "./Quantity";
 import { RangeMementoOf, RangeOf } from "./Range";
 
 // This enum is used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing 
 // Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EPositiveTrend { Up = "Up", Down = "Down"}
 
-export enum EMeasurementUnitType { Weight = "Weight", Time = "Time", Reps = "Reps" };
+export enum EMeasurementUnitType { Weight = "Weight", Time = "Time", Reps = "Reps" }
 
 // Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EMeasurementType {
@@ -16,6 +16,15 @@ export enum EMeasurementType {
    Row250="Row250", Run250="Run250"
 }
 
+export class MeasurementUnitType {
+   static isTimeUnitType(value: string): boolean {
+      return (value === EMeasurementUnitType[EMeasurementUnitType.Time]);
+   }
+
+   static isWeightUnitType(value: string): boolean {
+      return (value === EMeasurementUnitType[EMeasurementUnitType.Weight]);
+   }
+}
 export class MeasurementTypeMementoOf<Unit> {
    _measurementType: EMeasurementType;
    _unitType: EMeasurementUnitType;
@@ -130,6 +139,16 @@ export class MeasurementTypeOf<Unit> {
          this._unitType === rhs._unitType && 
          this._range.equals(rhs._range) &&
          this._trend === rhs._trend);
+   }
+
+   /**
+   * can be used in IO to check validity of data
+   */
+   static isAllowedMeasurementUnitType(value: string): boolean {
+      var allowedValues: Array<string> = Object.values(EMeasurementUnitType);
+
+      return allowedValues.indexOf(value) !== -1;
+
    }
 }
 
