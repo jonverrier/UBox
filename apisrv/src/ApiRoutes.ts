@@ -32,7 +32,7 @@ ApiRoutes.get(EApiUrls.QueryPerson, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.loadOne(params.get('_id'));
+      let result = db.loadOne(params.get('_key'));
       result.then(data => {
          res.send(codec.encode(data ? data : null));
       });
@@ -99,7 +99,7 @@ ApiRoutes.get(EApiUrls.QueryMeasurement, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.load(params.get('_id'));
+      let result = db.load(params.get('_key'));
       result.then(data => {
          if (data) {
             res.send(data.measurementType.unitType === EMeasurementUnitType.Weight ?
@@ -200,7 +200,7 @@ ApiRoutes.get(EApiUrls.QueryCohort, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.load(params.get('_id'));
+      let result = db.load(params.get('_key'));
       result.then(data => {
          res.send(data ? codec.encode(data) : null);
       });

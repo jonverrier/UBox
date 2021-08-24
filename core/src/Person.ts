@@ -556,7 +556,7 @@ export class Person extends Persistence {
 
          let memento: PersonMemento = params[0];
 
-         super(new PersistenceDetails(memento._persistenceDetails._id,
+         super(new PersistenceDetails(memento._persistenceDetails._key,
             memento._persistenceDetails._schemaVersion,
             memento._persistenceDetails._sequenceNumber));
 
@@ -658,7 +658,7 @@ export function personArraysAreEqual(lhs: Array<Person>, rhs: Array<Person>): bo
 }
 
 export interface IPersonStore {
-   loadOne(id: any): Promise<Person | null>;
-   loadMany(ids: Array<any>): Promise <Array<Person>>;
+   loadOne(id: string): Promise<Person | null>;
+   loadMany(ids: Array<string>): Promise <Array<Person>>;
    save(person: Person): Promise<Person | null>;
 }

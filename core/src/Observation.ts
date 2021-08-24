@@ -259,7 +259,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
 
          let memento: MeasurementMementoOf<MeasuredUnit> = params[0];
 
-         super(new PersistenceDetails(memento._persistenceDetails._id,
+         super(new PersistenceDetails(memento._persistenceDetails._key,
             memento._persistenceDetails._schemaVersion,
             memento._persistenceDetails._sequenceNumber));
 
@@ -328,7 +328,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
 }
 
 export interface IMeasurementStore {
-   load(id: any): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
-   loadMany(ids: Array<any>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>>;
+   load(id: string): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
+   loadMany(ids: Array<string>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>>;
    save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
 }

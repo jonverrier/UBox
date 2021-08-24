@@ -42,7 +42,7 @@ export class MeasurementApi implements IMeasurementStore {
       try {
          var etype: EMeasurementUnitType;
 
-         const response = await axios.get(this._queryUrl, { params: { _id: id.toString() } });
+         const response = await axios.get(this._queryUrl, { params: { _key: id.toString() } });
 
          if (response.data.measurementType.unitType === EMeasurementUnitType.Weight) {
             etype = EMeasurementUnitType.Weight;
@@ -91,7 +91,7 @@ export class MeasurementApi implements IMeasurementStore {
    /**
     * save a measurement object
     * @param measurement - the object to save
-    * @returns - a copy of what was saved - useful if saving a new object, as the store will assign a new _id
+    * @returns - a copy of what was saved - useful if saving a new object, as the store will assign a new key
     */
    async save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
 

@@ -42,7 +42,7 @@ describe("MeasurementApi - weight", function () {
 
       try {
          const response = await api.save(measurement1);
-         const response2 = await api.load(response.persistenceDetails._id);
+         const response2 = await api.load(response.persistenceDetails._key);
          done();
       } catch (e) {
          var logger = new Logger();
@@ -60,9 +60,9 @@ describe("MeasurementApi - weight", function () {
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(response.persistenceDetails._id.toString());
+         ids.push(response.persistenceDetails._key.toString());
          const response2 = await api.loadMany(ids);
-         console.log(response2);
+
          let returned = response2[0];
 
          // test is that we get the same Measurement back as array[0] as we got from the specific query
@@ -111,7 +111,7 @@ describe("MeasurementApi - time", function () {
 
       try {
          const response = await api.save(measurement1);
-         const response2 = await api.load(response.persistenceDetails._id);
+         const response2 = await api.load(response.persistenceDetails._key);
          done();
       } catch (e) {
          var logger = new Logger();
@@ -129,9 +129,9 @@ describe("MeasurementApi - time", function () {
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(response.persistenceDetails._id);
+         ids.push(response.persistenceDetails._key);
          const response2 = await api.loadMany(ids);
-         console.log(response2);
+
          let returned = response2[0];
 
          // test is that we get the same Measurement back as array[0] as we got from the specific query
@@ -176,9 +176,9 @@ describe("MeasurementApi - heterogenous", function () {
       const response2 = await api.save(weightMeasurement);
 
       // Build array query 
-      let ids = new Array<any>();
-      ids.push(response1.persistenceDetails._id);
-      ids.push(response2.persistenceDetails._id);
+      let ids = new Array<string>();
+      ids.push(response1.persistenceDetails._key);
+      ids.push(response2.persistenceDetails._key);
 
       try {
 

@@ -77,7 +77,7 @@ describe("CohortApi", function () {
       try {
          const response = await axios.put(saveUrl, encoded);
          let decoded = codec.decode(response.data);
-         const response2 = await axios.get(queryUrl, { params: { _id: decoded._persistenceDetails._id.toString() } });
+         const response2 = await axios.get(queryUrl, { params: { _key: decoded._persistenceDetails._key.toString() } });
          done();
       } catch (e) {
          var logger = new Logger();

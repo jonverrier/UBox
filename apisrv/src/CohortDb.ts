@@ -28,14 +28,14 @@ export class CohortDb implements ICohortStore {
 
    }
 
-   async load(id: any): Promise<Cohort | null>  {
+   async load(id: string): Promise<Cohort | null>  {
 
       const result = await cohortModel.findOne().where('_id').eq(id).exec();
 
       if (result) {
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._id !== result._doc._id)
-            result._doc._persistenceDetails._id = result._doc._id;
+         if (result._doc._persistenceDetails._key !== result._doc._id)
+            result._doc._persistenceDetails._key = result._doc._id;
 
          var personDb:PersonDb = new PersonDb();
 
@@ -70,11 +70,11 @@ export class CohortDb implements ICohortStore {
          memento._administrators = new Array<PersonMemento>();
          memento._members = new Array<PersonMemento>();
 
-         let result = await (new cohortModel(memento)).save({ isNew: cohort.persistenceDetails._id ? true : false });
+         let result = await (new cohortModel(memento)).save({ isNew: cohort.persistenceDetails._key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._id !== result._doc._id)
-            result._doc._persistenceDetails._id = result._doc._id;
+         if (result._doc._persistenceDetails._key !== result._doc._id)
+            result._doc._persistenceDetails._key = result._doc._id;
 
          // Restore the object arrays before sending back to client
          result._doc._administrators = prevAdmins;
@@ -94,7 +94,7 @@ export class CohortDb implements ICohortStore {
 
 const cohortSchema = new mongoose.Schema({
    _persistenceDetails: {
-      _id: {
+      _key: {
          type: Object,
          required: false
       },

@@ -95,7 +95,7 @@ describe("IOWeightMeasurement", function () {
       try {
 
          codec.decode({
-            _persistenceDetails: { _id: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
+            _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
             _quantity: quantity,
             _repeats: repeats,
             _cohortPeriod: 1,

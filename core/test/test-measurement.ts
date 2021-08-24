@@ -79,7 +79,7 @@ function testConstruct<MeasuredUnit>(quantity: QuantityOf<MeasuredUnit>,
 
    let measurement = new MeasurementOf<MeasuredUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
 
-   expect(measurement.persistenceDetails.id).to.equal("id");
+   expect(measurement.persistenceDetails.key).to.equal("id");
    expect(measurement.persistenceDetails.schemaVersion).to.equal(1);
    expect(measurement.persistenceDetails.sequenceNumber).to.equal(2);
 

@@ -53,7 +53,7 @@ describe("PersonApi", function () {
       try {
          const response = await axios.put(saveUrl, encoded);
          let decoded = codec.decode(response.data);
-         const response2 = await axios.get(queryUrl, { params: { _id: decoded._persistenceDetails._id.toString() } });
+         const response2 = await axios.get(queryUrl, { params: { _key: decoded._persistenceDetails._key.toString() } });
          done();
       } catch (e) {
          var logger = new Logger();
@@ -77,7 +77,7 @@ describe("PersonApi", function () {
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(decoded._persistenceDetails._id.toString());
+         ids.push(decoded._persistenceDetails._key.toString());
          let idList: IdList = new IdList(ids);
          encoded = inputCodec.encode(idList);
 

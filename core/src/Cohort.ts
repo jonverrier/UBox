@@ -308,7 +308,7 @@ export class Cohort extends Persistence {
          var i: number;
          let memento: CohortMemento = params[0];
 
-         super(new PersistenceDetails(memento._persistenceDetails._id,
+         super(new PersistenceDetails(memento._persistenceDetails._key,
             memento._persistenceDetails._schemaVersion,
             memento._persistenceDetails._sequenceNumber));
 
@@ -411,27 +411,6 @@ export class Cohort extends Persistence {
     */
    equals(rhs: Cohort): boolean {
 
-      if (!super.equals(rhs))
-         console.log("super");
-
-      if (!this._name.equals(rhs._name))
-         console.log("name");
-
-      if (!personArraysAreEqual(this._administrators, rhs._administrators))
-         console.log("personArraysAreEqual1");
-
-      if (!personArraysAreEqual(this._members, rhs._members))
-         console.log("personArraysAreEqual2");
-
-      if (!weightMeasurementTypeArraysAreEqual(this._weightMeasurements, rhs._weightMeasurements))
-         console.log("weightMeasurementTypeArraysAreEqual");
-
-      if (! timeMeasurementTypeArraysAreEqual(this._timeMeasurements, rhs._timeMeasurements)) 
-         console.log("timeMeasurementTypeArraysAreEqual");
-
-      if (!this._period.equals(rhs._period))
-         console.log("period");
-
       return (super.equals(rhs) &&
          this._name.equals(rhs._name) &&
          personArraysAreEqual(this._administrators, rhs._administrators) &&
@@ -487,6 +466,6 @@ export class Cohort extends Persistence {
 }
 
 export interface ICohortStore {
-   load(id: any): Promise<Cohort | null>;
+   load(id: string): Promise<Cohort | null>;
    save(cohort: Cohort): Promise<Cohort | null>;
 }

@@ -108,7 +108,7 @@ export class CohortCodec implements ICodec<Cohort> {
       for (i = 0; i < timeMeasurements.length; i++)
          timeMeasurements[i] = new MeasurementTypeOf<TimeUnits>(temp._timeMeasurements[i]);     
 
-      return new Cohort(new PersistenceDetails(temp._persistenceDetails._id, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
+      return new Cohort(new PersistenceDetails(temp._persistenceDetails._key, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
          new CohortName(temp._name._name),
          new CohortTimePeriod(new Date(temp._period._startDate), temp._period._period, temp._period._numberOfPeriods),
          administrators,

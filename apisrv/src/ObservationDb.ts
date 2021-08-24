@@ -23,15 +23,15 @@ export class MeasurementDb implements IMeasurementStore {
     * @param id - id for the object to load
     * @returns - a constructed object or null if not found. 
     */
-   async load(id: any): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> |null>  {
+   async load(id: string): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> |null>  {
 
       try {
          const result = await measurementModel.findOne().where('_id').eq(id).exec();
 
          if (result) {
             // If we saved a new document, copy the new Mongo ID to persistenceDetails
-            if (result._doc._persistenceDetails._id !== result._doc._id)
-               result._doc._persistenceDetails._id = result._doc._id;
+            if (result._doc._persistenceDetails._key !== result._doc._id)
+               result._doc._persistenceDetails._key = result._doc._id;
 
             if (MeasurementUnitType.isWeightUnitType(result._doc._measurementType._unitType)) {
                return this._weightCodec.tryCreateFrom(result._doc);
@@ -54,7 +54,7 @@ export class MeasurementDb implements IMeasurementStore {
     * @param ids - an array of ids for the objects to load
     * @returns - an array of constructed object or null if not found.
     */
-   async loadMany(ids: Array<any>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
+   async loadMany(ids: Array<string>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
 
       try {
          const result = await measurementModel.find().where('_id').in(ids).exec();
@@ -65,8 +65,8 @@ export class MeasurementDb implements IMeasurementStore {
 
             for (i = 0; i < result.length; i++) {
                // If we saved a new document, copy the new Mongo ID up to persistenceDetails
-               if (result[i]._doc._persistenceDetails._id !== result[i]._doc._id)
-                  result[i]._doc._persistenceDetails._id = result[i]._doc._id;
+               if (result[i]._doc._persistenceDetails._key !== result[i]._doc._id)
+                  result[i]._doc._persistenceDetails._key = result[i]._doc._id;
 
                var measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>;
                if (MeasurementUnitType.isWeightUnitType(result[i]._doc._measurementType._unitType)) {
@@ -92,15 +92,15 @@ export class MeasurementDb implements IMeasurementStore {
    /**
     * save a measurement object
     * @param measurement - the object to save
-    * @returns - a copy of what was saved - useful if saving a new object, as the store will assign a new _id
+    * @returns - a copy of what was saved - useful if saving a new object, as the store will assign a new key
     */
    async save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
       try {
-         let result = await (new measurementModel(measurement)).save({ isNew: measurement.persistenceDetails._id ? true : false });
+         let result = await (new measurementModel(measurement)).save({ isNew: measurement.persistenceDetails._key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._id !== result._doc._id)
-            result._doc._persistenceDetails._id = result._doc._id;
+         if (result._doc._persistenceDetails._key !== result._doc._id)
+            result._doc._persistenceDetails._key = result._doc._id;
 
          if (measurement.measurementType.unitType === EMeasurementUnitType.Weight)
             return this._weightCodec.tryCreateFrom(result._doc);
@@ -172,7 +172,7 @@ export const measurementTypeSchema = new mongoose.Schema({
 
 const measurementSchema = new mongoose.Schema({
    _persistenceDetails: {
-      _id: {
+      _key: {
          type: Object,
          required: false
       },

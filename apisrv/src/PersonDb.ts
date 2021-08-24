@@ -14,14 +14,14 @@ export class PersonDb implements IPersonStore {
       this._codec = new PersonCodec();;
    }
 
-   async loadOne (id: any): Promise<Person | null>  {
+   async loadOne(id: string): Promise<Person | null>  {
 
       const result = await personModel.findOne().where('_id').eq(id).exec();
 
       if (result) {
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._id !== result._doc._id)
-            result._doc._persistenceDetails._id = result._doc._id;
+         if (result._doc._persistenceDetails._key !== result._doc._id)
+            result._doc._persistenceDetails._key = result._doc._id;
 
          return this._codec.tryCreateFrom(result._doc);
       } else {
@@ -29,7 +29,7 @@ export class PersonDb implements IPersonStore {
       }
    }
 
-   async loadMany(ids: Array<any>): Promise<Array<Person>> {
+   async loadMany(ids: Array<string>): Promise<Array<Person>> {
 
       const result = await personModel.find().where('_id').in(ids).exec();
 
@@ -39,8 +39,8 @@ export class PersonDb implements IPersonStore {
 
          for (i = 0; i < result.length; i++) {
             // If we saved a new document, copy the new Mongo ID up to persistenceDetails
-            if (result[i]._doc._persistenceDetails._id !== result[i]._doc._id)
-               result[i]._doc._persistenceDetails._id = result[i]._doc._id;
+            if (result[i]._doc._persistenceDetails._key !== result[i]._doc._id)
+               result[i]._doc._persistenceDetails._key = result[i]._doc._id;
 
             people.push(this._codec.tryCreateFrom(result[i]._doc));
          }
@@ -56,8 +56,8 @@ export class PersonDb implements IPersonStore {
          let result = await (new personModel(person)).save({ isNew: person.persistenceDetails._id ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._id !== result._doc._id)
-            result._doc._persistenceDetails._id = result._doc._id;
+         if (result._doc._persistenceDetails._key !== result._doc._id)
+            result._doc._persistenceDetails._key = result._doc._id;
 
          return this._codec.tryCreateFrom(result._doc);
       } catch (err) {
@@ -71,8 +71,8 @@ export class PersonDb implements IPersonStore {
 
 const personSchema = new mongoose.Schema({
    _persistenceDetails: {
-      _id: {
-         type: Object,
+      _key: {
+         type: String,
          required: false
       },
       _schemaVersion: {

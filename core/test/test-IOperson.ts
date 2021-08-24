@@ -363,7 +363,7 @@ describe("IOPersistenceDetails", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ _id: "Joe", _schemaVersion: 0, _sequenceNumber: 0 });
+         codec.decode({ _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 });
       } catch (e) {
          caught = true;
       }
@@ -375,7 +375,7 @@ describe("IOPersistenceDetails", function () {
 
       let encoded = codec.encode(new PersistenceDetails("Joe", 0, 0));
 
-      expect(encoded.id).to.equal("Joe");
+      expect(encoded.key).to.equal("Joe");
       expect(encoded.schemaVersion).to.equal(0);
       expect(encoded.sequenceNumber).to.equal(0);
    });
@@ -401,7 +401,6 @@ describe("IOPersistenceDetails", function () {
 
 describe("IOPerson", function () {
 
-
    var codec: PersonCodec;
 
    beforeEach(function () {
@@ -414,7 +413,7 @@ describe("IOPerson", function () {
 
       try {
          codec.decode({
-            _persistenceDetails: { _id: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
+            _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
             _loginDetails: { _provider: ELoginProvider.Apple, _token: "123" },
             _name: { _name: "Joe", _surname: "Bloggs" },
             _email: { _email: "Joe@mail.com", _isEmailVerified: false },
@@ -435,7 +434,7 @@ describe("IOPerson", function () {
          new Name("Joe", null),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null));
 
-      expect(encoded.persistenceDetails.id).to.equal(1);
+      expect(encoded.persistenceDetails.key).to.equal(1);
       expect(encoded.persistenceDetails.schemaVersion).to.equal(1);
       expect(encoded.persistenceDetails.sequenceNumber).to.equal(1);
    });
