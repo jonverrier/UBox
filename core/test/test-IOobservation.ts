@@ -105,7 +105,7 @@ describe("IOWeightMeasurement", function () {
                _range: measurementType.range,
                _trend: measurementType.trend
             },
-            _subjectExternalId: "teststring"
+            _subjectKey: "teststring"
          });
       } catch (e) {
          var logger = new Logger();

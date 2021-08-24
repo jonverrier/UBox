@@ -82,7 +82,7 @@ export const weightMeasurementIoType = IoTs.type({
    _repeats: IoTs.number,
    _cohortPeriod: IoTs.number,
    _measurementType: weightMeasurementTypeIoType,
-   _subjectExternalId: IoTs.string
+   _subjectKey: IoTs.string
 });
 
 export class WeightMeasurementCodec implements ICodec<MeasurementOf<WeightUnits>> {
@@ -148,7 +148,7 @@ export const timeMeasurementIoType = IoTs.type({
    _repeats: IoTs.number,
    _cohortPeriod: IoTs.number,
    _measurementType: timeMeasurementTypeIoType,
-   _subjectExternalId: IoTs.string
+   _subjectKey: IoTs.string
 });
 
 export class TimeMeasurementCodec implements ICodec<MeasurementOf<TimeUnits>> {

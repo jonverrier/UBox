@@ -87,7 +87,7 @@ function testConstruct<MeasuredUnit>(quantity: QuantityOf<MeasuredUnit>,
    expect(measurement.repeats === repeats).to.equal(true);
    expect(measurement.cohortPeriod).to.equal(0);
    expect(measurement.measurementType.equals(measurementType)).to.equal(true);
-   expect(measurement.subjectExternalId).to.equal("1234");
+   expect(measurement.subjectKey).to.equal("1234");
 }
 
 function testEquals<MeasuredUnit>(quantity: QuantityOf<MeasuredUnit>,

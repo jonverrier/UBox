@@ -87,6 +87,14 @@ export class PersistenceDetails {
          (this._schemaVersion === rhs._schemaVersion) &&
          (this._sequenceNumber === rhs._sequenceNumber));
    }
+
+   /**
+   * hasValidKey - checks the primray key is in non-null state
+   * @returns boolean if object has a valid kep
+   */
+   hasValidKey(): boolean  {
+      return this._key !== null;
+   }
 }
 
 export class Persistence {

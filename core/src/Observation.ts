@@ -189,7 +189,7 @@ export class MeasurementMementoOf<MeasuredUnit> {
    _repeats: number;
    _cohortPeriod: number;
    _measurementType: MeasurementTypeMementoOf<MeasuredUnit>;
-   _subjectExternalId: string;
+   _subjectKey: string;
 
    /**
     * Create a MeasurementMementoOf object - a quantity, with a range of validity, and a marker of the positive trend (is it good if quantity goes up, or down)
@@ -198,17 +198,17 @@ export class MeasurementMementoOf<MeasuredUnit> {
     * @param repeats - the number of reps (for weight), number of distance units (for time measurements)
     * @param cohortPeriod - the period in which the measurement was taken
     * @param measurementType - reference to the class that defines the type of measurement
-    * @param subjectExternalId - reference to the entity to which the measurement applies  - usually a Person
+    * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
     */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: QuantityOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
+      quantity: QuantityOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectKey: string)
    {
       this._persistenceDetails = persistenceDetails.memento();
       this._quantity = quantity.memento();
       this._repeats = repeats;
       this._cohortPeriod = cohortPeriod;
       this._measurementType = measurementType.memento();
-      this._subjectExternalId = subjectExternalId;
+      this._subjectKey = subjectKey;
    }
 
    /**
@@ -229,8 +229,8 @@ export class MeasurementMementoOf<MeasuredUnit> {
    get measurementType(): MeasurementTypeMementoOf<MeasuredUnit> {
       return this._measurementType;
    }
-   get subjectExternalId(): string {
-      return this._subjectExternalId;
+   get subjectKey(): string {
+      return this._subjectKey;
    }
 }
 
@@ -239,7 +239,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
    private _repeats: number;
    private _cohortPeriod: number;
    private _measurementType: MeasurementTypeOf<MeasuredUnit>;
-   private _subjectExternalId: string; 
+   private _subjectKey: string; 
 
 /**
  * Create a Measurement object - a quantity, with a range of validity, and a marker of the positive trend (is it good if quantity goes up, or down)
@@ -248,10 +248,10 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
  * @param repeats - the number of reps (for weight), number of distance units (for time measurements)
  * @param cohortPeriod - the period in which the measurement was taken
  * @param measurementType - reference to the class that defines the type of measurement
- * @param subjectExternalId - reference to the entity to which the measurement applies  - usually a Person
+ * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
  */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: QuantityOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
+      quantity: QuantityOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectKey: string)
    public constructor(memento: MeasurementMementoOf<MeasuredUnit>);
    public constructor(...params: any[]) {
 
@@ -268,7 +268,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
          this._repeats = memento._repeats;
          this._cohortPeriod = memento._cohortPeriod;
          this._measurementType = new MeasurementTypeOf<MeasuredUnit>(memento._measurementType);
-         this._subjectExternalId = memento._subjectExternalId;
+         this._subjectKey = memento._subjectKey;
 
       } else {
 
@@ -281,7 +281,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
          this._repeats = params[2];
          this._cohortPeriod = params[3];
          this._measurementType = params[4];
-         this._subjectExternalId = params[5];
+         this._subjectKey = params[5];
       }
    }
 
@@ -300,15 +300,15 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
    get measurementType(): MeasurementTypeOf<MeasuredUnit> {
       return this._measurementType;
    }
-   get subjectExternalId(): string {
-      return this._subjectExternalId;
+   get subjectKey(): string {
+      return this._subjectKey;
    }
 
    /**
    * memento() returns a copy of internal state
    */
    memento(): MeasurementMementoOf<MeasuredUnit>  {
-      return new MeasurementMementoOf(this.persistenceDetails, this._quantity, this._repeats, this._cohortPeriod, this._measurementType, this._subjectExternalId);
+      return new MeasurementMementoOf(this.persistenceDetails, this._quantity, this._repeats, this._cohortPeriod, this._measurementType, this._subjectKey);
    }
 
    /**
@@ -323,7 +323,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
          this._repeats === rhs._repeats &&
          this._cohortPeriod === rhs._cohortPeriod &&
          this._measurementType.equals(rhs.measurementType) &&
-         this._subjectExternalId === rhs._subjectExternalId);
+         this._subjectKey === rhs._subjectKey);
    }
 }
 

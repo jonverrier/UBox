@@ -55,6 +55,8 @@ describe("CohortApi", function () {
       let codec = new CohortCodec();
       let encoded = codec.encode(cohort1);
 
+      // TODO - create and save a new measurement here. Think about how to avoid duplicates
+
       try {
          const response = await axios.put(saveUrl, encoded);
          var logger = new Logger();

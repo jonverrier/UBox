@@ -30,8 +30,8 @@ export class MeasurementDb implements IMeasurementStore {
 
          if (result) {
             // If we saved a new document, copy the new Mongo ID to persistenceDetails
-            if (result._doc._persistenceDetails._key !== result._doc._id)
-               result._doc._persistenceDetails._key = result._doc._id;
+            if (result._doc._persistenceDetails._key !== result._doc._id.toString())
+               result._doc._persistenceDetails._key = result._doc._id.toString();
 
             if (MeasurementUnitType.isWeightUnitType(result._doc._measurementType._unitType)) {
                return this._weightCodec.tryCreateFrom(result._doc);
@@ -50,6 +50,37 @@ export class MeasurementDb implements IMeasurementStore {
    }
 
    /**
+    * helper function to process arrays froma  loadXXX query.
+    */
+
+   private processManyResults(result: any): Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>> {
+      if (result && result.length > 0) {
+         var i: number;
+         var measurements: Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>
+            = new Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>();
+
+         for (i = 0; i < result.length; i++) {
+            // If we saved a new document, copy the new Mongo ID up to persistenceDetails
+            if (result[i]._doc._persistenceDetails._key !== result[i]._doc._id.toString())
+               result[i]._doc._persistenceDetails._key = result[i]._doc._id.toString();
+
+            var measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>;
+            if (MeasurementUnitType.isWeightUnitType(result[i]._doc._measurementType._unitType)) {
+               measurement = this._weightCodec.tryCreateFrom(result[i]._doc);
+            }
+            else {
+               measurement = this._timeCodec.tryCreateFrom(result[i]._doc);
+            }
+            measurements.push(measurement);
+         }
+
+         return measurements;
+      } else {
+         return null;
+      }
+   }
+
+   /**
     * load multiple measurement objects
     * @param ids - an array of ids for the objects to load
     * @returns - an array of constructed object or null if not found.
@@ -59,29 +90,27 @@ export class MeasurementDb implements IMeasurementStore {
       try {
          const result = await measurementModel.find().where('_id').in(ids).exec();
 
-         if (result && result.length > 0) {
-            var i: number;
-            var measurements: Array<MeasurementOf<WeightUnits>> = new Array<MeasurementOf<WeightUnits>>();
+         return this.processManyResults(result);
 
-            for (i = 0; i < result.length; i++) {
-               // If we saved a new document, copy the new Mongo ID up to persistenceDetails
-               if (result[i]._doc._persistenceDetails._key !== result[i]._doc._id)
-                  result[i]._doc._persistenceDetails._key = result[i]._doc._id;
+      } catch (err) {
+         let logger: Logger = new Logger();
+         logger.logError("MeasurementDb", "loadMany", "Error:", err);
+         return null;
+      }
+   }   
 
-               var measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>;
-               if (MeasurementUnitType.isWeightUnitType(result[i]._doc._measurementType._unitType)) {
-                  measurement = this._weightCodec.tryCreateFrom(result[i]._doc);
-               }
-               else {
-                  measurement = this._timeCodec.tryCreateFrom(result[i]._doc);
-               }
-               measurements.push(measurement);
-            }
+   /**
+    * load multiple measurement objects
+    * @param ids - an array of ids for people on which measurements apply 
+    * @returns - an array of constructed object or null if not found.
+    */
+   async loadManyForPeople (ids: Array<string>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
 
-            return measurements;
-         } else {
-            return null;
-         }
+      try {
+         const result = await measurementModel.find().where('_subjectKey').in(ids).exec();
+
+         return this.processManyResults(result);
+
       } catch (err) {
          let logger: Logger = new Logger();
          logger.logError("MeasurementDb", "loadMany", "Error:", err);
@@ -99,8 +128,8 @@ export class MeasurementDb implements IMeasurementStore {
          let result = await (new measurementModel(measurement)).save({ isNew: measurement.persistenceDetails._key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._key !== result._doc._id)
-            result._doc._persistenceDetails._key = result._doc._id;
+         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
+            result._doc._persistenceDetails._key = result._doc._id.toString();
 
          if (measurement.measurementType.unitType === EMeasurementUnitType.Weight)
             return this._weightCodec.tryCreateFrom(result._doc);
@@ -173,7 +202,7 @@ export const measurementTypeSchema = new mongoose.Schema({
 const measurementSchema = new mongoose.Schema({
    _persistenceDetails: {
       _key: {
-         type: Object,
+         type: String,
          required: false
       },
       _schemaVersion: {
@@ -205,7 +234,7 @@ const measurementSchema = new mongoose.Schema({
        required: true
    },
    _measurementType: measurementTypeSchema,
-   _subjectExternalId: {
+   _subjectKey: {
       type: String,
       required: true
    }

@@ -53,7 +53,8 @@ describe("PersonApi", function () {
       try {
          const response = await axios.put(saveUrl, encoded);
          let decoded = codec.decode(response.data);
-         const response2 = await axios.get(queryUrl, { params: { _key: decoded._persistenceDetails._key.toString() } });
+         const response2 = await axios.get(queryUrl, { params: { _key: decoded._persistenceDetails._key } });
+
          done();
       } catch (e) {
          var logger = new Logger();
@@ -77,7 +78,7 @@ describe("PersonApi", function () {
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(decoded._persistenceDetails._key.toString());
+         ids.push(decoded._persistenceDetails._key);
          let idList: IdList = new IdList(ids);
          encoded = inputCodec.encode(idList);
 
@@ -87,7 +88,7 @@ describe("PersonApi", function () {
 
          let personReturned = new Person(decodedPeople[0]);
 
-         // test is that we get the same person back as array[0] as we got from tje specific query
+         // test is that we get the same person back as array[0] as we got from the specific query
          if (personReturned.equals(new Person(decoded))) {
             done();
          } else {

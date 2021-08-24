@@ -7,7 +7,7 @@ import { Cohort, ICohortStore } from '../../core/src/Cohort';
 import { Person, PersonMemento } from '../../core/src/Person';
 import { CohortCodec } from '../../core/src/IOCohort';
 import { PersonDb } from './PersonDb';
-import { measurementTypeSchema } from './ObservationDb';
+import { measurementTypeSchema, MeasurementDb } from './ObservationDb';
 
 
 export class CohortDb implements ICohortStore {
@@ -17,12 +17,21 @@ export class CohortDb implements ICohortStore {
       this._codec = new CohortCodec();;
    }
 
+   private makeIdArray(input: Array<any>) : Array<string> {
+      var output: Array<string> = new Array<string>(input.length);
+
+      for (var i = 0; i < input.length; i++) {
+         output[i] = input[i].toString();
+      }
+      return output;
+   }
+
    private makePersonIds(people: Array<Person>): Array<string> {
       var ids: Array<string> = new Array<string>();
       var i: number;
 
       for (i = 0; i < people.length; i++) {
-         ids.push(people[i].persistenceDetails.id);
+         ids.push(people[i].persistenceDetails.key);
       }
       return ids;
 
@@ -34,14 +43,23 @@ export class CohortDb implements ICohortStore {
 
       if (result) {
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._key !== result._doc._id)
-            result._doc._persistenceDetails._key = result._doc._id;
+         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
+            result._doc._persistenceDetails._key = result._doc._id.toString();
 
-         var personDb:PersonDb = new PersonDb();
+         var personDb: PersonDb = new PersonDb();
+         var measurementDb = new MeasurementDb();
 
          // Switch adminstrators from an array of Ids to an array of objects by loading them up 
-         let admins = personDb.loadMany(result._doc._administratorIds);
-         let members = personDb.loadMany(result._doc._memberIds);
+         let adminIds = this.makeIdArray(result._doc._administratorIds);
+         let memberIds = this.makeIdArray(result._doc._memberIds);
+         let admins = personDb.loadMany(adminIds);
+         let members = personDb.loadMany(memberIds);
+         let measurements = measurementDb.loadManyForPeople(memberIds);
+         measurements.then(data => {
+            if (data.length > 0)
+               console.log(data);
+         });
+
          admins.then(data => {
             result._doc._administrators = data ? data : new Array<Person>();
             return members;
@@ -61,6 +79,22 @@ export class CohortDb implements ICohortStore {
          var prevAdmins: Array<Person> = cohort.administrators;
          var prevMembers: Array<Person> = cohort.members;
 
+         var personDb: PersonDb = new PersonDb();
+
+         // For any Admins that do not have valid key, save them
+         for (var i = 0; i < prevAdmins.length; i++) {
+            if (!prevAdmins[i].persistenceDetails.hasValidKey()) {
+               prevAdmins[i] = await personDb.save(prevAdmins[i]);
+            }
+         }
+
+         // For any Members that do not have valid key, save them
+         for (var i = 0; i < prevMembers.length; i++) {
+            if (!prevMembers[i].persistenceDetails.hasValidKey()) {
+               prevMembers[i] = await personDb.save(prevMembers[i]);
+            }
+         }
+
          // Before saving to DB, we convert object references to Ids, save the Ids on the memento, and remove object references from the Cohort.
          // We do the reverse on load.
          let memento = cohort.memento();
@@ -70,11 +104,12 @@ export class CohortDb implements ICohortStore {
          memento._administrators = new Array<PersonMemento>();
          memento._members = new Array<PersonMemento>();
 
+
          let result = await (new cohortModel(memento)).save({ isNew: cohort.persistenceDetails._key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._key !== result._doc._id)
-            result._doc._persistenceDetails._key = result._doc._id;
+         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
+            result._doc._persistenceDetails._key = result._doc._id.toString();
 
          // Restore the object arrays before sending back to client
          result._doc._administrators = prevAdmins;
@@ -95,7 +130,7 @@ export class CohortDb implements ICohortStore {
 const cohortSchema = new mongoose.Schema({
    _persistenceDetails: {
       _key: {
-         type: Object,
+         type: String,
          required: false
       },
       _schemaVersion: {
