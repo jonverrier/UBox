@@ -177,7 +177,7 @@ describe("Cohort", function () {
       expect(cohort1.name.equals(new CohortName("Joe"))).to.equal(true);
       expect(cohort1.period.equals(period)).to.equal(true);
       expect(personArraysAreEqual(cohort1.members, cohort2.members)).to.equal(true);
-      expect(personArraysAreEqual(cohort1.administrators, cohort2.members)).to.equal(true);
+      expect(personArraysAreEqual(cohort1.administrators, cohort2.administrators)).to.equal(true);
       expect(weightMeasurementTypeArraysAreEqual(cohort1.weightMeasurements, cohort2.weightMeasurements)).to.equal(true);
       expect(timeMeasurementTypeArraysAreEqual(cohort1.timeMeasurements, cohort2.timeMeasurements)).to.equal(true);
    });

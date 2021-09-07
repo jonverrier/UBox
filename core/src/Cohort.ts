@@ -457,7 +457,7 @@ export class Cohort extends Persistence {
     */
    includesAdministratorEmail (email: EmailAddress): boolean {
 
-      for (let i = 0; i < this._members.length; i++) {
+      for (let i = 0; i < this._administrators.length; i++) {
          if (this._administrators[i].email.equals(email))
             return true;
       }

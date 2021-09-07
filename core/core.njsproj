@@ -45,6 +45,7 @@
     <Folder Include="test\" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="src\Business.ts" />
     <TypeScriptCompile Include="src\Cohort.ts" />
     <TypeScriptCompile Include="src\IOCohort.ts" />
     <TypeScriptCompile Include="src\IOObservation.ts" />
@@ -59,6 +60,7 @@
     <TypeScriptCompile Include="src\Range.ts" />
     <TypeScriptCompile Include="src\CoreError.ts" />
     <TypeScriptCompile Include="src\Persistence.ts" />
+    <TypeScriptCompile Include="test\test-business.ts" />
     <TypeScriptCompile Include="test\test-cohort.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
