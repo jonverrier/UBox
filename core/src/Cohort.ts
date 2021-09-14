@@ -202,7 +202,7 @@ export class CohortMemento {
    _weightMeasurements: Array<MeasurementTypeMementoOf<WeightUnits>>;
    _timeMeasurements: Array<MeasurementTypeMementoOf<TimeUnits>>;
 
-   // These are used to allow the Db layer to switch object references to string Ids on save, and the reverse on load
+   // These are used to allow the Db layer to swizzle object references to string Ids on save, and the reverse on load
    // so separate documents/tables can be used in the DB
    _administratorIds: Array<string>;
    _memberIds: Array<string>;
@@ -283,6 +283,9 @@ export class Cohort extends Persistence {
    private _members: Array<Person>;
    private _weightMeasurements: Array<MeasurementTypeOf<WeightUnits>>;
    private _timeMeasurements: Array<MeasurementTypeOf<TimeUnits>>;
+
+   // These are used to allow the Db layer to swizzle object references to string Ids on save, and the reverse on load
+   // so separate documents/tables can be used in the DB
    private _adminstratorIds: Array<string>;
    private _memberIds: Array<string>;
 /**
@@ -444,11 +447,7 @@ export class Cohort extends Persistence {
     */
    includesMemberEmail (email: EmailAddress): boolean {
 
-      for (let i = 0; i < this._members.length; i++) {
-         if (this._members[i].email.equals(email))
-            return true;
-      }
-      return false;
+      return this.includesEmail(email, this._members);
    }
 
    /**
@@ -457,8 +456,18 @@ export class Cohort extends Persistence {
     */
    includesAdministratorEmail (email: EmailAddress): boolean {
 
-      for (let i = 0; i < this._administrators.length; i++) {
-         if (this._administrators[i].email.equals(email))
+      return this.includesEmail(email, this._administrators);
+   }
+
+   /**
+    * internal function to test if array includes a person with the email.
+    * @param email - the person to check
+    * @param people - an array of person objects to look inside to see if email is present
+    */
+   private includesEmail(email: EmailAddress, people: Array<Person>): boolean {
+
+      for (let i = 0; i < people.length; i++) {
+         if (people[i].email.equals(email))
             return true;
       }
       return false;

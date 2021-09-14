@@ -56,7 +56,7 @@ export class CohortDb implements ICohortStore {
          let members = personDb.loadMany(memberIds);
          let measurements = measurementDb.loadManyForPeople(memberIds);
          measurements.then(data => {
-            if (data.length > 0)
+            if (data && data.length > 0)
                console.log(data);
          });
 

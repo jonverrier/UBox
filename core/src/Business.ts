@@ -59,6 +59,9 @@ export class Business extends Persistence {
    private _name: Name;
    private _thumbnailUrl: Url;
    private _administrators: Array<Person>;
+
+   // These are used to allow the Db layer to swizzle object references to string Ids on save, and the reverse on load
+   // so separate documents/tables can be used in the DB
    private _administratorIds: Array<string>;
 
    /**
