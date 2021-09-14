@@ -1,10 +1,11 @@
 /*! Copyright TXPCo, 2020, 2021 */
-import { Url, UrlMemento, EmailAddress, Person, PersonMemento, personArraysAreEqual } from './Person';
+import { Name, NameMemento, Url, UrlMemento } from './Party';
+import { EmailAddress, Person, PersonMemento, personArraysAreEqual } from './Person';
 import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
 
 export class BusinessMemento {
    _persistenceDetails: PersistenceDetailsMemento;
-   _name: string;
+   _name: Name;
    _thumbnailUrl: UrlMemento;
    _administrators: Array<PersonMemento>;
 
@@ -20,7 +21,7 @@ export class BusinessMemento {
     * @param administrators - array of People, may be zero length // TODO - must have at least one adminsistrator
     */
    constructor(persistenceDetails: PersistenceDetails,
-      name: string,
+      name: Name,
       thumbnailUrl: Url,
       administrators: Array<Person>) {
 
@@ -43,7 +44,7 @@ export class BusinessMemento {
    get persistenceDetails(): PersistenceDetailsMemento {
       return this._persistenceDetails;
    }
-   get name(): string {
+   get name(): Name {
       return this._name;
    }
    get thumbnailUrl(): UrlMemento {
@@ -55,7 +56,7 @@ export class BusinessMemento {
 }
 
 export class Business extends Persistence {
-   private _name: string;
+   private _name: Name;
    private _thumbnailUrl: Url;
    private _administrators: Array<Person>;
    private _administratorIds: Array<string>;
@@ -68,7 +69,7 @@ export class Business extends Persistence {
     * @param administrators - array of People
     */
    constructor(persistenceDetails: PersistenceDetails,
-      name: string,
+      name: Name,
       thumbnailUrl: Url,
       administrators: Array<Person>);
    public constructor(memento: BusinessMemento);
@@ -106,7 +107,7 @@ export class Business extends Persistence {
    /**
    * set of 'getters' and setters for private variables
    */
-   get name(): string {
+   get name(): Name {
       return this._name;
    }
    get thumbnailUrl(): Url {
@@ -115,7 +116,7 @@ export class Business extends Persistence {
    get administrators(): Array<Person> {
       return this._administrators;
    }
-   set name(name: string) {
+   set name(name: Name) {
       this._name = name;
    }
    set thumbnailUrl(thumbnailUrl: Url) {
@@ -144,7 +145,7 @@ export class Business extends Persistence {
    equals(rhs: Business): boolean {
 
       return (super.equals(rhs) &&
-         (this._name === rhs._name) &&
+         (this._name.equals (rhs._name)) &&
          this._thumbnailUrl.equals(rhs._thumbnailUrl) &&
          personArraysAreEqual(this._administrators, rhs._administrators) );
    }

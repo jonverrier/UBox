@@ -112,14 +112,9 @@ const personSchema = new mongoose.Schema({
       }
    },
    _name: {
-      _name: {
+      _displayName: {
          type: String,
          required: true,
-         index: true
-      },
-      _surname: {
-         type: String,
-         required: false,
          index: true
       }
    },

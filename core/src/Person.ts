@@ -2,6 +2,7 @@
 import { URL } from 'url'
 import { InvalidParameterError } from './CoreError';
 import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
+import { Name, NameMemento, Url, UrlMemento } from './Party';
 
 // Rule summary for a Persistent Object: 
 // - derives from IPersistence, which contains a PersistentDetails member object. 
@@ -15,101 +16,6 @@ export enum ERoleType {
 
 export enum ELoginProvider {
    Apple = "Apple", Google = "Google", Private = "Private"
-}
-
-export class NameMemento {
-   _name: string;
-   _surname: string;
-
-   /**
-    * Create a NameMemento object
-    * @param name - user first name
-    * @param surname - user family name, can be null
-    */
-   constructor(name: string, surname: string | null = null) {
-
-      this._name = name;
-      this._surname = surname;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get name(): string {
-      return this._name;
-   }
-   get surname(): string {
-      return this._surname;
-   }
-
-}
-
-export class Name {
-   private _name: string;
-   private _surname: string;
-
-   /**
-    * Create a Name object
-    * @param name - user first name
-    * @param surname - user family name, can be null
-    */
-   public constructor(name: string, surname: string | null);
-   public constructor(memento: NameMemento);
-   public constructor(...paramArray: any[]) {
-
-      if (paramArray.length === 1) {
-         if (!Name.isValidName(paramArray[0]._name)) {
-            throw new InvalidParameterError("Name");
-         }
-         this._name = paramArray[0]._name;
-         this._surname = paramArray[0]._surname;
-      } else {
-         if (!Name.isValidName(paramArray[0])) {
-            throw new InvalidParameterError("Name");
-         }
-         this._name = paramArray[0];
-         this._surname = paramArray[1];
-      }
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get name(): string {
-      return this._name;
-   }
-   get surname(): string {
-      return this._surname;
-   }
-
-   /**
-   * memento() returns a copy of internal state
-   */
-   memento(): NameMemento {
-      return new NameMemento(this._name, this._surname);
-   }
-
-   /**
- * test for equality - checks all fields are the same. 
- * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
- * @param rhs - the object to compare this one to.  
- */
-   equals(rhs: Name): boolean {
-
-      return (this._name === rhs._name &&
-         ((this._surname === rhs._surname)));
-   }
-
-   /**
-    * test for valid name 
-    * @param name - the string to test
-    */
-   static isValidName(name: string): boolean {
-      if (name === null || name.length === 0)
-         return false;
-
-      return (true);
-   }
 }
 
 export class LoginDetailsMemento {
@@ -283,99 +189,6 @@ export class EmailAddress {
       return (
          (this._email === rhs._email) &&
          (this._isEmailVerified === rhs._isEmailVerified));
-   }
-}
-
-export class UrlMemento {
-   _url: string;
-   _isUrlVerified: boolean;
-
-   /**
-    * Create a export class UrlMemento {
- object
-    * @param url - user email
-    * @param isUrlVerified - boolean to say if we know URL is valid i.e we have retrieved it
-    */
-   constructor(url: string, isUrlVerified: boolean) {
-
-      this._url = url;
-      this._isUrlVerified = isUrlVerified;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get url(): string {
-      return this._url;
-   }
-   get isUrlVerified(): boolean {
-      return this._isUrlVerified;
-   }
-}
-
-export class Url {
-   private _url: string;
-   private _isUrlVerified: boolean;
-
-   /**
-    * Create a Url object
-    * @param url - user email
-    * @param isUrlVerified - boolean to say if we know URL is valid i.e we have retrieved it
-    */
-   constructor(url: string, isUrlVerified: boolean) {
-
-      if (!Url.isValidUrl(url)) {
-         throw new InvalidParameterError("Url");
-      }
-      this._url = url;
-      this._isUrlVerified = isUrlVerified;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get url(): string {
-      return this._url;
-   }
-   get isUrlVerified(): boolean {
-      return this._isUrlVerified;
-   }
-
-   /**
-    * test for valid url
-    * @param url - the string to test 
-    */
-   static isValidUrl(url: string): boolean {
-      if (url === null || url.length === 0)
-         return false;
-
-      let parsed;
-
-      try {
-         parsed = new URL(url);
-      } catch (_) {
-         return false;
-      }
-      return (true);
-   }
-
-   /**
-   * memento() returns a copy of internal state
-   */
-   memento(): UrlMemento {
-      return new UrlMemento(this._url, this._isUrlVerified);
-   }
-
-   /**
-    * test for equality - checks all fields are the same. 
-    * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
-    * @param rhs - the object to compare this one to.  
-    */
-   equals(rhs: Url): boolean {
-
-      return (
-         (this._url === rhs._url) &&
-         (this._isUrlVerified === rhs._isUrlVerified));
    }
 }
 
@@ -561,8 +374,8 @@ export class Person extends Persistence {
             memento._persistenceDetails._sequenceNumber));
 
          this._loginDetails = new LoginDetails(memento._loginDetails._provider, memento._loginDetails._token);
-         this._name = new Name(memento._name._name, memento._name._surname); 
          this._email = memento._email ? new EmailAddress(memento._email._email, memento._email._isEmailVerified) : null;
+         this._name = new Name(memento._name._displayName);
          this._thumbnailUrl = memento._thumbnailUrl ? new Url(memento._thumbnailUrl._url, memento._thumbnailUrl._isUrlVerified) : null;
          this._roles = memento._roles ? new Roles(memento._roles._roles) : null;
 

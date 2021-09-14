@@ -5,7 +5,8 @@ import axios from 'axios';
 import { TimeUnits, WeightUnits } from '../../core/src/Quantity';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { ELoginProvider, LoginDetails, Name, EmailAddress, Url, Person } from "../../core/src/Person";
+import { Name, Url } from "../../core/src/Party";
+import { ELoginProvider, LoginDetails, EmailAddress, Person } from "../../core/src/Person";
 import { MeasurementTypeOf } from "../../core/src/Observation";
 import { SnatchMeasurementType, Row250mMeasurementType } from '../../core/src/FitnessObservations';
 import { ECohortPeriod, CohortName, CohortTimePeriod, Cohort } from "../../core/src/Cohort";
@@ -25,7 +26,7 @@ describe("CohortApi", function () {
 
    let person = new Person(new PersistenceDetails(null, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe", null),
+      new Name("Joe"),
       new EmailAddress("Joe@mail.com", true),
       new Url("https://jo.pics.com", false), null);
 

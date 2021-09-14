@@ -4,7 +4,8 @@
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
 import { CohortNameCodec, CohortTimePeriodCodec, CohortCodec } from '../src/IOCohort';
-import { Name, LoginDetails, EmailAddress, Url, Person, ELoginProvider} from '../src/Person';
+import { Url, Name } from "../src/Party";
+import { LoginDetails, EmailAddress, Person, ELoginProvider} from '../src/Person';
 import { CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from '../src/Cohort';
 import { MeasurementTypeOf } from '../src/Observation';
 import { TimeUnits, WeightUnits } from '../src/Quantity';
@@ -123,7 +124,7 @@ describe("IOCohort", function () {
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe", null),
+      new Name("Joe"),
       new EmailAddress("Joe@mail.com", true),
       new Url("https://jo.pics.com", false), null);
 

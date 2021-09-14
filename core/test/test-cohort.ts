@@ -2,8 +2,9 @@
 // Copyright TXPCo ltd, 2021
 import { TimeUnits, WeightUnits } from '../src/Quantity';
 import { PersistenceDetails } from "../src/Persistence";
-import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run100m } from '../src/FitnessObservations'
-import { Name, LoginDetails, EmailAddress, Url, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
+import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run100m } from '../src/FitnessObservations';
+import { Url, Name } from "../src/Party";
+import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
 import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
 import { CohortName, CohortTimePeriod, Cohort, ECohortPeriod } from '../src/Cohort';
 
@@ -126,13 +127,13 @@ describe("Cohort", function () {
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe", null),
+      new Name("Joe"),
       new EmailAddress("Joe@mail.com", true),
       new Url("https://jo.pics.com", false), null);
 
    let person2 = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Jenny", null),
+      new Name("Jenny"),
       new EmailAddress("Jenny@mail.com", true),
       new Url("https://jo.pics.com", false),
       null);

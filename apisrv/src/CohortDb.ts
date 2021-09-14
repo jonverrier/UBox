@@ -104,7 +104,6 @@ export class CohortDb implements ICohortStore {
          memento._administrators = new Array<PersonMemento>();
          memento._members = new Array<PersonMemento>();
 
-
          let result = await (new cohortModel(memento)).save({ isNew: cohort.persistenceDetails._key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails

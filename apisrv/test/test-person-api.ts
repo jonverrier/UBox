@@ -5,7 +5,8 @@ import axios from 'axios';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
-import { ELoginProvider, ERoleType, LoginDetails, Name, EmailAddress, Url, Roles, Person } from "../../core/src/Person";
+import { Name, Url} from "../../core/src/Party";
+import { ELoginProvider, ERoleType, LoginDetails, EmailAddress, Roles, Person } from "../../core/src/Person";
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 
 var expect = require("chai").expect;
@@ -23,7 +24,7 @@ describe("PersonApi", function () {
    beforeEach(function () {
       person1 = new Person(new PersistenceDetails(null, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe", null),
+         new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false),
          new Roles(Array<ERoleType>(ERoleType.Member)));
    });

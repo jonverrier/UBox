@@ -5,7 +5,8 @@ import * as IoTsTypes from 'io-ts-types';
 
 import { WeightUnits, TimeUnits, QuantityOf } from '../src/Quantity';
 import { RangeOf } from '../src/Range';
-import { Name, LoginDetails, EmailAddress, Url, Roles, Person } from '../src/Person';
+import { Name, Url } from './Party';
+import { LoginDetails, EmailAddress, Roles, Person } from '../src/Person';
 import { MeasurementTypeOf } from '../src/Observation';
 import { CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from './Cohort';
 import { PersistenceDetails } from './Persistence';

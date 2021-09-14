@@ -3,7 +3,8 @@
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
 import { PersistenceDetailsCodec } from '../src/IOCommon';
-import { LoginDetails, EmailAddress, Url, Name, Roles, Person, ERoleType, ELoginProvider } from '../src/Person';
+import { Url, Name } from "../src/Party";
+import { LoginDetails, EmailAddress, Roles, Person, ERoleType, ELoginProvider } from '../src/Person';
 import { NameCodec, LoginDetailsCodec, EmailAddressCodec, UrlCodec, RolesCodec, PersonCodec } from '../src/IOPerson';
 
 var expect = require("chai").expect;
@@ -17,38 +18,12 @@ describe("IOName", function () {
       codec = new NameCodec();
    });
 
-   it("Needs to decode a name from clean name & null surname input.", function () {
+   it("Needs to decode a name from name input.", function () {
 
       var caught: boolean = false;
 
       try {
-         codec.decode ({ _name: "Joe", _surname: null });
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-   });
-
-   it("Needs to decode a name from name & no surname input.", function () {
-
-      var caught: boolean = false;
-
-      try {
-         codec.decode({ _name: "Joe"});
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-   });
-
-   it("Needs to decode a name from clean name & surname input.", function () {
-
-      var caught: boolean = false;
-
-      try {
-         codec.decode({ _name: "Joe", _surname: "Bloggs" });
+         codec.decode({ _displayName: "Joe"});
       } catch (e) {
          caught = true;
       }
@@ -61,7 +36,7 @@ describe("IOName", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ _name: null, _surname: "Bloggs" });
+         codec.decode({ _displayName: null});
       } catch (e) {
          caught = true;
       }
@@ -69,17 +44,9 @@ describe("IOName", function () {
       expect(caught).to.equal(true);
    });
 
-   it("Needs to encode a Name.", function () {
-
-      let encoded = codec.encode (new Name ("Joe", "Bloggs"));
-
-      expect(encoded.name).to.equal("Joe");
-      expect(encoded.surname).to.equal("Bloggs");
-   });
-
    it("Needs to encode then decode a Name.", function () {
 
-      let initial = new Name("Joe", "Bloggs");
+      let initial = new Name("Joe");
       let encoded = codec.encode(initial);
       let decoded: Name;
 
@@ -415,7 +382,7 @@ describe("IOPerson", function () {
          codec.decode({
             _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
             _loginDetails: { _provider: ELoginProvider.Apple, _token: "123" },
-            _name: { _name: "Joe", _surname: "Bloggs" },
+            _name: { _displayName: "Joe"},
             _email: { _email: "Joe@mail.com", _isEmailVerified: false },
             _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true },
             _roles: { _roles: null } 
@@ -431,7 +398,7 @@ describe("IOPerson", function () {
 
       let encoded = codec.encode(new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe", null),
+         new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null));
 
       expect(encoded.persistenceDetails.key).to.equal(1);
@@ -443,7 +410,7 @@ describe("IOPerson", function () {
 
       let initial = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe", null),
+         new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
       let encoded = codec.encode(initial);
       let decoded: Person;
