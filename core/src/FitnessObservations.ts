@@ -73,7 +73,7 @@ export class CleanAndJerkMeasurementType extends LiftMeasurementType {
 export class SpeedMeasurementType extends MeasurementTypeOf<TimeUnits> {
 
    /**
-    * Create a RowDistanceMeasurementType object - contains the static elements that characterise measurement of a row distance
+    * Create a SpeedMeasurementType object - contains the static elements that characterise measurement of any movement measured by time
     */
    constructor(mono: EMeasurementType, lowBar: number, highBar: number, ) {
       let lo = new QuantityOf<TimeUnits>(lowBar, ETimeUnits.Seconds);

@@ -111,7 +111,7 @@ export class Persistence {
    /**
    * set of 'getters' for private variables
    */
-   get persistenceDetails(): any {
+   get persistenceDetails(): PersistenceDetails {
       return this._persistenceDetails;
    }
 

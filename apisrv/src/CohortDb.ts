@@ -57,7 +57,7 @@ export class CohortDb implements ICohortStore {
          let measurements = measurementDb.loadManyForPeople(memberIds);
          measurements.then(data => {
             if (data && data.length > 0)
-               console.log(data);
+               console.log('TODO:' + data.toString());
          });
 
          admins.then(data => {
@@ -104,7 +104,7 @@ export class CohortDb implements ICohortStore {
          memento._administrators = new Array<PersonMemento>();
          memento._members = new Array<PersonMemento>();
 
-         let result = await (new cohortModel(memento)).save({ isNew: cohort.persistenceDetails._key ? true : false });
+         let result = await (new cohortModel(memento)).save({ isNew: cohort.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())

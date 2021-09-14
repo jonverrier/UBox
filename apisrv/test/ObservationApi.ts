@@ -4,6 +4,7 @@
 
 import axios from 'axios';
 
+import { Logger } from '../../core/src/Logger';
 import { EMeasurementUnitType, MeasurementOf, IMeasurementStore } from '../../core/src/Observation';
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
 import { WeightMeasurementCodec, MeasurementsCodec, TimeMeasurementCodec} from '../../core/src/IOObservation';
@@ -44,20 +45,20 @@ export class MeasurementApi implements IMeasurementStore {
 
          const response = await axios.get(this._queryUrl, { params: { _key: id.toString() } });
 
-         if (response.data.measurementType.unitType === EMeasurementUnitType.Weight) {
+         if (response.data._measurementType._unitType === EMeasurementUnitType.Weight) {
             etype = EMeasurementUnitType.Weight;
          }
          else {
             etype = EMeasurementUnitType.Time;
          }
 
-         let created = etype === EMeasurementUnitType.Weight ?
+         return etype === EMeasurementUnitType.Weight ?
             this._weightCodec.tryCreateFrom(response.data) :
             this._timeCodec.tryCreateFrom(response.data);
-
-         return created;
       }
       catch (e) {
+         let logger: Logger = new Logger();
+         logger.logError("MeasurementApi", "load", "Error:", e);
          return null;
       }
    }
@@ -83,7 +84,9 @@ export class MeasurementApi implements IMeasurementStore {
          let measurementsCodec = new MeasurementsCodec();
          return measurementsCodec.tryCreateFrom(response.data);
 
-      } catch {
+      } catch (e) {
+         let logger: Logger = new Logger();
+         logger.logError("MeasurementApi", "loadMany", "Error:", e);
          return null;
       }
    }
@@ -110,13 +113,13 @@ export class MeasurementApi implements IMeasurementStore {
       try {
          const response = await axios.put(this._saveUrl, encoded);
 
-         let created = etype === EMeasurementUnitType.Weight ?
+         return etype === EMeasurementUnitType.Weight ?
             this._weightCodec.tryCreateFrom (response.data) :
             this._timeCodec.tryCreateFrom(response.data);
 
-         return created;
-
       } catch (e) {
+         let logger: Logger = new Logger();
+         logger.logError("MeasurementApi", "save", "Error:", e);
          return null;
       }
    }

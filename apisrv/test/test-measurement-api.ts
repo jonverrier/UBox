@@ -39,10 +39,9 @@ describe("MeasurementApi - weight", function () {
 
    it("Needs to save and then retrieve an existing Measurement", async function (done) {
 
-
       try {
          const response = await api.save(measurement1);
-         const response2 = await api.load(response.persistenceDetails._key);
+         const response2 = await api.load(response.persistenceDetails.key);
          done();
       } catch (e) {
          var logger = new Logger();
@@ -60,7 +59,7 @@ describe("MeasurementApi - weight", function () {
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(response.persistenceDetails._key.toString());
+         ids.push(response.persistenceDetails.key.toString());
          const response2 = await api.loadMany(ids);
 
          let returned = response2[0];
@@ -111,7 +110,7 @@ describe("MeasurementApi - time", function () {
 
       try {
          const response = await api.save(measurement1);
-         const response2 = await api.load(response.persistenceDetails._key);
+         const response2 = await api.load(response.persistenceDetails.key);
          done();
       } catch (e) {
          var logger = new Logger();
@@ -129,7 +128,7 @@ describe("MeasurementApi - time", function () {
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(response.persistenceDetails._key);
+         ids.push(response.persistenceDetails.key);
          const response2 = await api.loadMany(ids);
 
          let returned = response2[0];
@@ -177,8 +176,8 @@ describe("MeasurementApi - heterogenous", function () {
 
       // Build array query 
       let ids = new Array<string>();
-      ids.push(response1.persistenceDetails._key);
-      ids.push(response2.persistenceDetails._key);
+      ids.push(response1.persistenceDetails.key);
+      ids.push(response2.persistenceDetails.key);
 
       try {
 

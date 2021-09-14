@@ -125,7 +125,35 @@ export class MeasurementDb implements IMeasurementStore {
     */
    async save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
       try {
-         let result = await (new measurementModel(measurement)).save({ isNew: measurement.persistenceDetails._key ? true : false });
+         if (!measurement.persistenceDetails.hasValidKey()) {
+            // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
+            // Records are the same if they are: 
+            // same subject, same measurementType, same cohortPeriod. 
+            var whereClause = {
+               '_subjectKey': measurement.subjectKey,
+               '_measurementType._measurementType': measurement.measurementType.measurementType,
+               '_cohortPeriod': measurement.cohortPeriod
+            };
+
+            const existing = await measurementModel.findOne(whereClause).exec();
+
+            // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
+            if (existing && existing._doc._persistenceDetails._sequenceNumber >= measurement.persistenceDetails.sequenceNumber) {
+
+               // If we have an existing document, copy the new Mongo ID to persistenceDetails
+               if (existing._doc._persistenceDetails._key !== existing._doc._id.toString())
+                  existing._doc._persistenceDetails._key = existing._doc._id.toString();
+
+               // Return a constructed object via weight or time codec as appropriate
+               if (MeasurementUnitType.isWeightUnitType(existing._doc._measurementType._unitType)) {
+                  return this._weightCodec.tryCreateFrom(existing._doc);
+               }
+               else {
+                  return this._timeCodec.tryCreateFrom(existing._doc);
+               }
+            }
+         }
+         let result = await (new measurementModel(measurement)).save({ isNew: measurement.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())

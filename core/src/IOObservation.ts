@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import { InvalidUnitError } from './CoreError';
-import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, ERepUnits} from './Quantity';
+import { WeightUnits, TimeUnits} from './Quantity';
 import { EMeasurementType, EMeasurementUnitType, EPositiveTrend, MeasurementUnitType, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from '../src/IOCommon';
 

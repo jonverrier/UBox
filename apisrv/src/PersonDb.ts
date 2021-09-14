@@ -60,7 +60,7 @@ export class PersonDb implements IPersonStore {
             // if the saved version has a later or equal sequence number, do not overwrite it
             if (existing && existing._doc._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
 
-               // If we saved a new document, copy the new Mongo ID to persistenceDetails
+               // If we have an existing document, copy the new Mongo ID to persistenceDetails
                if (existing._doc._persistenceDetails._key !== existing._doc._id.toString())
                   existing._doc._persistenceDetails._key = existing._doc._id.toString();
 
@@ -68,7 +68,7 @@ export class PersonDb implements IPersonStore {
             }
          }
          // only save if we are a later sequence number 
-         let result = await (new personModel(person)).save({ isNew: person.persistenceDetails._id ? true : false });
+         let result = await (new personModel(person)).save({ isNew: person.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())
