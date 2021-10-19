@@ -2,21 +2,29 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name, UrlMemento } from "../src/Party";
-import { LoginDetails, EmailAddress, Roles, Person, personArraysAreEqual, IPersonStore, ERoleType, ELoginProvider } from '../src/Person';
+import { LoginDetails, EmailAddress, Roles, Person, PersonMemento, personArraysAreEqual, IPersonStore, ERoleType, ELoginProvider } from '../src/Person';
 
 var expect = require("chai").expect;
 
 class StubLoader implements IPersonStore {
-   async loadOne(id: any): Promise<Person | null> {
-      return new Person(new PersistenceDetails(1, 1, 1),
+
+   person: Person;
+
+   constructor() {
+      this.person = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
          new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
    }
 
-   async loadMany(ids: Array<any>): Promise<Array<Person>> | null {
-      return null;
+   async loadOne(id: any): Promise<Person | null> {
+      return this.person;
    }
+
+   async loadMany(ids: Array<string>): Promise<Array<Person>> | null {
+      return new Array<Person> (this.person, this.person);
+   }
+
    async save(person: Person): Promise<Person | null> {
       return person;
    }
@@ -363,6 +371,15 @@ describe("Person", function () {
       expect(personArraysAreEqual(people2, people)).to.equal(false);
       expect(personArraysAreEqual(people3, people)).to.equal(false);
    });
+
+   it("Needs to convert to and from memento()", function () {
+
+      let memento: PersonMemento = person1.memento();
+      let newPerson = new Person (memento);
+
+      expect(person1.equals(newPerson)).to.equal(true);
+   });
+
 });
 
 describe("PersonLoader", function () {
@@ -374,6 +391,15 @@ describe("PersonLoader", function () {
       let person = loader.loadOne('dummy');
 
       expect(person).to.not.equal(null);
+   });
+
+   it("Needs to load Peiple.", function () {
+
+      let loader = new StubLoader;
+
+      let people = loader.loadMany(new Array<string> ('dummy1', 'dummy2'));
+
+      expect(people).to.not.equal(null);
    });
 
 });
