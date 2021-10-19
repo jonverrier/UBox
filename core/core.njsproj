@@ -45,6 +45,7 @@
     <Folder Include="test\" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="src\Business.ts" />
     <TypeScriptCompile Include="src\Cohort.ts" />
     <TypeScriptCompile Include="src\IOCohort.ts" />
     <TypeScriptCompile Include="src\IOObservation.ts" />
@@ -53,12 +54,14 @@
     <TypeScriptCompile Include="src\Logger.ts" />
     <TypeScriptCompile Include="src\Observation.ts" />
     <TypeScriptCompile Include="src\IOCommon.ts" />
+    <TypeScriptCompile Include="src\Party.ts" />
     <TypeScriptCompile Include="src\Person.ts" />
     <TypeScriptCompile Include="src\IOPerson.ts" />
     <TypeScriptCompile Include="src\Quantity.ts" />
     <TypeScriptCompile Include="src\Range.ts" />
     <TypeScriptCompile Include="src\CoreError.ts" />
     <TypeScriptCompile Include="src\Persistence.ts" />
+    <TypeScriptCompile Include="test\test-business.ts" />
     <TypeScriptCompile Include="test\test-cohort.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
@@ -67,6 +70,7 @@
     <TypeScriptCompile Include="test\test-localisation.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\test-logger.ts" />
     <TypeScriptCompile Include="test\test-measurement.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>

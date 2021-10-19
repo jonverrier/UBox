@@ -1,12 +1,14 @@
 /*! Copyright TXPCo, 2021 */
 
 import { Persistence, PersistenceDetails, PersistenceDetailsMemento } from "./Persistence";
-import { ERepUnits, ETimeUnits, EWeightUnits, QuantityMementoOf, QuantityOf } from "./Quantity";
+import { TimeUnits, WeightUnits, QuantityMementoOf, QuantityOf } from "./Quantity";
 import { RangeMementoOf, RangeOf } from "./Range";
 
 // This enum is used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing 
 // Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EPositiveTrend { Up = "Up", Down = "Down"}
+
+export enum EMeasurementUnitType { Weight = "Weight", Time = "Time", Reps = "Reps" }
 
 // Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EMeasurementType {
@@ -14,20 +16,32 @@ export enum EMeasurementType {
    Row250="Row250", Run250="Run250"
 }
 
+export class MeasurementUnitType {
+   static isTimeUnitType(value: string): boolean {
+      return (value === EMeasurementUnitType[EMeasurementUnitType.Time]);
+   }
+
+   static isWeightUnitType(value: string): boolean {
+      return (value === EMeasurementUnitType[EMeasurementUnitType.Weight]);
+   }
+}
 export class MeasurementTypeMementoOf<Unit> {
    _measurementType: EMeasurementType;
+   _unitType: EMeasurementUnitType;
    _range: RangeMementoOf<Unit>;
    _trend: EPositiveTrend;
 
    /**
     * Create a MeasurementTypeMementoFor object - contains the statis elements that characterise a measurement
-    * @param measurementType - enum to say what is being measured
+    * @param measurementType - defines the type of the measurement 
+    * @param measurementUnitType - unit typ (weight/time/reps)
     * @param range - acceptable range of values
     * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
     */
-   constructor(measurementType: EMeasurementType, range: RangeMementoOf<Unit>, trend: EPositiveTrend) {
+   constructor(measurementType: EMeasurementType, unitType: EMeasurementUnitType, range: RangeMementoOf<Unit>, trend: EPositiveTrend) {
 
       this._measurementType = measurementType;
+      this._unitType = unitType;
       this._range = range;
       this._trend = trend;
    }
@@ -37,6 +51,10 @@ export class MeasurementTypeMementoOf<Unit> {
    */
    get measurementType(): EMeasurementType {
       return this._measurementType;
+   }
+
+   get unitType(): EMeasurementUnitType {
+      return this._unitType;
    }
 
    get range(): RangeMementoOf<Unit> {
@@ -50,16 +68,18 @@ export class MeasurementTypeMementoOf<Unit> {
 
 export class MeasurementTypeOf<Unit> {
    private _measurementType: EMeasurementType;
+   private _unitType: EMeasurementUnitType;
    private _range: RangeOf<Unit>;
    private _trend: EPositiveTrend;
 
    /**
     * Create a MeasurementType object - contains the statis elements that characterise a measurement 
-    * @param measurementType - enum to say what is being measured
+    * @param measurementType - defines characteristics of what is being measured
+    * @param measurementUnitType - unit typ (weight/time/reps)*
     * @param range - acceptable range of values
     * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
     */
-   constructor(measurementType: EMeasurementType, range: RangeOf<Unit>, trend: EPositiveTrend);
+   constructor(measurementType: EMeasurementType, unitType: EMeasurementUnitType, range: RangeOf<Unit>, trend: EPositiveTrend);
    public constructor(memento: MeasurementTypeMementoOf<Unit>);
    public constructor(...params: any[]) {
 
@@ -67,6 +87,7 @@ export class MeasurementTypeOf<Unit> {
 
          let memento: MeasurementTypeMementoOf<Unit> = params[0];
          this._measurementType = memento._measurementType;
+         this._unitType = memento._unitType;
          this._range = new RangeOf<Unit>(new QuantityOf<Unit>(memento._range._lo._amount, memento._range._lo._unit),
             memento._range._loInclEq,
             new QuantityOf<Unit>(memento._range._hi._amount, memento._range._hi._unit),
@@ -75,8 +96,9 @@ export class MeasurementTypeOf<Unit> {
       } else {
 
          this._measurementType = params[0];
-         this._range = params[1];
-         this._trend = params[2];
+         this._unitType = params[1];
+         this._range = params[2];
+         this._trend = params[3];
       }
    }
 
@@ -85,6 +107,10 @@ export class MeasurementTypeOf<Unit> {
    */
    get measurementType(): EMeasurementType {
       return this._measurementType;
+   }
+
+   get unitType(): EMeasurementUnitType {
+      return this._unitType;
    }
 
    get range(): RangeOf<Unit> {
@@ -99,7 +125,7 @@ export class MeasurementTypeOf<Unit> {
    * memento() returns a copy of internal state
    */
    memento(): MeasurementTypeMementoOf<Unit> {
-      return new MeasurementTypeMementoOf<Unit>(this._measurementType, this._range.memento(), this._trend);
+      return new MeasurementTypeMementoOf<Unit>(this._measurementType, this._unitType, this._range.memento(), this._trend);
    }
 
    /**
@@ -109,9 +135,20 @@ export class MeasurementTypeOf<Unit> {
     */
    equals(rhs: MeasurementTypeOf<Unit>): boolean {
 
-      return (this._measurementType === rhs._measurementType && 
+      return (this._measurementType === rhs._measurementType &&
+         this._unitType === rhs._unitType && 
          this._range.equals(rhs._range) &&
          this._trend === rhs._trend);
+   }
+
+   /**
+   * can be used in IO to check validity of data
+   */
+   static isAllowedMeasurementUnitType(value: string): boolean {
+      var allowedValues: Array<string> = Object.values(EMeasurementUnitType);
+
+      return allowedValues.indexOf(value) !== -1;
+
    }
 }
 
@@ -134,14 +171,14 @@ function measurementTypeArraysAreEqual<Units>(lhs: Array<MeasurementTypeOf<Units
    return true;
 }
 
-export function weightMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<EWeightUnits>>,
-   rhs: Array<MeasurementTypeOf<EWeightUnits>>): boolean {
+export function weightMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<WeightUnits>>,
+   rhs: Array<MeasurementTypeOf<WeightUnits>>): boolean {
 
    return measurementTypeArraysAreEqual(lhs, rhs);
 }
 
-export function timeMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<ETimeUnits>>,
-   rhs: Array<MeasurementTypeOf<ETimeUnits>>): boolean {
+export function timeMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<TimeUnits>>,
+   rhs: Array<MeasurementTypeOf<TimeUnits>>): boolean {
 
    return  measurementTypeArraysAreEqual(lhs, rhs);;
 }
@@ -149,10 +186,10 @@ export function timeMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<E
 export class MeasurementMementoOf<MeasuredUnit> {
    _persistenceDetails: PersistenceDetailsMemento;
    _quantity: QuantityMementoOf<MeasuredUnit>;
-   _repeats: QuantityMementoOf<ERepUnits>;
+   _repeats: number;
    _cohortPeriod: number;
    _measurementType: MeasurementTypeMementoOf<MeasuredUnit>;
-   _subjectExternalId: string;
+   _subjectKey: string;
 
    /**
     * Create a MeasurementMementoOf object - a quantity, with a range of validity, and a marker of the positive trend (is it good if quantity goes up, or down)
@@ -161,17 +198,17 @@ export class MeasurementMementoOf<MeasuredUnit> {
     * @param repeats - the number of reps (for weight), number of distance units (for time measurements)
     * @param cohortPeriod - the period in which the measurement was taken
     * @param measurementType - reference to the class that defines the type of measurement
-    * @param subjectExternalId - reference to the entity to which the measurement applies  - usually a Person
+    * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
     */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: QuantityOf<MeasuredUnit>, repeats: QuantityOf<ERepUnits>, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
+      quantity: QuantityOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectKey: string)
    {
       this._persistenceDetails = persistenceDetails.memento();
       this._quantity = quantity.memento();
-      this._repeats = repeats.memento();
+      this._repeats = repeats;
       this._cohortPeriod = cohortPeriod;
       this._measurementType = measurementType.memento();
-      this._subjectExternalId = subjectExternalId;
+      this._subjectKey = subjectKey;
    }
 
    /**
@@ -183,7 +220,7 @@ export class MeasurementMementoOf<MeasuredUnit> {
    get quantity(): QuantityMementoOf<MeasuredUnit> {
       return this._quantity;
    }
-   get repeats(): QuantityMementoOf<ERepUnits> {
+   get repeats(): number {
       return this._repeats;
    }
    get cohortPeriod(): number {
@@ -192,17 +229,17 @@ export class MeasurementMementoOf<MeasuredUnit> {
    get measurementType(): MeasurementTypeMementoOf<MeasuredUnit> {
       return this._measurementType;
    }
-   get subjectExternalId(): string {
-      return this._subjectExternalId;
+   get subjectKey(): string {
+      return this._subjectKey;
    }
 }
 
 export class MeasurementOf<MeasuredUnit> extends Persistence {
    private _quantity: QuantityOf<MeasuredUnit>;
-   private _repeats: QuantityOf<ERepUnits>;
+   private _repeats: number;
    private _cohortPeriod: number;
    private _measurementType: MeasurementTypeOf<MeasuredUnit>;
-   private _subjectExternalId: string; 
+   private _subjectKey: string; 
 
 /**
  * Create a Measurement object - a quantity, with a range of validity, and a marker of the positive trend (is it good if quantity goes up, or down)
@@ -211,10 +248,10 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
  * @param repeats - the number of reps (for weight), number of distance units (for time measurements)
  * @param cohortPeriod - the period in which the measurement was taken
  * @param measurementType - reference to the class that defines the type of measurement
- * @param subjectExternalId - reference to the entity to which the measurement applies  - usually a Person
+ * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
  */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: QuantityOf<MeasuredUnit>, repeats: QuantityOf<ERepUnits>, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectExternalId: string)
+      quantity: QuantityOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectKey: string)
    public constructor(memento: MeasurementMementoOf<MeasuredUnit>);
    public constructor(...params: any[]) {
 
@@ -222,17 +259,16 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
 
          let memento: MeasurementMementoOf<MeasuredUnit> = params[0];
 
-         super(new PersistenceDetails(memento._persistenceDetails._id,
+         super(new PersistenceDetails(memento._persistenceDetails._key,
             memento._persistenceDetails._schemaVersion,
             memento._persistenceDetails._sequenceNumber));
 
          this._quantity = new QuantityOf<MeasuredUnit>(memento._quantity._amount,
             memento._quantity._unit);
-         this._repeats = new QuantityOf<ERepUnits>(memento._repeats._amount,
-            memento._repeats._unit);
+         this._repeats = memento._repeats;
          this._cohortPeriod = memento._cohortPeriod;
          this._measurementType = new MeasurementTypeOf<MeasuredUnit>(memento._measurementType);
-         this._subjectExternalId = memento._subjectExternalId;
+         this._subjectKey = memento._subjectKey;
 
       } else {
 
@@ -245,7 +281,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
          this._repeats = params[2];
          this._cohortPeriod = params[3];
          this._measurementType = params[4];
-         this._subjectExternalId = params[5];
+         this._subjectKey = params[5];
       }
    }
 
@@ -255,7 +291,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
    get quantity(): QuantityOf<MeasuredUnit> {
       return this._quantity;
    }
-   get repeats(): QuantityOf<ERepUnits> {
+   get repeats(): number {
       return this._repeats;
    }
    get cohortPeriod(): number {
@@ -264,15 +300,15 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
    get measurementType(): MeasurementTypeOf<MeasuredUnit> {
       return this._measurementType;
    }
-   get subjectExternalId(): string {
-      return this._subjectExternalId;
+   get subjectKey(): string {
+      return this._subjectKey;
    }
 
    /**
    * memento() returns a copy of internal state
    */
    memento(): MeasurementMementoOf<MeasuredUnit>  {
-      return new MeasurementMementoOf(this.persistenceDetails, this._quantity, this._repeats, this._cohortPeriod, this._measurementType, this._subjectExternalId);
+      return new MeasurementMementoOf(this.persistenceDetails, this._quantity, this._repeats, this._cohortPeriod, this._measurementType, this._subjectKey);
    }
 
    /**
@@ -284,14 +320,15 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
 
       return (super.equals (rhs) && 
          this._quantity.equals(rhs._quantity) &&
-         this._repeats.equals(rhs._repeats) &&
+         this._repeats === rhs._repeats &&
          this._cohortPeriod === rhs._cohortPeriod &&
          this._measurementType.equals(rhs.measurementType) &&
-         this._subjectExternalId === rhs._subjectExternalId);
+         this._subjectKey === rhs._subjectKey);
    }
 }
 
-export interface IWeightMeasurementStore {
-   load(id: any): Promise<MeasurementOf<EWeightUnits> | null>;
-   save(measurement: MeasurementOf<EWeightUnits>): Promise<MeasurementOf<EWeightUnits> | null>;
+export interface IMeasurementStore {
+   load(id: string): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
+   loadMany(ids: Array<string>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>>;
+   save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
 }

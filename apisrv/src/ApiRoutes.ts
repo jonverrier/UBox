@@ -11,13 +11,14 @@ import { IdListCodec, IdList } from '../../core/src/IOCommon';
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { PersonDb } from './PersonDb';
 
-import { WeightMeasurementCodec, WeightMeasurementsCodec } from '../../core/src/IOObservation';
-import { WeightMeasurementDb } from './ObservationDb';
+import { WeightMeasurementCodec, MeasurementsCodec, TimeMeasurementCodec } from '../../core/src/IOObservation';
+import { MeasurementDb } from './ObservationDb';
 
 import { CohortCodec } from '../../core/src/IOCohort';
 import { CohortDb } from './CohortDb';
 
 import { EApiUrls } from './ApiUrls';
+import { EMeasurementUnitType } from '../../core/src/Observation';
 
 export var ApiRoutes = express.Router();
 
@@ -31,7 +32,7 @@ ApiRoutes.get(EApiUrls.QueryPerson, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.loadOne(params.get('_id'));
+      let result = db.loadOne(params.get('_key'));
       result.then(data => {
          res.send(codec.encode(data ? data : null));
       });
@@ -50,14 +51,13 @@ ApiRoutes.put(EApiUrls.QueryPeople, function (req, res) {
       let peopleCodec = new PeopleCodec();
       let db = new PersonDb();
 
-
       let idCodec = new IdListCodec();
 
       var ids: IdList = idCodec.decode(req.body);
 
       let result = db.loadMany(ids._ids);
       result.then(data => {
-         res.send(peopleCodec.encode(data ? data : null));
+         res.send(peopleCodec.encode(data));
       });
 
    } catch (e) {
@@ -89,55 +89,90 @@ ApiRoutes.put(EApiUrls.SavePerson, function (req, res) {
 });
 
 // Retrieve a Measurement
-ApiRoutes.get(EApiUrls.QueryWeightMeasurement, function (req, res) {
+ApiRoutes.get(EApiUrls.QueryMeasurement, function (req, res) {
 
    try {
-      let codec = new WeightMeasurementCodec();
-      let db = new WeightMeasurementDb();
+      let weightCodec = new WeightMeasurementCodec();
+      let timeCodec = new TimeMeasurementCodec();
+      let db = new MeasurementDb();
 
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.load(params.get('_id'));
+      let result = db.load(params.get('_key'));
       result.then(data => {
-         res.send(data ? codec.encode(data) : null);
+         if (data) {
+            res.send(data.measurementType.unitType === EMeasurementUnitType.Weight ?
+               weightCodec.encode(data) :
+               timeCodec.encode(data));
+         }
+         else {
+            res.send(null);
+         }
       });
 
    } catch (e) {
       var logger = new Logger();
-      logger.logError("Measurement", "Load", "Error", e.toString());
+      logger.logError("Measurement", "QueryMeasurement", "Error", e.toString());
       res.send(null);
    }
 })
 
 // Save a Measurement
-ApiRoutes.put(EApiUrls.SaveWeightMeasurement, function (req, res) {
+ApiRoutes.put(EApiUrls.SaveMeasurement, function (req, res) {
 
    try {
-      let codec = new WeightMeasurementCodec();
-      let db = new WeightMeasurementDb();
+      let weightCodec = new WeightMeasurementCodec();
+      let timeCodec = new TimeMeasurementCodec();
+      let db = new MeasurementDb();
 
       let encoded = req.body;
-      let decoded = codec.tryCreateFrom(encoded);
+      var decoded;
+      var ok: boolean = false;
+      
+      try {
+         decoded = weightCodec.tryCreateFrom(encoded);
+         ok = true;
+      } catch (e) {
+      } 
 
-      let result = db.save(decoded);
-      result.then(data => {
-         res.send(codec.encode(data ? data : null));
-      });
+      if (!ok) {
+         try {
+            decoded = timeCodec.tryCreateFrom(encoded);
+            ok = true;
+         } catch (e) {
+         }
+      }
+
+      if (ok) {
+         let result = db.save(decoded);
+         result.then(data => {
+            if (data) {
+               res.send(data.measurementType.unitType === EMeasurementUnitType.Weight ?
+                  weightCodec.encode(data) :
+                  timeCodec.encode(data));
+            }
+            else {
+               res.send(null);
+            }
+         });
+      }
+      else {
+         throw new Error("Could not decode input." + req.body.toString());
+      }
    } catch (e) {
       var logger = new Logger();
-      logger.logError("Measurement", "SaveWeight", "Error", e.toString());
+      logger.logError("Measurement", "SaveMeasurement", "Error", e.toString());
       res.send(null);
    }
 });
 
 // Retrieve multiple Measurement objects
-ApiRoutes.put(EApiUrls.QueryWeightMeasurements, function (req, res) {
+ApiRoutes.put(EApiUrls.QueryMeasurements, function (req, res) {
 
    try {
-      let weightsCodec = new WeightMeasurementsCodec();
-      let db = new WeightMeasurementDb();
-
+      let measurementsCodec = new MeasurementsCodec();
+      let db = new MeasurementDb();
 
       let idCodec = new IdListCodec();
 
@@ -145,12 +180,12 @@ ApiRoutes.put(EApiUrls.QueryWeightMeasurements, function (req, res) {
 
       let result = db.loadMany(ids._ids);
       result.then(data => {
-         res.send(weightsCodec.encode(data ? data : null));
+         res.send(measurementsCodec.encode(data));
       });
 
    } catch (e) {
       var logger = new Logger();
-      logger.logError("Measurements", "QueryWeight", "Error", e.toString());
+      logger.logError("Measurements", "QueryMeasurements", "Error", e.toString());
       res.send(null);
    }
 })
@@ -165,7 +200,7 @@ ApiRoutes.get(EApiUrls.QueryCohort, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.load(params.get('_id'));
+      let result = db.load(params.get('_key'));
       result.then(data => {
          res.send(data ? codec.encode(data) : null);
       });

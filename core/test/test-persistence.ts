@@ -9,7 +9,7 @@ describe("PersistenceDetails", function () {
    it("Needs to construct correctly", function () {
       let persistence = new PersistenceDetails ("id", 1, 2);
 
-      expect(persistence.id).to.equal("id");
+      expect(persistence.key).to.equal("id");
       expect(persistence.schemaVersion).to.equal(1);
       expect(persistence.sequenceNumber).to.equal(2);
    });
@@ -31,7 +31,7 @@ describe("Persistence", function () {
    it("Needs to construct correctly", function () {
       let persistence = new Persistence (new PersistenceDetails("id", 1, 2));
 
-      expect(persistence.persistenceDetails.id).to.equal("id");
+      expect(persistence.persistenceDetails.key).to.equal("id");
       expect(persistence.persistenceDetails.schemaVersion).to.equal(1);
       expect(persistence.persistenceDetails.sequenceNumber).to.equal(2);
    });

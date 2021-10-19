@@ -1,21 +1,81 @@
 /*! Copyright TXPCo, 2021 */
 
 // Whenever any of these are changed, the schema in ObservationDb must be changed to match
-export enum EWeightUnits { Kg = "Kg", Lbs = "Lbs"}
-export enum ETimeUnits { Seconds = "Seconds"}
-export enum EDistanceUnits { Metres = "Metres"}
-export enum ERepUnits { Reps = "Reps"}
+export enum EWeightUnits { Kg = "Kg", Lbs = "Lbs" };
+export enum ETimeUnits { Seconds = "Seconds" };
+export enum ERepUnits { Reps = "Reps" };
+
+export interface IUnit {
+   allowedValues(): Array<string>;
+
+   isAllowedValue(value: string): boolean;
+}
+
+export class WeightUnits implements IUnit {
+   allowedValues(): Array<string> {
+      return WeightUnits.allowedValues(); // Member function calls the static one to avoid duplicated logic
+   }
+
+   isAllowedValue(value: string): boolean {
+      return WeightUnits.isAllowedValue(value); // Member function calls the static one to avoid duplicated logic
+   }
+
+   static allowedValues(): Array<string> {
+      return Object.values(EWeightUnits);
+   }
+
+   static isAllowedValue(value: string): boolean {
+      var values: Array<string> = WeightUnits.allowedValues();
+      return values.indexOf(value) !== -1;
+   }
+}
+
+export class TimeUnits implements IUnit {
+   allowedValues(): Array<string> {
+      return TimeUnits.allowedValues(); // Member function calls the static one to avoid duplicated logic
+   }
+
+   isAllowedValue(value: string): boolean {
+      return TimeUnits.isAllowedValue(value); // Member function calls the static one to avoid duplicated logic
+   }
+
+   static allowedValues(): Array<string> {
+      return Object.values(ETimeUnits);
+   }
+   static isAllowedValue(value: string): boolean {
+      var values: Array<string> = TimeUnits.allowedValues();
+      return values.indexOf(value) !== -1;
+   }
+}
+
+export class RepUnits implements IUnit {
+   allowedValues(): Array<string> {
+      return RepUnits.allowedValues(); // Member function calls the static one to avoid duplicated logic
+   }
+
+   isAllowedValue(value: string): boolean {
+      return RepUnits.isAllowedValue(value); // Member function calls the static one to avoid duplicated logic
+   }
+
+   static allowedValues(): Array<string> {
+      return Object.values(ERepUnits);
+   }
+   static isAllowedValue(value: string): boolean {
+      var values: Array<string> = RepUnits.allowedValues();
+      return values.indexOf(value) !== -1;
+   }
+}
 
 export class QuantityMementoOf<Unit> {
    _amount: number;
-   _unit: Unit;
+   _unit: string;
 
    /**
     * Create a QuantityMementoOf object - an amount, with Units
     * @param amount - the scalar value
     * @param unit - the unit in which the scalar value is measured
     */
-   constructor(amount: number, unit: Unit) {
+   constructor(amount: number, unit: string) {
       this._amount = amount;
       this._unit = unit;
    }
@@ -27,21 +87,22 @@ export class QuantityMementoOf<Unit> {
       return this._amount;
    }
 
-   get unit(): Unit {
+   get unit(): string {
       return this._unit;
    }
 }
 
 export class QuantityOf<Unit> { 
    private _amount: number;
-   private _unit: Unit;
+   private _unit: string;
 
 /**
  * Create a Quantity object - an amount, with Units
  * @param amount - the scalar value
  * @param unit - the unit in which the scalar value is measured
  */
-   constructor(amount: number, unit: Unit) {
+   constructor(amount: number, unit: string) {
+
       this._amount = amount;
       this._unit = unit;
    }
@@ -53,7 +114,7 @@ export class QuantityOf<Unit> {
       return this._amount;
    }
 
-   get unit(): Unit {
+   get unit(): string {
       return this._unit;
    }
 

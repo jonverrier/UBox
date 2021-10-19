@@ -1,10 +1,8 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-
-import { EWeightUnits, ERepUnits, QuantityOf, ETimeUnits } from './Quantity'; // ETimeUnits, EDistanceUnits, ERepUnits;
-import { RangeOf } from './Range';
-import { PersistenceDetails } from './Persistence';
-import { EMeasurementType, EPositiveTrend, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
+import { InvalidUnitError } from './CoreError';
+import { WeightUnits, TimeUnits} from './Quantity';
+import { EMeasurementType, EMeasurementUnitType, EPositiveTrend, MeasurementUnitType, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from '../src/IOCommon';
 
 import * as IoTs from 'io-ts';
@@ -19,17 +17,17 @@ import * as IoTs from 'io-ts';
 // ==========
 const weightQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: createEnumType<EWeightUnits>(EWeightUnits, 'EWeightUnits')
+   _unit: IoTs.string 
 });
 
 const timeQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: createEnumType<ETimeUnits>(ETimeUnits, 'ETimeUnits')
+   _unit: IoTs.string 
 });
 
 const repQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: createEnumType<ERepUnits>(ERepUnits, 'ERepUnits')
+   _unit: IoTs.string 
 });
 
 const weightRangeIoType = IoTs.type({
@@ -51,26 +49,27 @@ const timeRangeIoType = IoTs.type({
 
 export const weightMeasurementTypeIoType = IoTs.type({
    _measurementType: createEnumType<EMeasurementType>(EMeasurementType, 'EMeasurementType'),
+   _unitType: createEnumType<EMeasurementUnitType>(EMeasurementUnitType, 'EMeasurementUnitType'),
    _range: weightRangeIoType,
    _trend: createEnumType<EPositiveTrend>(EPositiveTrend, 'EPositiveTrend')
 });
 
-export class WeightMeasurementTypeCodec implements ICodec<MeasurementTypeOf<EWeightUnits>> {
+export class WeightMeasurementTypeCodec implements ICodec<MeasurementTypeOf<WeightUnits>> {
 
    decode(data: any): any {
       return decodeWith(weightMeasurementTypeIoType)(data);
    }
 
-   encode(data: MeasurementTypeOf<EWeightUnits>): any {
-      var memento: MeasurementTypeMementoOf<EWeightUnits> = data.memento();
+   encode(data: MeasurementTypeOf<WeightUnits>): any {
+      var memento: MeasurementTypeMementoOf<WeightUnits> = data.memento();
 
       return encodeWith(weightMeasurementTypeIoType)(memento);
    }
 
-   tryCreateFrom(data: any): MeasurementTypeOf<EWeightUnits> {
+   tryCreateFrom(data: any): MeasurementTypeOf<WeightUnits> {
       let temp = this.decode (data); // If types dont match an exception will be thrown here
 
-      return new MeasurementTypeOf<EWeightUnits>(temp);
+      return new MeasurementTypeOf<WeightUnits>(temp);
    }
 }
 
@@ -80,65 +79,33 @@ export class WeightMeasurementTypeCodec implements ICodec<MeasurementTypeOf<EWei
 export const weightMeasurementIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
    _quantity: weightQuantityIoType,
-   _repeats: repQuantityIoType,
+   _repeats: IoTs.number,
    _cohortPeriod: IoTs.number,
    _measurementType: weightMeasurementTypeIoType,
-   _subjectExternalId: IoTs.string
+   _subjectKey: IoTs.string
 });
 
-export class WeightMeasurementCodec implements ICodec<MeasurementOf<EWeightUnits>> {
+export class WeightMeasurementCodec implements ICodec<MeasurementOf<WeightUnits>> {
 
    decode(data: any): any {
       return decodeWith(weightMeasurementIoType)(data);
    }
 
-   encode(data: MeasurementOf<EWeightUnits>): any {
-      var memento: MeasurementMementoOf<EWeightUnits> = data.memento();
+   encode(data: MeasurementOf<WeightUnits>): any {
+      var memento: MeasurementMementoOf<WeightUnits> = data.memento();
 
       return encodeWith(weightMeasurementIoType)(memento);
    }
 
-   tryCreateFrom(data: any): MeasurementOf<EWeightUnits> {
-      let temp = this.decode(data); // If types dont match an exception will be thrown here
+   tryCreateFrom(data: any): MeasurementOf<WeightUnits> {
 
-      return new MeasurementOf<EWeightUnits>(temp);
-   }
-}
+      let temp: MeasurementMementoOf<WeightUnits> = this.decode(data); // If types dont match an exception will be thrown here
 
-// weightMeasurements (plural) Codec
-// ==========
+      // for later - can this be moved to the IO type ?
+      if (! MeasurementUnitType.isWeightUnitType (temp._measurementType._unitType))
+         throw new InvalidUnitError("Expected weight unit type.");
 
-export const weightMeasurementsIoType = IoTs.array(weightMeasurementIoType);
-
-export class WeightMeasurementsCodec implements ICodec<Array<MeasurementOf<EWeightUnits>>> {
-
-   decode(data: any): any {
-      return decodeWith(weightMeasurementsIoType)(data);
-   }
-
-   encode(data: Array<MeasurementOf<EWeightUnits>>): any {
-      var i: number;
-      var mementos: Array<MeasurementMementoOf<EWeightUnits>> = new Array<MeasurementMementoOf<EWeightUnits>>();
-
-      for (i = 0; i < data.length; i++) {
-         mementos[i] = data[i].memento();
-      }
-      return encodeWith(weightMeasurementsIoType)(mementos);
-   }
-
-   tryCreateFrom(data: any): Array<MeasurementOf<EWeightUnits>> {
-
-      var i: number;
-      var measurements: Array<MeasurementOf<EWeightUnits>> = new Array<MeasurementOf<EWeightUnits>>();
-
-      for (i = 0; i < data.length; i++) {
-
-         let temp = this.decode(data[i]); // If types dont match an exception will be thrown here
-
-         measurements[i] = new MeasurementOf<EWeightUnits>(temp);
-      }
-
-      return measurements;
+      return new MeasurementOf<WeightUnits>(temp);
    }
 }
 
@@ -147,26 +114,28 @@ export class WeightMeasurementsCodec implements ICodec<Array<MeasurementOf<EWeig
 
 export const timeMeasurementTypeIoType = IoTs.type({
    _measurementType: createEnumType<EMeasurementType>(EMeasurementType, 'EMeasurementType'),
+   _unitType: createEnumType<EMeasurementUnitType>(EMeasurementUnitType, 'EMeasurementUnitType'),
    _range: timeRangeIoType,
    _trend: createEnumType<EPositiveTrend>(EPositiveTrend, 'EPositiveTrend')
 });
 
-export class TimeMeasurementTypeCodec implements ICodec<MeasurementTypeOf<ETimeUnits>> {
+export class TimeMeasurementTypeCodec implements ICodec<MeasurementTypeOf<TimeUnits>> {
 
    decode(data: any): any {
       return decodeWith(timeMeasurementTypeIoType)(data);
    }
 
-   encode(data: MeasurementTypeOf<ETimeUnits>): any {
-      var memento: MeasurementTypeMementoOf<ETimeUnits> = data.memento();
+   encode(data: MeasurementTypeOf<TimeUnits>): any {
+      var memento: MeasurementTypeMementoOf<TimeUnits> = data.memento();
 
       return encodeWith(timeMeasurementTypeIoType)(memento);
    }
 
-   tryCreateFrom(data: any): MeasurementTypeOf<ETimeUnits> {
-      let temp = this.decode(data); // If types dont match an exception will be thrown here
+   tryCreateFrom(data: any): MeasurementTypeOf<TimeUnits> {
 
-      return new MeasurementTypeOf<ETimeUnits>(temp);
+      let temp: MeasurementTypeMementoOf<TimeUnits> = this.decode(data); // If types dont match an exception will be thrown here
+
+      return new MeasurementTypeOf<TimeUnits>(temp);
    }
 }
 
@@ -176,27 +145,72 @@ export class TimeMeasurementTypeCodec implements ICodec<MeasurementTypeOf<ETimeU
 export const timeMeasurementIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
    _quantity: timeQuantityIoType,
-   _repeats: repQuantityIoType,
+   _repeats: IoTs.number,
    _cohortPeriod: IoTs.number,
    _measurementType: timeMeasurementTypeIoType,
-   _subjectExternalId: IoTs.string
+   _subjectKey: IoTs.string
 });
 
-export class TimeMeasurementCodec implements ICodec<MeasurementOf<ETimeUnits>> {
+export class TimeMeasurementCodec implements ICodec<MeasurementOf<TimeUnits>> {
 
    decode(data: any): any {
       return decodeWith(timeMeasurementIoType)(data);
    }
 
-   encode(data: MeasurementOf<ETimeUnits>): any {
-      var memento: MeasurementMementoOf<ETimeUnits> = data.memento();
+   encode(data: MeasurementOf<TimeUnits>): any {
+      var memento: MeasurementMementoOf<TimeUnits> = data.memento();
 
       return encodeWith(timeMeasurementIoType)(memento);
    }
 
-   tryCreateFrom(data: any): MeasurementOf<ETimeUnits> {
-      let temp = this.decode(data); // If types dont match an exception will be thrown here
+   tryCreateFrom(data: any): MeasurementOf<TimeUnits> {
 
-      return new MeasurementOf<ETimeUnits>(temp);
+      let temp:MeasurementMementoOf<TimeUnits> = this.decode(data); // If types dont match an exception will be thrown here
+
+      // for later - can this be moved to the IO type ?
+      if (!MeasurementUnitType.isTimeUnitType(temp._measurementType._unitType))
+         throw new InvalidUnitError("Expected time unit type.");
+
+      return new MeasurementOf<TimeUnits>(temp);
+   }
+}
+
+// measurements (plural) Codec
+// ==========
+
+export const measurementsIoType = IoTs.array(IoTs.union ([weightMeasurementIoType, timeMeasurementIoType]));
+
+export class MeasurementsCodec implements ICodec<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
+
+   decode(data: any): any {
+      return decodeWith(measurementsIoType)(data);
+   }
+
+   encode(data: Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>): any {
+      var i: number;
+      var mementos: Array<MeasurementMementoOf<WeightUnits> | MeasurementMementoOf<TimeUnits>> =
+         new Array<MeasurementMementoOf<WeightUnits> | MeasurementMementoOf<TimeUnits>>();
+
+      for (i = 0; i < data.length; i++) {
+         mementos[i] = data[i].memento();
+      }
+      return encodeWith(measurementsIoType)(mementos);
+   }
+
+   tryCreateFrom(data: any): Array<MeasurementOf<WeightUnits>> {
+
+      var i: number;
+      var measurements: Array<MeasurementOf<WeightUnits>> = new Array<MeasurementOf<WeightUnits>>();
+      let temp: Array<MeasurementMementoOf<WeightUnits>> = this.decode(data); // If types dont match an exception will be thrown here
+
+      for (i = 0; i < temp.length; i++) {
+
+         if (MeasurementUnitType.isWeightUnitType(temp[i]._measurementType._unitType))
+            measurements[i] = new MeasurementOf<WeightUnits>(temp[i]);
+         else
+            measurements[i] = new MeasurementOf<TimeUnits>(temp[i]);
+      }
+
+      return measurements;
    }
 }

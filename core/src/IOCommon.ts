@@ -84,7 +84,7 @@ export interface ICodec<Target> {
 // Persistence Codec
 // ==========
 export const persistenceDetailsIoType = IoTs.type({
-   _id: IoTs.union([IoTs.null,IoTs.unknown]), 
+   _key: IoTs.union([IoTs.null,IoTs.unknown]),
    _schemaVersion: IoTs.number,
    _sequenceNumber: IoTs.number
 });
@@ -101,7 +101,7 @@ export class PersistenceDetailsCodec implements ICodec<PersistenceDetails> {
 
    tryCreateFrom(data: any): PersistenceDetails  {
       let temp = this.decode (data); // If types dont match an exception will be thrown here
-      return new PersistenceDetails(temp._id, temp._schemaVersion, temp._sequenceNumber);
+      return new PersistenceDetails(temp._key, temp._schemaVersion, temp._sequenceNumber);
    }
 }
 

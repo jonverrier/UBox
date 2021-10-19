@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2021 */
 export class PersistenceDetailsMemento {
-   _id: any;
+   _key: string;
    _schemaVersion: number;
    _sequenceNumber: number;
 
@@ -11,7 +11,7 @@ export class PersistenceDetailsMemento {
     * @param sequenceNumber - used to allow idempotent queries (all objects in a sequence range)
     */
    constructor(id: any, schemaVersion: number, sequenceNumber: number) {
-      this._id = id;
+      this._key = id;
       this._schemaVersion = schemaVersion;
       this._sequenceNumber = sequenceNumber;
    }
@@ -19,8 +19,8 @@ export class PersistenceDetailsMemento {
    /**
    * set of 'getters' for private variables
    */
-   get id(): any {
-      return this._id;
+   get key(): any {
+      return this._key;
    }
    get schemaVersion(): number {
       return this._schemaVersion;
@@ -31,7 +31,7 @@ export class PersistenceDetailsMemento {
 }
 
 export class PersistenceDetails {
-   private _id: any;
+   private _key: string;
    private _schemaVersion: number;
    private _sequenceNumber: number;
 
@@ -46,11 +46,11 @@ export class PersistenceDetails {
    public constructor(...paramArray: any[]) {
 
       if (paramArray.length === 1) {
-         this._id = paramArray[0]._id;
+         this._key = paramArray[0]._key;
          this._schemaVersion = paramArray[0]._schemaVersion;
          this._sequenceNumber = paramArray[0]._sequenceNumber;
       } else {
-         this._id = paramArray[0];
+         this._key = paramArray[0];
          this._schemaVersion = paramArray[1];
          this._sequenceNumber = paramArray[2];
       }
@@ -59,8 +59,8 @@ export class PersistenceDetails {
    /**
    * set of 'getters' for private variables
    */
-   get id(): any {
-      return this._id;
+   get key(): string {
+      return this._key;
    }
    get schemaVersion(): number {
       return this._schemaVersion;
@@ -73,7 +73,7 @@ export class PersistenceDetails {
    * memento() returns a copy of internal state
    */
    memento(): PersistenceDetailsMemento {
-      return new PersistenceDetailsMemento(this._id, this._schemaVersion, this._sequenceNumber);
+      return new PersistenceDetailsMemento(this._key, this._schemaVersion, this._sequenceNumber);
    }
 
    /**
@@ -83,9 +83,17 @@ export class PersistenceDetails {
     */
    equals(rhs: PersistenceDetails): boolean {
 
-      return ((this._id === rhs._id) &&
+      return ((this._key === rhs._key) &&
          (this._schemaVersion === rhs._schemaVersion) &&
          (this._sequenceNumber === rhs._sequenceNumber));
+   }
+
+   /**
+   * hasValidKey - checks the primray key is in non-null state
+   * @returns boolean if object has a valid kep
+   */
+   hasValidKey(): boolean  {
+      return this._key !== null;
    }
 }
 
@@ -103,7 +111,7 @@ export class Persistence {
    /**
    * set of 'getters' for private variables
    */
-   get persistenceDetails(): any {
+   get persistenceDetails(): PersistenceDetails {
       return this._persistenceDetails;
    }
 

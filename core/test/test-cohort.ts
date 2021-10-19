@@ -1,9 +1,10 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { ETimeUnits, EWeightUnits } from '../src/Quantity';
+import { TimeUnits, WeightUnits } from '../src/Quantity';
 import { PersistenceDetails } from "../src/Persistence";
-import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run100m } from '../src/FitnessObservations'
-import { Name, LoginDetails, EmailAddress, Url, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
+import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run100m } from '../src/FitnessObservations';
+import { Url, Name } from "../src/Party";
+import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
 import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
 import { CohortName, CohortTimePeriod, Cohort, ECohortPeriod } from '../src/Cohort';
 
@@ -126,24 +127,24 @@ describe("Cohort", function () {
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe", null),
+      new Name("Joe"),
       new EmailAddress("Joe@mail.com", true),
       new Url("https://jo.pics.com", false), null);
 
    let person2 = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Jenny", null),
+      new Name("Jenny"),
       new EmailAddress("Jenny@mail.com", true),
       new Url("https://jo.pics.com", false),
       null);
 
    beforeEach(function () {
       let weightMeasurement = new SnatchMeasurementType();
-      let weightMeasurements = new Array < MeasurementTypeOf<EWeightUnits>>();
+      let weightMeasurements = new Array < MeasurementTypeOf<WeightUnits>>();
       weightMeasurements.push(weightMeasurement);
 
       let timeMeasurement = new Row250mMeasurementType();
-      let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>();
+      let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 
       let people = new Array<Person>();
@@ -177,7 +178,7 @@ describe("Cohort", function () {
       expect(cohort1.name.equals(new CohortName("Joe"))).to.equal(true);
       expect(cohort1.period.equals(period)).to.equal(true);
       expect(personArraysAreEqual(cohort1.members, cohort2.members)).to.equal(true);
-      expect(personArraysAreEqual(cohort1.administrators, cohort2.members)).to.equal(true);
+      expect(personArraysAreEqual(cohort1.administrators, cohort2.administrators)).to.equal(true);
       expect(weightMeasurementTypeArraysAreEqual(cohort1.weightMeasurements, cohort2.weightMeasurements)).to.equal(true);
       expect(timeMeasurementTypeArraysAreEqual(cohort1.timeMeasurements, cohort2.timeMeasurements)).to.equal(true);
    });
@@ -187,11 +188,11 @@ describe("Cohort", function () {
       let newName = new CohortName ("NewJoe");
 
       let weightMeasurement = new CleanMeasurementType();
-      let weightMeasurements = new Array<MeasurementTypeOf<EWeightUnits>>();
+      let weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>();
       weightMeasurements.push(weightMeasurement);
 
       let timeMeasurement = new Run100m();
-      let timeMeasurements = new Array<MeasurementTypeOf<ETimeUnits>>();
+      let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 
       let people = new Array<Person>();

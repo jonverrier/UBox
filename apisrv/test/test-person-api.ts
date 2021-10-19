@@ -5,7 +5,8 @@ import axios from 'axios';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
-import { ELoginProvider, ERoleType, LoginDetails, Name, EmailAddress, Url, Roles, Person } from "../../core/src/Person";
+import { Name, Url} from "../../core/src/Party";
+import { ELoginProvider, ERoleType, LoginDetails, EmailAddress, Roles, Person } from "../../core/src/Person";
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 
 var expect = require("chai").expect;
@@ -23,7 +24,7 @@ describe("PersonApi", function () {
    beforeEach(function () {
       person1 = new Person(new PersistenceDetails(null, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe", null),
+         new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false),
          new Roles(Array<ERoleType>(ERoleType.Member)));
    });
@@ -53,7 +54,8 @@ describe("PersonApi", function () {
       try {
          const response = await axios.put(saveUrl, encoded);
          let decoded = codec.decode(response.data);
-         const response2 = await axios.get(queryUrl, { params: { _id: decoded._persistenceDetails._id.toString() } });
+         const response2 = await axios.get(queryUrl, { params: { _key: decoded._persistenceDetails._key } });
+
          done();
       } catch (e) {
          var logger = new Logger();
@@ -77,7 +79,7 @@ describe("PersonApi", function () {
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(decoded._persistenceDetails._id.toString());
+         ids.push(decoded._persistenceDetails._key);
          let idList: IdList = new IdList(ids);
          encoded = inputCodec.encode(idList);
 
@@ -87,7 +89,7 @@ describe("PersonApi", function () {
 
          let personReturned = new Person(decodedPeople[0]);
 
-         // test is that we get the same person back as array[0] as we got from tje specific query
+         // test is that we get the same person back as array[0] as we got from the specific query
          if (personReturned.equals(new Person(decoded))) {
             done();
          } else {

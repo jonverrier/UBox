@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { PersistenceDetails } from './Persistence';
-import { LoginDetails, EmailAddress, Url, Name, Roles, Person, PersonMemento, ERoleType, ELoginProvider } from "./Person";
+import { Url, Name} from "./Party";
+import { LoginDetails, EmailAddress, Roles, Person, PersonMemento, ERoleType, ELoginProvider } from "./Person";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 
 import * as IoTs from 'io-ts';
@@ -15,8 +15,7 @@ import * as IoTs from 'io-ts';
 // Name Codec
 // ==========
 const nameIoType = IoTs.type({
-   _name: IoTs.string, // name must be non-null
-   _surname: IoTs.union([IoTs.string, IoTs.undefined, IoTs.null])
+   _displayName: IoTs.string // name must be non-null
 });
 
 export class NameCodec implements ICodec<Name> {
@@ -31,7 +30,30 @@ export class NameCodec implements ICodec<Name> {
 
    tryCreateFrom(data: any): Name {
       let temp = this.decode (data); // If types dont match an exception will be thrown here 
-      return new Name(temp._name, temp._surname);
+      return new Name(temp._displayName);
+   }
+}
+
+// Url Codec
+// ==========
+export const urlIoType = IoTs.type({
+   _url: IoTs.string, // URL must be non-null
+   _isUrlVerified: IoTs.boolean
+});
+
+export class UrlCodec implements ICodec<Url> {
+
+   decode(data: any): any {
+      return decodeWith(urlIoType)(data);
+   }
+
+   encode(data: Url): any {
+      return encodeWith(urlIoType)(data.memento());
+   }
+
+   tryCreateFrom(data: any): Url {
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
+      return new Url(temp._url, temp._isUrlVerified);
    }
 }
 
@@ -80,32 +102,6 @@ export class EmailAddressCodec implements ICodec<EmailAddress> {
       return new EmailAddress(temp._email, temp._isEmailVerified);
    }
 }
-
-
-// Url Codec
-// ==========
-export const urlIoType = IoTs.type({
-   _url: IoTs.string, // URL must be non-null
-   _isUrlVerified: IoTs.boolean
-});
-
-export class UrlCodec implements ICodec<Url> {
-
-   decode(data: any): any {
-      return decodeWith(urlIoType)(data);
-   }
-
-   encode(data: Url): any {
-      return encodeWith(urlIoType)(data.memento());
-   }
-
-   tryCreateFrom(data: any): Url {
-      let temp = this.decode(data); // If types dont match an exception will be thrown here
-      return new Url(temp._url, temp._isUrlVerified);
-   }
-}
-
-
 
 // Roles Codec
 // ==========

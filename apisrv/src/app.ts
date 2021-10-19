@@ -4,7 +4,7 @@ import path from 'path';
 import errorHandler from 'errorhandler';
 import compression from 'compression';
 import bodyParser from 'body-parser';
-import queryString from 'querystring';
+import queryString from 'querystring'; // appears unused but must be loaded
 import mongoose from 'mongoose';
 import session from 'express-session';
 import connectMongo from 'connect-mongo';
@@ -101,12 +101,10 @@ app.post('/contact', (req, res) => {
 
    axios.post('https://www.google.com/recaptcha/api/siteverify', query, config)
       .then(googleRes => {
-         console.log(googleRes.data);
 
          if (googleRes.data.success === true && googleRes.data.score >= 0.5) {
             let contactDb = new ContactDb();
             contactDb.save(req.body.email, false);
-            console.log('saved');
          }
 
          res.send('OK');

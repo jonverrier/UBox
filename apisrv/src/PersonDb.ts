@@ -14,14 +14,14 @@ export class PersonDb implements IPersonStore {
       this._codec = new PersonCodec();;
    }
 
-   async loadOne (id: any): Promise<Person | null>  {
+   async loadOne(id: string): Promise<Person | null>  {
 
       const result = await personModel.findOne().where('_id').eq(id).exec();
 
       if (result) {
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._id !== result._doc._id)
-            result._doc._persistenceDetails._id = result._doc._id;
+         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
+            result._doc._persistenceDetails._key = result._doc._id.toString();
 
          return this._codec.tryCreateFrom(result._doc);
       } else {
@@ -29,7 +29,7 @@ export class PersonDb implements IPersonStore {
       }
    }
 
-   async loadMany(ids: Array<any>): Promise<Array<Person>> {
+   async loadMany(ids: Array<string>): Promise<Array<Person>> {
 
       const result = await personModel.find().where('_id').in(ids).exec();
 
@@ -39,8 +39,8 @@ export class PersonDb implements IPersonStore {
 
          for (i = 0; i < result.length; i++) {
             // If we saved a new document, copy the new Mongo ID up to persistenceDetails
-            if (result[i]._doc._persistenceDetails._id !== result[i]._doc._id)
-               result[i]._doc._persistenceDetails._id = result[i]._doc._id;
+            if (result[i]._doc._persistenceDetails._key !== result[i]._doc._id.toString())
+               result[i]._doc._persistenceDetails._key = result[i]._doc._id.toString();
 
             people.push(this._codec.tryCreateFrom(result[i]._doc));
          }
@@ -53,11 +53,26 @@ export class PersonDb implements IPersonStore {
 
    async save(person: Person): Promise<Person | null> {
       try {
-         let result = await (new personModel(person)).save({ isNew: person.persistenceDetails._id ? true : false });
+         if (! person.persistenceDetails.hasValidKey()) {
+            // If the record has not already been saved, look to see if we have an existing record for same email
+            const existing = await personModel.findOne().where('_email._email').eq(person.email.email).exec();
+
+            // if the saved version has a later or equal sequence number, do not overwrite it
+            if (existing && existing._doc._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
+
+               // If we have an existing document, copy the new Mongo ID to persistenceDetails
+               if (existing._doc._persistenceDetails._key !== existing._doc._id.toString())
+                  existing._doc._persistenceDetails._key = existing._doc._id.toString();
+
+               return this._codec.tryCreateFrom(existing._doc);
+            }
+         }
+         // only save if we are a later sequence number 
+         let result = await (new personModel(person)).save({ isNew: person.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._id !== result._doc._id)
-            result._doc._persistenceDetails._id = result._doc._id;
+         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
+            result._doc._persistenceDetails._key = result._doc._id.toString();
 
          return this._codec.tryCreateFrom(result._doc);
       } catch (err) {
@@ -71,8 +86,8 @@ export class PersonDb implements IPersonStore {
 
 const personSchema = new mongoose.Schema({
    _persistenceDetails: {
-      _id: {
-         type: Object,
+      _key: {
+         type: String,
          required: false
       },
       _schemaVersion: {
@@ -97,14 +112,9 @@ const personSchema = new mongoose.Schema({
       }
    },
    _name: {
-      _name: {
+      _displayName: {
          type: String,
          required: true,
-         index: true
-      },
-      _surname: {
-         type: String,
-         required: false,
          index: true
       }
    },
