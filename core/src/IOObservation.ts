@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import { InvalidUnitError } from './CoreError';
-import { WeightUnits, TimeUnits} from './Quantity';
+import { WeightUnits, TimeUnits, EWeightUnits} from './Quantity';
 import { EMeasurementType, EMeasurementUnitType, EPositiveTrend, MeasurementUnitType, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from '../src/IOCommon';
 
@@ -69,6 +69,9 @@ export class WeightMeasurementTypeCodec implements ICodec<MeasurementTypeOf<Weig
    tryCreateFrom(data: any): MeasurementTypeOf<WeightUnits> {
       let temp = this.decode (data); // If types dont match an exception will be thrown here
 
+      if (!(MeasurementTypeOf.isAllowedMeasurementUnitType(temp._unitType)))
+         throw new InvalidUnitError("Expected valid unit type.");
+
       return new MeasurementTypeOf<WeightUnits>(temp);
    }
 }
@@ -134,6 +137,9 @@ export class TimeMeasurementTypeCodec implements ICodec<MeasurementTypeOf<TimeUn
    tryCreateFrom(data: any): MeasurementTypeOf<TimeUnits> {
 
       let temp: MeasurementTypeMementoOf<TimeUnits> = this.decode(data); // If types dont match an exception will be thrown here
+
+      if (!(MeasurementTypeOf.isAllowedMeasurementUnitType(temp._unitType)))
+         throw new InvalidUnitError("Expected valid unit type.");
 
       return new MeasurementTypeOf<TimeUnits>(temp);
    }

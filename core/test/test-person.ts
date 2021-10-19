@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
-import { Url, Name } from "../src/Party";
+import { Url, Name, UrlMemento } from "../src/Party";
 import { LoginDetails, EmailAddress, Roles, Person, personArraysAreEqual, IPersonStore, ERoleType, ELoginProvider } from '../src/Person';
 
 var expect = require("chai").expect;
@@ -141,6 +141,14 @@ describe("Url", function () {
       expect(url1.url).to.equal("https://jo.pics.com");
       expect(url1.isUrlVerified).to.equal(true);
    });
+
+   it("Needs to convert to and from memento()", function () {
+
+      let memento:UrlMemento = url1.memento();
+      let newUrl = new Url(memento.url, memento.isUrlVerified);
+
+      expect(url1.equals (newUrl)).to.equal(true);
+   });
 });
 
 describe("EmailAddress", function () {
@@ -189,6 +197,8 @@ describe("EmailAddress", function () {
 
       expect(email1.email).to.equal("Joe@mail.com");
       expect(email1.isEmailVerified).to.equal(true);
+      expect(email1.memento().email).to.equal(email1.email);
+      expect(email1.memento().isEmailVerified).to.equal(email1.isEmailVerified);
    });
 });
 
@@ -243,6 +253,7 @@ describe("Roles", function () {
    it("Needs to correctly store attributes", function () {
 
       expect(roles1.roles).to.equal(roles1.roles);
+      expect(roles1.memento().roles).to.equal(roles1.roles);
    });
 });
 
@@ -309,6 +320,13 @@ describe("Person", function () {
       expect(person1.email.equals(new EmailAddress("Joe@mail.com", true))).to.equal(true);
       expect(person1.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
       expect(person1.roles).to.equal(null);
+
+      expect(person1.memento().loginDetails.provider === person1.loginDetails.memento().provider).to.equal(true);
+      expect(person1.memento().name.displayName === person1.name.memento().displayName).to.equal(true);
+      expect(person1.memento().email.email === person1.email.memento().email).to.equal(true);
+      expect(person1.memento().thumbnailUrl.url === person1.thumbnailUrl.memento().url).to.equal(true);
+      expect(person1.memento().roles === null
+         || Roles.rolesArraysAreEqual(person1.memento().roles.roles, person1.roles.memento().roles)).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
