@@ -5,7 +5,7 @@ import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
 import { TimeUnits, ETimeUnits, WeightUnits, EWeightUnits, QuantityOf } from '../src/Quantity';
 import { RangeOf } from '../src/Range';
-import { WeightMeasurementTypeCodec, WeightMeasurementCodec, TimeMeasurementTypeCodec, TimeMeasurementCodec } from '../src/IOObservation';
+import { WeightMeasurementTypeCodec, WeightMeasurementCodec, TimeMeasurementTypeCodec, TimeMeasurementCodec, MeasurementsCodec } from '../src/IOObservation';
 import { CleanMeasurementType, Row250mMeasurementType } from '../src/FitnessObservations';
 import { MeasurementTypeOf, MeasurementOf, EMeasurementUnitType} from '../src/Observation';
 
@@ -151,6 +151,21 @@ describe("IOWeightMeasurement", function () {
       expect(decoded.equals(measurement)).to.equal(true);
    });
 
+
+   it("Needs to encode & decode multiple WeightMeasurements", function () {
+
+      var measurements: Array<MeasurementOf<WeightUnits>> = new Array<MeasurementOf<WeightUnits>>();
+      measurements.push(measurement);
+      measurements.push(measurement);
+
+      var measurementsCodec: MeasurementsCodec = new MeasurementsCodec();
+      var encoded = measurementsCodec.encode(measurements);
+
+      var newMeasurements: Array<MeasurementOf<TimeUnits>> = measurementsCodec.tryCreateFrom(encoded);
+
+      expect(newMeasurements[0].equals(measurement)).to.equal(true);
+   });
+
 });
 
 describe("IOWeightMeasurementType", function () {
@@ -215,6 +230,7 @@ describe("IOWeightMeasurementType", function () {
       expect(caught).to.equal(false);
       expect(decoded.equals(measurementType)).to.equal(true);
    });
+
 });
 
 describe("IOTimeMeasurementType", function () {
@@ -268,6 +284,21 @@ describe("IOTimeMeasurement", function () {
 
       expect(caught).to.equal(false);
       expect(decoded.equals(measurement)).to.equal(true);
+   });
+
+   it("Needs to encode & decode multiple TimeMeasurements", function () {
+
+
+      var measurements: Array<MeasurementOf<TimeUnits>> = new Array<MeasurementOf<TimeUnits>>();
+      measurements.push(measurement);
+      measurements.push(measurement);
+
+      var measurementsCodec: MeasurementsCodec = new MeasurementsCodec();
+      var encoded = measurementsCodec.encode(measurements);
+
+      var newMeasurements: Array<MeasurementOf<TimeUnits>> = measurementsCodec.tryCreateFrom(encoded);
+
+      expect(newMeasurements[0].equals(measurement)).to.equal(true);
    });
 
 });

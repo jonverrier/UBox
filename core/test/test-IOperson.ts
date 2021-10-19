@@ -5,7 +5,7 @@ import { PersistenceDetails } from '../src/Persistence';
 import { PersistenceDetailsCodec } from '../src/IOCommon';
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Roles, Person, ERoleType, ELoginProvider } from '../src/Person';
-import { NameCodec, LoginDetailsCodec, EmailAddressCodec, UrlCodec, RolesCodec, PersonCodec } from '../src/IOPerson';
+import { NameCodec, LoginDetailsCodec, EmailAddressCodec, UrlCodec, RolesCodec, PersonCodec, PeopleCodec } from '../src/IOPerson';
 
 var expect = require("chai").expect;
 
@@ -427,5 +427,24 @@ describe("IOPerson", function () {
 
       expect(caught).to.equal(false);
       expect(decoded.equals(initial)).to.equal(true);
+   });
+
+   it("Needs to encode & decode multiple objects", function () {
+
+      let initial = new Person(new PersistenceDetails(1, 1, 1),
+         new LoginDetails(ELoginProvider.Apple, "123"),
+         new Name("Joe"),
+         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
+
+      var people: Array<Person> = new Array<Person>();
+      people.push(initial);
+      people.push(initial);
+
+      var peopleCodec: PeopleCodec = new PeopleCodec();
+      var encoded = peopleCodec.encode(people);
+
+      var newPeople: Array<Person> = peopleCodec.tryCreateFrom(encoded);
+
+      expect(newPeople[0].equals(initial)).to.equal(true);
    });
 });
