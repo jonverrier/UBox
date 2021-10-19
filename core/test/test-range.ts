@@ -17,6 +17,12 @@ describe("Range", function () {
       expect(range.hi).to.equal(quantityHi);
       expect(range.lowIncludesEqual).to.equal(true);
       expect(range.highIncludesEqual).to.equal(false);
+
+      // test the memento 
+      expect(range.memento().lo.amount).to.equal(quantityLo.memento().amount);
+      expect(range.memento().hi.amount).to.equal(quantityHi.memento().amount);
+      expect(range.memento().loInclEq).to.equal(true);
+      expect(range.memento().hiInclEq).to.equal(false);
    });
 
    it("Needs to return true for lower bound if lower bound equal.", function () {

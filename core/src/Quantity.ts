@@ -1,10 +1,9 @@
 /*! Copyright TXPCo, 2021 */
 
 // Whenever any of these are changed, the schema in ObservationDb must be changed to match
-export enum EWeightUnits { Kg = "Kg", Lbs = "Lbs"}
-export enum ETimeUnits { Seconds = "Seconds"}
-export enum EDistanceUnits { Metres = "Metres"}
-export enum ERepUnits { Reps = "Reps"}
+export enum EWeightUnits { Kg = "Kg", Lbs = "Lbs" };
+export enum ETimeUnits { Seconds = "Seconds" };
+export enum ERepUnits { Reps = "Reps" };
 
 export interface IUnit {
    allowedValues(): Array<string>;
@@ -14,12 +13,11 @@ export interface IUnit {
 
 export class WeightUnits implements IUnit {
    allowedValues(): Array<string> {
-      return Object.values(EWeightUnits);
+      return WeightUnits.allowedValues(); // Member function calls the static one to avoid duplicated logic
    }
 
    isAllowedValue(value: string): boolean {
-      var values: Array<string> = this.allowedValues();
-      return values.indexOf(value) !== -1;
+      return WeightUnits.isAllowedValue(value); // Member function calls the static one to avoid duplicated logic
    }
 
    static allowedValues(): Array<string> {
@@ -34,12 +32,11 @@ export class WeightUnits implements IUnit {
 
 export class TimeUnits implements IUnit {
    allowedValues(): Array<string> {
-      return Object.values(ETimeUnits);
+      return TimeUnits.allowedValues(); // Member function calls the static one to avoid duplicated logic
    }
 
    isAllowedValue(value: string): boolean {
-      var values: Array<string> = this.allowedValues();
-      return values.indexOf(value) !== -1;
+      return TimeUnits.isAllowedValue(value); // Member function calls the static one to avoid duplicated logic
    }
 
    static allowedValues(): Array<string> {
@@ -53,12 +50,11 @@ export class TimeUnits implements IUnit {
 
 export class RepUnits implements IUnit {
    allowedValues(): Array<string> {
-      return Object.values(ERepUnits);
+      return RepUnits.allowedValues(); // Member function calls the static one to avoid duplicated logic
    }
 
    isAllowedValue(value: string): boolean {
-      var values: Array<string> = this.allowedValues();
-      return values.indexOf(value) !== -1;
+      return RepUnits.isAllowedValue(value); // Member function calls the static one to avoid duplicated logic
    }
 
    static allowedValues(): Array<string> {

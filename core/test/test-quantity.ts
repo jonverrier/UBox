@@ -1,8 +1,45 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { WeightUnits, TimeUnits, EWeightUnits, ETimeUnits, QuantityOf} from '../src/Quantity';
+import { WeightUnits, TimeUnits, RepUnits, EWeightUnits, ETimeUnits, ERepUnits, QuantityOf } from '../src/Quantity';
+
 
 var expect = require("chai").expect;
+
+describe("WeightUnits", function () {
+
+   it("Needs to construct correctly", function () {
+      let weightUnits = new WeightUnits();
+
+      expect(weightUnits.isAllowedValue(EWeightUnits.Kg)).to.equal(true);
+      expect(weightUnits.isAllowedValue(ETimeUnits.Seconds)).to.equal(false);
+      expect(weightUnits.allowedValues().indexOf(EWeightUnits.Kg) !== -1).to.equal(true);
+   });
+
+});
+
+describe("TimeUnits", function () {
+
+   it("Needs to construct correctly", function () {
+      let timeUnits = new TimeUnits();
+
+      expect(timeUnits.isAllowedValue(ETimeUnits.Seconds)).to.equal(true);
+      expect(timeUnits.isAllowedValue(EWeightUnits.Kg)).to.equal(false);
+      expect(timeUnits.allowedValues().indexOf(ETimeUnits.Seconds) !== -1).to.equal(true);
+   });
+
+});
+
+describe("RepUnits", function () {
+
+   it("Needs to construct correctly", function () {
+      let repUnits = new RepUnits();
+
+      expect(repUnits.isAllowedValue(ERepUnits.Reps)).to.equal(true);
+      expect(repUnits.isAllowedValue(EWeightUnits.Kg)).to.equal(false);
+      expect(repUnits.allowedValues().indexOf(ERepUnits.Reps) !== -1).to.equal(true);
+   });
+
+});
 
 describe("Quantity", function () {
 
@@ -11,6 +48,7 @@ describe("Quantity", function () {
 
       expect(quantity.amount).to.equal(1);
       expect(quantity.unit).to.equal(EWeightUnits.Kg);
+      expect(quantity.memento().unit).to.equal(EWeightUnits.Kg);
    });
 
    it("Needs to compare for equality correctly", function () {

@@ -6,11 +6,12 @@
   "author": {
     "name": ""
   },
-  "scripts": {
-    "build": "tsc --build",
-    "clean": "tsc --build --clean",
-    "start": "ts-node src/app.ts"
-  },
+   "scripts": {
+      "build": "tsc --build",
+      "clean": "tsc --build --clean",
+      "test": "mocha",
+      "start": "ts-node src/app.ts"
+   },
   "devDependencies": {
     "@types/express": "^4.17.12",
     "@types/mocha": "^9.0.0",

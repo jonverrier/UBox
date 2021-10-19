@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
-import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, QuantityOf, ERepUnits, EDistanceUnits } from '../src/Quantity';
+import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, QuantityOf } from '../src/Quantity';
 import {
    EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IMeasurementStore,
    weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual
