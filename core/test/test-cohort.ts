@@ -6,7 +6,7 @@ import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Ru
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
 import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
-import { CohortName, CohortTimePeriod, Cohort, ECohortPeriod } from '../src/Cohort';
+import { CohortName, CohortTimePeriod, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
 
 
 var expect = require("chai").expect;
@@ -225,6 +225,14 @@ describe("Cohort", function () {
       expect(cohort1.includesAdministratorEmail(person.email)).to.equal(true);
       expect(cohort1.includesMemberEmail(person2.email)).to.equal(false);
       expect(cohort1.includesAdministratorEmail(person2.email)).to.equal(false);
+   });
+
+   it("Needs to convert to and from memento()", function () {
+
+      let memento: CohortMemento = cohort1.memento();
+      let newCohort = new Cohort (memento);
+
+      expect(cohort1.equals(newCohort)).to.equal(true);
    });
 });
 

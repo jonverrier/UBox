@@ -12,6 +12,7 @@ describe("PersistenceDetails", function () {
       expect(persistence.key).to.equal("id");
       expect(persistence.schemaVersion).to.equal(1);
       expect(persistence.sequenceNumber).to.equal(2);
+      expect(persistence.hasValidKey()).to.equal(true);
    });
 
    it("Needs to compare for equality correctly", function () {
@@ -24,6 +25,19 @@ describe("PersistenceDetails", function () {
       expect(persistence1.equals(persistence3)).to.equal(true);
    });
 
+   it("Needs to create memento() correctly", function () {
+      let persistence1 = new PersistenceDetails("id", 1, 2);
+
+      expect(persistence1.memento().key === persistence1.key).to.equal(true);
+      expect(persistence1.memento().schemaVersion === persistence1.schemaVersion).to.equal(true);
+      expect(persistence1.memento().sequenceNumber === persistence1.sequenceNumber).to.equal(true);
+   });
+
+   it("Needs to construct correctly from memento()", function () {
+      let persistence1 = new PersistenceDetails("id", 1, 2);
+
+      expect(new PersistenceDetails(persistence1.memento()).equals(persistence1)).to.equal(true);
+   });
 });
 
 describe("Persistence", function () {

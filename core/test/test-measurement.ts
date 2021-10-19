@@ -3,7 +3,7 @@
 import { PersistenceDetails } from "../src/Persistence";
 import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, QuantityOf } from '../src/Quantity';
 import {
-   EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IMeasurementStore,
+   EPositiveTrend, EMeasurementType, EMeasurementUnitType, MeasurementTypeOf, MeasurementOf, IMeasurementStore,
    weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual
 } from '../src/Observation';
 import {
@@ -22,6 +22,7 @@ describe("MeasurementType", function () {
       expect(snatch.measurementType).to.equal(EMeasurementType.Snatch);
       expect(snatch.range.equals(snatch2.range)).to.equal(true);
       expect(snatch.trend).to.equal(EPositiveTrend.Up);
+      expect(snatch.unitType).to.equal(EMeasurementUnitType.Weight);
    });
 
    it("Needs to test for equality", function () {
@@ -70,6 +71,13 @@ describe("MeasurementType", function () {
       expect(timeMeasurementTypeArraysAreEqual(null, rows)).to.equal(false);
       expect(timeMeasurementTypeArraysAreEqual(moreRows, rows)).to.equal(false);
       expect(timeMeasurementTypeArraysAreEqual(moreRows, variedRows)).to.equal(false);
+   });
+
+   it("Needs to construct correctly from memento()", function () {
+      let snatch1 = new SnatchMeasurementType();
+      let memento = snatch1.memento();
+
+      expect(new MeasurementTypeOf < EWeightUnits> (memento).equals(snatch1)).to.equal(true);
    });
 });
 

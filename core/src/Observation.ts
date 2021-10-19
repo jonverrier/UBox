@@ -86,13 +86,13 @@ export class MeasurementTypeOf<Unit> {
       if (params.length === 1) {
 
          let memento: MeasurementTypeMementoOf<Unit> = params[0];
-         this._measurementType = memento._measurementType;
-         this._unitType = memento._unitType;
-         this._range = new RangeOf<Unit>(new QuantityOf<Unit>(memento._range._lo._amount, memento._range._lo._unit),
+         this._measurementType = memento.measurementType;
+         this._unitType = memento.unitType;
+         this._range = new RangeOf<Unit>(new QuantityOf<Unit>(memento.range._lo._amount, memento.range._lo._unit),
             memento._range._loInclEq,
-            new QuantityOf<Unit>(memento._range._hi._amount, memento._range._hi._unit),
-            memento._range._hiInclEq);
-         this._trend = memento._trend;
+            new QuantityOf<Unit>(memento.range._hi._amount, memento.range._hi._unit),
+            memento.range._hiInclEq);
+         this._trend = memento.trend;
       } else {
 
          this._measurementType = params[0];
@@ -259,16 +259,16 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
 
          let memento: MeasurementMementoOf<MeasuredUnit> = params[0];
 
-         super(new PersistenceDetails(memento._persistenceDetails._key,
-            memento._persistenceDetails._schemaVersion,
-            memento._persistenceDetails._sequenceNumber));
+         super(new PersistenceDetails(memento.persistenceDetails._key,
+            memento.persistenceDetails._schemaVersion,
+            memento.persistenceDetails._sequenceNumber));
 
-         this._quantity = new QuantityOf<MeasuredUnit>(memento._quantity._amount,
-            memento._quantity._unit);
-         this._repeats = memento._repeats;
-         this._cohortPeriod = memento._cohortPeriod;
-         this._measurementType = new MeasurementTypeOf<MeasuredUnit>(memento._measurementType);
-         this._subjectKey = memento._subjectKey;
+         this._quantity = new QuantityOf<MeasuredUnit>(memento.quantity._amount,
+            memento.quantity._unit);
+         this._repeats = memento.repeats;
+         this._cohortPeriod = memento.cohortPeriod;
+         this._measurementType = new MeasurementTypeOf<MeasuredUnit>(memento.measurementType);
+         this._subjectKey = memento.subjectKey;
 
       } else {
 

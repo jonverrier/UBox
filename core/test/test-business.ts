@@ -3,7 +3,7 @@
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
-import { Business } from '../src/Business';
+import { Business, BusinessMemento } from '../src/Business';
 
 
 var expect = require("chai").expect;
@@ -79,6 +79,14 @@ describe("Business", function () {
       expect(business1.includesAdministrator(person2)).to.equal(false);
       expect(business1.includesAdministratorEmail(person.email)).to.equal(true);
       expect(business1.includesAdministratorEmail(person2.email)).to.equal(false);
+   });
+
+   it("Needs to convert to and from memento()", function () {
+
+      let memento: BusinessMemento = business1.memento();
+      let newBusiness = new Business (memento);
+
+      expect(business1.equals(newBusiness)).to.equal(true);
    });
 });
 

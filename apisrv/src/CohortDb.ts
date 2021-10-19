@@ -57,7 +57,7 @@ export class CohortDb implements ICohortStore {
          let measurements = measurementDb.loadManyForPeople(memberIds);
          measurements.then(data => {
             if (data && data.length > 0)
-               console.log('TODO:' + data.toString());
+               console.log('TODO:' + data.toString()); // TODO - splice measurements to the chort 
          });
 
          admins.then(data => {

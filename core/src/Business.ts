@@ -82,16 +82,16 @@ export class Business extends Persistence {
          var i: number;
          let memento: BusinessMemento = params[0];
 
-         super(new PersistenceDetails(memento._persistenceDetails._key,
-            memento._persistenceDetails._schemaVersion,
-            memento._persistenceDetails._sequenceNumber));
+         super(new PersistenceDetails(memento.persistenceDetails._key,
+            memento.persistenceDetails._schemaVersion,
+            memento.persistenceDetails._sequenceNumber));
 
-         this._name = memento._name;
-         this._thumbnailUrl = new Url(memento._thumbnailUrl.url, memento._thumbnailUrl.isUrlVerified);
+         this._name = memento.name;
+         this._thumbnailUrl = new Url(memento.thumbnailUrl.url, memento.thumbnailUrl.isUrlVerified);
 
-         this._administrators = new Array<Person>(memento._administrators.length);
-         for (i = 0; i < memento._administrators.length; i++)
-            this._administrators[i] = new Person(memento._administrators[i]);
+         this._administrators = new Array<Person>(memento.administrators.length);
+         for (i = 0; i < memento.administrators.length; i++)
+            this._administrators[i] = new Person(memento.administrators[i]);
          
          this._administratorIds = null;
 
