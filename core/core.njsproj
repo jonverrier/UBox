@@ -66,6 +66,7 @@
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-IOcohort.ts" />
+    <TypeScriptCompile Include="test\test-IOcommon.ts" />
     <TypeScriptCompile Include="test\test-IOobservation.ts" />
     <TypeScriptCompile Include="test\test-localisation.ts">
       <TestFramework>Mocha</TestFramework>

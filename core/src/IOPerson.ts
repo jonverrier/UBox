@@ -188,13 +188,11 @@ export class PeopleCodec implements ICodec<Array<Person>> {
 
       var i: number;
       var people: Array<Person> = new Array<Person>(data.length);
-      var personCodec: PersonCodec = new PersonCodec();
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
 
-      for (i = 0; i < data.length; i++) {
+      for (i = 0; i < temp.length; i++) {
 
-         let temp = personCodec.decode(data[i]); // If types dont match an exception will be thrown here
-
-         people[i] = new Person(temp); 
+         people[i] = new Person(temp[i]); 
       }
 
       return people;
