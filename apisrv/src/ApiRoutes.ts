@@ -162,7 +162,7 @@ ApiRoutes.put(EApiUrls.SaveMeasurement, function (req, res) {
       }
    } catch (e) {
       var logger = new Logger();
-      logger.logError("Measurement", "SaveMeasurement", "Error", e.toString());
+      logger.logError("Measurement", "SaveMeasurement", "Error:", e.toString());
       res.send(null);
    }
 });

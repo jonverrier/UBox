@@ -19,8 +19,8 @@ export enum ELoginProvider {
 }
 
 export class LoginDetailsMemento {
-   _provider: ELoginProvider;
-   _token: string;
+   readonly _provider: ELoginProvider;
+   readonly _token: string;
 
    /**
     * Create a LoginDetailsMemento object
@@ -31,16 +31,6 @@ export class LoginDetailsMemento {
 
       this._provider = provider;
       this._token = token;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get provider(): ELoginProvider {
-      return this._provider;
-   }
-   get token(): string {
-      return this._token;
    }
 }
 
@@ -105,8 +95,8 @@ export class LoginDetails {
 }
 
 export class EmailAddressMemento {
-   _email: string;
-   _isEmailVerified: boolean;
+   readonly _email: string;
+   readonly _isEmailVerified: boolean;
 
    /**
     * Create an EmailAddressMemento object
@@ -117,16 +107,6 @@ export class EmailAddressMemento {
 
       this._email = email;
       this._isEmailVerified = isEmailVerified;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get email(): string {
-      return this._email;
-   }
-   get isEmailVerified(): boolean {
-      return this._isEmailVerified;
    }
 }
 
@@ -193,7 +173,7 @@ export class EmailAddress {
 }
 
 export class RolesMemento {
-   _roles: Array<ERoleType>;
+   readonly _roles: Array<ERoleType>;
 
    /**
     * Create a RolesMemento {
@@ -203,13 +183,6 @@ export class RolesMemento {
    constructor(roles: Array<ERoleType>) {
 
       this._roles = roles;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get roles(): Array<ERoleType> {
-      return this._roles;
    }
 }
 
@@ -307,41 +280,18 @@ export class PersonMemento {
     * @param email - user email, can be null if not provided
     * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
     * @param roles - list of roles the Person plays, can be null
+    * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor(persistenceDetails: PersistenceDetails,
-      loginDetails: LoginDetails, name: Name, email: EmailAddress | null, thumbnailUrl: Url | null, roles: Roles | null) {
+   constructor(persistenceDetails: PersistenceDetailsMemento,
+      loginDetails: LoginDetailsMemento, name: NameMemento, email: EmailAddressMemento | null, thumbnailUrl: UrlMemento | null, roles: RolesMemento | null) {
 
-      this._persistenceDetails = persistenceDetails.memento();
-      this._loginDetails = loginDetails.memento();
-      this._name = name.memento();
-      this._email = email ? email.memento() : null;
-      this._thumbnailUrl = thumbnailUrl? thumbnailUrl.memento() : null;
-      this._roles = roles ? roles.memento() : null;
+      this._persistenceDetails = persistenceDetails;
+      this._loginDetails = loginDetails;
+      this._name = name;
+      this._email = email;
+      this._thumbnailUrl = thumbnailUrl;
+      this._roles = roles;
    }
-
-   /**
-   * set of 'getters' for private variables
-   */
-
-   get persistenceDetails(): PersistenceDetailsMemento {
-      return this._persistenceDetails;
-   }
-   get loginDetails(): LoginDetailsMemento {
-      return this._loginDetails;
-   }
-   get name(): NameMemento {
-      return this._name;
-   }
-   get email(): EmailAddressMemento | null {
-      return this._email;
-   }
-   get thumbnailUrl(): UrlMemento | null {
-      return this._thumbnailUrl;
-   }
-   get roles(): RolesMemento | null {
-      return this._roles;
-   }
-
 }
 
 export class Person extends Persistence {
@@ -426,7 +376,12 @@ export class Person extends Persistence {
    * memento() returns a copy of internal state
    */
    memento(): PersonMemento {
-      return new PersonMemento (this.persistenceDetails, this._loginDetails, this._name, this._email, this._thumbnailUrl, this._roles);
+      return new PersonMemento(this.persistenceDetails.memento(),
+         this._loginDetails.memento(),
+         this._name ? this.name.memento() : null,
+         this._email ? this.email.memento() : null,
+         this._thumbnailUrl ? this.thumbnailUrl.memento(): null,
+         this._roles ? this.roles.memento() : null);
    }
 
    /**

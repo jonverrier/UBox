@@ -4,10 +4,10 @@ import { EmailAddress, Person, PersonMemento, personArraysAreEqual } from './Per
 import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
 
 export class BusinessMemento {
-   _persistenceDetails: PersistenceDetailsMemento;
-   _name: Name;
-   _thumbnailUrl: UrlMemento;
-   _administrators: Array<PersonMemento>;
+   readonly _persistenceDetails: PersistenceDetailsMemento;
+   readonly _name: Name;
+   readonly _thumbnailUrl: UrlMemento;
+   readonly _administrators: Array<PersonMemento>;
 
    // These are used to allow the Db layer to switch object references to string Ids on save, and the reverse on load
    // so separate documents/tables can be used in the DB
@@ -15,19 +15,20 @@ export class BusinessMemento {
 
    /**
     * Create a BusinessMemento object
-    * @param persistenceDetails - (from Persistence) for the database layer to use and assign
+    * @param persistenceDetailsMemento - (from Persistence) for the database layer to use and assign
     * @param name - plain text name for the cohort
     * @param thumbnailUrl - Url to the thumbnail image
     * @param administrators - array of People, may be zero length // TODO - must have at least one adminsistrator
+    * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor(persistenceDetails: PersistenceDetails,
+   constructor(persistenceDetails: PersistenceDetailsMemento,
       name: Name,
       thumbnailUrl: Url,
       administrators: Array<Person>) {
 
       var i: number = 0;
 
-      this._persistenceDetails = persistenceDetails.memento();
+      this._persistenceDetails = persistenceDetails;
       this._name = name;
       this._thumbnailUrl = thumbnailUrl.memento();
 
@@ -36,22 +37,6 @@ export class BusinessMemento {
          this._administrators[i] = administrators[i].memento();
 
       this._administratorIds = null;
-   }
-
-   /**
-   * set of 'getters' and setters for private variables
-   */
-   get persistenceDetails(): PersistenceDetailsMemento {
-      return this._persistenceDetails;
-   }
-   get name(): Name {
-      return this._name;
-   }
-   get thumbnailUrl(): UrlMemento {
-      return this._thumbnailUrl;
-   }
-   get administrators(): Array<PersonMemento> {
-      return this._administrators;
    }
 }
 
@@ -82,16 +67,16 @@ export class Business extends Persistence {
          var i: number;
          let memento: BusinessMemento = params[0];
 
-         super(new PersistenceDetails(memento.persistenceDetails._key,
-            memento.persistenceDetails._schemaVersion,
-            memento.persistenceDetails._sequenceNumber));
+         super(new PersistenceDetails(memento._persistenceDetails._key,
+            memento._persistenceDetails._schemaVersion,
+            memento._persistenceDetails._sequenceNumber));
 
-         this._name = memento.name;
-         this._thumbnailUrl = new Url(memento.thumbnailUrl.url, memento.thumbnailUrl.isUrlVerified);
+         this._name = memento._name;
+         this._thumbnailUrl = new Url(memento._thumbnailUrl.url, memento._thumbnailUrl.isUrlVerified);
 
-         this._administrators = new Array<Person>(memento.administrators.length);
-         for (i = 0; i < memento.administrators.length; i++)
-            this._administrators[i] = new Person(memento.administrators[i]);
+         this._administrators = new Array<Person>(memento._administrators.length);
+         for (i = 0; i < memento._administrators.length; i++)
+            this._administrators[i] = new Person(memento._administrators[i]);
          
          this._administratorIds = null;
 
@@ -134,7 +119,7 @@ export class Business extends Persistence {
    * memento() returns a copy of internal state
    */
    memento(): BusinessMemento {
-      return new BusinessMemento(this.persistenceDetails,
+      return new BusinessMemento(this.persistenceDetails.memento(),
          this._name,
          this._thumbnailUrl,
          this._administrators);

@@ -4,10 +4,10 @@ import { QuantityOf, QuantityMementoOf } from './Quantity';
 import { InvalidUnitError } from './CoreError';
 
 export class RangeMementoOf<Unit> {
-   _lo: QuantityMementoOf<Unit>;
-   _hi: QuantityMementoOf<Unit>;
-   _loInclEq: boolean;
-   _hiInclEq: boolean;
+   readonly _lo: QuantityMementoOf<Unit>;
+   readonly _hi: QuantityMementoOf<Unit>;
+   readonly _loInclEq: boolean;
+   readonly _hiInclEq: boolean;
 
    /**
     * Create a RangeMementoFor object - a low and high scalar quality.
@@ -22,25 +22,6 @@ export class RangeMementoOf<Unit> {
       this._loInclEq = _loInclEq;
       this._hi = hi;
       this._hiInclEq = _hiInclEq;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get lo(): QuantityMementoOf<Unit> {
-      return this._lo;
-   }
-
-   get hi(): QuantityMementoOf<Unit> {
-      return this._hi;
-   }
-
-   get loInclEq(): boolean {
-      return this._loInclEq;
-   }
-
-   get hiInclEq(): boolean {
-      return this._hiInclEq;
    }
 }
 

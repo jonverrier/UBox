@@ -5,7 +5,7 @@ import { URL } from 'url'
 import { InvalidParameterError } from './CoreError';
 
 export class NameMemento {
-   _displayName: string;
+   readonly _displayName: string;
 
    /**
     * Create a NameMemento object
@@ -14,13 +14,6 @@ export class NameMemento {
    constructor(displayName: string) {
 
       this._displayName = displayName;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get displayName(): string {
-      return this._displayName;
    }
 }
 

@@ -113,6 +113,23 @@ export class IdList {
    constructor(ids: Array<string>) {
       this._ids = ids;
    }
+
+   equals(list: IdList): boolean {
+
+      var lhs: Array<string> = this._ids;
+      var rhs = list._ids;
+
+      // if we have mis-matched false values, return false
+      if (lhs && !rhs || !lhs && rhs)
+         return false;
+
+      for (var i = 0; i < lhs.length; i++) {
+         if (lhs[i] !== rhs[i]) {
+            return false;
+         }
+      }
+      return true;
+   }
 }
 
 // ID List Codec - IDs are sent over wire as a list of strings
