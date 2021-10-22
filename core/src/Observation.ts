@@ -26,10 +26,10 @@ export class MeasurementUnitType {
    }
 }
 export class MeasurementTypeMementoOf<Unit> {
-   _measurementType: EMeasurementType;
-   _unitType: EMeasurementUnitType;
-   _range: RangeMementoOf<Unit>;
-   _trend: EPositiveTrend;
+   readonly _measurementType: EMeasurementType;
+   readonly _unitType: EMeasurementUnitType;
+   readonly _range: RangeMementoOf<Unit>;
+   readonly _trend: EPositiveTrend;
 
    /**
     * Create a MeasurementTypeMementoFor object - contains the statis elements that characterise a measurement
@@ -37,6 +37,7 @@ export class MeasurementTypeMementoOf<Unit> {
     * @param measurementUnitType - unit typ (weight/time/reps)
     * @param range - acceptable range of values
     * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
+    * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
    constructor(measurementType: EMeasurementType, unitType: EMeasurementUnitType, range: RangeMementoOf<Unit>, trend: EPositiveTrend) {
 
@@ -44,25 +45,6 @@ export class MeasurementTypeMementoOf<Unit> {
       this._unitType = unitType;
       this._range = range;
       this._trend = trend;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get measurementType(): EMeasurementType {
-      return this._measurementType;
-   }
-
-   get unitType(): EMeasurementUnitType {
-      return this._unitType;
-   }
-
-   get range(): RangeMementoOf<Unit> {
-      return this._range;
-   }
-
-   get trend(): EPositiveTrend {
-      return this._trend;
    }
 }
 
@@ -86,13 +68,13 @@ export class MeasurementTypeOf<Unit> {
       if (params.length === 1) {
 
          let memento: MeasurementTypeMementoOf<Unit> = params[0];
-         this._measurementType = memento.measurementType;
-         this._unitType = memento.unitType;
-         this._range = new RangeOf<Unit>(new QuantityOf<Unit>(memento.range._lo._amount, memento.range._lo._unit),
+         this._measurementType = memento._measurementType;
+         this._unitType = memento._unitType;
+         this._range = new RangeOf<Unit>(new QuantityOf<Unit>(memento._range._lo._amount, memento._range._lo._unit),
             memento._range._loInclEq,
-            new QuantityOf<Unit>(memento.range._hi._amount, memento.range._hi._unit),
-            memento.range._hiInclEq);
-         this._trend = memento.trend;
+            new QuantityOf<Unit>(memento._range._hi._amount, memento._range._hi._unit),
+            memento._range._hiInclEq);
+         this._trend = memento._trend;
       } else {
 
          this._measurementType = params[0];
@@ -184,12 +166,12 @@ export function timeMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<T
 }
 
 export class MeasurementMementoOf<MeasuredUnit> {
-   _persistenceDetails: PersistenceDetailsMemento;
-   _quantity: QuantityMementoOf<MeasuredUnit>;
-   _repeats: number;
-   _cohortPeriod: number;
-   _measurementType: MeasurementTypeMementoOf<MeasuredUnit>;
-   _subjectKey: string;
+   readonly _persistenceDetails: PersistenceDetailsMemento;
+   readonly _quantity: QuantityMementoOf<MeasuredUnit>;
+   readonly _repeats: number;
+   readonly _cohortPeriod: number;
+   readonly _measurementType: MeasurementTypeMementoOf<MeasuredUnit>;
+   readonly _subjectKey: string;
 
    /**
     * Create a MeasurementMementoOf object - a quantity, with a range of validity, and a marker of the positive trend (is it good if quantity goes up, or down)
@@ -199,38 +181,17 @@ export class MeasurementMementoOf<MeasuredUnit> {
     * @param cohortPeriod - the period in which the measurement was taken
     * @param measurementType - reference to the class that defines the type of measurement
     * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
+    * Design - all memento classes must depend only on base types, value types, or other Mementos*
     */
-   constructor(persistenceDetails: PersistenceDetails,
-      quantity: QuantityOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectKey: string)
+   constructor(persistenceDetails: PersistenceDetailsMemento,
+      quantity: QuantityMementoOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeMementoOf<MeasuredUnit>, subjectKey: string)
    {
-      this._persistenceDetails = persistenceDetails.memento();
-      this._quantity = quantity.memento();
+      this._persistenceDetails = persistenceDetails;
+      this._quantity = quantity;
       this._repeats = repeats;
       this._cohortPeriod = cohortPeriod;
-      this._measurementType = measurementType.memento();
+      this._measurementType = measurementType;
       this._subjectKey = subjectKey;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get persistenceDetails(): PersistenceDetailsMemento {
-      return this._persistenceDetails;
-   }
-   get quantity(): QuantityMementoOf<MeasuredUnit> {
-      return this._quantity;
-   }
-   get repeats(): number {
-      return this._repeats;
-   }
-   get cohortPeriod(): number {
-      return this._cohortPeriod;
-   }
-   get measurementType(): MeasurementTypeMementoOf<MeasuredUnit> {
-      return this._measurementType;
-   }
-   get subjectKey(): string {
-      return this._subjectKey;
    }
 }
 
@@ -259,16 +220,16 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
 
          let memento: MeasurementMementoOf<MeasuredUnit> = params[0];
 
-         super(new PersistenceDetails(memento.persistenceDetails._key,
-            memento.persistenceDetails._schemaVersion,
-            memento.persistenceDetails._sequenceNumber));
+         super(new PersistenceDetails(memento._persistenceDetails._key,
+            memento._persistenceDetails._schemaVersion,
+            memento._persistenceDetails._sequenceNumber));
 
-         this._quantity = new QuantityOf<MeasuredUnit>(memento.quantity._amount,
-            memento.quantity._unit);
-         this._repeats = memento.repeats;
-         this._cohortPeriod = memento.cohortPeriod;
-         this._measurementType = new MeasurementTypeOf<MeasuredUnit>(memento.measurementType);
-         this._subjectKey = memento.subjectKey;
+         this._quantity = new QuantityOf<MeasuredUnit>(memento._quantity._amount,
+            memento._quantity._unit);
+         this._repeats = memento._repeats;
+         this._cohortPeriod = memento._cohortPeriod;
+         this._measurementType = new MeasurementTypeOf<MeasuredUnit>(memento._measurementType);
+         this._subjectKey = memento._subjectKey;
 
       } else {
 
@@ -308,7 +269,10 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
    * memento() returns a copy of internal state
    */
    memento(): MeasurementMementoOf<MeasuredUnit>  {
-      return new MeasurementMementoOf(this.persistenceDetails, this._quantity, this._repeats, this._cohortPeriod, this._measurementType, this._subjectKey);
+      return new MeasurementMementoOf(this.persistenceDetails.memento(),
+         this._quantity.memento(),
+         this._repeats, this._cohortPeriod,
+         this._measurementType.memento(), this._subjectKey);
    }
 
    /**

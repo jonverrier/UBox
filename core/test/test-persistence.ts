@@ -28,9 +28,9 @@ describe("PersistenceDetails", function () {
    it("Needs to create memento() correctly", function () {
       let persistence1 = new PersistenceDetails("id", 1, 2);
 
-      expect(persistence1.memento().key === persistence1.key).to.equal(true);
-      expect(persistence1.memento().schemaVersion === persistence1.schemaVersion).to.equal(true);
-      expect(persistence1.memento().sequenceNumber === persistence1.sequenceNumber).to.equal(true);
+      expect(persistence1.memento()._key === persistence1.key).to.equal(true);
+      expect(persistence1.memento()._schemaVersion === persistence1.schemaVersion).to.equal(true);
+      expect(persistence1.memento()._sequenceNumber === persistence1.sequenceNumber).to.equal(true);
    });
 
    it("Needs to construct correctly from memento()", function () {

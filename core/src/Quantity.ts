@@ -67,8 +67,8 @@ export class RepUnits implements IUnit {
 }
 
 export class QuantityMementoOf<Unit> {
-   _amount: number;
-   _unit: string;
+   readonly _amount: number;
+   readonly _unit: string;
 
    /**
     * Create a QuantityMementoOf object - an amount, with Units
@@ -78,17 +78,6 @@ export class QuantityMementoOf<Unit> {
    constructor(amount: number, unit: string) {
       this._amount = amount;
       this._unit = unit;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get amount(): number {
-      return this._amount;
-   }
-
-   get unit(): string {
-      return this._unit;
    }
 }
 

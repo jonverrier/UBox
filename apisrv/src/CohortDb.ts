@@ -115,7 +115,7 @@ export class CohortDb implements ICohortStore {
          result._doc._members = prevMembers;
 
          // TODO This is really a development level check - that when we read back from the database, the saved object passes the ts-io checks. 
-         // Could remove from production builds once schema is stable, & just return oroginal object with a new PersistenceDetails _id
+         // Could remove from production builds once schema is stable, & just return original object with a new PersistenceDetails _id
          return this._codec.tryCreateFrom(result._doc);
       } catch (err) {
          let logger: Logger = new Logger();

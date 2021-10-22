@@ -1,8 +1,8 @@
 /*! Copyright TXPCo, 2021 */
 export class PersistenceDetailsMemento {
-   _key: string;
-   _schemaVersion: number;
-   _sequenceNumber: number;
+   readonly _key: string;
+   readonly _schemaVersion: number;
+   readonly _sequenceNumber: number;
 
    /**
     * Create a PersistenceDetailsMemento object 
@@ -10,23 +10,10 @@ export class PersistenceDetailsMemento {
     * @param schemaVersion - schema version used - allows upgrades on the fly when loading old format data
     * @param sequenceNumber - used to allow idempotent queries (all objects in a sequence range)
     */
-   constructor(id: any, schemaVersion: number, sequenceNumber: number) {
+   constructor(id: string, schemaVersion: number, sequenceNumber: number) {
       this._key = id;
       this._schemaVersion = schemaVersion;
       this._sequenceNumber = sequenceNumber;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get key(): any {
-      return this._key;
-   }
-   get schemaVersion(): number {
-      return this._schemaVersion;
-   }
-   get sequenceNumber(): number {
-      return this._sequenceNumber;
    }
 }
 
@@ -40,6 +27,7 @@ export class PersistenceDetails {
     * @param id - for the database to use and assign
     * @param schemaVersion - schema version used - allows upgrades on the fly when loading old format data
     * @param sequenceNumber - used to allow idempotent queries (all objects in a sequence range)
+    * Design - all memento classes must depend only on base types, value types, or other Mementos*
     */
    public constructor(id: any, schemaVersion: number, sequenceNumber: number);
    public constructor(memento: PersistenceDetailsMemento);

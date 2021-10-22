@@ -205,8 +205,8 @@ describe("EmailAddress", function () {
 
       expect(email1.email).to.equal("Joe@mail.com");
       expect(email1.isEmailVerified).to.equal(true);
-      expect(email1.memento().email).to.equal(email1.email);
-      expect(email1.memento().isEmailVerified).to.equal(email1.isEmailVerified);
+      expect(email1.memento()._email).to.equal(email1.email);
+      expect(email1.memento()._isEmailVerified).to.equal(email1.isEmailVerified);
    });
 });
 
@@ -261,7 +261,7 @@ describe("Roles", function () {
    it("Needs to correctly store attributes", function () {
 
       expect(roles1.roles).to.equal(roles1.roles);
-      expect(roles1.memento().roles).to.equal(roles1.roles);
+      expect(roles1.memento()._roles).to.equal(roles1.roles);
    });
 });
 
@@ -329,12 +329,12 @@ describe("Person", function () {
       expect(person1.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
       expect(person1.roles).to.equal(null);
 
-      expect(person1.memento().loginDetails.provider === person1.loginDetails.memento().provider).to.equal(true);
-      expect(person1.memento().name.displayName === person1.name.memento().displayName).to.equal(true);
-      expect(person1.memento().email.email === person1.email.memento().email).to.equal(true);
-      expect(person1.memento().thumbnailUrl.url === person1.thumbnailUrl.memento().url).to.equal(true);
-      expect(person1.memento().roles === null
-         || Roles.rolesArraysAreEqual(person1.memento().roles.roles, person1.roles.memento().roles)).to.equal(true);
+      expect(person1.memento()._loginDetails._provider === person1.loginDetails.memento()._provider).to.equal(true);
+      expect(person1.memento()._name._displayName === person1.name.memento()._displayName).to.equal(true);
+      expect(person1.memento()._email._email === person1.email.memento()._email).to.equal(true);
+      expect(person1.memento()._thumbnailUrl.url === person1.thumbnailUrl.memento().url).to.equal(true);
+      expect(person1.memento()._roles === null
+         || Roles.rolesArraysAreEqual(person1.memento()._roles._roles, person1.roles.memento()._roles)).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
@@ -393,7 +393,7 @@ describe("PersonLoader", function () {
       expect(person).to.not.equal(null);
    });
 
-   it("Needs to load Peiple.", function () {
+   it("Needs to load People.", function () {
 
       let loader = new StubLoader;
 

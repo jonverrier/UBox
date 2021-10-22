@@ -1,10 +1,9 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { Logger } from '../src/Logger';
-import { PersistenceDetails } from '../src/Persistence';
-import { PersistenceDetailsCodec } from '../src/IOCommon';
+import { PersistenceDetails, PersistenceDetailsMemento } from '../src/Persistence';
 import { Url, Name } from "../src/Party";
-import { LoginDetails, EmailAddress, Roles, Person, ERoleType, ELoginProvider } from '../src/Person';
+import { LoginDetails, EmailAddress, Roles, Person, ERoleType, ELoginProvider, PersonMemento } from '../src/Person';
 import { NameCodec, LoginDetailsCodec, EmailAddressCodec, UrlCodec, RolesCodec, PersonCodec, PeopleCodec } from '../src/IOPerson';
 
 var expect = require("chai").expect;
@@ -102,8 +101,8 @@ describe("IOLoginDetails", function () {
 
       let encoded = codec.encode(new LoginDetails(ELoginProvider.Apple, "123"));
 
-      expect(encoded.provider).to.equal(ELoginProvider.Apple);
-      expect(encoded.token).to.equal("123");
+      expect(encoded._provider).to.equal(ELoginProvider.Apple);
+      expect(encoded._token).to.equal("123");
    });
 
    it("Needs to encode then decode LoginDetails.", function () {
@@ -316,56 +315,6 @@ describe("IORoles", function () {
 
 });
 
-describe("IOPersistenceDetails", function () {
-
-
-   var codec: PersistenceDetailsCodec;
-
-   beforeEach(function () {
-      codec = new PersistenceDetailsCodec();
-   });
-
-   it("Needs to decode PersistenceDetails from clean input.", function () {
-
-      var caught: boolean = false;
-
-      try {
-         codec.decode({ _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 });
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-   });
-
-   it("Needs to encode PersistenceDetails.", function () {
-
-      let encoded = codec.encode(new PersistenceDetails("Joe", 0, 0));
-
-      expect(encoded.key).to.equal("Joe");
-      expect(encoded.schemaVersion).to.equal(0);
-      expect(encoded.sequenceNumber).to.equal(0);
-   });
-
-   it("Needs to encode then decode PersistenceDetails.", function () {
-
-      let initial = new PersistenceDetails("Joe", 0, 0);
-      let encoded = codec.encode(initial);
-      let decoded: PersistenceDetails;
-
-      var caught: boolean = false;
-
-      try {
-         decoded = codec.tryCreateFrom(encoded);
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-      expect(decoded.equals(initial)).to.equal(true);
-   });
-});
-
 describe("IOPerson", function () {
 
    var codec: PersonCodec;
@@ -396,14 +345,14 @@ describe("IOPerson", function () {
 
    it("Needs to encode Person.", function () {
 
-      let encoded = codec.encode(new Person(new PersistenceDetails(1, 1, 1),
+      let encoded: PersonMemento = codec.encode(new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
          new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null));
 
-      expect(encoded.persistenceDetails.key).to.equal(1);
-      expect(encoded.persistenceDetails.schemaVersion).to.equal(1);
-      expect(encoded.persistenceDetails.sequenceNumber).to.equal(1);
+      expect(encoded._persistenceDetails._key).to.equal(1);
+      expect(encoded._persistenceDetails._schemaVersion).to.equal(1);
+      expect(encoded._persistenceDetails._sequenceNumber).to.equal(1);
    });
 
    it("Needs to encode then decode Person.", function () {
@@ -429,7 +378,7 @@ describe("IOPerson", function () {
       expect(decoded.equals(initial)).to.equal(true);
    });
 
-   it("Needs to encode & decode multiple objects", function () {
+   it("Needs to encode & decode multiple People", function () {
 
       let initial = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),

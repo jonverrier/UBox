@@ -122,7 +122,7 @@ describe("CohortTimePeriod", function () {
 });
 
 describe("Cohort", function () {
-   let cohort1, cohort2;
+   let cohort1:Cohort, cohort2:Cohort;
    let period = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 1);
 
    let person = new Person(new PersistenceDetails(1, 1, 1),

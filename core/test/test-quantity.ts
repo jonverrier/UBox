@@ -48,7 +48,7 @@ describe("Quantity", function () {
 
       expect(quantity.amount).to.equal(1);
       expect(quantity.unit).to.equal(EWeightUnits.Kg);
-      expect(quantity.memento().unit).to.equal(EWeightUnits.Kg);
+      expect(quantity.memento()._unit).to.equal(EWeightUnits.Kg);
    });
 
    it("Needs to compare for equality correctly", function () {
