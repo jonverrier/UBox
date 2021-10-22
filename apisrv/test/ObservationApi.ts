@@ -20,6 +20,7 @@ export class MeasurementApi implements IMeasurementStore {
    private _saveUrl: string;
    private _queryUrl: string;
    private _queryManyUrl: string;
+   private _queryManyForPeopleUrl: string; 
 
 
    constructor(serverUrl: string) {
@@ -28,7 +29,8 @@ export class MeasurementApi implements IMeasurementStore {
 
       this._saveUrl = serverUrl + EApiUrls.SaveMeasurement;
       this._queryUrl = serverUrl + EApiUrls.QueryMeasurement;
-      this._queryManyUrl= serverUrl + EApiUrls.QueryMeasurements;
+      this._queryManyUrl = serverUrl + EApiUrls.QueryMeasurements;
+      this._queryManyForPeopleUrl = serverUrl + EApiUrls.QueryMeasurementsForPeople;
    }
 
    /**
@@ -79,6 +81,29 @@ export class MeasurementApi implements IMeasurementStore {
 
          // ask for a list
          const response = await axios.put(this._queryManyUrl, encoded);
+
+         // reconstruct proper objects & return
+         let measurementsCodec = new MeasurementsCodec();
+         return measurementsCodec.tryCreateFrom(response.data);
+
+      } catch (e) {
+         let logger: Logger = new Logger();
+         logger.logError("MeasurementApi", "loadMany", "Error:", e);
+         return null;
+      }
+   }
+
+   async loadManyForPeople(ids: Array<string>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
+
+      try {
+         let inputCodec = new IdListCodec();
+
+         // Build array query 
+         let idList: IdList = new IdList(ids);
+         let encoded = inputCodec.encode(idList);
+
+         // ask for a list
+         const response = await axios.put(this._queryManyForPeopleUrl, encoded);
 
          // reconstruct proper objects & return
          let measurementsCodec = new MeasurementsCodec();

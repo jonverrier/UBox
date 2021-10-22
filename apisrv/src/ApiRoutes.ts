@@ -190,6 +190,29 @@ ApiRoutes.put(EApiUrls.QueryMeasurements, function (req, res) {
    }
 })
 
+// Retrieve multiple Measurement objects
+ApiRoutes.put(EApiUrls.QueryMeasurementsForPeople, function (req, res) {
+
+   try {
+      let measurementsCodec = new MeasurementsCodec();
+      let db = new MeasurementDb();
+
+      let idCodec = new IdListCodec();
+
+      var ids: IdList = idCodec.decode(req.body);
+
+      let result = db.loadManyForPeople (ids._ids);
+      result.then(data => {
+         res.send(measurementsCodec.encode(data));
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("Measurements", "QueryMeasurementsForPeople", "Error", e.toString());
+      res.send(null);
+   }
+})
+
 // Retrieve a Cohort
 ApiRoutes.get(EApiUrls.QueryCohort, function (req, res) {
 
