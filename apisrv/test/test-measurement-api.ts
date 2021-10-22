@@ -81,6 +81,37 @@ describe("MeasurementApi - weight", function () {
       }
 
    });
+
+   it("Needs to save and then retrieve a Measurement using lists of SubjectIds", async function (done) {
+
+      try {
+         // Save a new object 
+         const response = await api.save(measurement1);
+
+         // Build array query & ask for a list
+         let ids = new Array<string>();
+         ids.push(response.subjectKey.toString());
+         const response2 = await api.loadManyForPeople (ids);
+
+         let returned = response2[0];
+
+         // test is that we get the same Measurement back as array[0] as we got from the specific query
+         if (returned.equals(response)) {
+            done();
+         } else {
+            var logger = new Logger();
+            var e: string = "Returned: " + returned + "original: " + measurement1;
+            logger.logError("MeasurementAPI", "Save-LoadMany", "Error", e);
+            done(e)
+         }
+
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("MeasurementApi", "Save-LoadMany", "Error", e.toString());
+         done(e);
+      }
+
+   });
 });
 
 describe("MeasurementApi - time", function () {
