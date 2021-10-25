@@ -54,6 +54,7 @@
     <TypeScriptCompile Include="src\Logger.ts" />
     <TypeScriptCompile Include="src\Observation.ts" />
     <TypeScriptCompile Include="src\IOCommon.ts" />
+    <TypeScriptCompile Include="src\ObservationDictionary.ts" />
     <TypeScriptCompile Include="src\Party.ts" />
     <TypeScriptCompile Include="src\Person.ts" />
     <TypeScriptCompile Include="src\IOPerson.ts" />
@@ -75,6 +76,7 @@
     <TypeScriptCompile Include="test\test-measurement.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\test-observationdictionary.ts" />
     <TypeScriptCompile Include="test\test-person.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>

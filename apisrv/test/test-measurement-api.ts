@@ -6,7 +6,7 @@ import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { MeasurementOf } from '../../core/src/Observation';
 import { WeightUnits, EWeightUnits, QuantityOf, TimeUnits, ETimeUnits } from "../../core/src/Quantity";
-import { SnatchMeasurementType, Run100m } from '../../core/src/FitnessObservations';
+import { SnatchMeasurementType, Run800mMeasurementType } from '../../core/src/FitnessObservations';
 import { MeasurementApi } from './ObservationApi';
 
 var expect = require("chai").expect;
@@ -115,9 +115,9 @@ describe("MeasurementApi - weight", function () {
 });
 
 describe("MeasurementApi - time", function () {
-   let quantity = new QuantityOf<TimeUnits>(20, ETimeUnits.Seconds);
+   let quantity = new QuantityOf<TimeUnits>(200, ETimeUnits.Seconds);
    let repeats = 1;
-   let measurementType = new Run100m();
+   let measurementType = new Run800mMeasurementType();
    let api: MeasurementApi = new MeasurementApi(root);
 
    var measurement1: MeasurementOf<TimeUnits> = new MeasurementOf<TimeUnits>(
@@ -185,8 +185,8 @@ describe("MeasurementApi - time", function () {
 
 describe("MeasurementApi - heterogenous", function () {
    let repeats = 1;
-   let quantityOfTime = new QuantityOf<TimeUnits>(20, ETimeUnits.Seconds);
-   let timeMeasurementType = new Run100m();
+   let quantityOfTime = new QuantityOf<TimeUnits>(200, ETimeUnits.Seconds);
+   let timeMeasurementType = new Run800mMeasurementType();
    let quantityOfWeight = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
    let weightMeasurementType = new SnatchMeasurementType();
 

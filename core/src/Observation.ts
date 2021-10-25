@@ -12,8 +12,8 @@ export enum EMeasurementUnitType { Weight = "Weight", Time = "Time", Reps = "Rep
 
 // Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EMeasurementType {
-   Snatch = "Snatch", Clean = "Clean", Jerk = "Jerk", CleanAndJerk = "CleanAndJerk",
-   Row250="Row250", Run250="Run250"
+   Snatch = "Snatch", Clean = "Clean", Jerk = "Jerk", CleanAndJerk = "Clean & Jerk",
+   Row250="Row 250m", Run800="Run 800m"
 }
 
 export class MeasurementUnitType {

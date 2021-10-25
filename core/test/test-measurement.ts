@@ -2,14 +2,16 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, QuantityOf } from '../src/Quantity';
+
 import {
    EPositiveTrend, EMeasurementType, EMeasurementUnitType, MeasurementTypeOf, MeasurementOf, IMeasurementStore,
    weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual
 } from '../src/Observation';
+
 import {
    SnatchMeasurementType, CleanMeasurementType, JerkMeasurementType, CleanAndJerkMeasurementType,
-   Row250mMeasurementType, Run100m
-} from '../src/FitnessObservations'
+   Row250mMeasurementType, Run800mMeasurementType
+} from '../src/FitnessObservations';
 
 var expect = require("chai").expect;
 
@@ -56,7 +58,7 @@ describe("MeasurementType", function () {
 
    it("Needs to test time array compare", function () {
       let row = new Row250mMeasurementType();
-      let run = new Run100m();
+      let run = new Run800mMeasurementType();
       let rows = new Array<MeasurementTypeOf<TimeUnits>>();
       let moreRows = new Array<MeasurementTypeOf<TimeUnits>>();
       let variedRows = new Array<MeasurementTypeOf<TimeUnits>>();
@@ -151,7 +153,7 @@ describe("Measurement", function () {
    it("Needs to construct Run100m correctly", function () {
       let quantity = new QuantityOf<TimeUnits>(240, ETimeUnits.Seconds);
       let repeats = 1;
-      let measurement = new Run100m();
+      let measurement = new Run800mMeasurementType();
       testConstruct(quantity, repeats, measurement);
    });
 
@@ -191,9 +193,9 @@ describe("Measurement", function () {
    });
 
    it("Needs to test Run for equality", function () {
-      let quantity = new QuantityOf<TimeUnits>(60, ETimeUnits.Seconds);
+      let quantity = new QuantityOf<TimeUnits>(180, ETimeUnits.Seconds);
       let repeats = 1;
-      let measurement = new Run100m();
+      let measurement = new Run800mMeasurementType();
       testEquals(quantity, repeats, measurement);
    });
 

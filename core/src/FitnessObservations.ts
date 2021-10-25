@@ -75,12 +75,12 @@ export class SpeedMeasurementType extends MeasurementTypeOf<TimeUnits> {
    /**
     * Create a SpeedMeasurementType object - contains the static elements that characterise measurement of any movement measured by time
     */
-   constructor(mono: EMeasurementType, lowBar: number, highBar: number, ) {
+   constructor(measurementTypemeasurementType: EMeasurementType, lowBar: number, highBar: number, ) {
       let lo = new QuantityOf<TimeUnits>(lowBar, ETimeUnits.Seconds);
       let hi = new QuantityOf<TimeUnits>(highBar, ETimeUnits.Seconds);
       let range = new RangeOf<TimeUnits>(lo, true, hi, true);
 
-      super(mono, EMeasurementUnitType.Time, range, EPositiveTrend.Down);
+      super(measurementTypemeasurementType, EMeasurementUnitType.Time, range, EPositiveTrend.Down);
    }
 
 }
@@ -96,13 +96,13 @@ export class Row250mMeasurementType extends SpeedMeasurementType {
 
 }
 
-export class Run100m extends SpeedMeasurementType {
+export class Run800mMeasurementType extends SpeedMeasurementType {
 
    /**
-    * Create a Row500mMeasurementType object - contains the static elements that characterise measurement of a 100m run
+    * Create a Run800mMeasurementType object - contains the static elements that characterise measurement of a 800m run
     */
    constructor() {
-      super(EMeasurementType.Run250, 5, 500);
+      super(EMeasurementType.Run800, 120, 1000);
    }
 
 }

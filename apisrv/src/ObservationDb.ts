@@ -7,7 +7,7 @@ import { Logger } from '../../core/src/Logger';
 import { MeasurementUnitType, MeasurementOf, IMeasurementStore, EMeasurementType, EMeasurementUnitType, EPositiveTrend } from '../../core/src/Observation';
 import { WeightMeasurementCodec, TimeMeasurementCodec } from '../../core/src/IOObservation';
 import { TimeUnits, WeightUnits, RepUnits } from "../../core/src/Quantity";
-
+import { ObservationDictionary } from '../../core/src/ObservationDictionary';
 
 export class MeasurementDb implements IMeasurementStore {
    private _weightCodec: WeightMeasurementCodec;

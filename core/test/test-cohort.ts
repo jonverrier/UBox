@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { TimeUnits, WeightUnits } from '../src/Quantity';
 import { PersistenceDetails } from "../src/Persistence";
-import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run100m } from '../src/FitnessObservations';
+import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run800mMeasurementType } from '../src/FitnessObservations';
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
 import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
@@ -191,7 +191,7 @@ describe("Cohort", function () {
       let weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>();
       weightMeasurements.push(weightMeasurement);
 
-      let timeMeasurement = new Run100m();
+      let timeMeasurement = new Run800mMeasurementType();
       let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 
