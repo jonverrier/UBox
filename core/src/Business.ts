@@ -5,7 +5,7 @@ import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Pe
 
 export class BusinessMemento {
    readonly _persistenceDetails: PersistenceDetailsMemento;
-   readonly _name: Name;
+   readonly _name: NameMemento;
    readonly _thumbnailUrl: UrlMemento;
    readonly _administrators: Array<PersonMemento>;
 
@@ -22,7 +22,7 @@ export class BusinessMemento {
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
-      name: Name,
+      name: NameMemento,
       thumbnailUrl: Url,
       administrators: Array<Person>) {
 
@@ -71,7 +71,7 @@ export class Business extends Persistence {
             memento._persistenceDetails._schemaVersion,
             memento._persistenceDetails._sequenceNumber));
 
-         this._name = memento._name;
+         this._name = new Name(memento._name._displayName);
          this._thumbnailUrl = new Url(memento._thumbnailUrl.url, memento._thumbnailUrl.isUrlVerified);
 
          this._administrators = new Array<Person>(memento._administrators.length);
@@ -120,7 +120,7 @@ export class Business extends Persistence {
    */
    memento(): BusinessMemento {
       return new BusinessMemento(this.persistenceDetails.memento(),
-         this._name,
+         this._name.memento(),
          this._thumbnailUrl,
          this._administrators);
    }

@@ -105,7 +105,7 @@ export class WeightMeasurementCodec implements ICodec<MeasurementOf<WeightUnits>
 
       let temp: MeasurementMementoOf<WeightUnits> = this.decode(data); // If types dont match an exception will be thrown here
 
-      // for later - can this be moved to the IO type ?
+      // for later - can this be moved to the IoTS type ?
       if (! MeasurementUnitType.isWeightUnitType (temp._measurementType._unitType))
          throw new InvalidUnitError("Expected weight unit type.");
 
