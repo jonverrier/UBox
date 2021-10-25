@@ -292,7 +292,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
 }
 
 export interface IMeasurementStore {
-   load(id: string): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
-   loadMany(ids: Array<string>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>>;
-   save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
+   loadOne (id: string): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
+   loadMany (ids: Array<string>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>>;
+   save (measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>;
 }

@@ -23,7 +23,7 @@ export class MeasurementDb implements IMeasurementStore {
     * @param id - id for the object to load
     * @returns - a constructed object or null if not found. 
     */
-   async load(id: string): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> |null>  {
+   async loadOne (id: string): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> |null>  {
 
       try {
          const result = await measurementModel.findOne().where('_id').eq(id).exec();

@@ -12,8 +12,6 @@ import { WeightUnits, TimeUnits } from "../../core/src/Quantity";
 
 import { EApiUrls } from '../src/ApiUrls';
 
-var root: string = 'http://localhost:4000';
-
 export class MeasurementApi implements IMeasurementStore {
    private _weightCodec: WeightMeasurementCodec;
    private _timeCodec: TimeMeasurementCodec;
@@ -38,7 +36,7 @@ export class MeasurementApi implements IMeasurementStore {
     * @param id - id for the object to load
     * @returns - a constructed object or null if not found. 
     */
-   async load(id: any): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
+   async loadOne (id: any): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
 
       var decoded;
 

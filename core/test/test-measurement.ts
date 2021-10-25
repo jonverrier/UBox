@@ -214,7 +214,7 @@ describe("Measurement", function () {
 });
 
 class StubStore implements IMeasurementStore {
-   async load(): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>  {
+   async loadOne (): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>  {
       let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
       let measurementType = new SnatchMeasurementType();
@@ -239,7 +239,7 @@ describe("MeasurementLoader", function () {
 
       let loader = new StubStore;
 
-      let measurement = loader.load();
+      let measurement = loader.loadOne ();
 
       expect(measurement).to.not.equal(null);
    });
