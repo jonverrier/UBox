@@ -99,7 +99,7 @@ ApiRoutes.get(EApiUrls.QueryMeasurement, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.load(params.get('_key'));
+      let result = db.loadOne (params.get('_key'));
       result.then(data => {
          if (data) {
             res.send(data.measurementType.unitType === EMeasurementUnitType.Weight ?

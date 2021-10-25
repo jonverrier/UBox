@@ -41,7 +41,7 @@ describe("MeasurementApi - weight", function () {
 
       try {
          const response = await api.save(measurement1);
-         const response2 = await api.load(response.persistenceDetails.key);
+         const response2 = await api.loadOne (response.persistenceDetails.key);
          done();
       } catch (e) {
          var logger = new Logger();
@@ -141,7 +141,7 @@ describe("MeasurementApi - time", function () {
 
       try {
          const response = await api.save(measurement1);
-         const response2 = await api.load(response.persistenceDetails.key);
+         const response2 = await api.loadOne (response.persistenceDetails.key);
          done();
       } catch (e) {
          var logger = new Logger();

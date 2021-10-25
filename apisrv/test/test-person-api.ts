@@ -8,6 +8,7 @@ import { IdListCodec, IdList } from '../../core/src/IOCommon';
 import { Name, Url} from "../../core/src/Party";
 import { ELoginProvider, ERoleType, LoginDetails, EmailAddress, Roles, Person } from "../../core/src/Person";
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
+import { PersonApi } from './PersonApi';
 
 var expect = require("chai").expect;
 
@@ -20,6 +21,7 @@ var queryManyUrl: string = root + EApiUrls.QueryPeople;
 
 describe("PersonApi", function () {
    var person1: Person;
+   var api: PersonApi;
 
    beforeEach(function () {
       person1 = new Person(new PersistenceDetails(null, 1, 1),
@@ -27,16 +29,16 @@ describe("PersonApi", function () {
          new Name("Joe"),
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false),
          new Roles(Array<ERoleType>(ERoleType.Member)));
+
+      var root: string = 'http://localhost:4000';
+
+      api = new PersonApi(root);
    });
 
    it("Needs to save a new Person", async function (done) {
 
-      let codec = new PersonCodec();
-      let encoded = codec.encode(person1);
-
       try {
-         const response = await axios.put(saveUrl, encoded);
-         let decoded = codec.decode(response.data);
+         api.save(person1);
          done();
       } catch (e) {
          var logger = new Logger();
@@ -48,13 +50,9 @@ describe("PersonApi", function () {
 
    it("Needs to save and then retrieve an existing Person", async function (done) {
 
-      let codec = new PersonCodec();
-      let encoded = codec.encode(person1);
-
       try {
-         const response = await axios.put(saveUrl, encoded);
-         let decoded = codec.decode(response.data);
-         const response2 = await axios.get(queryUrl, { params: { _key: decoded._persistenceDetails._key } });
+         const response = await api.save(person1);
+         const response2 = await axios.get(queryUrl, { params: { _key: response.persistenceDetails.key } });
 
          done();
       } catch (e) {
@@ -69,32 +67,22 @@ describe("PersonApi", function () {
 
       let inputCodec = new IdListCodec();
 
-      let codec = new PersonCodec();
-      let encoded = codec.encode(person1);
-
       try {
          // Save a new object then read it back
-         const response = await axios.put(saveUrl, encoded);
-         let decoded = codec.decode(response.data);
+         const response = await api.save(person1);
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(decoded._persistenceDetails._key);
-         let idList: IdList = new IdList(ids);
-         encoded = inputCodec.encode(idList);
+         ids.push(response.persistenceDetails.key);
 
-         const response2 = await axios.put(queryManyUrl, encoded);
-         let peopleCodec = new PeopleCodec();
-         let decodedPeople = peopleCodec.decode(response2.data);
+         const decodedPeople = await api.loadMany(ids);
 
-         let personReturned = new Person(decodedPeople[0]);
-
-         // test is that we get the same person back as array[0] as we got from the specific query
-         if (personReturned.equals(new Person(decoded))) {
+         // test is that we get the same person back as array[0] as we got from the first save operation 
+         if (decodedPeople[0].equals(response)) {
             done();
          } else {
             var logger = new Logger();
-            var e: string = "Returned: " + personReturned + "original: " + decoded;
+            var e: string = "Returned: " + decodedPeople[0] + "original: " + response;
             logger.logError("PersonApi", "Save-LoadMany", "Error", e);
             done (e)
          }
