@@ -4,9 +4,10 @@ import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { MeasurementOf } from '../../core/src/Observation';
+import { MeasurementOf, IMeasurementTypeFactoryFor } from '../../core/src/Observation';
 import { WeightUnits, EWeightUnits, QuantityOf, TimeUnits, ETimeUnits } from "../../core/src/Quantity";
 import { SnatchMeasurementType, Run800mMeasurementType } from '../../core/src/FitnessObservations';
+import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from "../../core/src/ObservationDictionary";
 import { MeasurementApi } from './ObservationApi';
 
 var expect = require("chai").expect;
@@ -15,10 +16,25 @@ import { EApiUrls } from '../src/ApiUrls';
 
 var root: string = 'http://localhost:4000';
 
+const getCircularReplacer = () => {
+   const seen = new WeakSet();
+   return (key, value) => {
+      if (typeof value === "object" && value !== null) {
+         if (seen.has(value)) {
+            return;
+         }
+         seen.add(value);
+      }
+      return value;
+   };
+};
+
 describe("MeasurementApi - weight", function () {
+   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
+
    let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
    let repeats = 1;
-   let measurementType = new SnatchMeasurementType();
+   let measurementType = new SnatchMeasurementType(weightFactory);
    let api: MeasurementApi = new MeasurementApi(root);
 
    var measurement1: MeasurementOf<WeightUnits> = new MeasurementOf<WeightUnits>(
@@ -45,7 +61,7 @@ describe("MeasurementApi - weight", function () {
          done();
       } catch (e) {
          var logger = new Logger();
-         logger.logError("PersonApi", "Save-Load", "Error", e.toString());
+         logger.logError("MeasurementApi", "Save-Load", "Error", e.toString());
          done(e);
       }
 
@@ -55,28 +71,28 @@ describe("MeasurementApi - weight", function () {
 
       try {
          // Save a new object 
-         const response = await api.save (measurement1);
+         const firstSave = await api.save(measurement1);
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(response.persistenceDetails.key.toString());
+         ids.push(firstSave.persistenceDetails.key);
          const response2 = await api.loadMany(ids);
 
-         let returned = response2[0];
+         let secondSave = response2[0];
 
          // test is that we get the same Measurement back as array[0] as we got from the specific query
-         if (returned.equals(response)) {
+         if (secondSave.equals(firstSave)) {
             done();
          } else {
             var logger = new Logger();
-            var e: string = "Returned: " + returned + "original: " + measurement1;
-            logger.logError("MeasurementAPI", "Save-LoadMany", "Error", e);
+            var e: string = " Returned: " + JSON.stringify(secondSave, getCircularReplacer()) + "Original: " + JSON.stringify(firstSave, getCircularReplacer());
+            logger.logError("test-measurement-api", "Save-LoadMany", "Error", e);
             done(e)
          }
 
       } catch (e) {
          var logger = new Logger();
-         logger.logError("MeasurementApi", "Save-LoadMany", "Error", e.toString());
+         logger.logError("test-measurement-api", "Save-LoadMany", "Error", e.toString());
          done(e);
       }
 
@@ -86,28 +102,28 @@ describe("MeasurementApi - weight", function () {
 
       try {
          // Save a new object 
-         const response = await api.save(measurement1);
+         const firstSave = await api.save(measurement1);
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(response.subjectKey.toString());
+         ids.push(firstSave.subjectKey.toString());
          const response2 = await api.loadManyForPeople (ids);
 
-         let returned = response2[0];
+         let secondSave = response2[0];
 
          // test is that we get the same Measurement back as array[0] as we got from the specific query
-         if (returned.equals(response)) {
+         if (secondSave.subjectKey === firstSave.subjectKey) {
             done();
          } else {
             var logger = new Logger();
-            var e: string = "Returned: " + returned + "original: " + measurement1;
-            logger.logError("MeasurementAPI", "Save-LoadMany", "Error", e);
-            done(e)
+            var e: string = " Returned: " + JSON.stringify(secondSave, getCircularReplacer()) + "Original: " + JSON.stringify(firstSave, getCircularReplacer());
+            logger.logError("test-measurement-api", "Save-LoadMany", "Error", e);
+            done(new Error(e));
          }
 
       } catch (e) {
          var logger = new Logger();
-         logger.logError("MeasurementApi", "Save-LoadMany", "Error", e.toString());
+         logger.logError("test-measurement-api", "Save-LoadMany", "Error", e.toString());
          done(e);
       }
 
@@ -115,9 +131,11 @@ describe("MeasurementApi - weight", function () {
 });
 
 describe("MeasurementApi - time", function () {
+   let timeFactory: IMeasurementTypeFactoryFor<TimeUnits> = new SpeedMeasurementTypeFactory();
+
    let quantity = new QuantityOf<TimeUnits>(200, ETimeUnits.Seconds);
    let repeats = 1;
-   let measurementType = new Run800mMeasurementType();
+   let measurementType = new Run800mMeasurementType(timeFactory);
    let api: MeasurementApi = new MeasurementApi(root);
 
    var measurement1: MeasurementOf<TimeUnits> = new MeasurementOf<TimeUnits>(
@@ -146,7 +164,7 @@ describe("MeasurementApi - time", function () {
       } catch (e) {
          var logger = new Logger();
          logger.logError("MeasurementApi", "Save-Load", "Error", e.toString());
-         done(e);
+         done(new Error(e));
       }
 
    });
@@ -155,23 +173,23 @@ describe("MeasurementApi - time", function () {
 
       try {
          // Save a new object 
-         const response = await api.save(measurement1);
+         const firstSave = await api.save(measurement1);
 
          // Build array query & ask for a list
          let ids = new Array<string>();
-         ids.push(response.persistenceDetails.key);
+         ids.push(firstSave.persistenceDetails.key);
          const response2 = await api.loadMany(ids);
 
-         let returned = response2[0];
+         let secondSave = response2[0];
 
          // test is that we get the same Measurement back as array[0] as we got from the specific query
-         if (returned.equals(response)) {
+         if (secondSave.equals(firstSave)) {
             done();
          } else {
             var logger = new Logger();
-            var e: string = "Returned: " + returned + "original: " + measurement1;
-            logger.logError("MeasurementAPI", "Save-LoadMany", "Error", e);
-            done(e)
+            var e: string = " Returned: " + JSON.stringify(secondSave, getCircularReplacer()) + "Original: " + JSON.stringify(firstSave, getCircularReplacer());
+            logger.logError("MeasurementApi", "Save-LoadMany", "Error", e.toString());
+            done(new Error(e));
          }
 
       } catch (e) {
@@ -185,10 +203,13 @@ describe("MeasurementApi - time", function () {
 
 describe("MeasurementApi - heterogenous", function () {
    let repeats = 1;
+   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
+   let timeFactory: IMeasurementTypeFactoryFor<TimeUnits> = new SpeedMeasurementTypeFactory();
+
    let quantityOfTime = new QuantityOf<TimeUnits>(200, ETimeUnits.Seconds);
-   let timeMeasurementType = new Run800mMeasurementType();
+   let timeMeasurementType = new Run800mMeasurementType(timeFactory);
    let quantityOfWeight = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
-   let weightMeasurementType = new SnatchMeasurementType();
+   let weightMeasurementType = new SnatchMeasurementType(weightFactory);
 
    var timeMeasurement: MeasurementOf<TimeUnits> = new MeasurementOf<TimeUnits>(
       new PersistenceDetails(null, 1, 2), quantityOfTime, repeats, 0, timeMeasurementType, "1234");
@@ -221,7 +242,7 @@ describe("MeasurementApi - heterogenous", function () {
             var logger = new Logger();
             var e: string = "Returned: " + response3;
             logger.logError("MeasurementAPI", "Save-LoadMany", "Error", e);
-            done(e)
+            done(new Error(e));
          }
 
       } catch (e) {

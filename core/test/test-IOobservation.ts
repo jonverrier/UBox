@@ -6,8 +6,9 @@ import { PersistenceDetails } from '../src/Persistence';
 import { TimeUnits, ETimeUnits, WeightUnits, EWeightUnits, QuantityOf } from '../src/Quantity';
 import { RangeOf } from '../src/Range';
 import { WeightMeasurementTypeCodec, WeightMeasurementCodec, TimeMeasurementTypeCodec, TimeMeasurementCodec, MeasurementsCodec } from '../src/IOObservation';
+import { MeasurementTypeOf, MeasurementOf, EMeasurementUnitType, IMeasurementTypeFactoryFor} from '../src/Observation';
 import { CleanMeasurementType, Row250mMeasurementType } from '../src/FitnessObservations';
-import { MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, EMeasurementUnitType} from '../src/Observation';
+import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from '../src/ObservationDictionary';
 
 var expect = require("chai").expect;
 
@@ -15,9 +16,10 @@ var expect = require("chai").expect;
 
 describe("IOWeightMeasurementType", function () {
 
+   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
 
    var codec: WeightMeasurementTypeCodec;
-   var measurementType: CleanMeasurementType = new CleanMeasurementType();
+   var measurementType: CleanMeasurementType = new CleanMeasurementType(weightFactory);
 
    beforeEach(function () {
       codec = new WeightMeasurementTypeCodec();
@@ -79,11 +81,12 @@ describe("IOWeightMeasurementType", function () {
 });
 
 describe("IOWeightMeasurement", function () {
+   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
 
    var quantity = new QuantityOf<WeightUnits>(10, EWeightUnits.Kg);
    var repeats = 1;
    var codec: WeightMeasurementCodec = new WeightMeasurementCodec();
-   var measurementType: MeasurementTypeOf<WeightUnits> = new CleanMeasurementType();
+   var measurementType: MeasurementTypeOf<WeightUnits> = new CleanMeasurementType(weightFactory);
    var measurement: MeasurementOf<WeightUnits> = new MeasurementOf<WeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
 
    it("Needs to decode a WeightMeasurement from clean input.", function () {
@@ -97,12 +100,7 @@ describe("IOWeightMeasurement", function () {
             _quantity: quantity,
             _repeats: repeats,
             _cohortPeriod: 1,
-            _measurementType: {
-               _measurementType: measurementType.measurementType,
-               _unitType: EMeasurementUnitType.Weight,
-               _range: measurementType.range,
-               _trend: measurementType.trend
-            },
+            _measurementType: measurementType.measurementType,
             _subjectKey: "teststring"
          });
       } catch (e) {
@@ -159,7 +157,7 @@ describe("IOWeightMeasurement", function () {
       var measurementsCodec: MeasurementsCodec = new MeasurementsCodec();
       var encoded = measurementsCodec.encode(measurements);
 
-      var newMeasurements: Array<MeasurementOf<TimeUnits>> = measurementsCodec.tryCreateFrom(encoded);
+      var newMeasurements: Array<MeasurementOf<WeightUnits>> = measurementsCodec.tryCreateFrom(encoded);
 
       expect(newMeasurements[0].equals(measurement)).to.equal(true);
    });
@@ -167,10 +165,10 @@ describe("IOWeightMeasurement", function () {
 });
 
 describe("IOTimeMeasurementType", function () {
-
+   let timeFactory: IMeasurementTypeFactoryFor<WeightUnits> = new SpeedMeasurementTypeFactory();
 
    var codec: TimeMeasurementTypeCodec = new TimeMeasurementTypeCodec();
-   var measurementType: Row250mMeasurementType = new Row250mMeasurementType();
+   var measurementType: Row250mMeasurementType = new Row250mMeasurementType(timeFactory);
 
    it("Needs to encode then decode a TimeMeasurementType.", function () {
 
@@ -193,11 +191,12 @@ describe("IOTimeMeasurementType", function () {
 });
 
 describe("IOTimeMeasurement", function () {
+   let timeFactory: IMeasurementTypeFactoryFor<WeightUnits> = new SpeedMeasurementTypeFactory();
 
    var quantity = new QuantityOf<TimeUnits>(10, ETimeUnits.Seconds);
    var repeats = 1;
    var codec: TimeMeasurementCodec = new TimeMeasurementCodec();
-   var measurementType: MeasurementTypeOf<TimeUnits> = new Row250mMeasurementType();
+   var measurementType: MeasurementTypeOf<TimeUnits> = new Row250mMeasurementType(timeFactory);
    var measurement: MeasurementOf<TimeUnits> = new MeasurementOf<TimeUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
 
    it("Needs to encode then decode a TimeMeasurement.", function () {

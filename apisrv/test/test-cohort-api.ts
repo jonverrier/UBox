@@ -7,12 +7,12 @@ import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { Name, Url } from "../../core/src/Party";
 import { ELoginProvider, LoginDetails, EmailAddress, Roles, ERoleType, Person} from "../../core/src/Person";
-import { MeasurementTypeOf, MeasurementOf} from "../../core/src/Observation";
+import { MeasurementTypeOf, MeasurementOf, IMeasurementTypeFactoryFor} from "../../core/src/Observation";
 import { SnatchMeasurementType, Row250mMeasurementType } from '../../core/src/FitnessObservations';
+import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from "../../core/src/ObservationDictionary";
 import { ECohortPeriod, CohortName, CohortTimePeriod, Cohort } from "../../core/src/Cohort";
 import { CohortCodec } from '../../core/src/IOCohort';
 import { PersonCodec } from '../../core/src/IOPerson';
-import { WeightMeasurementCodec } from '../../core/src/IOObservation';
 import { MeasurementApi } from './ObservationApi';
 
 var expect = require("chai").expect;
@@ -24,6 +24,9 @@ var saveUrl: string = root + EApiUrls.SaveCohort;
 var queryUrl: string = root + EApiUrls.QueryCohort;
 
 describe("CohortApi", function () {
+   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
+   let timeFactory: IMeasurementTypeFactoryFor<TimeUnits> = new SpeedMeasurementTypeFactory();
+
    let cohort1;
    let period = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 1);
 
@@ -34,11 +37,11 @@ describe("CohortApi", function () {
       new Url("https://jo.pics.com", false), null);
 
    beforeEach(function () {
-      let weightMeasurement = new SnatchMeasurementType();
+      let weightMeasurement = new SnatchMeasurementType(weightFactory);
       let weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>();
       weightMeasurements.push(weightMeasurement); 
 
-      let timeMeasurement = new Row250mMeasurementType();
+      let timeMeasurement = new Row250mMeasurementType(timeFactory);
       let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 
@@ -71,7 +74,7 @@ describe("CohortApi", function () {
       // Create and save a measurement on the person 
       let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
       let repeats = 1;
-      let measurementType = new SnatchMeasurementType();
+      let measurementType = new SnatchMeasurementType(weightFactory);
       let api: MeasurementApi = new MeasurementApi(root);
       var measurement1: MeasurementOf<WeightUnits> = new MeasurementOf<WeightUnits>(
          new PersistenceDetails(null, 1, 2), quantity, repeats, 0, measurementType, savedPerson.persistenceDetails.key);

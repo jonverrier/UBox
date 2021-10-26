@@ -2,9 +2,9 @@
 
 import { InvalidUnitError } from './CoreError';
 import { WeightUnits, TimeUnits, EWeightUnits } from './Quantity';
-import { PersistenceDetailsMemento } from './Persistence';
 import { EMeasurementType, EMeasurementUnitType, EPositiveTrend, MeasurementUnitType, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from '../src/IOCommon';
+import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory} from "./ObservationDictionary";
 
 import * as IoTs from 'io-ts';
 
@@ -85,7 +85,7 @@ export const weightMeasurementIoType = IoTs.type({
    _quantity: weightQuantityIoType,
    _repeats: IoTs.number,
    _cohortPeriod: IoTs.number,
-   _measurementType: weightMeasurementTypeIoType,
+   _measurementType: IoTs.string,
    _subjectKey: IoTs.string
 });
 
@@ -104,10 +104,13 @@ export class WeightMeasurementCodec implements ICodec<MeasurementOf<WeightUnits>
    tryCreateFrom(data: any): MeasurementOf<WeightUnits> {
 
       let temp: MeasurementMementoOf<WeightUnits> = this.decode(data); // If types dont match an exception will be thrown here
+      let dictionary: OlympicLiftMeasurementTypeFactory = new OlympicLiftMeasurementTypeFactory();
 
       // for later - can this be moved to the IoTS type ?
-      if (! MeasurementUnitType.isWeightUnitType (temp._measurementType._unitType))
+      if (!dictionary.isValid (temp._measurementType))
          throw new InvalidUnitError("Expected weight unit type.");
+
+      temp._measurementTypeFactory = dictionary;
 
       return new MeasurementOf<WeightUnits>(temp);
    }
@@ -154,7 +157,7 @@ export const timeMeasurementIoType = IoTs.type({
    _quantity: timeQuantityIoType,
    _repeats: IoTs.number,
    _cohortPeriod: IoTs.number,
-   _measurementType: timeMeasurementTypeIoType,
+   _measurementType: IoTs.string,
    _subjectKey: IoTs.string
 });
 
@@ -172,11 +175,13 @@ export class TimeMeasurementCodec implements ICodec<MeasurementOf<TimeUnits>> {
 
    tryCreateFrom(data: any): MeasurementOf<TimeUnits> {
 
+      let dictionary: SpeedMeasurementTypeFactory = new SpeedMeasurementTypeFactory();
       let temp:MeasurementMementoOf<TimeUnits> = this.decode(data); // If types dont match an exception will be thrown here
 
       // for later - can this be moved to the IO type ?
-      if (!MeasurementUnitType.isTimeUnitType(temp._measurementType._unitType))
+      if (!dictionary.isValid(temp._measurementType)) 
          throw new InvalidUnitError("Expected time unit type.");
+      temp._measurementTypeFactory = dictionary;
 
       return new MeasurementOf<TimeUnits>(temp);
    }
@@ -210,12 +215,19 @@ export class MeasurementsCodec implements ICodec<Array<MeasurementOf<WeightUnits
       var measurements: Array<MeasurementOf<WeightUnits>> = new Array<MeasurementOf<WeightUnits>>();
       let temp: Array<MeasurementMementoOf<WeightUnits>> = this.decode(data); // If types dont match an exception will be thrown here
 
+      let weightMeasurementFactory: OlympicLiftMeasurementTypeFactory = new OlympicLiftMeasurementTypeFactory();
+      let timeMeasurementFactory: SpeedMeasurementTypeFactory = new SpeedMeasurementTypeFactory();
+
       for (i = 0; i < temp.length; i++) {
 
-         if (MeasurementUnitType.isWeightUnitType(temp[i]._measurementType._unitType))
+         if (weightMeasurementFactory.isValid(temp[i]._measurementType)) {
+            temp[i]._measurementTypeFactory = weightMeasurementFactory;
             measurements[i] = new MeasurementOf<WeightUnits>(temp[i]);
-         else
+         }
+         else {
+            temp[i]._measurementTypeFactory = timeMeasurementFactory;
             measurements[i] = new MeasurementOf<TimeUnits>(temp[i]);
+         }
       }
 
       return measurements;

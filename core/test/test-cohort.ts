@@ -2,10 +2,11 @@
 // Copyright TXPCo ltd, 2021
 import { TimeUnits, WeightUnits } from '../src/Quantity';
 import { PersistenceDetails } from "../src/Persistence";
-import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run800mMeasurementType } from '../src/FitnessObservations';
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
-import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf } from "../src/Observation";
+import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf, IMeasurementTypeFactoryFor } from "../src/Observation";
+import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run800mMeasurementType } from '../src/FitnessObservations';
+import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from '../src/ObservationDictionary';
 import { CohortName, CohortTimePeriod, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
 
 
@@ -32,7 +33,7 @@ describe("CohortName", function () {
       let caught = false;
 
       try {
-         let name4 = new CohortName("");
+         new CohortName("");
       }
       catch {
          caught = true;
@@ -94,7 +95,7 @@ describe("CohortTimePeriod", function () {
       let caught = false;
 
       try {
-         let period4 = new CohortTimePeriod(new Date(1900, 0), ECohortPeriod.Week, 1);
+         new CohortTimePeriod(new Date(1900, 0), ECohortPeriod.Week, 1);
       }
       catch {
          caught = true;
@@ -124,6 +125,8 @@ describe("CohortTimePeriod", function () {
 describe("Cohort", function () {
    let cohort1:Cohort, cohort2:Cohort;
    let period = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 1);
+   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
+   let timeFactory: IMeasurementTypeFactoryFor<WeightUnits> = new SpeedMeasurementTypeFactory();
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
@@ -139,11 +142,11 @@ describe("Cohort", function () {
       null);
 
    beforeEach(function () {
-      let weightMeasurement = new SnatchMeasurementType();
+      let weightMeasurement = new SnatchMeasurementType(weightFactory);
       let weightMeasurements = new Array < MeasurementTypeOf<WeightUnits>>();
       weightMeasurements.push(weightMeasurement);
 
-      let timeMeasurement = new Row250mMeasurementType();
+      let timeMeasurement = new Row250mMeasurementType(timeFactory);
       let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 
@@ -187,11 +190,11 @@ describe("Cohort", function () {
 
       let newName = new CohortName ("NewJoe");
 
-      let weightMeasurement = new CleanMeasurementType();
+      let weightMeasurement = new CleanMeasurementType(weightFactory);
       let weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>();
       weightMeasurements.push(weightMeasurement);
 
-      let timeMeasurement = new Run800mMeasurementType();
+      let timeMeasurement = new Run800mMeasurementType(timeFactory);
       let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
       timeMeasurements.push(timeMeasurement);
 
