@@ -25,11 +25,13 @@ export class MeasurementUnitType {
       return (value === EMeasurementUnitType[EMeasurementUnitType.Weight]);
    }
 }
+
 export class MeasurementTypeMementoOf<Unit> {
    readonly _measurementType: EMeasurementType;
    readonly _unitType: EMeasurementUnitType;
    readonly _range: RangeMementoOf<Unit>;
    readonly _trend: EPositiveTrend;
+   readonly _measurementTypeFactory: IMeasurementTypeFactoryFor<Unit>; 
 
    /**
     * Create a MeasurementTypeMementoFor object - contains the statis elements that characterise a measurement
@@ -39,13 +41,26 @@ export class MeasurementTypeMementoOf<Unit> {
     * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor(measurementType: EMeasurementType, unitType: EMeasurementUnitType, range: RangeMementoOf<Unit>, trend: EPositiveTrend) {
+   constructor(measurementType: EMeasurementType,
+      unitType: EMeasurementUnitType,
+      range: RangeMementoOf<Unit>,
+      trend: EPositiveTrend,
+      measurementTypeFactory: IMeasurementTypeFactoryFor<Unit>) {
 
       this._measurementType = measurementType;
       this._unitType = unitType;
       this._range = range;
       this._trend = trend;
+      this._measurementTypeFactory = measurementTypeFactory;
    }
+}
+
+
+// Interface defining a factory class for MeasurementType
+// Used so measurements only store a key to the measurement, not all the attributes
+export interface IMeasurementTypeFactoryFor<Unit> {
+   lookup(measurementName: string): MeasurementTypeOf<Unit>;
+   isValid (measurementName: string): boolean;
 }
 
 export class MeasurementTypeOf<Unit> {
@@ -53,6 +68,7 @@ export class MeasurementTypeOf<Unit> {
    private _unitType: EMeasurementUnitType;
    private _range: RangeOf<Unit>;
    private _trend: EPositiveTrend;
+   private _measurementTypeFactory: IMeasurementTypeFactoryFor<Unit>;
 
    /**
     * Create a MeasurementType object - contains the statis elements that characterise a measurement 
@@ -61,7 +77,11 @@ export class MeasurementTypeOf<Unit> {
     * @param range - acceptable range of values
     * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
     */
-   constructor(measurementType: EMeasurementType, unitType: EMeasurementUnitType, range: RangeOf<Unit>, trend: EPositiveTrend);
+   constructor(measurementType: EMeasurementType,
+      unitType: EMeasurementUnitType,
+      range: RangeOf<Unit>,
+      trend: EPositiveTrend,
+      measurementTypeFactory: IMeasurementTypeFactoryFor<Unit>);
    public constructor(memento: MeasurementTypeMementoOf<Unit>);
    public constructor(...params: any[]) {
 
@@ -75,12 +95,14 @@ export class MeasurementTypeOf<Unit> {
             new QuantityOf<Unit>(memento._range._hi._amount, memento._range._hi._unit),
             memento._range._hiInclEq);
          this._trend = memento._trend;
+         this._measurementTypeFactory = memento._measurementTypeFactory;
       } else {
 
          this._measurementType = params[0];
          this._unitType = params[1];
          this._range = params[2];
          this._trend = params[3];
+         this._measurementTypeFactory = params[4];
       }
    }
 
@@ -103,11 +125,15 @@ export class MeasurementTypeOf<Unit> {
       return this._trend;
    }
 
+   get factory(): IMeasurementTypeFactoryFor<Unit> {
+      return this._measurementTypeFactory;
+   }
+
    /**
    * memento() returns a copy of internal state
    */
    memento(): MeasurementTypeMementoOf<Unit> {
-      return new MeasurementTypeMementoOf<Unit>(this._measurementType, this._unitType, this._range.memento(), this._trend);
+      return new MeasurementTypeMementoOf<Unit>(this._measurementType, this._unitType, this._range.memento(), this._trend, this._measurementTypeFactory);
    }
 
    /**
@@ -165,12 +191,13 @@ export function timeMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<T
    return  measurementTypeArraysAreEqual(lhs, rhs);;
 }
 
-export class MeasurementMementoOf<MeasuredUnit> {
+export class MeasurementMementoOf<Unit> {
    readonly _persistenceDetails: PersistenceDetailsMemento;
-   readonly _quantity: QuantityMementoOf<MeasuredUnit>;
+   readonly _quantity: QuantityMementoOf<Unit>;
    readonly _repeats: number;
    readonly _cohortPeriod: number;
-   readonly _measurementType: MeasurementTypeMementoOf<MeasuredUnit>;
+   readonly _measurementType: EMeasurementType;
+   _measurementTypeFactory: IMeasurementTypeFactoryFor<Unit>; // This is not readonly as needs to be set by TsIO code (IOObservation)
    readonly _subjectKey: string;
 
    /**
@@ -179,12 +206,15 @@ export class MeasurementMementoOf<MeasuredUnit> {
     * @param quantity - the value of the measurement (amount and units)
     * @param repeats - the number of reps (for weight), number of distance units (for time measurements)
     * @param cohortPeriod - the period in which the measurement was taken
-    * @param measurementType - reference to the class that defines the type of measurement
+    * @param measurementType - key to the class that defines the type of measurement
+    * @param measurementTypeFactory - factory class to create an actual measurement type
     * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
     * Design - all memento classes must depend only on base types, value types, or other Mementos*
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
-      quantity: QuantityMementoOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeMementoOf<MeasuredUnit>, subjectKey: string)
+      quantity: QuantityMementoOf<Unit>, repeats: number, cohortPeriod: number,
+      measurementType: EMeasurementType,
+      subjectKey: string)
    {
       this._persistenceDetails = persistenceDetails;
       this._quantity = quantity;
@@ -224,11 +254,14 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
             memento._persistenceDetails._schemaVersion,
             memento._persistenceDetails._sequenceNumber));
 
+         // Look up the measurement type from the enum
+         let measurementType: MeasurementTypeOf<MeasuredUnit> = memento._measurementTypeFactory.lookup(memento._measurementType);
+
          this._quantity = new QuantityOf<MeasuredUnit>(memento._quantity._amount,
             memento._quantity._unit);
          this._repeats = memento._repeats;
          this._cohortPeriod = memento._cohortPeriod;
-         this._measurementType = new MeasurementTypeOf<MeasuredUnit>(memento._measurementType);
+         this._measurementType = measurementType;
          this._subjectKey = memento._subjectKey;
 
       } else {
@@ -272,7 +305,8 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
       return new MeasurementMementoOf(this.persistenceDetails.memento(),
          this._quantity.memento(),
          this._repeats, this._cohortPeriod,
-         this._measurementType.memento(), this._subjectKey);
+         this._measurementType.measurementType,
+         this._subjectKey);
    }
 
    /**

@@ -9,6 +9,7 @@ import { EMeasurementUnitType, MeasurementOf, IMeasurementStore } from '../../co
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
 import { WeightMeasurementCodec, MeasurementsCodec, TimeMeasurementCodec} from '../../core/src/IOObservation';
 import { WeightUnits, TimeUnits } from "../../core/src/Quantity";
+import { OlympicLiftMeasurementTypeFactory } from '../../core/src/ObservationDictionary';
 
 import { EApiUrls } from '../src/ApiUrls';
 
@@ -18,7 +19,8 @@ export class MeasurementApi implements IMeasurementStore {
    private _saveUrl: string;
    private _queryUrl: string;
    private _queryManyUrl: string;
-   private _queryManyForPeopleUrl: string; 
+   private _queryManyForPeopleUrl: string;
+   private _weightFactory: OlympicLiftMeasurementTypeFactory = new OlympicLiftMeasurementTypeFactory();
 
 
    constructor(serverUrl: string) {
@@ -39,13 +41,14 @@ export class MeasurementApi implements IMeasurementStore {
    async loadOne (id: any): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
 
       var decoded;
+      var response;
 
       try {
          var etype: EMeasurementUnitType;
 
-         const response = await axios.get(this._queryUrl, { params: { _key: id.toString() } });
+         response = await axios.get(this._queryUrl, { params: { _key: id.toString() } });
 
-         if (response.data._measurementType._unitType === EMeasurementUnitType.Weight) {
+         if (this._weightFactory.isValid( response.data._measurementType)) {
             etype = EMeasurementUnitType.Weight;
          }
          else {
@@ -58,7 +61,7 @@ export class MeasurementApi implements IMeasurementStore {
       }
       catch (e) {
          let logger: Logger = new Logger();
-         logger.logError("MeasurementApi", "load", "Error:", e);
+         logger.logError("MeasurementApi", "load", "Error:", e.toString() + " " + response.data);
          return null;
       }
    }
@@ -70,6 +73,8 @@ export class MeasurementApi implements IMeasurementStore {
     */
    async loadMany(ids: Array<any>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
 
+      var response;
+
       try {
          let inputCodec = new IdListCodec();
 
@@ -78,7 +83,7 @@ export class MeasurementApi implements IMeasurementStore {
          let encoded = inputCodec.encode(idList);
 
          // ask for a list
-         const response = await axios.put(this._queryManyUrl, encoded);
+         response = await axios.put(this._queryManyUrl, encoded);
 
          // reconstruct proper objects & return
          let measurementsCodec = new MeasurementsCodec();
@@ -86,7 +91,7 @@ export class MeasurementApi implements IMeasurementStore {
 
       } catch (e) {
          let logger: Logger = new Logger();
-         logger.logError("MeasurementApi", "loadMany", "Error:", e);
+         logger.logError("MeasurementApi", "loadMany", "Error:", e.toString() + " " + response.data);
          return null;
       }
    }
@@ -109,7 +114,7 @@ export class MeasurementApi implements IMeasurementStore {
 
       } catch (e) {
          let logger: Logger = new Logger();
-         logger.logError("MeasurementApi", "loadMany", "Error:", e);
+         logger.logError("MeasurementApi", "loadManyForPeople", "Error:", e);
          return null;
       }
    }

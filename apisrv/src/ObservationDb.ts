@@ -7,11 +7,12 @@ import { Logger } from '../../core/src/Logger';
 import { MeasurementUnitType, MeasurementOf, IMeasurementStore, EMeasurementType, EMeasurementUnitType, EPositiveTrend } from '../../core/src/Observation';
 import { WeightMeasurementCodec, TimeMeasurementCodec } from '../../core/src/IOObservation';
 import { TimeUnits, WeightUnits, RepUnits } from "../../core/src/Quantity";
-import { ObservationDictionary } from '../../core/src/ObservationDictionary';
+import { OlympicLiftMeasurementTypeFactory } from '../../core/src/ObservationDictionary';
 
 export class MeasurementDb implements IMeasurementStore {
    private _weightCodec: WeightMeasurementCodec;
    private _timeCodec: TimeMeasurementCodec;
+   private _weightMeasurementFactory: OlympicLiftMeasurementTypeFactory = new OlympicLiftMeasurementTypeFactory();
 
    constructor() {
       this._weightCodec = new WeightMeasurementCodec();
@@ -33,7 +34,7 @@ export class MeasurementDb implements IMeasurementStore {
             if (result._doc._persistenceDetails._key !== result._doc._id.toString())
                result._doc._persistenceDetails._key = result._doc._id.toString();
 
-            if (MeasurementUnitType.isWeightUnitType(result._doc._measurementType._unitType)) {
+            if (this._weightMeasurementFactory.isValid (result._doc._measurementType)) {
                return this._weightCodec.tryCreateFrom(result._doc);
             }
             else {
@@ -65,7 +66,7 @@ export class MeasurementDb implements IMeasurementStore {
                result[i]._doc._persistenceDetails._key = result[i]._doc._id.toString();
 
             var measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>;
-            if (MeasurementUnitType.isWeightUnitType(result[i]._doc._measurementType._unitType)) {
+            if (this._weightMeasurementFactory.isValid(result[i]._doc._measurementType)) {
                measurement = this._weightCodec.tryCreateFrom(result[i]._doc);
             }
             else {
@@ -145,7 +146,7 @@ export class MeasurementDb implements IMeasurementStore {
                   existing._doc._persistenceDetails._key = existing._doc._id.toString();
 
                // Return a constructed object via weight or time codec as appropriate
-               if (MeasurementUnitType.isWeightUnitType(existing._doc._measurementType._unitType)) {
+               if (this._weightMeasurementFactory.isValid(existing._doc._measurementType)) {
                   return this._weightCodec.tryCreateFrom(existing._doc);
                }
                else {
@@ -153,13 +154,13 @@ export class MeasurementDb implements IMeasurementStore {
                }
             }
          }
-         let result = await (new measurementModel(measurement)).save({ isNew: measurement.persistenceDetails.key ? true : false });
+         let result = await (new measurementModel(measurement.memento())).save({ isNew: measurement.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())
             result._doc._persistenceDetails._key = result._doc._id.toString();
 
-         if (measurement.measurementType.unitType === EMeasurementUnitType.Weight)
+         if (this._weightMeasurementFactory.isValid(result._doc._measurementType)) 
             return this._weightCodec.tryCreateFrom(result._doc);
          else
             return this._timeCodec.tryCreateFrom(result._doc);
@@ -261,7 +262,10 @@ const measurementSchema = new mongoose.Schema({
        type: Number,
        required: true
    },
-   _measurementType: measurementTypeSchema,
+   _measurementType: {
+      type: String,
+      required: true
+   },
    _subjectKey: {
       type: String,
       required: true
