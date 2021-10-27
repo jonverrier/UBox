@@ -2,7 +2,8 @@
 // Copyright TXPCo ltd, 2021
 import axios from 'axios';
 
-import { TimeUnits, WeightUnits, EWeightUnits, QuantityOf} from '../../core/src/Quantity';
+import { BaseUnit, BaseUnits } from '../../core/src/Unit';
+import { TimeUnits, WeightUnits, EWeightUnits, Quantity} from '../../core/src/Quantity';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { Name, Url } from "../../core/src/Party";
@@ -10,7 +11,7 @@ import { ELoginProvider, LoginDetails, EmailAddress, Roles, ERoleType, Person} f
 import { MeasurementTypeOf, MeasurementOf, IMeasurementTypeFactoryFor} from "../../core/src/Observation";
 import { SnatchMeasurementType, Row250mMeasurementType } from '../../core/src/FitnessObservations';
 import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from "../../core/src/ObservationDictionary";
-import { ECohortPeriod, CohortName, CohortTimePeriod, Cohort } from "../../core/src/Cohort";
+import { ECohortPeriod, CohortName, CohortTimePeriod, Cohort, ECohortType } from "../../core/src/Cohort";
 import { CohortCodec } from '../../core/src/IOCohort';
 import { PersonCodec } from '../../core/src/IOPerson';
 import { MeasurementApi } from './ObservationApi';
@@ -22,6 +23,19 @@ import { EApiUrls } from '../src/ApiUrls';
 var root: string = 'http://localhost:4000';
 var saveUrl: string = root + EApiUrls.SaveCohort;
 var queryUrl: string = root + EApiUrls.QueryCohort;
+
+const getCircularReplacer = () => {
+   const seen = new WeakSet();
+   return (key, value) => {
+      if (typeof value === "object" && value !== null) {
+         if (seen.has(value)) {
+            return;
+         }
+         seen.add(value);
+      }
+      return value;
+   };
+};
 
 describe("CohortApi", function () {
    let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
@@ -53,8 +67,7 @@ describe("CohortApi", function () {
          period,
          people,
          people,
-         weightMeasurements,
-         timeMeasurements);
+         ECohortType.OlympicLifting);
    });
 
    it("Needs to save a new Cohort", async function (done) {
@@ -72,7 +85,7 @@ describe("CohortApi", function () {
       let savedPerson:Person = personCodec.tryCreateFrom (personResponse.data);
 
       // Create and save a measurement on the person 
-      let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
+      let quantity = new Quantity(60, BaseUnits.kilogram);
       let repeats = 1;
       let measurementType = new SnatchMeasurementType(weightFactory);
       let api: MeasurementApi = new MeasurementApi(root);
@@ -86,14 +99,13 @@ describe("CohortApi", function () {
       let encoded = codec.encode(cohort1);
 
       try {
-
          const response = await axios.put(saveUrl, encoded);
          var logger = new Logger();
          let decoded = codec.decode(response.data);
          done();
       } catch (e) {
          var logger = new Logger();
-         logger.logError("CohortApi", "Save", "Error", e.toString());
+         logger.logError("CohortApi", "Save", "Error", JSON.stringify(e, getCircularReplacer()));
          done(e);
       }
 
@@ -112,7 +124,7 @@ describe("CohortApi", function () {
          done();
       } catch (e) {
          var logger = new Logger();
-         logger.logError("CohortApi", "Save-Load", "Error", e.toString());
+         logger.logError("CohortApi", "Save-Load", "Error", JSON.stringify(e, getCircularReplacer()));
          done(e);
       }
 

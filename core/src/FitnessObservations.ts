@@ -1,8 +1,9 @@
 /*! Copyright TXPCo, 2021 */
 
-import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, QuantityOf } from "./Quantity";
+import { EBaseUnitDimension, BaseUnits } from './Unit';
+import { WeightUnits, TimeUnits, Quantity } from "./Quantity";
 import { RangeOf } from "./Range";
-import { EMeasurementType, EMeasurementUnitType, EPositiveTrend, MeasurementTypeOf, IMeasurementTypeFactoryFor} from './Observation';
+import { EMeasurementType, EPositiveTrend, MeasurementTypeOf, IMeasurementTypeFactoryFor} from './Observation';
 
 
 // ====================
@@ -14,11 +15,11 @@ export class LiftMeasurementType extends MeasurementTypeOf<WeightUnits> {
     * Create a SnatchMeasurementType object - contains the static elements that characterise measurement of a snatch
     */
    constructor(lift: EMeasurementType, lowBar: number, highBar: number, measurementTypeFactory: IMeasurementTypeFactoryFor<WeightUnits>) {
-      let lo = new QuantityOf<WeightUnits>(lowBar, EWeightUnits.Kg);
-      let hi = new QuantityOf<WeightUnits>(highBar, EWeightUnits.Kg);
+      let lo = new Quantity(lowBar, BaseUnits.kilogram);
+      let hi = new Quantity(highBar, BaseUnits.kilogram);
       let range = new RangeOf<WeightUnits>(lo, true, hi, true);
 
-      super(lift, EMeasurementUnitType.Weight, range, EPositiveTrend.Up, measurementTypeFactory);
+      super(lift, EBaseUnitDimension.Weight, range, EPositiveTrend.Up, measurementTypeFactory);
    }
 
 }
@@ -76,11 +77,11 @@ export class SpeedMeasurementType extends MeasurementTypeOf<TimeUnits> {
     * Create a SpeedMeasurementType object - contains the static elements that characterise measurement of any movement measured by time
     */
    constructor(measurementTypemeasurementType: EMeasurementType, lowBar: number, highBar: number, measurementTypeFactory:IMeasurementTypeFactoryFor<TimeUnits>) {
-      let lo = new QuantityOf<TimeUnits>(lowBar, ETimeUnits.Seconds);
-      let hi = new QuantityOf<TimeUnits>(highBar, ETimeUnits.Seconds);
+      let lo = new Quantity (lowBar, BaseUnits.second);
+      let hi = new Quantity(highBar, BaseUnits.second);
       let range = new RangeOf<TimeUnits>(lo, true, hi, true);
 
-      super(measurementTypemeasurementType, EMeasurementUnitType.Time, range, EPositiveTrend.Down, measurementTypeFactory);
+      super(measurementTypemeasurementType, EBaseUnitDimension.Time, range, EPositiveTrend.Down, measurementTypeFactory);
    }
 
 }
@@ -104,5 +105,4 @@ export class Run800mMeasurementType extends SpeedMeasurementType {
    constructor(measurementTypeFactory: IMeasurementTypeFactoryFor<TimeUnits>) {
       super(EMeasurementType.Run800, 120, 1000, measurementTypeFactory);
    }
-
 }

@@ -5,10 +5,11 @@
 import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
-import { EMeasurementUnitType, MeasurementOf, IMeasurementStore } from '../../core/src/Observation';
+import { EBaseUnitDimension } from '../../core/src/Unit';
+import { WeightUnits, TimeUnits } from "../../core/src/Quantity";
+import { MeasurementOf, IMeasurementStore } from '../../core/src/Observation';
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
 import { WeightMeasurementCodec, MeasurementsCodec, TimeMeasurementCodec} from '../../core/src/IOObservation';
-import { WeightUnits, TimeUnits } from "../../core/src/Quantity";
 import { OlympicLiftMeasurementTypeFactory } from '../../core/src/ObservationDictionary';
 
 import { EApiUrls } from '../src/ApiUrls';
@@ -44,24 +45,24 @@ export class MeasurementApi implements IMeasurementStore {
       var response;
 
       try {
-         var etype: EMeasurementUnitType;
+         var etype: EBaseUnitDimension;
 
          response = await axios.get(this._queryUrl, { params: { _key: id.toString() } });
 
          if (this._weightFactory.isValid( response.data._measurementType)) {
-            etype = EMeasurementUnitType.Weight;
+            etype = EBaseUnitDimension.Weight;
          }
          else {
-            etype = EMeasurementUnitType.Time;
+            etype = EBaseUnitDimension.Time;
          }
 
-         return etype === EMeasurementUnitType.Weight ?
+         return etype === EBaseUnitDimension.Weight ?
             this._weightCodec.tryCreateFrom(response.data) :
             this._timeCodec.tryCreateFrom(response.data);
       }
       catch (e) {
          let logger: Logger = new Logger();
-         logger.logError("MeasurementApi", "load", "Error:", e.toString() + " " + response.data);
+         logger.logError("MeasurementApi", "load", "Error:", e.toString());
          return null;
       }
    }
@@ -91,7 +92,7 @@ export class MeasurementApi implements IMeasurementStore {
 
       } catch (e) {
          let logger: Logger = new Logger();
-         logger.logError("MeasurementApi", "loadMany", "Error:", e.toString() + " " + response.data);
+         logger.logError("MeasurementApi", "loadMany", "Error:", e.toString() );
          return null;
       }
    }
@@ -127,21 +128,21 @@ export class MeasurementApi implements IMeasurementStore {
    async save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
 
       var encoded;
-      var etype: EMeasurementUnitType;
+      var etype: EBaseUnitDimension;
 
-      if (measurement.measurementType.unitType === EMeasurementUnitType.Weight) {
+      if (measurement.measurementType.unitType === EBaseUnitDimension.Weight) {
          encoded = this._weightCodec.encode(measurement);
-         etype = EMeasurementUnitType.Weight;
+         etype = EBaseUnitDimension.Weight;
       }
       else {
          encoded = this._timeCodec.encode(measurement);
-         etype = EMeasurementUnitType.Time;
+         etype = EBaseUnitDimension.Time;
       }
 
       try {
          const response = await axios.put(this._saveUrl, encoded);
 
-         return etype === EMeasurementUnitType.Weight ?
+         return etype === EBaseUnitDimension.Weight ?
             this._weightCodec.tryCreateFrom (response.data) :
             this._timeCodec.tryCreateFrom(response.data);
 

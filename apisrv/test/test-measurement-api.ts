@@ -3,9 +3,10 @@
 import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
+import { BaseUnit, BaseUnits } from '../../core/src/Unit';
+import { WeightUnits, EWeightUnits, Quantity, TimeUnits, ETimeUnits } from "../../core/src/Quantity";
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { MeasurementOf, IMeasurementTypeFactoryFor } from '../../core/src/Observation';
-import { WeightUnits, EWeightUnits, QuantityOf, TimeUnits, ETimeUnits } from "../../core/src/Quantity";
 import { SnatchMeasurementType, Run800mMeasurementType } from '../../core/src/FitnessObservations';
 import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from "../../core/src/ObservationDictionary";
 import { MeasurementApi } from './ObservationApi';
@@ -32,7 +33,7 @@ const getCircularReplacer = () => {
 describe("MeasurementApi - weight", function () {
    let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
 
-   let quantity = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
+   let quantity = new Quantity(60, BaseUnits.kilogram);
    let repeats = 1;
    let measurementType = new SnatchMeasurementType(weightFactory);
    let api: MeasurementApi = new MeasurementApi(root);
@@ -81,13 +82,13 @@ describe("MeasurementApi - weight", function () {
          let secondSave = response2[0];
 
          // test is that we get the same Measurement back as array[0] as we got from the specific query
-         if (secondSave.equals(firstSave)) {
+         if (firstSave.equals(secondSave)) {
             done();
          } else {
             var logger = new Logger();
             var e: string = " Returned: " + JSON.stringify(secondSave, getCircularReplacer()) + "Original: " + JSON.stringify(firstSave, getCircularReplacer());
             logger.logError("test-measurement-api", "Save-LoadMany", "Error", e);
-            done(e)
+            done(new Error (e))
          }
 
       } catch (e) {
@@ -111,7 +112,7 @@ describe("MeasurementApi - weight", function () {
 
          let secondSave = response2[0];
 
-         // test is that we get the same Measurement back as array[0] as we got from the specific query
+         // test is that we get a Measurement for the right subject
          if (secondSave.subjectKey === firstSave.subjectKey) {
             done();
          } else {
@@ -133,7 +134,7 @@ describe("MeasurementApi - weight", function () {
 describe("MeasurementApi - time", function () {
    let timeFactory: IMeasurementTypeFactoryFor<TimeUnits> = new SpeedMeasurementTypeFactory();
 
-   let quantity = new QuantityOf<TimeUnits>(200, ETimeUnits.Seconds);
+   let quantity = new Quantity(200, BaseUnits.kilogram);
    let repeats = 1;
    let measurementType = new Run800mMeasurementType(timeFactory);
    let api: MeasurementApi = new MeasurementApi(root);
@@ -149,7 +150,7 @@ describe("MeasurementApi - time", function () {
          done();
       } catch (e) {
          var logger = new Logger();
-         logger.logError("MeasurementApi", "Save", "Error", e.toString());
+         logger.logError("test-measurement-api", "Save", "Error", e.toString());
          done(e);
       }
 
@@ -163,7 +164,7 @@ describe("MeasurementApi - time", function () {
          done();
       } catch (e) {
          var logger = new Logger();
-         logger.logError("MeasurementApi", "Save-Load", "Error", e.toString());
+         logger.logError("test-measurement-api", "Save-Load", "Error", e.toString());
          done(new Error(e));
       }
 
@@ -183,7 +184,7 @@ describe("MeasurementApi - time", function () {
          let secondSave = response2[0];
 
          // test is that we get the same Measurement back as array[0] as we got from the specific query
-         if (secondSave.equals(firstSave)) {
+         if (firstSave.equals(secondSave)) {
             done();
          } else {
             var logger = new Logger();
@@ -194,7 +195,7 @@ describe("MeasurementApi - time", function () {
 
       } catch (e) {
          var logger = new Logger();
-         logger.logError("MeasurementApi", "Save-LoadMany", "Error", e.toString());
+         logger.logError("test-measurement-api", "Save-LoadMany", "Error", e.toString());
          done(e);
       }
 
@@ -206,9 +207,9 @@ describe("MeasurementApi - heterogenous", function () {
    let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
    let timeFactory: IMeasurementTypeFactoryFor<TimeUnits> = new SpeedMeasurementTypeFactory();
 
-   let quantityOfTime = new QuantityOf<TimeUnits>(200, ETimeUnits.Seconds);
+   let quantityOfTime = new Quantity(200, BaseUnits.second);
    let timeMeasurementType = new Run800mMeasurementType(timeFactory);
-   let quantityOfWeight = new QuantityOf<WeightUnits>(60, EWeightUnits.Kg);
+   let quantityOfWeight = new Quantity(60, BaseUnits.kilogram);
    let weightMeasurementType = new SnatchMeasurementType(weightFactory);
 
    var timeMeasurement: MeasurementOf<TimeUnits> = new MeasurementOf<TimeUnits>(
@@ -241,13 +242,13 @@ describe("MeasurementApi - heterogenous", function () {
          } else {
             var logger = new Logger();
             var e: string = "Returned: " + response3;
-            logger.logError("MeasurementAPI", "Save-LoadMany", "Error", e);
+            logger.logError("test-measurement-api", "Save-LoadMany", "Error", e);
             done(new Error(e));
          }
 
       } catch (e) {
          var logger = new Logger();
-         logger.logError("MeasurementApi", "Save-LoadMany", "Error", e.toString());
+         logger.logError("test-measurement-api", "Save-LoadMany", "Error", e.toString());
          done(e);
       }
 

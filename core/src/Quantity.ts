@@ -1,5 +1,7 @@
 /*! Copyright TXPCo, 2021 */
 
+import { BaseUnit } from './Unit';
+
 // Whenever any of these are changed, the schema in ObservationDb must be changed to match
 export enum EWeightUnits { Kg = "Kg", Lbs = "Lbs" };
 export enum ETimeUnits { Seconds = "Seconds" };
@@ -66,34 +68,44 @@ export class RepUnits implements IUnit {
    }
 }
 
-export class QuantityMementoOf<Unit> {
+export class QuantityMemento {
    readonly _amount: number;
-   readonly _unit: string;
+   readonly _unit: BaseUnit;
 
    /**
     * Create a QuantityMementoOf object - an amount, with Units
     * @param amount - the scalar value
     * @param unit - the unit in which the scalar value is measured
     */
-   constructor(amount: number, unit: string) {
+   constructor(amount: number, unit: BaseUnit) {
       this._amount = amount;
       this._unit = unit;
    }
 }
 
-export class QuantityOf<Unit> { 
+export class Quantity { 
    private _amount: number;
-   private _unit: string;
+   private _unit: BaseUnit;
 
 /**
  * Create a Quantity object - an amount, with Units
  * @param amount - the scalar value
  * @param unit - the unit in which the scalar value is measured
  */
-   constructor(amount: number, unit: string) {
+   constructor(amount: number, unit: BaseUnit)
+   public constructor(memento: QuantityMemento);
+   public constructor(...params: any[]) {
 
-      this._amount = amount;
-      this._unit = unit;
+      if (params.length === 1) {
+         let memento: QuantityMemento = params[0];
+
+         this._amount = memento._amount;
+         this._unit = memento._unit;
+
+      } else {
+         this._amount = params[0];
+         this._unit = params[1];
+      }
    }
 
    /**
@@ -103,15 +115,15 @@ export class QuantityOf<Unit> {
       return this._amount;
    }
 
-   get unit(): string {
+   get unit(): BaseUnit {
       return this._unit;
    }
 
    /**
    * memento() returns a copy of internal state
    */
-   memento(): QuantityMementoOf<Unit> {
-      return new QuantityMementoOf<Unit>(this._amount, this._unit);
+   memento(): QuantityMemento {
+      return new QuantityMemento (this._amount, this._unit);
    }
 
    /**
@@ -119,11 +131,11 @@ export class QuantityOf<Unit> {
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
     */
-   equals(rhs: QuantityOf<Unit> ) : boolean {
+   equals(rhs: Quantity ) : boolean {
 
       return (
          (this._amount === rhs._amount) &&
-         (this._unit === rhs._unit));
+         (this._unit.equals(rhs._unit))); 
    }
 }
 

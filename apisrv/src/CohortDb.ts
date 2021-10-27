@@ -3,7 +3,7 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { Cohort, ICohortStore } from '../../core/src/Cohort';
+import { ECohortType, Cohort, ICohortStore } from '../../core/src/Cohort';
 import { Person, PersonMemento } from '../../core/src/Person';
 import { CohortCodec } from '../../core/src/IOCohort';
 import { PersonDb } from './PersonDb';
@@ -126,6 +126,8 @@ export class CohortDb implements ICohortStore {
    }
 }
 
+const cohortTypes: Array<string> = (Object.values(ECohortType));
+
 const cohortSchema = new mongoose.Schema({
    _persistenceDetails: {
       _key: {
@@ -170,8 +172,11 @@ const cohortSchema = new mongoose.Schema({
       type: [String],
       required: true
    },
-   _weightMeasurements: [measurementTypeSchema],
-   _timeMeasurements: [measurementTypeSchema]
+   _cohortType: {
+      type: String,
+      enum: cohortTypes,
+      required: true
+   }
 },
 {  // Enable timestamps for archival 
       timestamps: true

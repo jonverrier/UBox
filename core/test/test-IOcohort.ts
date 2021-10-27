@@ -6,11 +6,11 @@ import { PersistenceDetails } from '../src/Persistence';
 import { CohortNameCodec, CohortTimePeriodCodec, CohortCodec } from '../src/IOCohort';
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Person, ELoginProvider} from '../src/Person';
-import { CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from '../src/Cohort';
 import { MeasurementTypeOf, IMeasurementTypeFactoryFor} from '../src/Observation';
 import { TimeUnits, WeightUnits } from '../src/Quantity';
 import { SnatchMeasurementType, Row250mMeasurementType } from '../src/FitnessObservations';
 import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from '../src/ObservationDictionary';
+import { ECohortType, CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from '../src/Cohort';
 
 var expect = require("chai").expect;
 
@@ -148,8 +148,7 @@ describe("IOCohort", function () {
       period,
       people,
       people,
-      weightMeasurements,
-      timeMeasurements);
+      ECohortType.Conditioning);
 
    it("Needs to decode a Cohort from clean input.", function () {
 

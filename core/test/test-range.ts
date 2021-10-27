@@ -1,6 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { WeightUnits,EWeightUnits, QuantityOf } from '../src/Quantity';
+import { BaseUnits } from '../src/Unit';
+import { WeightUnits,EWeightUnits, Quantity } from '../src/Quantity';
 import { RangeOf } from '../src/Range';
 
 var expect = require("chai").expect;
@@ -8,8 +9,8 @@ var expect = require("chai").expect;
 describe("Range", function () {
 
    it("Needs to construct correctly", function () {
-      let quantityLo = new QuantityOf<WeightUnits>(1, EWeightUnits.Kg);
-      let quantityHi = new QuantityOf<WeightUnits>(2, EWeightUnits.Kg);
+      let quantityLo = new Quantity(1, BaseUnits.kilogram);
+      let quantityHi = new Quantity(2, BaseUnits.kilogram);
 
       let range = new RangeOf<WeightUnits>(quantityLo, true, quantityHi, false);
 
@@ -27,8 +28,8 @@ describe("Range", function () {
 
    it("Needs to return true for lower bound if lower bound equal.", function () {
 
-      let quantityLo = new QuantityOf<WeightUnits>(1, EWeightUnits.Kg);
-      let quantityHi = new QuantityOf<WeightUnits>(2, EWeightUnits.Kg);
+      let quantityLo = new Quantity(1, BaseUnits.kilogram);
+      let quantityHi = new Quantity(2, BaseUnits.kilogram);
 
       let range = new RangeOf<WeightUnits>(quantityLo, true, quantityHi, false);
 
@@ -37,8 +38,8 @@ describe("Range", function () {
 
    it("Needs to return false for lower bound if lower bound not equal.", function () {
 
-      let quantityLo = new QuantityOf<WeightUnits>(1, EWeightUnits.Kg);
-      let quantityHi = new QuantityOf<WeightUnits>(2, EWeightUnits.Kg);
+      let quantityLo = new Quantity(1, BaseUnits.kilogram);
+      let quantityHi = new Quantity(2, BaseUnits.kilogram);
 
       let range = new RangeOf<WeightUnits>(quantityLo, false, quantityHi, false);
 
@@ -47,8 +48,8 @@ describe("Range", function () {
 
    it("Needs to return true for higher bound if higher bound equal.", function () {
 
-      let quantityLo = new QuantityOf<WeightUnits>(1, EWeightUnits.Kg);
-      let quantityHi = new QuantityOf<WeightUnits>(2, EWeightUnits.Kg);
+      let quantityLo = new Quantity(1, BaseUnits.kilogram);
+      let quantityHi = new Quantity(2, BaseUnits.kilogram);
 
       let range = new RangeOf<WeightUnits>(quantityLo, true, quantityHi, true);
 
@@ -57,8 +58,8 @@ describe("Range", function () {
 
    it("Needs to return false for higher bound if higher bound not equal.", function () {
 
-      let quantityLo = new QuantityOf<WeightUnits>(1, EWeightUnits.Kg);
-      let quantityHi = new QuantityOf<WeightUnits>(2, EWeightUnits.Kg);
+      let quantityLo = new Quantity(1, BaseUnits.kilogram);
+      let quantityHi = new Quantity(2, BaseUnits.kilogram);
 
       let range = new RangeOf<WeightUnits>(quantityLo, false, quantityHi, false);
 
@@ -67,8 +68,8 @@ describe("Range", function () {
 
    it("Needs to throw mis-match error if units are incompatible..", function () {
 
-      let quantityLo = new QuantityOf<WeightUnits>(1, EWeightUnits.Kg);
-      let quantityHi = new QuantityOf<WeightUnits>(2, EWeightUnits.Lbs); // we dont currently auto translate between units. 
+      let quantityLo = new Quantity(1, BaseUnits.kilogram);
+      let quantityHi = new Quantity(2, BaseUnits.lb); // we dont currently auto translate between units.
       let caught = false;
 
       try {
@@ -81,8 +82,8 @@ describe("Range", function () {
 
    it("Needs to throw range error .", function () {
 
-      let quantityLo = new QuantityOf<WeightUnits>(1, EWeightUnits.Kg);
-      let quantityHi = new QuantityOf<WeightUnits>(2, EWeightUnits.Kg);
+      let quantityLo = new Quantity(1, BaseUnits.kilogram);
+      let quantityHi = new Quantity(2, BaseUnits.kilogram);
       let caught = false;
 
       try {
