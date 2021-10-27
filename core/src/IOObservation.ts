@@ -1,8 +1,9 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import { InvalidUnitError } from './CoreError';
-import { WeightUnits, TimeUnits, EWeightUnits } from './Quantity';
-import { EMeasurementType, EMeasurementUnitType, EPositiveTrend, MeasurementUnitType, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
+import { EBaseUnitDimension } from './Unit';
+import { WeightUnits, TimeUnits } from './Quantity';
+import { EMeasurementType, EPositiveTrend, MeasurementTypeOf, MeasurementTypeMementoOf, MeasurementOf, MeasurementMementoOf} from "./Observation";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from '../src/IOCommon';
 import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory} from "./ObservationDictionary";
 
@@ -16,19 +17,24 @@ import * as IoTs from 'io-ts';
 
 // Quantity Codecs
 // ==========
+const unitIoType = IoTs.type({
+   _dimension: IoTs.string,
+   _name: IoTs.string
+});
+
 const weightQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: IoTs.string 
+   _unit: unitIoType
 });
 
 const timeQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: IoTs.string 
+   _unit: unitIoType
 });
 
 const repQuantityIoType = IoTs.type({
    _amount: IoTs.number,
-   _unit: IoTs.string 
+   _unit: unitIoType
 });
 
 const weightRangeIoType = IoTs.type({
@@ -50,7 +56,7 @@ const timeRangeIoType = IoTs.type({
 
 export const weightMeasurementTypeIoType = IoTs.type({
    _measurementType: createEnumType<EMeasurementType>(EMeasurementType, 'EMeasurementType'),
-   _unitType: createEnumType<EMeasurementUnitType>(EMeasurementUnitType, 'EMeasurementUnitType'),
+   _unitType: createEnumType<EBaseUnitDimension>(EBaseUnitDimension, 'EBaseUnitDimension'),
    _range: weightRangeIoType,
    _trend: createEnumType<EPositiveTrend>(EPositiveTrend, 'EPositiveTrend')
 });
@@ -121,7 +127,7 @@ export class WeightMeasurementCodec implements ICodec<MeasurementOf<WeightUnits>
 
 export const timeMeasurementTypeIoType = IoTs.type({
    _measurementType: createEnumType<EMeasurementType>(EMeasurementType, 'EMeasurementType'),
-   _unitType: createEnumType<EMeasurementUnitType>(EMeasurementUnitType, 'EMeasurementUnitType'),
+   _unitType: createEnumType<EBaseUnitDimension>(EBaseUnitDimension, 'EBaseUnitDimension'),
    _range: timeRangeIoType,
    _trend: createEnumType<EPositiveTrend>(EPositiveTrend, 'EPositiveTrend')
 });

@@ -10,6 +10,7 @@ export class NameMemento {
    /**
     * Create a NameMemento object
     * @param displayName - user name for a Person, or the name of Business.
+    * Design - all memento classes must depend only on base types, value types, or other Mementos**
     */
    constructor(displayName: string) {
 
@@ -73,10 +74,10 @@ export class UrlMemento {
    _isUrlVerified: boolean;
 
    /**
-    * Create a export class UrlMemento {
- object
+    * Create a UrlMemento object
     * @param url - user email
     * @param isUrlVerified - boolean to say if we know URL is valid i.e we have retrieved it
+    * Design - all memento classes must depend only on base types, value types, or other Mementos*
     */
    constructor(url: string, isUrlVerified: boolean) {
 

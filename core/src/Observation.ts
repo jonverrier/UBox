@@ -1,14 +1,14 @@
 /*! Copyright TXPCo, 2021 */
 
-import { Persistence, PersistenceDetails, PersistenceDetailsMemento } from "./Persistence";
-import { TimeUnits, WeightUnits, QuantityMementoOf, QuantityOf } from "./Quantity";
+import { EBaseUnitDimension, BaseUnit } from './Unit';
+import { TimeUnits, WeightUnits, QuantityMemento, Quantity } from "./Quantity";
 import { RangeMementoOf, RangeOf } from "./Range";
+import { Persistence, PersistenceDetails, PersistenceDetailsMemento } from "./Persistence";
+
 
 // This enum is used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing 
 // Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EPositiveTrend { Up = "Up", Down = "Down"}
-
-export enum EMeasurementUnitType { Weight = "Weight", Time = "Time", Reps = "Reps" }
 
 // Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EMeasurementType {
@@ -16,19 +16,9 @@ export enum EMeasurementType {
    Row250="Row 250m", Run800="Run 800m"
 }
 
-export class MeasurementUnitType {
-   static isTimeUnitType(value: string): boolean {
-      return (value === EMeasurementUnitType[EMeasurementUnitType.Time]);
-   }
-
-   static isWeightUnitType(value: string): boolean {
-      return (value === EMeasurementUnitType[EMeasurementUnitType.Weight]);
-   }
-}
-
 export class MeasurementTypeMementoOf<Unit> {
    readonly _measurementType: EMeasurementType;
-   readonly _unitType: EMeasurementUnitType;
+   readonly _unitType: EBaseUnitDimension;
    readonly _range: RangeMementoOf<Unit>;
    readonly _trend: EPositiveTrend;
    readonly _measurementTypeFactory: IMeasurementTypeFactoryFor<Unit>; 
@@ -42,7 +32,7 @@ export class MeasurementTypeMementoOf<Unit> {
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
    constructor(measurementType: EMeasurementType,
-      unitType: EMeasurementUnitType,
+      unitType: EBaseUnitDimension,
       range: RangeMementoOf<Unit>,
       trend: EPositiveTrend,
       measurementTypeFactory: IMeasurementTypeFactoryFor<Unit>) {
@@ -65,7 +55,7 @@ export interface IMeasurementTypeFactoryFor<Unit> {
 
 export class MeasurementTypeOf<Unit> {
    private _measurementType: EMeasurementType;
-   private _unitType: EMeasurementUnitType;
+   private _unitType: EBaseUnitDimension;
    private _range: RangeOf<Unit>;
    private _trend: EPositiveTrend;
    private _measurementTypeFactory: IMeasurementTypeFactoryFor<Unit>;
@@ -78,7 +68,7 @@ export class MeasurementTypeOf<Unit> {
     * @param trend - used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing
     */
    constructor(measurementType: EMeasurementType,
-      unitType: EMeasurementUnitType,
+      unitType: EBaseUnitDimension,
       range: RangeOf<Unit>,
       trend: EPositiveTrend,
       measurementTypeFactory: IMeasurementTypeFactoryFor<Unit>);
@@ -90,9 +80,9 @@ export class MeasurementTypeOf<Unit> {
          let memento: MeasurementTypeMementoOf<Unit> = params[0];
          this._measurementType = memento._measurementType;
          this._unitType = memento._unitType;
-         this._range = new RangeOf<Unit>(new QuantityOf<Unit>(memento._range._lo._amount, memento._range._lo._unit),
+         this._range = new RangeOf<Unit>(new Quantity(memento._range._lo),
             memento._range._loInclEq,
-            new QuantityOf<Unit>(memento._range._hi._amount, memento._range._hi._unit),
+            new Quantity(memento._range._hi),
             memento._range._hiInclEq);
          this._trend = memento._trend;
          this._measurementTypeFactory = memento._measurementTypeFactory;
@@ -113,7 +103,7 @@ export class MeasurementTypeOf<Unit> {
       return this._measurementType;
    }
 
-   get unitType(): EMeasurementUnitType {
+   get unitType(): EBaseUnitDimension {
       return this._unitType;
    }
 
@@ -153,7 +143,7 @@ export class MeasurementTypeOf<Unit> {
    * can be used in IO to check validity of data
    */
    static isAllowedMeasurementUnitType(value: string): boolean {
-      var allowedValues: Array<string> = Object.values(EMeasurementUnitType);
+      var allowedValues: Array<string> = Object.values(EBaseUnitDimension);
 
       return allowedValues.indexOf(value) !== -1;
 
@@ -193,7 +183,7 @@ export function timeMeasurementTypeArraysAreEqual(lhs: Array<MeasurementTypeOf<T
 
 export class MeasurementMementoOf<Unit> {
    readonly _persistenceDetails: PersistenceDetailsMemento;
-   readonly _quantity: QuantityMementoOf<Unit>;
+   readonly _quantity: QuantityMemento;
    readonly _repeats: number;
    readonly _cohortPeriod: number;
    readonly _measurementType: EMeasurementType;
@@ -212,7 +202,7 @@ export class MeasurementMementoOf<Unit> {
     * Design - all memento classes must depend only on base types, value types, or other Mementos*
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
-      quantity: QuantityMementoOf<Unit>, repeats: number, cohortPeriod: number,
+      quantity: QuantityMemento, repeats: number, cohortPeriod: number,
       measurementType: EMeasurementType,
       subjectKey: string)
    {
@@ -226,7 +216,7 @@ export class MeasurementMementoOf<Unit> {
 }
 
 export class MeasurementOf<MeasuredUnit> extends Persistence {
-   private _quantity: QuantityOf<MeasuredUnit>;
+   private _quantity: Quantity
    private _repeats: number;
    private _cohortPeriod: number;
    private _measurementType: MeasurementTypeOf<MeasuredUnit>;
@@ -242,7 +232,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
  * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
  */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: QuantityOf<MeasuredUnit>, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectKey: string)
+      quantity: Quantity, repeats: number, cohortPeriod: number, measurementType: MeasurementTypeOf<MeasuredUnit>, subjectKey: string)
    public constructor(memento: MeasurementMementoOf<MeasuredUnit>);
    public constructor(...params: any[]) {
 
@@ -257,8 +247,8 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
          // Look up the measurement type from the enum
          let measurementType: MeasurementTypeOf<MeasuredUnit> = memento._measurementTypeFactory.lookup(memento._measurementType);
 
-         this._quantity = new QuantityOf<MeasuredUnit>(memento._quantity._amount,
-            memento._quantity._unit);
+         this._quantity = new Quantity(memento._quantity._amount,
+            new BaseUnit(memento._quantity._unit));
          this._repeats = memento._repeats;
          this._cohortPeriod = memento._cohortPeriod;
          this._measurementType = measurementType;
@@ -282,7 +272,7 @@ export class MeasurementOf<MeasuredUnit> extends Persistence {
    /**
    * set of 'getters' for private variables
    */
-   get quantity(): QuantityOf<MeasuredUnit> {
+   get quantity(): Quantity {
       return this._quantity;
    }
    get repeats(): number {

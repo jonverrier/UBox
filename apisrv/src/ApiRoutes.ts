@@ -5,12 +5,11 @@ import express from 'express';
 import { URL, URLSearchParams} from 'url';
 
 import { Logger } from '../../core/src/Logger';
-
+import { EBaseUnitDimension } from '../../core/src/Unit';
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
 
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { PersonDb } from './PersonDb';
-
 import { WeightMeasurementCodec, MeasurementsCodec, TimeMeasurementCodec } from '../../core/src/IOObservation';
 import { MeasurementDb } from './ObservationDb';
 
@@ -18,7 +17,6 @@ import { CohortCodec } from '../../core/src/IOCohort';
 import { CohortDb } from './CohortDb';
 
 import { EApiUrls } from './ApiUrls';
-import { EMeasurementUnitType } from '../../core/src/Observation';
 
 export var ApiRoutes = express.Router();
 
@@ -102,7 +100,7 @@ ApiRoutes.get(EApiUrls.QueryMeasurement, function (req, res) {
       let result = db.loadOne (params.get('_key'));
       result.then(data => {
          if (data) {
-            res.send(data.measurementType.unitType === EMeasurementUnitType.Weight ?
+            res.send(data.measurementType.unitType === EBaseUnitDimension.Weight ?
                weightCodec.encode(data) :
                timeCodec.encode(data));
          }
@@ -148,7 +146,7 @@ ApiRoutes.put(EApiUrls.SaveMeasurement, function (req, res) {
          let result = db.save(decoded);
          result.then(data => {
             if (data) {
-               res.send(data.measurementType.unitType === EMeasurementUnitType.Weight ?
+               res.send(data.measurementType.unitType === EBaseUnitDimension.Weight ?
                   weightCodec.encode(data) :
                   timeCodec.encode(data));
             }

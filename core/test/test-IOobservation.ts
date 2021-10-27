@@ -3,12 +3,13 @@
 
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
-import { TimeUnits, ETimeUnits, WeightUnits, EWeightUnits, QuantityOf } from '../src/Quantity';
+import { EBaseUnitDimension, BaseUnits } from '../src/Unit';
+import { TimeUnits, WeightUnits, Quantity } from '../src/Quantity';
 import { RangeOf } from '../src/Range';
-import { WeightMeasurementTypeCodec, WeightMeasurementCodec, TimeMeasurementTypeCodec, TimeMeasurementCodec, MeasurementsCodec } from '../src/IOObservation';
-import { MeasurementTypeOf, MeasurementOf, EMeasurementUnitType, IMeasurementTypeFactoryFor} from '../src/Observation';
+import { MeasurementTypeOf, MeasurementOf, IMeasurementTypeFactoryFor} from '../src/Observation';
 import { CleanMeasurementType, Row250mMeasurementType } from '../src/FitnessObservations';
 import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from '../src/ObservationDictionary';
+import { WeightMeasurementTypeCodec, WeightMeasurementCodec, TimeMeasurementTypeCodec, TimeMeasurementCodec, MeasurementsCodec } from '../src/IOObservation';
 
 var expect = require("chai").expect;
 
@@ -33,7 +34,7 @@ describe("IOWeightMeasurementType", function () {
 
          codec.decode({
             _measurementType: measurementType.measurementType,
-            _unitType: EMeasurementUnitType.Weight,
+            _unitType: EBaseUnitDimension.Weight,
             _range: measurementType.range,
             _trend: measurementType.trend
          });
@@ -49,9 +50,9 @@ describe("IOWeightMeasurementType", function () {
 
       let encoded = codec.encode(measurementType);
       let encodedRange = new RangeOf<WeightUnits>(
-         new QuantityOf<WeightUnits>(encoded._range._lo._amount, encoded._range._lo._unit),
+         new Quantity(encoded._range._lo),
          encoded._range._loInclEq,
-         new QuantityOf<WeightUnits>(encoded._range._hi._amount, encoded._range._hi._unit),
+         new Quantity(encoded._range._hi),
          encoded._range._hiInclEq);
 
       expect(encoded._measurementType).to.equal(measurementType.measurementType);
@@ -83,7 +84,7 @@ describe("IOWeightMeasurementType", function () {
 describe("IOWeightMeasurement", function () {
    let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
 
-   var quantity = new QuantityOf<WeightUnits>(10, EWeightUnits.Kg);
+   var quantity = new Quantity(10, BaseUnits.kilogram);
    var repeats = 1;
    var codec: WeightMeasurementCodec = new WeightMeasurementCodec();
    var measurementType: MeasurementTypeOf<WeightUnits> = new CleanMeasurementType(weightFactory);
@@ -193,7 +194,7 @@ describe("IOTimeMeasurementType", function () {
 describe("IOTimeMeasurement", function () {
    let timeFactory: IMeasurementTypeFactoryFor<WeightUnits> = new SpeedMeasurementTypeFactory();
 
-   var quantity = new QuantityOf<TimeUnits>(10, ETimeUnits.Seconds);
+   var quantity = new Quantity(10, BaseUnits.second);
    var repeats = 1;
    var codec: TimeMeasurementCodec = new TimeMeasurementCodec();
    var measurementType: MeasurementTypeOf<TimeUnits> = new Row250mMeasurementType(timeFactory);

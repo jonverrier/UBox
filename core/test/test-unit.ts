@@ -15,7 +15,7 @@ describe("BaseUnits", function () {
    });
 
    it("Needs to consruct Lbs", function () {
-      let lbs = BaseUnits.poundLb;
+      let lbs = BaseUnits.lb;
 
       expect(lbs.dimension).to.equal(EBaseUnitDimension.Weight);
       expect(lbs.name).to.equal(EBaseUnit.Lbs);

@@ -4,10 +4,10 @@ import { TimeUnits, WeightUnits } from '../src/Quantity';
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
-import { weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, MeasurementTypeOf, IMeasurementTypeFactoryFor } from "../src/Observation";
+import { MeasurementTypeOf, IMeasurementTypeFactoryFor } from "../src/Observation";
 import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run800mMeasurementType } from '../src/FitnessObservations';
 import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from '../src/ObservationDictionary';
-import { CohortName, CohortTimePeriod, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
+import { ECohortType, CohortName, CohortTimePeriod, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
 
 
 var expect = require("chai").expect;
@@ -158,16 +158,14 @@ describe("Cohort", function () {
          period,
          people,
          people,
-         weightMeasurements,
-         timeMeasurements);
+         ECohortType.OlympicLifting);
 
       cohort2 = new Cohort(new PersistenceDetails("id", 1, 1),
          new CohortName("Bill"),
          period,
          people,
          people,
-         weightMeasurements,
-         timeMeasurements);
+         ECohortType.OlympicLifting);
    });
    
    it("Needs to compare for equality and inequality", function () {
@@ -182,8 +180,7 @@ describe("Cohort", function () {
       expect(cohort1.period.equals(period)).to.equal(true);
       expect(personArraysAreEqual(cohort1.members, cohort2.members)).to.equal(true);
       expect(personArraysAreEqual(cohort1.administrators, cohort2.administrators)).to.equal(true);
-      expect(weightMeasurementTypeArraysAreEqual(cohort1.weightMeasurements, cohort2.weightMeasurements)).to.equal(true);
-      expect(timeMeasurementTypeArraysAreEqual(cohort1.timeMeasurements, cohort2.timeMeasurements)).to.equal(true);
+      expect(cohort1.cohortType).to.equal(ECohortType.OlympicLifting);
    });
 
    it("Needs to correctly change attributes", function () {
@@ -206,16 +203,14 @@ describe("Cohort", function () {
       cohort1.name = newName;
       cohort1.members = people;
       cohort1.administrators = people;
-      cohort1.weightMeasurements = weightMeasurements;
-      cohort1.timeMeasurements = timeMeasurements;
+      cohort1.cohortType = ECohortType.Conditioning;
       cohort1.period = newPeriod;
 
       expect(cohort1.name.equals(newName)).to.equal(true);
       expect(cohort1.period.equals(newPeriod)).to.equal(true);
       expect(personArraysAreEqual(cohort1.members, people)).to.equal(true);
       expect(personArraysAreEqual(cohort1.administrators, people)).to.equal(true);
-      expect(weightMeasurementTypeArraysAreEqual(cohort1.weightMeasurements, weightMeasurements)).to.equal(true);
-      expect(timeMeasurementTypeArraysAreEqual(cohort1.timeMeasurements, timeMeasurements)).to.equal(true);
+      expect(cohort1.cohortType).to.equal(ECohortType.Conditioning);
    });
 
    it("Needs to test membership", function () {

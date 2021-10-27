@@ -1,6 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { WeightUnits, TimeUnits, RepUnits, EWeightUnits, ETimeUnits, ERepUnits, QuantityOf } from '../src/Quantity';
+import { BaseUnits } from '../src/Unit';
+import { WeightUnits, TimeUnits, RepUnits, EWeightUnits, ETimeUnits, ERepUnits, Quantity } from '../src/Quantity';
 
 
 var expect = require("chai").expect;
@@ -44,17 +45,17 @@ describe("RepUnits", function () {
 describe("Quantity", function () {
 
    it("Needs to construct correctly", function () {
-      let quantity = new QuantityOf<WeightUnits>(1, EWeightUnits.Kg);
+      let quantity = new Quantity(1, BaseUnits.kilogram);
 
       expect(quantity.amount).to.equal(1);
-      expect(quantity.unit).to.equal(EWeightUnits.Kg);
-      expect(quantity.memento()._unit).to.equal(EWeightUnits.Kg);
+      expect(quantity.unit).to.equal(BaseUnits.kilogram);
+      expect(quantity.memento()._unit).to.equal(BaseUnits.kilogram);
    });
 
    it("Needs to compare for equality correctly", function () {
-      let quantity1 = new QuantityOf<WeightUnits>(1, EWeightUnits.Kg);
-      let quantity2 = new QuantityOf<WeightUnits>(2, EWeightUnits.Kg);
-      let quantity3 = new QuantityOf<WeightUnits>(1, EWeightUnits.Kg);
+      let quantity1 = new Quantity(1, BaseUnits.kilogram);
+      let quantity2 = new Quantity(2, BaseUnits.kilogram);
+      let quantity3 = new Quantity(1, BaseUnits.kilogram);
 
       expect(quantity1.equals(quantity1)).to.equal(true);
       expect(quantity1.equals(quantity2)).to.equal(false);

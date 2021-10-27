@@ -3,10 +3,12 @@
 import { InvalidParameterError } from './CoreError';
 import { PersistenceDetailsMemento, PersistenceDetails, Persistence } from "./Persistence";
 import { EmailAddress, PersonMemento, Person, personArraysAreEqual } from "./Person";
-import { MeasurementTypeMementoOf, MeasurementTypeOf, weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual } from "./Observation";
+import { MeasurementTypeMementoOf, EMeasurementType, MeasurementTypeOf, weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual } from "./Observation";
 import { WeightUnits, TimeUnits } from './Quantity';
 
-export enum ECohortPeriod { Week = "Week", TwoWeeks = "TwoWeeks", ThreeWeeks = "ThreeWeeks", FourWeeks = "FourWeeks", Month = "Month"}
+export enum ECohortPeriod { Week = "Week", TwoWeeks = "TwoWeeks", ThreeWeeks = "ThreeWeeks", FourWeeks = "FourWeeks", Month = "Month" }
+
+export enum ECohortType {OlympicLifting = "Olymplic Lifting", Powerlifting = "Power Lifting", Conditioning = "Conditioning"}
 
 export class CohortNameMemento {
    _name: string;
@@ -199,8 +201,7 @@ export class CohortMemento {
    _period: CohortTimePeriodMemento;
    _administrators: Array<PersonMemento>;
    _members: Array<PersonMemento>;
-   _weightMeasurements: Array<MeasurementTypeMementoOf<WeightUnits>>;
-   _timeMeasurements: Array<MeasurementTypeMementoOf<TimeUnits>>;
+   _cohortType: ECohortType;
 
    // These are used to allow the Db layer to swizzle object references to string Ids on save, and the reverse on load
    // so separate documents/tables can be used in the DB
@@ -214,65 +215,27 @@ export class CohortMemento {
     * @param period - CohortTimePeriod to specifiy start date, period, number of period*
     * @param administrators - array of People, may be zero length // TODO - must have at least one adminsistrator
     * @param members - array of People, may be zero length 
-    * @param weightMeasurements - array of weight measurements, may be zero length
-    * @param timeMeasurements - array of time measurements, may be zero length
+    * @param cohortType - purpose of the cohort (Oly, Power, Conditioning, ...)
+    * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor(persistenceDetails: PersistenceDetails,
-      name: CohortName, 
-      period: CohortTimePeriod,
-      administrators: Array<Person>, members: Array<Person>,
-      weightMeasurements: Array<MeasurementTypeOf<WeightUnits>>,
-      timeMeasurements: Array<MeasurementTypeOf<TimeUnits>>) {
+   constructor(persistenceDetails: PersistenceDetailsMemento,
+      name: CohortNameMemento, 
+      period: CohortTimePeriodMemento,
+      administrators: Array<PersonMemento>, members: Array<PersonMemento>,
+      cohortType: ECohortType) {
 
       var i: number = 0;
 
-      this._persistenceDetails = persistenceDetails.memento();
-      this._name = name.memento();
-      this._period = period.memento();
+      this._persistenceDetails = persistenceDetails;
+      this._name = name;
+      this._period = period;
 
-      this._administrators = new Array<PersonMemento>(administrators.length);
-      for (i = 0; i < administrators.length; i++)
-         this._administrators[i] = administrators[i].memento();
-
-      this._members = new Array<PersonMemento>(members.length);
-      for (i = 0; i < members.length; i++)
-         this._members[i] = members[i].memento();
-
-      this._weightMeasurements = new Array < MeasurementTypeMementoOf < WeightUnits >> (weightMeasurements.length);
-      for (i = 0; i < weightMeasurements.length; i++)
-         this._weightMeasurements[i] = weightMeasurements[i].memento();
-
-      this._timeMeasurements = new Array<MeasurementTypeMementoOf<TimeUnits>>(timeMeasurements.length);
-      for (i = 0; i < timeMeasurements.length; i++)
-         this._timeMeasurements[i] = timeMeasurements[i].memento();
+      this._administrators = administrators;
+      this._members = members;
+      this._cohortType = cohortType;
 
       this._administratorIds = null;
       this._memberIds = null;
-   }
-
-   /**
-   * set of 'getters' and setters for private variables
-   */
-   get persistenceDetails(): PersistenceDetailsMemento {
-      return this._persistenceDetails;
-   }
-   get name(): CohortNameMemento {
-      return this._name;
-   }
-   get administrators(): Array<PersonMemento> {
-      return this._administrators;
-   }
-   get members(): Array<PersonMemento> {
-      return this._members;
-   }
-   get period(): CohortTimePeriodMemento {
-      return this._period;
-   }
-   get weightMeasurements(): Array<MeasurementTypeMementoOf<WeightUnits>> {
-      return this._weightMeasurements;
-   }
-   get timeMeasurements(): Array<MeasurementTypeMementoOf<TimeUnits>> {
-      return this._timeMeasurements;
    }
 }
 
@@ -281,8 +244,7 @@ export class Cohort extends Persistence {
    private _period: CohortTimePeriod;
    private _administrators: Array<Person>;
    private _members: Array<Person>;
-   private _weightMeasurements: Array<MeasurementTypeOf<WeightUnits>>;
-   private _timeMeasurements: Array<MeasurementTypeOf<TimeUnits>>;
+   private _cohortType: ECohortType;
 
    // These are used to allow the Db layer to swizzle object references to string Ids on save, and the reverse on load
    // so separate documents/tables can be used in the DB
@@ -295,15 +257,13 @@ export class Cohort extends Persistence {
  * @param administrators - array of People
  * @param members - array of People
  * @param period - CohortTimePeriod to specifiy start date, period, number of period
- * @param weightMeasurements - array of weight measurements
- * @param timeMeasurements - array of time measurements
+ * @param cohortType - purpose of the cohort (Oly, Power, Conditioning, ...)
  */
    constructor(persistenceDetails: PersistenceDetails,
       name: CohortName,
       period: CohortTimePeriod,
       administrators: Array<Person>, members: Array<Person>,
-      weightMeasurements: Array<MeasurementTypeOf<WeightUnits>>,
-      timeMeasurements: Array<MeasurementTypeOf<TimeUnits>>);
+      cohortType: ECohortType);
    public constructor(memento: CohortMemento);
    public constructor(...params: any[]) {
 
@@ -311,28 +271,22 @@ export class Cohort extends Persistence {
          var i: number;
          let memento: CohortMemento = params[0];
 
-         super(new PersistenceDetails(memento.persistenceDetails._key,
-            memento.persistenceDetails._schemaVersion,
-            memento.persistenceDetails._sequenceNumber));
+         super(new PersistenceDetails(memento._persistenceDetails._key,
+            memento._persistenceDetails._schemaVersion,
+            memento._persistenceDetails._sequenceNumber));
 
-         this._name = new CohortName(memento.name.name);
-         this._period = new CohortTimePeriod(memento.period.startDate, memento.period.period, memento.period.numberOfPeriods);
+         this._name = new CohortName(memento._name.name);
+         this._period = new CohortTimePeriod(memento._period.startDate, memento._period.period, memento._period.numberOfPeriods);
 
-         this._administrators = new Array<Person>(memento.administrators.length);
-         for (i = 0; i < memento.administrators.length; i++)
-            this._administrators[i] = new Person(memento.administrators[i]);
+         this._administrators = new Array<Person>(memento._administrators.length);
+         for (i = 0; i < memento._administrators.length; i++)
+            this._administrators[i] = new Person(memento._administrators[i]);
 
-         this._members = new Array<Person>(memento.members.length);
-         for (i = 0; i < memento.members.length; i++)
-            this._members[i] = new Person(memento.members[i]);
+         this._members = new Array<Person>(memento._members.length);
+         for (i = 0; i < memento._members.length; i++)
+            this._members[i] = new Person(memento._members[i]);
 
-         this._weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>(memento.weightMeasurements.length);
-         for (i = 0; i < memento.weightMeasurements.length; i++)
-            this._weightMeasurements[i] = new MeasurementTypeOf<WeightUnits>(memento.weightMeasurements[i]);
-
-         this._timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>(memento.timeMeasurements.length);
-         for (i = 0; i < memento.timeMeasurements.length; i++)
-            this._timeMeasurements[i] = new MeasurementTypeOf<TimeUnits>(memento.timeMeasurements[i]);
+         this._cohortType = memento._cohortType;
 
          this._adminstratorIds = null;
          this._memberIds = null;
@@ -345,8 +299,7 @@ export class Cohort extends Persistence {
          this._period = params[2];
          this._administrators = params[3];
          this._members = params[4];
-         this._weightMeasurements = params[5];
-         this._timeMeasurements = params[6];
+         this._cohortType = params[5];
          this._adminstratorIds = null;
          this._memberIds = null;
       }
@@ -367,11 +320,8 @@ export class Cohort extends Persistence {
    get period(): CohortTimePeriod {
       return this._period;
    }
-   get weightMeasurements(): Array<MeasurementTypeOf<WeightUnits>> {
-      return this._weightMeasurements;
-   }
-   get timeMeasurements(): Array<MeasurementTypeOf<TimeUnits>> {
-      return this._timeMeasurements;
+   get cohortType(): ECohortType {
+      return this._cohortType;
    }
 
    set name(name: CohortName) {
@@ -386,11 +336,8 @@ export class Cohort extends Persistence {
    set members(people: Array<Person>) {
       this._members = people;
    }
-   set weightMeasurements(weightMeasurements: Array<MeasurementTypeOf<WeightUnits>>)  {
-      this._weightMeasurements = weightMeasurements;
-   }
-   set timeMeasurements(timeMeasurements: Array<MeasurementTypeOf<TimeUnits>>) {
-      this._timeMeasurements = timeMeasurements;
+   set cohortType(cohortType: ECohortType)  {
+      this._cohortType = cohortType;
    }
 
 
@@ -398,13 +345,22 @@ export class Cohort extends Persistence {
    * memento() returns a copy of internal state
    */
    memento(): CohortMemento {
-      return new CohortMemento (this.persistenceDetails, 
-         this._name,
-         this._period,
-         this._administrators,
-         this._members,
-         this._weightMeasurements,
-         this._timeMeasurements);
+
+      var i: number = 0;
+      let administrators = new Array<PersonMemento>(this._administrators.length);
+      for (i = 0; i < this._administrators.length; i++)
+         administrators[i] = this._administrators[i].memento();
+
+      let members = new Array<PersonMemento>(this._members.length);
+      for (i = 0; i < this._members.length; i++)
+         members[i] = this._members[i].memento();
+
+      return new CohortMemento (this.persistenceDetails.memento(), 
+         this._name.memento(),
+         this._period.memento(),
+         administrators,
+         members,
+         this._cohortType);
    }
 
    /**
@@ -417,9 +373,8 @@ export class Cohort extends Persistence {
       return (super.equals(rhs) &&
          this._name.equals(rhs._name) &&
          personArraysAreEqual(this._administrators, rhs._administrators) &&
-         personArraysAreEqual (this._members, rhs._members) &&
-         weightMeasurementTypeArraysAreEqual (this._weightMeasurements, rhs._weightMeasurements) &&
-         timeMeasurementTypeArraysAreEqual(this._timeMeasurements, rhs._timeMeasurements) &&
+         personArraysAreEqual(this._members, rhs._members) &&
+         this._cohortType === rhs._cohortType &&
          this._period.equals(rhs._period));
    }
 
@@ -466,8 +421,8 @@ export class Cohort extends Persistence {
     */
    private includesEmail(email: EmailAddress, people: Array<Person>): boolean {
 
-      for (let i = 0; i < people.length; i++) {
-         if (people[i].email.equals(email))
+      for (let item of people) {
+         if (item.email.equals(email))
             return true;
       }
       return false;

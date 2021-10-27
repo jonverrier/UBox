@@ -3,12 +3,10 @@
 import * as IoTs from 'io-ts';
 import * as IoTsTypes from 'io-ts-types';
 
-import { WeightUnits, TimeUnits, QuantityOf } from '../src/Quantity';
-import { RangeOf } from '../src/Range';
-import { Name, Url } from './Party';
-import { LoginDetails, EmailAddress, Roles, Person } from '../src/Person';
+import { WeightUnits, TimeUnits } from '../src/Quantity';
+import { Person } from '../src/Person';
 import { MeasurementTypeOf } from '../src/Observation';
-import { CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from './Cohort';
+import { ECohortType, CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from './Cohort';
 import { PersistenceDetails } from './Persistence';
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from './IOCommon';
 import { personIoType } from './IOPerson';
@@ -75,8 +73,7 @@ const cohortIoType = IoTs.type({
    _period: cohortPeriodIoType,
    _administrators: IoTs.array(personIoType),
    _members: IoTs.array(personIoType),
-   _weightMeasurements: IoTs.array( weightMeasurementTypeIoType),
-   _timeMeasurements: IoTs.array(timeMeasurementTypeIoType)
+   _cohortType: createEnumType<ECohortType>(ECohortType, 'ECohortType')
 });
 
 export class CohortCodec implements ICodec<Cohort> {
@@ -99,22 +96,13 @@ export class CohortCodec implements ICodec<Cohort> {
 
       let members = new Array<Person>(temp._members.length);
       for (i = 0; i < members.length; i++)
-         members[i] = new Person(temp._members[i]);
-
-      let weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>(temp._weightMeasurements.length);
-      for (i = 0; i < weightMeasurements.length; i++)
-         weightMeasurements[i] = new MeasurementTypeOf<WeightUnits>(temp._weightMeasurements[i]);
-
-      let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>(temp._timeMeasurements.length);
-      for (i = 0; i < timeMeasurements.length; i++)
-         timeMeasurements[i] = new MeasurementTypeOf<TimeUnits>(temp._timeMeasurements[i]);     
+         members[i] = new Person(temp._members[i]);    
 
       return new Cohort(new PersistenceDetails(temp._persistenceDetails._key, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
          new CohortName(temp._name._name),
          new CohortTimePeriod(new Date(temp._period._startDate), temp._period._period, temp._period._numberOfPeriods),
          administrators,
          members,
-         weightMeasurements,
-         timeMeasurements);
+         temp._cohortType);
    }
 }

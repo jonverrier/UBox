@@ -4,9 +4,10 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { MeasurementUnitType, MeasurementOf, IMeasurementStore, EMeasurementType, EMeasurementUnitType, EPositiveTrend } from '../../core/src/Observation';
-import { WeightMeasurementCodec, TimeMeasurementCodec } from '../../core/src/IOObservation';
+import { EBaseUnitDimension, EBaseUnit, BaseUnits } from '../../core/src/Unit';
 import { TimeUnits, WeightUnits, RepUnits } from "../../core/src/Quantity";
+import { MeasurementOf, IMeasurementStore, EMeasurementType, EPositiveTrend } from '../../core/src/Observation';
+import { WeightMeasurementCodec, TimeMeasurementCodec } from '../../core/src/IOObservation';
 import { OlympicLiftMeasurementTypeFactory } from '../../core/src/ObservationDictionary';
 
 export class MeasurementDb implements IMeasurementStore {
@@ -174,9 +175,43 @@ export class MeasurementDb implements IMeasurementStore {
 
 
 const measurementTypeValues: Array<string> = (Object.values(EMeasurementType));
-const measurementUnitTypeValues: Array<string> = (Object.values(EMeasurementUnitType));
-const allUnitValues: Array<string> = WeightUnits.allowedValues().concat(TimeUnits.allowedValues()).concat(RepUnits.allowedValues());
+const measurementUnitTypeValues: Array<string> = (Object.values(EBaseUnitDimension));
 const trendValues: Array<string> = (Object.values(EPositiveTrend));
+
+const baseUnitDemensions: Array<string> = (Object.values(EBaseUnitDimension));
+const baseUnits: Array<string> = (Object.values(EBaseUnit));
+
+export const quantitySchema = new mongoose.Schema({
+   _amount: {
+      type: Number,
+      required: true
+   },
+   _unit: {
+      _dimension: {
+         type: String,
+         enum: baseUnitDemensions,
+         required: true
+      },
+      _name: {
+         type: String,
+         enum: baseUnits,
+         required: true
+      }
+   }
+});
+
+export const rangeSchema = new mongoose.Schema({
+   _lo: quantitySchema,
+   _loInclEq: {
+      type: Boolean,
+      required: true
+   },
+   _hi: quantitySchema,
+   _hiInclEq: {
+      type: Boolean,
+      required: true
+   },
+});
 
 export const measurementTypeSchema = new mongoose.Schema({
    _measurementType: {
@@ -189,38 +224,7 @@ export const measurementTypeSchema = new mongoose.Schema({
       enum: measurementUnitTypeValues,
       required: true
    }, 
-   _range: {
-      _lo: {
-         _amount: {
-            type: Number,
-            required: true
-         },
-         _unit: {
-            type: String,
-            enum: allUnitValues,
-            required: true
-         },
-      },
-      _loInclEq: {
-         type: Boolean,
-         required: true
-      },
-      _hi: {
-         _amount: {
-            type: Number,
-            required: true
-         },
-         _unit: {
-            type: String,
-            enum: allUnitValues,
-            required: true
-         },
-      },
-      _hiInclEq: {
-         type: Boolean,
-         required: true
-      },
-   },
+   _range: rangeSchema,
    _trend: {
       type: String,
       enum: trendValues,
@@ -243,17 +247,7 @@ const measurementSchema = new mongoose.Schema({
          required: true
       },
    },
-   _quantity: {
-      _amount: {
-         type: Number,
-         required: true
-      },
-      _unit: {
-         type: String,
-         enum: allUnitValues,
-         required: true
-      },
-   },
+   _quantity: quantitySchema,
    _repeats: {
       type: Number,
       required: true

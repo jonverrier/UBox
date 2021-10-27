@@ -1,11 +1,11 @@
 /*! Copyright TXPCo, 2021 */
 
-import { QuantityOf, QuantityMementoOf } from './Quantity';
+import { Quantity, QuantityMemento } from './Quantity';
 import { InvalidUnitError } from './CoreError';
 
 export class RangeMementoOf<Unit> {
-   readonly _lo: QuantityMementoOf<Unit>;
-   readonly _hi: QuantityMementoOf<Unit>;
+   readonly _lo: QuantityMemento;
+   readonly _hi: QuantityMemento;
    readonly _loInclEq: boolean;
    readonly _hiInclEq: boolean;
 
@@ -16,7 +16,7 @@ export class RangeMementoOf<Unit> {
     * @param hi - the unit in which the scalar value is measured
     * @param _hiInclEq - does the the high end of the range include equality test
     */
-   constructor(lo: QuantityMementoOf<Unit>, _loInclEq: boolean, hi: QuantityMementoOf<Unit>, _hiInclEq: boolean) {
+   constructor(lo: QuantityMemento, _loInclEq: boolean, hi: QuantityMemento, _hiInclEq: boolean) {
 
       this._lo = lo;
       this._loInclEq = _loInclEq;
@@ -26,8 +26,8 @@ export class RangeMementoOf<Unit> {
 }
 
 export class RangeOf<Unit> { 
-   private _lo: QuantityOf<Unit>;
-   private _hi: QuantityOf<Unit>;
+   private _lo: Quantity;
+   private _hi: Quantity;
    private _loInclEq: boolean;
    private _hiInclEq: boolean;
 
@@ -38,7 +38,7 @@ export class RangeOf<Unit> {
  * @param hi - the unit in which the scalar value is measured
  * @param hiInclEq - does the the high end of the range include equality test
  */
-   constructor(lo: QuantityOf<Unit>, loInclEq: boolean, hi: QuantityOf<Unit>, hiInclEq: boolean) {
+   constructor(lo: Quantity, loInclEq: boolean, hi: Quantity, hiInclEq: boolean) {
 
       // TODO - Currently we dont handle conversion, should allow conversion between units via a UnitConverter class
       if (lo.unit != hi.unit)
@@ -57,11 +57,11 @@ export class RangeOf<Unit> {
    /**
    * set of 'getters' for private variables
    */
-   get lo(): QuantityOf<Unit> {
+   get lo(): Quantity {
       return this._lo;
    }
 
-   get hi(): QuantityOf<Unit> {
+   get hi(): Quantity {
       return this._hi;
    }
 
@@ -98,7 +98,7 @@ export class RangeOf<Unit> {
     * test for wether the range includes the value
     * @param value - the object to test 
     */
-   includes(value: QuantityOf<Unit>): boolean {
+   includes(value: Quantity): boolean {
 
       if (value.amount > this._lo.amount && value.amount < this._hi.amount)
          return true;
