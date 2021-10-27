@@ -62,6 +62,7 @@
     <TypeScriptCompile Include="src\Range.ts" />
     <TypeScriptCompile Include="src\CoreError.ts" />
     <TypeScriptCompile Include="src\Persistence.ts" />
+    <TypeScriptCompile Include="src\Unit.ts" />
     <TypeScriptCompile Include="test\test-business.ts" />
     <TypeScriptCompile Include="test\test-cohort.ts">
       <TestFramework>Mocha</TestFramework>
@@ -92,6 +93,7 @@
     <TypeScriptCompile Include="test\test-persistence.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\test-unit.ts" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
