@@ -8,7 +8,7 @@ import { Quantity } from "../../core/src/Quantity";
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { MeasurementTypes } from "../../core/src/ObservationTypeDictionary";
 import { Measurement } from '../../core/src/Observation';
-import { MeasurementApi } from './ObservationApi';
+import { MeasurementApi } from '../src/ObservationApi';
 
 var expect = require("chai").expect;
 
@@ -27,7 +27,7 @@ const getCircularReplacer = () => {
    };
 };
 
-describe("MeasurementApi - weight", function () {
+describe("MeasurementApi", function () {
 
    let quantity = new Quantity(60, BaseUnits.kilogram);
    let repeats = 1;

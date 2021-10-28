@@ -88,8 +88,10 @@
     <TypeScriptCompile Include="src\ContactDb.ts" />
     <TypeScriptCompile Include="src\ObservationDb.ts" />
     <TypeScriptCompile Include="src\PersonDb.ts" />
-    <TypeScriptCompile Include="test\ObservationApi.ts" />
-    <TypeScriptCompile Include="test\PersonApi.ts" />
+    <TypeScriptCompile Include="src\ApiHelp.ts" />
+    <TypeScriptCompile Include="src\ObservationApi.ts" />
+    <TypeScriptCompile Include="src\CohortApi.ts" />
+    <TypeScriptCompile Include="src\PersonApi.ts" />
     <TypeScriptCompile Include="test\test-cohort-api.ts" />
     <TypeScriptCompile Include="test\test-measurement-api.ts" />
     <TypeScriptCompile Include="test\test-person-api.ts">

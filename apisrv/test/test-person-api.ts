@@ -1,14 +1,12 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { IdListCodec, IdList } from '../../core/src/IOCommon';
+import { IdListCodec } from '../../core/src/IOCommon';
 import { Name, Url} from "../../core/src/Party";
 import { ELoginProvider, ERoleType, LoginDetails, EmailAddress, Roles, Person } from "../../core/src/Person";
-import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
-import { PersonApi } from './PersonApi';
+import { PersonApi } from '../src/PersonApi';
 
 var expect = require("chai").expect;
 
@@ -30,8 +28,6 @@ describe("PersonApi", function () {
          new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false),
          new Roles(Array<ERoleType>(ERoleType.Member)));
 
-      var root: string = 'http://localhost:4000';
-
       api = new PersonApi(root);
    });
 
@@ -51,8 +47,8 @@ describe("PersonApi", function () {
    it("Needs to save and then retrieve an existing Person", async function (done) {
 
       try {
-         const response = await api.save(person1);
-         const response2 = await axios.get(queryUrl, { params: { _key: response.persistenceDetails.key } });
+         const savedPerson = await api.save(person1);
+         const response2 = await api.loadOne(savedPerson.persistenceDetails.key);
 
          done();
       } catch (e) {
@@ -64,8 +60,6 @@ describe("PersonApi", function () {
    });
 
    it("Needs to save and then retrieve a Person using lists", async function (done) {
-
-      let inputCodec = new IdListCodec();
 
       try {
          // Save a new object then read it back

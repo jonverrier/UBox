@@ -428,6 +428,6 @@ export class Cohort extends Persistence {
 }
 
 export interface ICohortStore {
-   load(id: string): Promise<Cohort | null>;
+   loadOne(id: string): Promise<Cohort | null>;
    save(cohort: Cohort): Promise<Cohort | null>;
 }
