@@ -3,45 +3,10 @@
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
-import { ECohortType, CohortName, CohortTimePeriod, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
+import { ECohortType, CohortTimePeriod, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
 
 
 var expect = require("chai").expect;
-
-describe("CohortName", function () {
-   var name1: CohortName, name2: CohortName, name3: CohortName;
-
-   beforeEach(function () {
-      name1 = new CohortName("Joe");
-      name2 = new CohortName("Bill");
-      name3 = new CohortName("Joe");
-   });
-
-   it("Needs to compare for equality and inequality", function () {
-
-      expect(name1.equals(name1)).to.equal(true);
-      expect(name1.equals(name2)).to.equal(false);
-      expect(name1.equals(name3)).to.equal(true);
-   });
-
-   it("Needs to catch invalid name", function () {
-
-      let caught = false;
-
-      try {
-         new CohortName("");
-      }
-      catch {
-         caught = true;
-      }
-      expect(caught).to.equal(true);
-   });
-
-   it("Needs to correctly store attributes", function () {
-
-      expect(name1.name).to.equal("Joe");
-   });
-});
 
 describe("CohortTimePeriod", function () {
    var period1: CohortTimePeriod, period2: CohortTimePeriod, period3: CohortTimePeriod;
@@ -141,14 +106,14 @@ describe("Cohort", function () {
       people.push(person);
 
       cohort1 = new Cohort(new PersistenceDetails("id", 1, 1),
-         new CohortName("Joe"),
+         new Name("Joe"),
          period,
          people,
          people,
          ECohortType.OlympicLifting);
 
       cohort2 = new Cohort(new PersistenceDetails("id", 1, 1),
-         new CohortName("Bill"),
+         new Name("Bill"),
          period,
          people,
          people,
@@ -163,7 +128,7 @@ describe("Cohort", function () {
    
    it("Needs to correctly store attributes", function () {
 
-      expect(cohort1.name.equals(new CohortName("Joe"))).to.equal(true);
+      expect(cohort1.name.equals(new Name("Joe"))).to.equal(true);
       expect(cohort1.period.equals(period)).to.equal(true);
       expect(personArraysAreEqual(cohort1.members, cohort2.members)).to.equal(true);
       expect(personArraysAreEqual(cohort1.administrators, cohort2.administrators)).to.equal(true);
@@ -172,7 +137,7 @@ describe("Cohort", function () {
 
    it("Needs to correctly change attributes", function () {
 
-      let newName = new CohortName ("NewJoe");
+      let newName = new Name ("NewJoe");
 
       let people = new Array<Person>();
       people.push(person2);

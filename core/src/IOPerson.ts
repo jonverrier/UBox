@@ -3,6 +3,7 @@
 import { Url, Name} from "./Party";
 import { LoginDetails, EmailAddress, Roles, Person, PersonMemento, ERoleType, ELoginProvider } from "./Person";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
+import { nameIoType, urlIoType, } from '../src/IOParty';
 
 import * as IoTs from 'io-ts';
 
@@ -12,50 +13,6 @@ import * as IoTs from 'io-ts';
 // - has a Codec class, which can transform to and from the Memento format. 
 // - Memento versions are transmitted over the wire, and stored in the database.
 
-// Name Codec
-// ==========
-const nameIoType = IoTs.type({
-   _displayName: IoTs.string // name must be non-null
-});
-
-export class NameCodec implements ICodec<Name> {
-
-   decode(data: any): any {
-      return decodeWith(nameIoType)(data); 
-   }
-
-   encode(data: Name): any {
-      return encodeWith(nameIoType)(data.memento());
-   }
-
-   tryCreateFrom(data: any): Name {
-      let temp = this.decode (data); // If types dont match an exception will be thrown here 
-      return new Name(temp._displayName);
-   }
-}
-
-// Url Codec
-// ==========
-export const urlIoType = IoTs.type({
-   _url: IoTs.string, // URL must be non-null
-   _isUrlVerified: IoTs.boolean
-});
-
-export class UrlCodec implements ICodec<Url> {
-
-   decode(data: any): any {
-      return decodeWith(urlIoType)(data);
-   }
-
-   encode(data: Url): any {
-      return encodeWith(urlIoType)(data.memento());
-   }
-
-   tryCreateFrom(data: any): Url {
-      let temp = this.decode(data); // If types dont match an exception will be thrown here
-      return new Url(temp._url, temp._isUrlVerified);
-   }
-}
 
 // LoginDetails Codec
 // ==========

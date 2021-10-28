@@ -3,7 +3,6 @@
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { IdListCodec } from '../../core/src/IOCommon';
 import { Name, Url} from "../../core/src/Party";
 import { ELoginProvider, ERoleType, LoginDetails, EmailAddress, Roles, Person } from "../../core/src/Person";
 import { PersonApi } from '../src/PersonApi';

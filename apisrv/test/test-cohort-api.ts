@@ -5,9 +5,8 @@ import axios from 'axios';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { Name, Url } from "../../core/src/Party";
-import { ELoginProvider, LoginDetails, EmailAddress, Roles, ERoleType, Person } from "../../core/src/Person";
-
-import { ECohortPeriod, CohortName, CohortTimePeriod, Cohort, ECohortType } from "../../core/src/Cohort";
+import { ELoginProvider, LoginDetails, EmailAddress, Person } from "../../core/src/Person";
+import { ECohortPeriod, CohortTimePeriod, Cohort, ECohortType } from "../../core/src/Cohort";
 import { CohortApi } from '../src/CohortApi';
 
 var expect = require("chai").expect;
@@ -35,7 +34,7 @@ describe("CohortApi", function () {
       people.push(person); 
 
       cohort1 = new Cohort(new PersistenceDetails(null, 1, 1),
-         new CohortName("Joe"),
+         new Name("Joe"),
          period,
          people,
          people,

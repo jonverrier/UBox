@@ -3,10 +3,12 @@
 import * as IoTs from 'io-ts';
 import * as IoTsTypes from 'io-ts-types';
 
+import { Name } from './Party';
 import { Person } from '../src/Person';
-import { ECohortType, CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from './Cohort';
+import { ECohortType, CohortTimePeriod, ECohortPeriod, Cohort } from './Cohort';
 import { PersistenceDetails } from './Persistence';
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from './IOCommon';
+import { nameIoType } from './IOParty';
 import { personIoType } from './IOPerson';
 
 // Rule summary for a Persistent Object: 
@@ -15,27 +17,6 @@ import { personIoType } from './IOPerson';
 // - has a Codec class, which can transform to and from the Memento format. 
 // - Memento versions are transmitted over the wire, and stored in the database.
 
-// CohortName Codec
-// ==========
-const cohortNameIoType = IoTs.type({
-   _name: IoTs.string
-});
-
-export class CohortNameCodec implements ICodec<CohortName> {
-
-   decode(data: any): any {
-      return decodeWith(cohortNameIoType)(data);
-   }
-
-   encode(data: CohortName): any {
-      return encodeWith(cohortNameIoType)(data.memento());
-   }
-
-   tryCreateFrom(data: any): CohortName {
-      let temp = this.decode(data); // If types dont match an exception will be thrown here
-      return new CohortName(temp._name);
-   }
-}
 
 // CohortTimePeriod Codec
 // ==========
@@ -66,7 +47,7 @@ export class CohortTimePeriodCodec implements ICodec<CohortTimePeriod> {
 
 const cohortIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
-   _name: cohortNameIoType,
+   _name: nameIoType,
    _period: cohortPeriodIoType,
    _administrators: IoTs.array(personIoType),
    _members: IoTs.array(personIoType),
@@ -84,6 +65,7 @@ export class CohortCodec implements ICodec<Cohort> {
    }
 
    tryCreateFrom(data: any): Cohort {
+
       let temp = this.decode (data); // If types dont match an exception will be thrown here
       var i: number;
 
@@ -96,7 +78,7 @@ export class CohortCodec implements ICodec<Cohort> {
          members[i] = new Person(temp._members[i]);    
 
       return new Cohort(new PersistenceDetails(temp._persistenceDetails._key, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
-         new CohortName(temp._name._name),
+         new Name(temp._name._displayName),
          new CohortTimePeriod(new Date(temp._period._startDate), temp._period._period, temp._period._numberOfPeriods),
          administrators,
          members,

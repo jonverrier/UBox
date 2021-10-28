@@ -47,8 +47,10 @@
   <ItemGroup>
     <TypeScriptCompile Include="src\Business.ts" />
     <TypeScriptCompile Include="src\Cohort.ts" />
+    <TypeScriptCompile Include="src\IOBusiness.ts" />
     <TypeScriptCompile Include="src\IOCohort.ts" />
     <TypeScriptCompile Include="src\IOObservation.ts" />
+    <TypeScriptCompile Include="src\IOParty.ts" />
     <TypeScriptCompile Include="src\Localisation.ts" />
     <TypeScriptCompile Include="src\Logger.ts" />
     <TypeScriptCompile Include="src\Observation.ts" />
@@ -67,9 +69,11 @@
     <TypeScriptCompile Include="test\test-cohort.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\test-IObusiness.ts" />
     <TypeScriptCompile Include="test\test-IOcohort.ts" />
     <TypeScriptCompile Include="test\test-IOcommon.ts" />
     <TypeScriptCompile Include="test\test-IOobservation.ts" />
+    <TypeScriptCompile Include="test\test-IOparty.ts" />
     <TypeScriptCompile Include="test\test-localisation.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
