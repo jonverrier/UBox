@@ -37,7 +37,7 @@ export class CohortDb implements ICohortStore {
 
    }
 
-   async load(id: string): Promise<Cohort | null>  {
+   async loadOne (id: string): Promise<Cohort | null>  {
 
       const result = await cohortModel.findOne().where('_id').eq(id).exec();
 
@@ -47,27 +47,28 @@ export class CohortDb implements ICohortStore {
             result._doc._persistenceDetails._key = result._doc._id.toString();
 
          var personDb: PersonDb = new PersonDb();
-         var measurementDb = new MeasurementDb();
 
          // Switch adminstrators from an array of Ids to an array of objects by loading them up 
          let adminIds = this.makeIdArray(result._doc._administratorIds);
          let memberIds = this.makeIdArray(result._doc._memberIds);
-         let admins = personDb.loadMany(adminIds);
-         let members = personDb.loadMany(memberIds);
-         let measurements = measurementDb.loadManyForPeople(memberIds);
-         measurements.then(data => {
-            if (data && data.length > 0)
-               result.measurements = data; 
-         });
+         let admins = await personDb.loadMany(adminIds);
+         let members = await personDb.loadMany(memberIds);
 
-         admins.then(data => {
+
+         /* admins.then(data => {
             result._doc._administrators = data ? data : new Array<Person>();
             return members;
          })
          .then(data => {
             result._doc._members = data ? data : new Array<Person>();
             return this._codec.tryCreateFrom(result._doc);
-         });
+         }); */
+
+         // TODO - should be able to run these in parallel and then chain them. Does not seem to work per above ... 
+         result._doc._administrators = admins ? admins : new Array<Person>();
+         result._doc._members = members ? members : new Array<Person>();
+
+         return this._codec.tryCreateFrom(result._doc);
 
       } else {
          return null;
