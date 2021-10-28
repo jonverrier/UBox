@@ -1,8 +1,8 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { BaseUnits } from '../src/Unit';
-import { WeightUnits,EWeightUnits, Quantity } from '../src/Quantity';
-import { RangeOf } from '../src/Range';
+import { Quantity } from '../src/Quantity';
+import { Range } from '../src/Range';
 
 var expect = require("chai").expect;
 
@@ -12,7 +12,7 @@ describe("Range", function () {
       let quantityLo = new Quantity(1, BaseUnits.kilogram);
       let quantityHi = new Quantity(2, BaseUnits.kilogram);
 
-      let range = new RangeOf<WeightUnits>(quantityLo, true, quantityHi, false);
+      let range = new Range(quantityLo, true, quantityHi, false);
 
       expect(range.lo).to.equal(quantityLo);
       expect(range.hi).to.equal(quantityHi);
@@ -31,7 +31,7 @@ describe("Range", function () {
       let quantityLo = new Quantity(1, BaseUnits.kilogram);
       let quantityHi = new Quantity(2, BaseUnits.kilogram);
 
-      let range = new RangeOf<WeightUnits>(quantityLo, true, quantityHi, false);
+      let range = new Range(quantityLo, true, quantityHi, false);
 
       expect(range.includes(quantityLo)).to.equal(true);
    });
@@ -41,7 +41,7 @@ describe("Range", function () {
       let quantityLo = new Quantity(1, BaseUnits.kilogram);
       let quantityHi = new Quantity(2, BaseUnits.kilogram);
 
-      let range = new RangeOf<WeightUnits>(quantityLo, false, quantityHi, false);
+      let range = new Range(quantityLo, false, quantityHi, false);
 
       expect(range.includes(quantityLo)).to.equal(false);
    });
@@ -51,7 +51,7 @@ describe("Range", function () {
       let quantityLo = new Quantity(1, BaseUnits.kilogram);
       let quantityHi = new Quantity(2, BaseUnits.kilogram);
 
-      let range = new RangeOf<WeightUnits>(quantityLo, true, quantityHi, true);
+      let range = new Range(quantityLo, true, quantityHi, true);
 
       expect(range.includes(quantityHi)).to.equal(true);
    });
@@ -61,7 +61,7 @@ describe("Range", function () {
       let quantityLo = new Quantity(1, BaseUnits.kilogram);
       let quantityHi = new Quantity(2, BaseUnits.kilogram);
 
-      let range = new RangeOf<WeightUnits>(quantityLo, false, quantityHi, false);
+      let range = new Range(quantityLo, false, quantityHi, false);
 
       expect(range.includes(quantityHi)).to.equal(false);
    });
@@ -73,7 +73,7 @@ describe("Range", function () {
       let caught = false;
 
       try {
-         let range = new RangeOf<WeightUnits>(quantityLo, false, quantityHi, false);
+         let range = new Range(quantityLo, false, quantityHi, false);
       } catch {
          caught = true;
       }
@@ -88,7 +88,7 @@ describe("Range", function () {
 
       try {
          // call below has lo range > hi range, which is out of bounds
-         let range = new RangeOf<WeightUnits>(quantityHi, false, quantityLo, false);
+         let range = new Range(quantityHi, false, quantityLo, false);
       } catch {
          caught = true;
       }

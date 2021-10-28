@@ -1,12 +1,8 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { TimeUnits, WeightUnits } from '../src/Quantity';
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
-import { MeasurementTypeOf, IMeasurementTypeFactoryFor } from "../src/Observation";
-import { SnatchMeasurementType, CleanMeasurementType, Row250mMeasurementType, Run800mMeasurementType } from '../src/FitnessObservations';
-import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from '../src/ObservationDictionary';
 import { ECohortType, CohortName, CohortTimePeriod, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
 
 
@@ -125,8 +121,6 @@ describe("CohortTimePeriod", function () {
 describe("Cohort", function () {
    let cohort1:Cohort, cohort2:Cohort;
    let period = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 1);
-   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
-   let timeFactory: IMeasurementTypeFactoryFor<WeightUnits> = new SpeedMeasurementTypeFactory();
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
@@ -142,13 +136,6 @@ describe("Cohort", function () {
       null);
 
    beforeEach(function () {
-      let weightMeasurement = new SnatchMeasurementType(weightFactory);
-      let weightMeasurements = new Array < MeasurementTypeOf<WeightUnits>>();
-      weightMeasurements.push(weightMeasurement);
-
-      let timeMeasurement = new Row250mMeasurementType(timeFactory);
-      let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
-      timeMeasurements.push(timeMeasurement);
 
       let people = new Array<Person>();
       people.push(person);
@@ -186,14 +173,6 @@ describe("Cohort", function () {
    it("Needs to correctly change attributes", function () {
 
       let newName = new CohortName ("NewJoe");
-
-      let weightMeasurement = new CleanMeasurementType(weightFactory);
-      let weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>();
-      weightMeasurements.push(weightMeasurement);
-
-      let timeMeasurement = new Run800mMeasurementType(timeFactory);
-      let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
-      timeMeasurements.push(timeMeasurement);
 
       let people = new Array<Person>();
       people.push(person2);

@@ -3,7 +3,7 @@
 import { Quantity, QuantityMemento } from './Quantity';
 import { InvalidUnitError } from './CoreError';
 
-export class RangeMementoOf<Unit> {
+export class RangeMemento {
    readonly _lo: QuantityMemento;
    readonly _hi: QuantityMemento;
    readonly _loInclEq: boolean;
@@ -25,7 +25,7 @@ export class RangeMementoOf<Unit> {
    }
 }
 
-export class RangeOf<Unit> { 
+export class Range { 
    private _lo: Quantity;
    private _hi: Quantity;
    private _loInclEq: boolean;
@@ -76,8 +76,8 @@ export class RangeOf<Unit> {
    /**
    * memento() returns a copy of internal state
    */
-   memento(): RangeMementoOf<Unit> {
-      return new RangeMementoOf<Unit>(this._lo.memento(), this._loInclEq, this._hi.memento(), this._hiInclEq);
+   memento(): RangeMemento {
+      return new RangeMemento(this._lo.memento(), this._loInclEq, this._hi.memento(), this._hiInclEq);
    }
 
    /**
@@ -85,7 +85,7 @@ export class RangeOf<Unit> {
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
     */
-   equals(rhs: RangeOf<Unit> ) : boolean {
+   equals(rhs: Range ) : boolean {
 
       return (
          (this._lo.equals (rhs._lo)) &&

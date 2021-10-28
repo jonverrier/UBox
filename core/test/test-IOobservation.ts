@@ -4,29 +4,27 @@
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
 import { EBaseUnitDimension, BaseUnits } from '../src/Unit';
-import { TimeUnits, WeightUnits, Quantity } from '../src/Quantity';
-import { RangeOf } from '../src/Range';
-import { MeasurementTypeOf, MeasurementOf, IMeasurementTypeFactoryFor} from '../src/Observation';
-import { CleanMeasurementType, Row250mMeasurementType } from '../src/FitnessObservations';
-import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from '../src/ObservationDictionary';
-import { WeightMeasurementTypeCodec, WeightMeasurementCodec, TimeMeasurementTypeCodec, TimeMeasurementCodec, MeasurementsCodec } from '../src/IOObservation';
+import { Quantity } from '../src/Quantity';
+import { Range } from '../src/Range';
+import { MeasurementType} from '../src/ObservationType';
+import { MeasurementTypes } from '../src/ObservationTypeDictionary';
+import { Measurement } from '../src/Observation';
+import { MeasurementTypeCodec, MeasurementCodec, MeasurementsCodec } from '../src/IOObservation';
 
 var expect = require("chai").expect;
 
 
 
-describe("IOWeightMeasurementType", function () {
+describe("IOMeasurementType", function () {
 
-   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
-
-   var codec: WeightMeasurementTypeCodec;
-   var measurementType: CleanMeasurementType = new CleanMeasurementType(weightFactory);
+   var codec: MeasurementTypeCodec;
+   var measurementType: MeasurementType = MeasurementTypes.clean;
 
    beforeEach(function () {
-      codec = new WeightMeasurementTypeCodec();
+      codec = new MeasurementTypeCodec();
    });
 
-   it("Needs to decode a WeightMeasurementType from clean input.", function () {
+   it("Needs to decode a MeasurementType from clean input.", function () {
 
       var caught: boolean = false;
 
@@ -46,10 +44,10 @@ describe("IOWeightMeasurementType", function () {
    });
 
 
-   it("Needs to encode WeightMeasurementType.", function () {
+   it("Needs to encode MeasurementType.", function () {
 
       let encoded = codec.encode(measurementType);
-      let encodedRange = new RangeOf<WeightUnits>(
+      let encodedRange = new Range(
          new Quantity(encoded._range._lo),
          encoded._range._loInclEq,
          new Quantity(encoded._range._hi),
@@ -60,10 +58,10 @@ describe("IOWeightMeasurementType", function () {
       expect(measurementType.range.equals(encodedRange)).to.equal(true);
    });
 
-   it("Needs to encode then decode WeightMeasurementType.", function () {
+   it("Needs to encode then decode MeasurementType.", function () {
 
       let encoded = codec.encode(measurementType);
-      let decoded: CleanMeasurementType;
+      let decoded: MeasurementType;
 
       var caught: boolean = false;
 
@@ -71,7 +69,7 @@ describe("IOWeightMeasurementType", function () {
          decoded = codec.tryCreateFrom(encoded);
       } catch (e) {
          var logger = new Logger();
-         logger.logError("WeightMeasurementType", "Decode", "Error", e.toString());
+         logger.logError("MeasurementType", "Decode", "Error", e.toString());
          caught = true;
       }
 
@@ -81,16 +79,15 @@ describe("IOWeightMeasurementType", function () {
 
 });
 
-describe("IOWeightMeasurement", function () {
-   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
+describe("IOMeasurement", function () {
 
    var quantity = new Quantity(10, BaseUnits.kilogram);
    var repeats = 1;
-   var codec: WeightMeasurementCodec = new WeightMeasurementCodec();
-   var measurementType: MeasurementTypeOf<WeightUnits> = new CleanMeasurementType(weightFactory);
-   var measurement: MeasurementOf<WeightUnits> = new MeasurementOf<WeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
+   var codec: MeasurementCodec = new MeasurementCodec();
+   var measurementType: MeasurementType = MeasurementTypes.clean;
+   var measurement: Measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
 
-   it("Needs to decode a WeightMeasurement from clean input.", function () {
+   it("Needs to decode a Measurement from clean input.", function () {
 
       var caught: boolean = false;
 
@@ -106,7 +103,7 @@ describe("IOWeightMeasurement", function () {
          });
       } catch (e) {
          var logger = new Logger();
-         logger.logError("WeightMeasurement", "Decode", "Error", e.toString());
+         logger.logError("Measurement", "Decode", "Error", e.toString());
          caught = true;
       }
 
@@ -114,7 +111,7 @@ describe("IOWeightMeasurement", function () {
    });
 
 
-   it("Needs to encode WeightMeasurement.", function () {
+   it("Needs to encode Measurement.", function () {
 
       var caught: boolean = false;
 
@@ -122,17 +119,17 @@ describe("IOWeightMeasurement", function () {
          let encoded = codec.encode(measurement);
       } catch (e) {
          var logger = new Logger();
-         logger.logInfo("WeightMeasurement", "Encode", "Error", e.toString());
+         logger.logInfo("Measurement", "Encode", "Error", e.toString());
          caught = true;
       }
 
       expect(caught).to.equal(false);
    });
 
-   it("Needs to encode then decode WeightMeasurement.", function () {
+   it("Needs to encode then decode Measurement.", function () {
 
       let encoded = codec.encode(measurement);
-      let decoded: MeasurementOf<WeightUnits>;
+      let decoded: Measurement;
 
       var caught: boolean = false;
 
@@ -140,7 +137,7 @@ describe("IOWeightMeasurement", function () {
          decoded = codec.tryCreateFrom(encoded);
       } catch (e) {
          var logger = new Logger();
-         logger.logError("WeightMeasurement", "Encode-Decode", "Error", e.toString());
+         logger.logError("Measurement", "Encode-Decode", "Error", e.toString());
          caught = true;
       }
 
@@ -149,87 +146,16 @@ describe("IOWeightMeasurement", function () {
    });
 
 
-   it("Needs to encode & decode multiple WeightMeasurements", function () {
+   it("Needs to encode & decode multiple Measurements", function () {
 
-      var measurements: Array<MeasurementOf<WeightUnits>> = new Array<MeasurementOf<WeightUnits>>();
+      var measurements: Array<Measurement> = new Array<Measurement>();
       measurements.push(measurement);
       measurements.push(measurement);
 
       var measurementsCodec: MeasurementsCodec = new MeasurementsCodec();
       var encoded = measurementsCodec.encode(measurements);
 
-      var newMeasurements: Array<MeasurementOf<WeightUnits>> = measurementsCodec.tryCreateFrom(encoded);
-
-      expect(newMeasurements[0].equals(measurement)).to.equal(true);
-   });
-
-});
-
-describe("IOTimeMeasurementType", function () {
-   let timeFactory: IMeasurementTypeFactoryFor<WeightUnits> = new SpeedMeasurementTypeFactory();
-
-   var codec: TimeMeasurementTypeCodec = new TimeMeasurementTypeCodec();
-   var measurementType: Row250mMeasurementType = new Row250mMeasurementType(timeFactory);
-
-   it("Needs to encode then decode a TimeMeasurementType.", function () {
-
-      let encoded = codec.encode(measurementType);
-      let decoded: Row250mMeasurementType;
-
-      var caught: boolean = false;
-
-      try {
-         decoded = codec.tryCreateFrom(encoded);
-      } catch (e) {
-         var logger = new Logger();
-         logger.logError("TimeMeasurementType", "Decode", "Error", e.toString());
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-      expect(decoded.equals(measurementType)).to.equal(true);
-   });
-});
-
-describe("IOTimeMeasurement", function () {
-   let timeFactory: IMeasurementTypeFactoryFor<WeightUnits> = new SpeedMeasurementTypeFactory();
-
-   var quantity = new Quantity(10, BaseUnits.second);
-   var repeats = 1;
-   var codec: TimeMeasurementCodec = new TimeMeasurementCodec();
-   var measurementType: MeasurementTypeOf<TimeUnits> = new Row250mMeasurementType(timeFactory);
-   var measurement: MeasurementOf<TimeUnits> = new MeasurementOf<TimeUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");;
-
-   it("Needs to encode then decode a TimeMeasurement.", function () {
-
-      let encoded = codec.encode(measurement);
-      let decoded: MeasurementOf<TimeUnits>;
-
-      var caught: boolean = false;
-
-      try {
-         decoded = codec.tryCreateFrom(encoded);
-      } catch (e) {
-         var logger = new Logger();
-         logger.logError("TimeMeasurement", "Encode-Decode", "Error", e.toString());
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-      expect(decoded.equals(measurement)).to.equal(true);
-   });
-
-   it("Needs to encode & decode multiple TimeMeasurements", function () {
-
-
-      var measurements: Array<MeasurementOf<TimeUnits>> = new Array<MeasurementOf<TimeUnits>>();
-      measurements.push(measurement);
-      measurements.push(measurement);
-
-      var measurementsCodec: MeasurementsCodec = new MeasurementsCodec();
-      var encoded = measurementsCodec.encode(measurements);
-
-      var newMeasurements: Array<MeasurementOf<TimeUnits>> = measurementsCodec.tryCreateFrom(encoded);
+      var newMeasurements: Array<Measurement> = measurementsCodec.tryCreateFrom(encoded);
 
       expect(newMeasurements[0].equals(measurement)).to.equal(true);
    });

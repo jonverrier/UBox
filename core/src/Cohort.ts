@@ -3,8 +3,6 @@
 import { InvalidParameterError } from './CoreError';
 import { PersistenceDetailsMemento, PersistenceDetails, Persistence } from "./Persistence";
 import { EmailAddress, PersonMemento, Person, personArraysAreEqual } from "./Person";
-import { MeasurementTypeMementoOf, EMeasurementType, MeasurementTypeOf, weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual } from "./Observation";
-import { WeightUnits, TimeUnits } from './Quantity';
 
 export enum ECohortPeriod { Week = "Week", TwoWeeks = "TwoWeeks", ThreeWeeks = "ThreeWeeks", FourWeeks = "FourWeeks", Month = "Month" }
 

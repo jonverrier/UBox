@@ -3,17 +3,14 @@
 import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
-import { BaseUnit, BaseUnits } from '../../core/src/Unit';
-import { WeightUnits, EWeightUnits, Quantity, TimeUnits, ETimeUnits } from "../../core/src/Quantity";
+import { BaseUnits } from '../../core/src/Unit';
+import { Quantity } from "../../core/src/Quantity";
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { MeasurementOf, IMeasurementTypeFactoryFor } from '../../core/src/Observation';
-import { SnatchMeasurementType, Run800mMeasurementType } from '../../core/src/FitnessObservations';
-import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from "../../core/src/ObservationDictionary";
+import { MeasurementTypes } from "../../core/src/ObservationTypeDictionary";
+import { Measurement } from '../../core/src/Observation';
 import { MeasurementApi } from './ObservationApi';
 
 var expect = require("chai").expect;
-
-import { EApiUrls } from '../src/ApiUrls';
 
 var root: string = 'http://localhost:4000';
 
@@ -31,14 +28,13 @@ const getCircularReplacer = () => {
 };
 
 describe("MeasurementApi - weight", function () {
-   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
 
    let quantity = new Quantity(60, BaseUnits.kilogram);
    let repeats = 1;
-   let measurementType = new SnatchMeasurementType(weightFactory);
+   let measurementType = MeasurementTypes.snatch;
    let api: MeasurementApi = new MeasurementApi(root);
 
-   var measurement1: MeasurementOf<WeightUnits> = new MeasurementOf<WeightUnits>(
+   var measurement1: Measurement = new Measurement(
       new PersistenceDetails(null, 1, 2), quantity, repeats, 0, measurementType, "1234");
 
    it("Needs to save a new Measurement", async function (done) {
@@ -132,14 +128,13 @@ describe("MeasurementApi - weight", function () {
 });
 
 describe("MeasurementApi - time", function () {
-   let timeFactory: IMeasurementTypeFactoryFor<TimeUnits> = new SpeedMeasurementTypeFactory();
 
-   let quantity = new Quantity(200, BaseUnits.kilogram);
+   let quantity = new Quantity(200, BaseUnits.second);
    let repeats = 1;
-   let measurementType = new Run800mMeasurementType(timeFactory);
+   let measurementType = MeasurementTypes.row250;
    let api: MeasurementApi = new MeasurementApi(root);
 
-   var measurement1: MeasurementOf<TimeUnits> = new MeasurementOf<TimeUnits>(
+   var measurement1: Measurement = new Measurement(
       new PersistenceDetails(null, 1, 2), quantity, repeats, 0, measurementType, "1234");
 
    it("Needs to save a new Measurement", async function (done) {
@@ -171,6 +166,7 @@ describe("MeasurementApi - time", function () {
    });
 
    it("Needs to save and then retrieve a Measurement using lists", async function (done) {
+      var logger = new Logger();
 
       try {
          // Save a new object 
@@ -187,14 +183,13 @@ describe("MeasurementApi - time", function () {
          if (firstSave.equals(secondSave)) {
             done();
          } else {
-            var logger = new Logger();
+
             var e: string = " Returned: " + JSON.stringify(secondSave, getCircularReplacer()) + "Original: " + JSON.stringify(firstSave, getCircularReplacer());
             logger.logError("MeasurementApi", "Save-LoadMany", "Error", e.toString());
             done(new Error(e));
          }
 
       } catch (e) {
-         var logger = new Logger();
          logger.logError("test-measurement-api", "Save-LoadMany", "Error", e.toString());
          done(e);
       }
@@ -203,18 +198,19 @@ describe("MeasurementApi - time", function () {
 });
 
 describe("MeasurementApi - heterogenous", function () {
+
+   var logger = new Logger();
+
    let repeats = 1;
-   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
-   let timeFactory: IMeasurementTypeFactoryFor<TimeUnits> = new SpeedMeasurementTypeFactory();
 
    let quantityOfTime = new Quantity(200, BaseUnits.second);
-   let timeMeasurementType = new Run800mMeasurementType(timeFactory);
+   let timeMeasurementType = MeasurementTypes.run800;
    let quantityOfWeight = new Quantity(60, BaseUnits.kilogram);
-   let weightMeasurementType = new SnatchMeasurementType(weightFactory);
+   let weightMeasurementType = MeasurementTypes.snatch;
 
-   var timeMeasurement: MeasurementOf<TimeUnits> = new MeasurementOf<TimeUnits>(
+   var timeMeasurement: Measurement = new Measurement(
       new PersistenceDetails(null, 1, 2), quantityOfTime, repeats, 0, timeMeasurementType, "1234");
-   var weightMeasurement: MeasurementOf<WeightUnits> = new MeasurementOf<WeightUnits>(
+   var weightMeasurement: Measurement = new Measurement(
       new PersistenceDetails(null, 1, 2), quantityOfWeight, repeats, 0, weightMeasurementType, "1234");
 
    let api: MeasurementApi = new MeasurementApi(root);
@@ -240,14 +236,12 @@ describe("MeasurementApi - heterogenous", function () {
          if (response3.length === 2) {
             done();
          } else {
-            var logger = new Logger();
             var e: string = "Returned: " + response3;
             logger.logError("test-measurement-api", "Save-LoadMany", "Error", e);
             done(new Error(e));
          }
 
       } catch (e) {
-         var logger = new Logger();
          logger.logError("test-measurement-api", "Save-LoadMany", "Error", e.toString());
          done(e);
       }

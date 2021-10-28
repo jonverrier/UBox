@@ -6,10 +6,6 @@ import { PersistenceDetails } from '../src/Persistence';
 import { CohortNameCodec, CohortTimePeriodCodec, CohortCodec } from '../src/IOCohort';
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Person, ELoginProvider} from '../src/Person';
-import { MeasurementTypeOf, IMeasurementTypeFactoryFor} from '../src/Observation';
-import { TimeUnits, WeightUnits } from '../src/Quantity';
-import { SnatchMeasurementType, Row250mMeasurementType } from '../src/FitnessObservations';
-import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from '../src/ObservationDictionary';
 import { ECohortType, CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from '../src/Cohort';
 
 var expect = require("chai").expect;
@@ -118,9 +114,6 @@ describe("IOCohortTimePeriod", function () {
 
 describe("IOCohort", function () {
 
-   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
-   let timeFactory: IMeasurementTypeFactoryFor<WeightUnits> = new SpeedMeasurementTypeFactory();
-
    var codec: CohortCodec = new CohortCodec();
    var cohort: Cohort;
 
@@ -134,14 +127,6 @@ describe("IOCohort", function () {
 
    let people = new Array<Person>();
    people.push(person);
-
-   let weightMeasurement = new SnatchMeasurementType(weightFactory);
-   let weightMeasurements = new Array<MeasurementTypeOf<WeightUnits>>();
-   weightMeasurements.push(weightMeasurement);
-
-   let timeMeasurement = new Row250mMeasurementType(timeFactory);
-   let timeMeasurements = new Array<MeasurementTypeOf<TimeUnits>>();
-   timeMeasurements.push(timeMeasurement);
 
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),
       new CohortName("Joe"),
