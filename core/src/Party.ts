@@ -62,10 +62,10 @@ export class Name {
     * @param name - the string to test
     */
    static isValidName(name: string): boolean {
-      if (name === null || name.length === 0)
-         return false;
+      if (name && name.length > 0)
+         return true;
 
-      return (true);
+      return (false);
    }
 }
 

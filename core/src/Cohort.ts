@@ -2,82 +2,12 @@
 
 import { InvalidParameterError } from './CoreError';
 import { PersistenceDetailsMemento, PersistenceDetails, Persistence } from "./Persistence";
+import { Name, NameMemento } from "./Party";
 import { EmailAddress, PersonMemento, Person, personArraysAreEqual } from "./Person";
 
 export enum ECohortPeriod { Week = "Week", TwoWeeks = "TwoWeeks", ThreeWeeks = "ThreeWeeks", FourWeeks = "FourWeeks", Month = "Month" }
 
 export enum ECohortType {OlympicLifting = "Olymplic Lifting", Powerlifting = "Power Lifting", Conditioning = "Conditioning"}
-
-export class CohortNameMemento {
-   _name: string;
-
-   /**
-    * Create a CohortNameMemento object
-    * @param name - name for the Cohort
-    */
-   constructor(name: string) {
-      this._name = name;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get name(): string {
-      return this._name;
-   }
-}
-
-export class CohortName {
-   private _name: string;
-
-   /**
-    * Create a CohortName object
-    * @param name - name for the Cohort
-    */
-   constructor(name: string) {
-      if (!CohortName.isValidName (name)) {
-         throw new InvalidParameterError();
-      }
-
-      this._name = name;
-   }
-
-   /**
-   * memento() returns a copy of internal state
-   */
-   memento(): CohortNameMemento {
-      return new CohortNameMemento (this._name);
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get name(): string {
-      return this._name;
-   }
-
-
-   /**
- * test for equality - checks all fields are the same. 
- * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
- * @param rhs - the object to compare this one to.  
- */
-   equals(rhs: CohortName): boolean {
-
-      return (this._name === rhs._name);
-   }
-
-   /**
-    * test for valid name 
-    * @param name - the string to test
-    */
-   static isValidName(name: string): boolean {
-      if (name === null || name.length === 0)
-         return false;
-
-      return (true);
-   }
-}
 
 export class CohortTimePeriodMemento {
    _startDate: Date;
@@ -195,7 +125,7 @@ export class CohortTimePeriod {
 
 export class CohortMemento {
    _persistenceDetails: PersistenceDetailsMemento;
-   _name: CohortNameMemento;
+   _name: NameMemento;
    _period: CohortTimePeriodMemento;
    _administrators: Array<PersonMemento>;
    _members: Array<PersonMemento>;
@@ -217,7 +147,7 @@ export class CohortMemento {
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
-      name: CohortNameMemento, 
+      name: NameMemento, 
       period: CohortTimePeriodMemento,
       administrators: Array<PersonMemento>, members: Array<PersonMemento>,
       cohortType: ECohortType) {
@@ -238,7 +168,7 @@ export class CohortMemento {
 }
 
 export class Cohort extends Persistence {
-   private _name: CohortName;
+   private _name: Name;
    private _period: CohortTimePeriod;
    private _administrators: Array<Person>;
    private _members: Array<Person>;
@@ -258,7 +188,7 @@ export class Cohort extends Persistence {
  * @param cohortType - purpose of the cohort (Oly, Power, Conditioning, ...)
  */
    constructor(persistenceDetails: PersistenceDetails,
-      name: CohortName,
+      name: Name,
       period: CohortTimePeriod,
       administrators: Array<Person>, members: Array<Person>,
       cohortType: ECohortType);
@@ -273,7 +203,7 @@ export class Cohort extends Persistence {
             memento._persistenceDetails._schemaVersion,
             memento._persistenceDetails._sequenceNumber));
 
-         this._name = new CohortName(memento._name.name);
+         this._name = new Name(memento._name._displayName);
          this._period = new CohortTimePeriod(memento._period.startDate, memento._period.period, memento._period.numberOfPeriods);
 
          this._administrators = new Array<Person>(memento._administrators.length);
@@ -306,7 +236,7 @@ export class Cohort extends Persistence {
    /**
    * set of 'getters' and setters for private variables
    */
-   get name(): CohortName {
+   get name(): Name {
       return this._name;
    }
    get administrators(): Array<Person> {
@@ -322,7 +252,7 @@ export class Cohort extends Persistence {
       return this._cohortType;
    }
 
-   set name(name: CohortName) {
+   set name(name: Name) {
       this._name = name;
    }
    set period(period: CohortTimePeriod) {

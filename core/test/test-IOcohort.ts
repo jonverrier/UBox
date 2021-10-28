@@ -3,62 +3,13 @@
 
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
-import { CohortNameCodec, CohortTimePeriodCodec, CohortCodec } from '../src/IOCohort';
 import { Url, Name } from "../src/Party";
 import { LoginDetails, EmailAddress, Person, ELoginProvider} from '../src/Person';
-import { ECohortType, CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from '../src/Cohort';
+import { ECohortType, CohortTimePeriod, ECohortPeriod, Cohort } from '../src/Cohort';
+import { CohortTimePeriodCodec, CohortCodec } from '../src/IOCohort';
 
 var expect = require("chai").expect;
 
-describe("IOCohortName", function () {
-
-   var codec: CohortNameCodec = new CohortNameCodec();
-   var cohortName: CohortName = new CohortName("test");
-
-   it("Needs to decode a CohortName from clean input.", function () {
-
-      var caught: boolean = false;
-
-      try {
-
-         codec.decode({
-            _name: "test name"
-         });
-
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-   });
-
-
-   it("Needs to encode CohortName.", function () {
-
-      let encoded = codec.encode(cohortName);     
-
-      expect(cohortName.equals(encoded)).to.equals(true);
-   });
-
-   it("Needs to encode then decode CohortName.", function () {
-
-      let encoded = codec.encode(cohortName);
-      let decoded: CohortName;
-
-      var caught: boolean = false;
-
-      try {
-         decoded = codec.tryCreateFrom(encoded);
-      } catch (e) {
-         var logger = new Logger();
-         logger.logError("CohortName", "Decode", "Error", e.toString());
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-      expect(decoded.equals(cohortName)).to.equal(true);
-   });
-});
 
 describe("IOCohortTimePeriod", function () {
 
@@ -129,7 +80,7 @@ describe("IOCohort", function () {
    people.push(person);
 
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),
-      new CohortName("Joe"),
+      new Name("Joe"),
       period,
       people,
       people,

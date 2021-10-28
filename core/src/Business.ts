@@ -1,4 +1,5 @@
 /*! Copyright TXPCo, 2020, 2021 */
+import { InvalidParameterError } from './CoreError';
 import { Name, NameMemento, Url, UrlMemento } from './Party';
 import { EmailAddress, Person, PersonMemento, personArraysAreEqual } from './Person';
 import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
@@ -25,6 +26,9 @@ export class BusinessMemento {
       name: NameMemento,
       thumbnailUrl: Url,
       administrators: Array<Person>) {
+
+      if ((!administrators) || administrators.length < 1)
+         throw new InvalidParameterError("Business must have at least one Administrator");
 
       var i: number = 0;
 
