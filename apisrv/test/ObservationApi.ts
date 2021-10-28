@@ -6,27 +6,23 @@ import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
 import { EBaseUnitDimension } from '../../core/src/Unit';
-import { WeightUnits, TimeUnits } from "../../core/src/Quantity";
-import { MeasurementOf, IMeasurementStore } from '../../core/src/Observation';
+import { MeasurementTypes } from '../../core/src/ObservationTypeDictionary';
+import { Measurement, IMeasurementStore } from '../../core/src/Observation';
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
-import { WeightMeasurementCodec, MeasurementsCodec, TimeMeasurementCodec} from '../../core/src/IOObservation';
-import { OlympicLiftMeasurementTypeFactory } from '../../core/src/ObservationDictionary';
+import { MeasurementCodec, MeasurementsCodec} from '../../core/src/IOObservation';
 
 import { EApiUrls } from '../src/ApiUrls';
 
 export class MeasurementApi implements IMeasurementStore {
-   private _weightCodec: WeightMeasurementCodec;
-   private _timeCodec: TimeMeasurementCodec;
+   private _codec: MeasurementCodec;
    private _saveUrl: string;
    private _queryUrl: string;
    private _queryManyUrl: string;
    private _queryManyForPeopleUrl: string;
-   private _weightFactory: OlympicLiftMeasurementTypeFactory = new OlympicLiftMeasurementTypeFactory();
 
 
    constructor(serverUrl: string) {
-      this._weightCodec = new WeightMeasurementCodec();
-      this._timeCodec = new TimeMeasurementCodec();
+      this._codec = new MeasurementCodec();
 
       this._saveUrl = serverUrl + EApiUrls.SaveMeasurement;
       this._queryUrl = serverUrl + EApiUrls.QueryMeasurement;
@@ -39,7 +35,7 @@ export class MeasurementApi implements IMeasurementStore {
     * @param id - id for the object to load
     * @returns - a constructed object or null if not found. 
     */
-   async loadOne (id: any): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
+   async loadOne (id: any): Promise<Measurement | null> {
 
       var decoded;
       var response;
@@ -49,16 +45,7 @@ export class MeasurementApi implements IMeasurementStore {
 
          response = await axios.get(this._queryUrl, { params: { _key: id.toString() } });
 
-         if (this._weightFactory.isValid( response.data._measurementType)) {
-            etype = EBaseUnitDimension.Weight;
-         }
-         else {
-            etype = EBaseUnitDimension.Time;
-         }
-
-         return etype === EBaseUnitDimension.Weight ?
-            this._weightCodec.tryCreateFrom(response.data) :
-            this._timeCodec.tryCreateFrom(response.data);
+         this._codec.tryCreateFrom(response.data);
       }
       catch (e) {
          let logger: Logger = new Logger();
@@ -72,7 +59,7 @@ export class MeasurementApi implements IMeasurementStore {
     * @param ids - an array of ids for the objects to load
     * @returns - an array of constructed object or null if not found.
     */
-   async loadMany(ids: Array<any>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
+   async loadMany(ids: Array<any>): Promise<Array<Measurement>> {
 
       var response;
 
@@ -97,7 +84,7 @@ export class MeasurementApi implements IMeasurementStore {
       }
    }
 
-   async loadManyForPeople(ids: Array<string>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
+   async loadManyForPeople(ids: Array<string>): Promise<Array<Measurement>> {
 
       try {
          let inputCodec = new IdListCodec();
@@ -125,26 +112,17 @@ export class MeasurementApi implements IMeasurementStore {
     * @param measurement - the object to save
     * @returns - a copy of what was saved - useful if saving a new object, as the store will assign a new key
     */
-   async save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
+   async save(measurement: Measurement): Promise<Measurement | null> {
 
       var encoded;
-      var etype: EBaseUnitDimension;
 
-      if (measurement.measurementType.unitType === EBaseUnitDimension.Weight) {
-         encoded = this._weightCodec.encode(measurement);
-         etype = EBaseUnitDimension.Weight;
-      }
-      else {
-         encoded = this._timeCodec.encode(measurement);
-         etype = EBaseUnitDimension.Time;
-      }
+      encoded = this._codec.encode(measurement);
+
 
       try {
          const response = await axios.put(this._saveUrl, encoded);
 
-         return etype === EBaseUnitDimension.Weight ?
-            this._weightCodec.tryCreateFrom (response.data) :
-            this._timeCodec.tryCreateFrom(response.data);
+         return this._codec.tryCreateFrom(response.data);
 
       } catch (e) {
          let logger: Logger = new Logger();

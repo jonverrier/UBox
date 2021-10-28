@@ -3,14 +3,11 @@
 import * as IoTs from 'io-ts';
 import * as IoTsTypes from 'io-ts-types';
 
-import { WeightUnits, TimeUnits } from '../src/Quantity';
 import { Person } from '../src/Person';
-import { MeasurementTypeOf } from '../src/Observation';
 import { ECohortType, CohortName, CohortTimePeriod, ECohortPeriod, Cohort } from './Cohort';
 import { PersistenceDetails } from './Persistence';
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from './IOCommon';
 import { personIoType } from './IOPerson';
-import { weightMeasurementTypeIoType, timeMeasurementTypeIoType } from './IOObservation';
 
 // Rule summary for a Persistent Object: 
 // - derives from IPersistence, which contains a PersistentDetails member object. 

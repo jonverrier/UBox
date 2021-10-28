@@ -4,20 +4,18 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { EBaseUnitDimension, EBaseUnit, BaseUnits } from '../../core/src/Unit';
-import { TimeUnits, WeightUnits, RepUnits } from "../../core/src/Quantity";
-import { MeasurementOf, IMeasurementStore, EMeasurementType, EPositiveTrend } from '../../core/src/Observation';
-import { WeightMeasurementCodec, TimeMeasurementCodec } from '../../core/src/IOObservation';
-import { OlympicLiftMeasurementTypeFactory } from '../../core/src/ObservationDictionary';
+import { EBaseUnitDimension, EBaseUnit } from '../../core/src/Unit';
+import { EMeasurementType, EPositiveTrend } from '../../core/src/ObservationType';
+import { MeasurementTypes } from '../../core/src/ObservationTypeDictionary';
+import { Measurement, IMeasurementStore } from '../../core/src/Observation';
+import { MeasurementCodec } from '../../core/src/IOObservation';
 
 export class MeasurementDb implements IMeasurementStore {
-   private _weightCodec: WeightMeasurementCodec;
-   private _timeCodec: TimeMeasurementCodec;
-   private _weightMeasurementFactory: OlympicLiftMeasurementTypeFactory = new OlympicLiftMeasurementTypeFactory();
+   private _codec: MeasurementCodec;
+   private _measurementTypes: MeasurementTypes = new MeasurementTypes();
 
    constructor() {
-      this._weightCodec = new WeightMeasurementCodec();
-      this._timeCodec = new TimeMeasurementCodec();
+      this._codec = new MeasurementCodec();
    }
 
    /**
@@ -25,7 +23,7 @@ export class MeasurementDb implements IMeasurementStore {
     * @param id - id for the object to load
     * @returns - a constructed object or null if not found. 
     */
-   async loadOne (id: string): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> |null>  {
+   async loadOne (id: string): Promise<Measurement | null>  {
 
       try {
          const result = await measurementModel.findOne().where('_id').eq(id).exec();
@@ -35,11 +33,11 @@ export class MeasurementDb implements IMeasurementStore {
             if (result._doc._persistenceDetails._key !== result._doc._id.toString())
                result._doc._persistenceDetails._key = result._doc._id.toString();
 
-            if (this._weightMeasurementFactory.isValid (result._doc._measurementType)) {
-               return this._weightCodec.tryCreateFrom(result._doc);
+            if (this._measurementTypes.isValid (result._doc._measurementType)) {
+               return this._codec.tryCreateFrom(result._doc);
             }
             else {
-               return this._timeCodec.tryCreateFrom(result._doc);
+               return null;
             }
          } else {
             return null;
@@ -55,25 +53,22 @@ export class MeasurementDb implements IMeasurementStore {
     * helper function to process arrays froma  loadXXX query.
     */
 
-   private processManyResults(result: any): Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>> {
+   private processManyResults(result: any): Array<Measurement> {
       if (result && result.length > 0) {
          var i: number;
-         var measurements: Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>
-            = new Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>();
+         var measurements: Array<Measurement>
+            = new Array<Measurement>();
 
          for (i = 0; i < result.length; i++) {
             // If we saved a new document, copy the new Mongo ID up to persistenceDetails
             if (result[i]._doc._persistenceDetails._key !== result[i]._doc._id.toString())
                result[i]._doc._persistenceDetails._key = result[i]._doc._id.toString();
 
-            var measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>;
-            if (this._weightMeasurementFactory.isValid(result[i]._doc._measurementType)) {
-               measurement = this._weightCodec.tryCreateFrom(result[i]._doc);
+            var measurement: Measurement;
+            if (this._measurementTypes.isValid(result[i]._doc._measurementType)) {
+               measurement = this._codec.tryCreateFrom(result[i]._doc);
+               measurements.push(measurement);
             }
-            else {
-               measurement = this._timeCodec.tryCreateFrom(result[i]._doc);
-            }
-            measurements.push(measurement);
          }
 
          return measurements;
@@ -87,7 +82,7 @@ export class MeasurementDb implements IMeasurementStore {
     * @param ids - an array of ids for the objects to load
     * @returns - an array of constructed object or null if not found.
     */
-   async loadMany(ids: Array<string>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
+   async loadMany(ids: Array<string>): Promise<Array<Measurement>> {
 
       try {
          const result = await measurementModel.find().where('_id').in(ids).exec();
@@ -106,7 +101,7 @@ export class MeasurementDb implements IMeasurementStore {
     * @param ids - an array of ids for people on which measurements apply 
     * @returns - an array of constructed object or null if not found.
     */
-   async loadManyForPeople (ids: Array<string>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
+   async loadManyForPeople (ids: Array<string>): Promise<Array<Measurement>> {
 
       try {
          const result = await measurementModel.find().where('_subjectKey').in(ids).exec();
@@ -125,7 +120,7 @@ export class MeasurementDb implements IMeasurementStore {
     * @param measurement - the object to save
     * @returns - a copy of what was saved - useful if saving a new object, as the store will assign a new key
     */
-   async save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
+   async save(measurement: Measurement): Promise<Measurement | null> {
       try {
          if (!measurement.persistenceDetails.hasValidKey()) {
             // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
@@ -147,11 +142,11 @@ export class MeasurementDb implements IMeasurementStore {
                   existing._doc._persistenceDetails._key = existing._doc._id.toString();
 
                // Return a constructed object via weight or time codec as appropriate
-               if (this._weightMeasurementFactory.isValid(existing._doc._measurementType)) {
-                  return this._weightCodec.tryCreateFrom(existing._doc);
+               if (this._measurementTypes.isValid(existing._doc._measurementType)) {
+                  return this._codec.tryCreateFrom(existing._doc);
                }
                else {
-                  return this._timeCodec.tryCreateFrom(existing._doc);
+                  return null;
                }
             }
          }
@@ -161,10 +156,10 @@ export class MeasurementDb implements IMeasurementStore {
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())
             result._doc._persistenceDetails._key = result._doc._id.toString();
 
-         if (this._weightMeasurementFactory.isValid(result._doc._measurementType)) 
-            return this._weightCodec.tryCreateFrom(result._doc);
+         if (this._measurementTypes.isValid(result._doc._measurementType))
+            return this._codec.tryCreateFrom(result._doc);
          else
-            return this._timeCodec.tryCreateFrom(result._doc);
+            return null;
       } catch (err) {
          let logger: Logger = new Logger();
          logger.logError("MeasurementDb", "save", "Error:", err);

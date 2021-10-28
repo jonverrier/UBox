@@ -10,7 +10,7 @@ import { IdListCodec, IdList } from '../../core/src/IOCommon';
 
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { PersonDb } from './PersonDb';
-import { WeightMeasurementCodec, MeasurementsCodec, TimeMeasurementCodec } from '../../core/src/IOObservation';
+import { MeasurementCodec, MeasurementsCodec } from '../../core/src/IOObservation';
 import { MeasurementDb } from './ObservationDb';
 
 import { CohortCodec } from '../../core/src/IOCohort';
@@ -90,8 +90,7 @@ ApiRoutes.put(EApiUrls.SavePerson, function (req, res) {
 ApiRoutes.get(EApiUrls.QueryMeasurement, function (req, res) {
 
    try {
-      let weightCodec = new WeightMeasurementCodec();
-      let timeCodec = new TimeMeasurementCodec();
+      let codec = new MeasurementCodec();
       let db = new MeasurementDb();
 
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
@@ -100,9 +99,7 @@ ApiRoutes.get(EApiUrls.QueryMeasurement, function (req, res) {
       let result = db.loadOne (params.get('_key'));
       result.then(data => {
          if (data) {
-            res.send(data.measurementType.unitType === EBaseUnitDimension.Weight ?
-               weightCodec.encode(data) :
-               timeCodec.encode(data));
+            res.send(codec.encode(data));
          }
          else {
             res.send(null);
@@ -120,44 +117,21 @@ ApiRoutes.get(EApiUrls.QueryMeasurement, function (req, res) {
 ApiRoutes.put(EApiUrls.SaveMeasurement, function (req, res) {
 
    try {
-      let weightCodec = new WeightMeasurementCodec();
-      let timeCodec = new TimeMeasurementCodec();
+      let codec = new MeasurementCodec();
       let db = new MeasurementDb();
 
-      let encoded = req.body;
-      var decoded;
-      var ok: boolean = false;
-      
-      try {
-         decoded = weightCodec.tryCreateFrom(encoded);
-         ok = true;
-      } catch (e) {
-      } 
+      let encoded = req.body;     
+      var decoded = codec.tryCreateFrom(encoded);
 
-      if (!ok) {
-         try {
-            decoded = timeCodec.tryCreateFrom(encoded);
-            ok = true;
-         } catch (e) {
+      let result = db.save(decoded);
+      result.then(data => {
+         if (data) {
+            res.send(codec.encode(data));
          }
-      }
-
-      if (ok) {
-         let result = db.save(decoded);
-         result.then(data => {
-            if (data) {
-               res.send(data.measurementType.unitType === EBaseUnitDimension.Weight ?
-                  weightCodec.encode(data) :
-                  timeCodec.encode(data));
-            }
-            else {
-               res.send(null);
-            }
-         });
-      }
-      else {
-         throw new Error("Could not decode input." + req.body.toString());
-      }
+         else {
+            res.send(null);
+         }
+      });
    } catch (e) {
       var logger = new Logger();
       logger.logError("Measurement", "SaveMeasurement", "Error:", e.toString());

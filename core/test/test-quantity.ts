@@ -1,46 +1,11 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { BaseUnits } from '../src/Unit';
-import { WeightUnits, TimeUnits, RepUnits, EWeightUnits, ETimeUnits, ERepUnits, Quantity } from '../src/Quantity';
+import { EBaseUnit, EBaseUnitDimension, BaseUnits } from '../src/Unit';
+import { Quantity } from '../src/Quantity';
 
 
 var expect = require("chai").expect;
 
-describe("WeightUnits", function () {
-
-   it("Needs to construct correctly", function () {
-      let weightUnits = new WeightUnits();
-
-      expect(weightUnits.isAllowedValue(EWeightUnits.Kg)).to.equal(true);
-      expect(weightUnits.isAllowedValue(ETimeUnits.Seconds)).to.equal(false);
-      expect(weightUnits.allowedValues().indexOf(EWeightUnits.Kg) !== -1).to.equal(true);
-   });
-
-});
-
-describe("TimeUnits", function () {
-
-   it("Needs to construct correctly", function () {
-      let timeUnits = new TimeUnits();
-
-      expect(timeUnits.isAllowedValue(ETimeUnits.Seconds)).to.equal(true);
-      expect(timeUnits.isAllowedValue(EWeightUnits.Kg)).to.equal(false);
-      expect(timeUnits.allowedValues().indexOf(ETimeUnits.Seconds) !== -1).to.equal(true);
-   });
-
-});
-
-describe("RepUnits", function () {
-
-   it("Needs to construct correctly", function () {
-      let repUnits = new RepUnits();
-
-      expect(repUnits.isAllowedValue(ERepUnits.Reps)).to.equal(true);
-      expect(repUnits.isAllowedValue(EWeightUnits.Kg)).to.equal(false);
-      expect(repUnits.allowedValues().indexOf(ERepUnits.Reps) !== -1).to.equal(true);
-   });
-
-});
 
 describe("Quantity", function () {
 
@@ -62,21 +27,19 @@ describe("Quantity", function () {
       expect(quantity1.equals(quantity3)).to.equal(true);
    });
 
-   it("Needs to test weight unit membership  correctly", function () {
-      var isMember: string = EWeightUnits.Kg;
-      var notMember: string = "Banana";
+   it("Needs to test Weight unit membership  correctly", function () {
 
-      expect(WeightUnits.isAllowedValue(isMember)).to.equal(true);
-      expect(WeightUnits.isAllowedValue(notMember)).to.equal(false);
+      expect(BaseUnits.kilogram.dimension === EBaseUnitDimension.Weight).to.equal(true);
    });
 
-   it("Needs to test time unit membership  correctly", function () {
-      var isMember: string = ETimeUnits.Seconds;
-      var notMember: string = "Banana";
+   it("Needs to test Time unit membership  correctly", function () {
 
-      expect(TimeUnits.isAllowedValue(isMember)).to.equal(true);
-      expect(TimeUnits.isAllowedValue(notMember)).to.equal(false);
+      expect(BaseUnits.second.dimension === EBaseUnitDimension.Time).to.equal(true);
    });
 
+   it("Needs to test Rep unit membership  correctly", function () {
+
+      expect(BaseUnits.rep.dimension === EBaseUnitDimension.Reps).to.equal(true);
+   });
 });
 

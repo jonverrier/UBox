@@ -2,29 +2,20 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { EBaseUnitDimension, BaseUnits } from '../src/Unit';
-import { WeightUnits, EWeightUnits, TimeUnits, ETimeUnits, Quantity } from '../src/Quantity';
+import { Quantity } from '../src/Quantity';
 
-import {
-   EPositiveTrend, EMeasurementType, MeasurementTypeOf, MeasurementOf, IMeasurementStore,
-   weightMeasurementTypeArraysAreEqual, timeMeasurementTypeArraysAreEqual, IMeasurementTypeFactoryFor
-} from '../src/Observation';
+import { EPositiveTrend, EMeasurementType, MeasurementType, measurementTypeArraysAreEqual} from '../src/Observationtype';
 
-import {
-   SnatchMeasurementType, CleanMeasurementType, JerkMeasurementType, CleanAndJerkMeasurementType,
-   Row250mMeasurementType, Run800mMeasurementType
-} from '../src/FitnessObservations';
-
-import { OlympicLiftMeasurementTypeFactory, SpeedMeasurementTypeFactory } from '../src/ObservationDictionary';
+import { MeasurementTypes } from '../src/ObservationTypeDictionary';
+import { Measurement, IMeasurementStore } from '../src/Observation';
 
 var expect = require("chai").expect;
 
 describe("MeasurementType", function () {
-   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
-   let timeFactory: IMeasurementTypeFactoryFor<WeightUnits> = new SpeedMeasurementTypeFactory();
 
    it("Needs to construct correctly", function () {
-      let snatch = new SnatchMeasurementType(weightFactory);
-      let snatch2 = new SnatchMeasurementType(weightFactory);
+      let snatch = MeasurementTypes.snatch;
+      let snatch2 = MeasurementTypes.snatch;
 
       expect(snatch.measurementType).to.equal(EMeasurementType.Snatch);
       expect(snatch.range.equals(snatch2.range)).to.equal(true);
@@ -33,66 +24,66 @@ describe("MeasurementType", function () {
    });
 
    it("Needs to test for equality", function () {
-      let snatch = new SnatchMeasurementType(weightFactory);
-      let clean = new CleanMeasurementType(weightFactory);
-      let snatch2 = new SnatchMeasurementType(weightFactory);
+      let snatch = MeasurementTypes.snatch;
+      let clean = MeasurementTypes.clean;
+      let snatch2 = MeasurementTypes.snatch;
 
       expect(snatch.equals(snatch)).to.equal(true);
       expect(snatch.equals(clean)).to.equal(false);
       expect(snatch.equals(snatch2)).to.equal(true);
    });
 
-   it("Needs to test weight array compare", function () {
-      let snatch = new SnatchMeasurementType(weightFactory);
-      let clean = new CleanMeasurementType(weightFactory);
-      let snatches = new Array<MeasurementTypeOf<WeightUnits>>();
-      let moreSnatches = new Array<MeasurementTypeOf<WeightUnits>>();
-      let variedLifts = new Array<MeasurementTypeOf<WeightUnits>>();
+   it("Needs to test array compare", function () {
+      let snatch = MeasurementTypes.snatch;
+      let clean = MeasurementTypes.clean;
+      let snatches = new Array<MeasurementType>();
+      let moreSnatches = new Array<MeasurementType>();
+      let variedLifts = new Array<MeasurementType>();
       snatches.push(snatch);
       moreSnatches.push(snatch);
       moreSnatches.push(snatch);
       variedLifts.push(snatch);
       variedLifts.push(clean);
 
-      expect(weightMeasurementTypeArraysAreEqual(snatches, snatches)).to.equal(true);
-      expect(weightMeasurementTypeArraysAreEqual(snatches, null)).to.equal(false);
-      expect(weightMeasurementTypeArraysAreEqual(null, snatches)).to.equal(false);
-      expect(weightMeasurementTypeArraysAreEqual(moreSnatches, snatches)).to.equal(false);
-      expect(weightMeasurementTypeArraysAreEqual(moreSnatches, variedLifts)).to.equal(false);
+      expect(measurementTypeArraysAreEqual(snatches, snatches)).to.equal(true);
+      expect(measurementTypeArraysAreEqual(snatches, null)).to.equal(false);
+      expect(measurementTypeArraysAreEqual(null, snatches)).to.equal(false);
+      expect(measurementTypeArraysAreEqual(moreSnatches, snatches)).to.equal(false);
+      expect(measurementTypeArraysAreEqual(moreSnatches, variedLifts)).to.equal(false);
    });
 
    it("Needs to test time array compare", function () {
-      let row = new Row250mMeasurementType(timeFactory);
-      let run = new Run800mMeasurementType(timeFactory);
-      let rows = new Array<MeasurementTypeOf<TimeUnits>>();
-      let moreRows = new Array<MeasurementTypeOf<TimeUnits>>();
-      let variedRows = new Array<MeasurementTypeOf<TimeUnits>>();
+      let row = MeasurementTypes.row250;
+      let run = MeasurementTypes.run800;
+      let rows = new Array<MeasurementType>();
+      let moreRows = new Array<MeasurementType>();
+      let variedRows = new Array<MeasurementType>();
       rows.push(row);
       moreRows.push(row);
       moreRows.push(row);
       variedRows.push(row);
       variedRows.push(run);
 
-      expect(timeMeasurementTypeArraysAreEqual(rows, rows)).to.equal(true);
-      expect(timeMeasurementTypeArraysAreEqual(rows, null)).to.equal(false);
-      expect(timeMeasurementTypeArraysAreEqual(null, rows)).to.equal(false);
-      expect(timeMeasurementTypeArraysAreEqual(moreRows, rows)).to.equal(false);
-      expect(timeMeasurementTypeArraysAreEqual(moreRows, variedRows)).to.equal(false);
+      expect(measurementTypeArraysAreEqual(rows, rows)).to.equal(true);
+      expect(measurementTypeArraysAreEqual(rows, null)).to.equal(false);
+      expect(measurementTypeArraysAreEqual(null, rows)).to.equal(false);
+      expect(measurementTypeArraysAreEqual(moreRows, rows)).to.equal(false);
+      expect(measurementTypeArraysAreEqual(moreRows, variedRows)).to.equal(false);
    });
 
    it("Needs to construct correctly from memento()", function () {
-      let snatch1 = new SnatchMeasurementType(weightFactory);
+      let snatch1 = MeasurementTypes.snatch;
       let memento = snatch1.memento();
 
-      expect(new MeasurementTypeOf < EWeightUnits> (memento).equals(snatch1)).to.equal(true);
+      expect(new MeasurementType (memento).equals(snatch1)).to.equal(true);
    });
 });
 
-function testConstruct<MeasuredUnit>(quantity: Quantity,
+function testConstruct(quantity: Quantity,
                               repeats: number,
-                              measurementType: MeasurementTypeOf<MeasuredUnit>) {
+                              measurementType: MeasurementType) {
 
-   let measurement = new MeasurementOf<MeasuredUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+   let measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
 
    expect(measurement.persistenceDetails.key).to.equal("id");
    expect(measurement.persistenceDetails.schemaVersion).to.equal(1);
@@ -105,13 +96,13 @@ function testConstruct<MeasuredUnit>(quantity: Quantity,
    expect(measurement.subjectKey).to.equal("1234");
 }
 
-function testEquals<MeasuredUnit>(quantity: Quantity,
+function testEquals(quantity: Quantity,
    repeats: number,
-   measurementType: MeasurementTypeOf<MeasuredUnit>) {
+   measurementType: MeasurementType) {
 
-   let measurement1 = new MeasurementOf<MeasuredUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
-   let measurement2 = new MeasurementOf<MeasuredUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 1, measurementType, "1234");
-   let measurement3 = new MeasurementOf<MeasuredUnit>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+   let measurement1 = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+   let measurement2 = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 1, measurementType, "1234");
+   let measurement3 = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
 
    expect(measurement1.equals(measurement1)).to.equal(true);
    expect(measurement1.equals(measurement2)).to.equal(false);
@@ -119,75 +110,74 @@ function testEquals<MeasuredUnit>(quantity: Quantity,
 }
 
 describe("Measurement", function () {
-   let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
-   let timeFactory: IMeasurementTypeFactoryFor<WeightUnits> = new SpeedMeasurementTypeFactory();
+   let measurementTypes: MeasurementTypes = new MeasurementTypes();
 
    it("Needs to construct Snatch correctly", function () {
       let quantity = new Quantity(60, BaseUnits.kilogram);
       let repeats = 1;
-      let measurement = new SnatchMeasurementType(weightFactory);
+      let measurement = MeasurementTypes.snatch;
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to construct Clean correctly", function () {
       let quantity = new Quantity(60, BaseUnits.kilogram);
       let repeats = 1;
-      let measurement = new CleanMeasurementType(weightFactory);
+      let measurement = MeasurementTypes.clean;
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to construct Jerk correctly", function () {
       let quantity = new Quantity(60, BaseUnits.kilogram);
       let repeats = 1;
-      let measurement = new JerkMeasurementType(weightFactory);
+      let measurement = MeasurementTypes.jerk;
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to construct Clean&Jerk correctly", function () {
       let quantity = new Quantity(60, BaseUnits.kilogram);
       let repeats = 1;
-      let measurement = new CleanAndJerkMeasurementType(weightFactory);
+      let measurement = MeasurementTypes.cleanAndJerk;
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to construct Row250m correctly", function () {
       let quantity = new Quantity(120, BaseUnits.second);
       let repeats = 1;
-      let measurement = new Row250mMeasurementType(timeFactory);
+      let measurement = MeasurementTypes.row250;
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to construct Run800m correctly", function () {
       let quantity = new Quantity(240, BaseUnits.second);
       let repeats = 1;
-      let measurement = new Run800mMeasurementType(timeFactory);
+      let measurement = MeasurementTypes.run800;
       testConstruct(quantity, repeats, measurement);
    });
 
    it("Needs to test Snatch for equality", function () {
       let quantity = new Quantity(60, BaseUnits.kilogram);
       let repeats = 1;
-      let measurement = new SnatchMeasurementType(weightFactory);
+      let measurement = MeasurementTypes.snatch;
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to test Clean for equality", function () {
       let quantity = new Quantity(60, BaseUnits.kilogram);
       let repeats = 1;
-      let measurement = new CleanMeasurementType(weightFactory);
+      let measurement = MeasurementTypes.clean;
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to test Jerk for equality", function () {
       let quantity = new Quantity(60, BaseUnits.kilogram);
       let repeats = 1;
-      let measurement = new JerkMeasurementType(weightFactory);
+      let measurement = MeasurementTypes.jerk;
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to test Clean&Jerk for equality", function () {
       let quantity = new Quantity(60, BaseUnits.kilogram);
-      let measurement = new CleanAndJerkMeasurementType(weightFactory);
+      let measurement = MeasurementTypes.cleanAndJerk;
       let repeats = 1;
       testEquals(quantity, repeats, measurement);
    });
@@ -195,25 +185,25 @@ describe("Measurement", function () {
    it("Needs to test Row for equality", function () {
       let quantity = new Quantity(60, BaseUnits.second);
       let repeats = 1;
-      let measurement = new Row250mMeasurementType(timeFactory);
+      let measurement = MeasurementTypes.row250;
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to test Run for equality", function () {
       let quantity = new Quantity(120, BaseUnits.second);
       let repeats = 1;
-      let measurement = new Run800mMeasurementType(timeFactory);
+      let measurement = MeasurementTypes.run800;
       testEquals(quantity, repeats, measurement);
    });
 
    it("Needs to throw out of range error", function () {
       let quantity = new Quantity(600, BaseUnits.kilogram); // 600 kg snatch is impossible
       let repeats = 1;
-      let measurementType = new SnatchMeasurementType(weightFactory);
+      let measurementType = MeasurementTypes.snatch;
       let caught = false;
 
       try {
-         let measurement = new MeasurementOf<WeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+         let measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
       } catch {
          caught = true;
       }
@@ -224,21 +214,20 @@ describe("Measurement", function () {
 
 class StubStore implements IMeasurementStore {
 
-   async loadOne(): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null>  {
-      let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
+   async loadOne(): Promise<Measurement | Measurement | null>  {
 
       let quantity = new Quantity(60, BaseUnits.kilogram);
       let repeats = 1;
-      let measurementType = new SnatchMeasurementType(weightFactory);
+      let measurementType = MeasurementTypes.snatch;
 
-      return new MeasurementOf<WeightUnits>(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+      return new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
    }
 
-   async save(measurement: MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>): Promise<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits> | null> {
+   async save(measurement: Measurement | Measurement): Promise<Measurement | Measurement | null> {
       return measurement;
    }
 
-   loadMany(ids: Array<any>): Promise<Array<MeasurementOf<WeightUnits> | MeasurementOf<TimeUnits>>> {
+   loadMany(ids: Array<any>): Promise<Array<Measurement | Measurement>> {
       return null;
    }
 
@@ -266,12 +255,10 @@ describe("MeasurementStorer", function () {
       let caught = false;
 
       try {
-         let weightFactory: IMeasurementTypeFactoryFor<WeightUnits> = new OlympicLiftMeasurementTypeFactory();
-
          let quantity = new Quantity(60, BaseUnits.kilogram);
          let repeats = 1;
-         let measurementType = new SnatchMeasurementType(weightFactory);
-         let measurement = new MeasurementOf<WeightUnits>(new PersistenceDetails("id", 1, 2),
+         let measurementType = MeasurementTypes.snatch;
+         let measurement = new Measurement(new PersistenceDetails("id", 1, 2),
             quantity, repeats, 0, measurementType, "1234");
 
          storer.save(measurement);
