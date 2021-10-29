@@ -5,11 +5,13 @@ import * as IoTsTypes from 'io-ts-types';
 
 import { Name } from './Party';
 import { Person } from '../src/Person';
+import { Business } from './Business';
 import { ECohortType, CohortTimePeriod, ECohortPeriod, Cohort } from './Cohort';
 import { PersistenceDetails } from './Persistence';
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from './IOCommon';
 import { nameIoType } from './IOParty';
 import { personIoType } from './IOPerson';
+import { businessIoType } from './IOBusiness';
 
 // Rule summary for a Persistent Object: 
 // - derives from IPersistence, which contains a PersistentDetails member object. 
@@ -47,9 +49,9 @@ export class CohortTimePeriodCodec implements ICodec<CohortTimePeriod> {
 
 const cohortIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
+   _business: businessIoType,
    _name: nameIoType,
    _period: cohortPeriodIoType,
-   _administrators: IoTs.array(personIoType),
    _members: IoTs.array(personIoType),
    _cohortType: createEnumType<ECohortType>(ECohortType, 'ECohortType')
 });
@@ -69,18 +71,14 @@ export class CohortCodec implements ICodec<Cohort> {
       let temp = this.decode (data); // If types dont match an exception will be thrown here
       var i: number;
 
-      let administrators = new Array<Person>(temp._administrators.length);
-      for (i = 0; i < administrators.length; i++)
-         administrators[i] = new Person(temp._administrators[i]);
-
       let members = new Array<Person>(temp._members.length);
       for (i = 0; i < members.length; i++)
          members[i] = new Person(temp._members[i]);    
 
       return new Cohort(new PersistenceDetails(temp._persistenceDetails._key, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
+         new Business (temp._business),
          new Name(temp._name._displayName),
          new CohortTimePeriod(new Date(temp._period._startDate), temp._period._period, temp._period._numberOfPeriods),
-         administrators,
          members,
          temp._cohortType);
    }

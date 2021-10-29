@@ -158,8 +158,8 @@ export class Business extends Persistence {
     */
    includesAdministratorEmail(email: EmailAddress): boolean {
 
-      for (let i = 0; i < this._administrators.length; i++) {
-         if (this._administrators[i].email.equals(email))
+      for (let item of this._administrators) {
+         if (item.email.equals(email))
             return true;
       }
       return false;

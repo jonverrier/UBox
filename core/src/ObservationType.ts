@@ -1,9 +1,8 @@
 /*! Copyright TXPCo, 2021 */
 
-import { EBaseUnitDimension, BaseUnit } from './Unit';
-import { QuantityMemento, Quantity } from "./Quantity";
+import { EBaseUnitDimension } from './Unit';
+import { Quantity } from "./Quantity";
 import { RangeMemento, Range } from "./Range";
-import { Persistence, PersistenceDetails, PersistenceDetailsMemento } from "./Persistence";
 
 // This enum is used to say which direction is 'better' for a measurement - quantity increasing or quantity decreasing 
 // Whenever this is changed, the schema in ObservationDb must be changed to match
@@ -22,7 +21,7 @@ export class MeasurementTypeMemento {
    readonly _trend: EPositiveTrend;
 
    /**
-    * Create a MeasurementTypeMementoFor object - contains the statis elements that characterise a measurement
+    * Create a MeasurementTypeMementoFor object - contains the static elements that characterise a measurement
     * @param measurementType - defines the type of the measurement 
     * @param measurementUnitType - unit typ (weight/time/reps)
     * @param range - acceptable range of values
