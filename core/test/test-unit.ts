@@ -34,5 +34,12 @@ describe("BaseUnits", function () {
       expect(reps.dimension).to.equal(EBaseUnitDimension.Reps);
       expect(reps.name).to.equal(EBaseUnit.Reps);
    });
+
+   it("Needs to construct a memento", function () {
+      let reps = BaseUnits.rep.memento();
+
+      expect(reps._dimension).to.equal(EBaseUnitDimension.Reps);
+      expect(reps._name).to.equal(EBaseUnit.Reps);
+   });
 });
 

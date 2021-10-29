@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name } from "../src/Party";
-import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
+import { LoginDetails, EmailAddress, Person, ELoginProvider } from '../src/Person';
 import { Business, BusinessMemento } from '../src/Business';
 
 
@@ -54,7 +54,7 @@ describe("Business", function () {
 
       expect(business1.name.equals (initialName)).to.equal(true);
       expect(business1.thumbnailUrl.equals(url)).to.equal(true);
-      expect(personArraysAreEqual(business1.administrators, business2.administrators)).to.equal(true);
+      expect(Person.peopleAreEqual(business1.administrators, business2.administrators)).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
@@ -70,7 +70,7 @@ describe("Business", function () {
 
       expect(business1.name.equals (newName)).to.equal(true);
       expect(business1.thumbnailUrl.equals(newUrl)).to.equal(true);
-      expect(personArraysAreEqual(business1.administrators, people)).to.equal(true);
+      expect(Person.peopleAreEqual(business1.administrators, people)).to.equal(true);
    });
 
    it("Needs to test membership", function () {

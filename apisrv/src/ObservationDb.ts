@@ -33,12 +33,8 @@ export class MeasurementDb implements IMeasurementStore {
             if (result._doc._persistenceDetails._key !== result._doc._id.toString())
                result._doc._persistenceDetails._key = result._doc._id.toString();
 
-            if (this._measurementTypes.isValid (result._doc._measurementType)) {
-               return this._codec.tryCreateFrom(result._doc);
-            }
-            else {
-               return null;
-            }
+            return this._codec.tryCreateFrom(result._doc);
+
          } else {
             return null;
          }
@@ -65,10 +61,8 @@ export class MeasurementDb implements IMeasurementStore {
                result[i]._doc._persistenceDetails._key = result[i]._doc._id.toString();
 
             var measurement: Measurement;
-            if (this._measurementTypes.isValid(result[i]._doc._measurementType)) {
-               measurement = this._codec.tryCreateFrom(result[i]._doc);
-               measurements.push(measurement);
-            }
+            measurement = this._codec.tryCreateFrom(result[i]._doc);
+            measurements.push(measurement);
          }
 
          return measurements;
@@ -141,13 +135,8 @@ export class MeasurementDb implements IMeasurementStore {
                if (existing._doc._persistenceDetails._key !== existing._doc._id.toString())
                   existing._doc._persistenceDetails._key = existing._doc._id.toString();
 
-               // Return a constructed object via weight or time codec as appropriate
-               if (this._measurementTypes.isValid(existing._doc._measurementType)) {
-                  return this._codec.tryCreateFrom(existing._doc);
-               }
-               else {
-                  return null;
-               }
+               // Return a constructed object via codec 
+               return this._codec.tryCreateFrom(existing._doc);
             }
          }
          let result = await (new measurementModel(measurement.memento())).save({ isNew: measurement.persistenceDetails.key ? true : false });
@@ -156,10 +145,8 @@ export class MeasurementDb implements IMeasurementStore {
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())
             result._doc._persistenceDetails._key = result._doc._id.toString();
 
-         if (this._measurementTypes.isValid(result._doc._measurementType))
-            return this._codec.tryCreateFrom(result._doc);
-         else
-            return null;
+         return this._codec.tryCreateFrom(result._doc);
+
       } catch (err) {
          let logger: Logger = new Logger();
          logger.logError("MeasurementDb", "save", "Error:", err);

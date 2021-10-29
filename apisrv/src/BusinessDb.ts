@@ -3,17 +3,17 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { ECohortType, Cohort, IBusinessStore } from '../../core/src/Cohort';
 import { Person, PersonMemento } from '../../core/src/Person';
-import { CohortCodec } from '../../core/src/IOCohort';
+import { Business, IBusinessStore } from '../../core/src/Business';
+import { BusinessCodec } from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
 
 
-export class CohortDb implements IBusinessStore {
+export class BusinessDb implements IBusinessStore {
    private _codec;
 
    constructor() {
-      this._codec = new CohortCodec();;
+      this._codec = new BusinessCodec();;
    }
 
    private makeIdArray(input: Array<any>) : Array<string> {
@@ -36,9 +36,9 @@ export class CohortDb implements IBusinessStore {
 
    }
 
-   async loadOne (id: string): Promise<Cohort | null>  {
+   async loadOne(id: string): Promise<Business | null>  {
 
-      const result = await cohortModel.findOne().where('_id').eq(id).exec();
+      const result = await businessModel.findOne().where('_id').eq(id).exec();
 
       if (result) {
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
@@ -49,23 +49,8 @@ export class CohortDb implements IBusinessStore {
 
          // Switch adminstrators from an array of Ids to an array of objects by loading them up 
          let adminIds = this.makeIdArray(result._doc._administratorIds);
-         let memberIds = this.makeIdArray(result._doc._memberIds);
          let admins = await personDb.loadMany(adminIds);
-         let members = await personDb.loadMany(memberIds);
-
-
-         /* admins.then(data => {
-            result._doc._administrators = data ? data : new Array<Person>();
-            return members;
-         })
-         .then(data => {
-            result._doc._members = data ? data : new Array<Person>();
-            return this._codec.tryCreateFrom(result._doc);
-         }); */
-
-         // TODO - should be able to run these in parallel and then chain them. Does not seem to work per above ... 
          result._doc._administrators = admins ? admins : new Array<Person>();
-         result._doc._members = members ? members : new Array<Person>();
 
          return this._codec.tryCreateFrom(result._doc);
 
@@ -74,10 +59,9 @@ export class CohortDb implements IBusinessStore {
       }
    }
 
-   async save(cohort: Cohort): Promise<Cohort | null> {
+   async save(business: Business): Promise<Business | null> {
       try {
-         var prevAdmins: Array<Person> = cohort.administrators;
-         var prevMembers: Array<Person> = cohort.members;
+         var prevAdmins: Array<Person> = business.administrators;
 
          var personDb: PersonDb = new PersonDb();
 
@@ -88,23 +72,14 @@ export class CohortDb implements IBusinessStore {
             }
          }
 
-         // For any Members that do not have valid key, save them
-         for (var i = 0; i < prevMembers.length; i++) {
-            if (!prevMembers[i].persistenceDetails.hasValidKey()) {
-               prevMembers[i] = await personDb.save(prevMembers[i]);
-            }
-         }
-
          // Before saving to DB, we convert object references to Ids, save the Ids on the memento, and remove object references from the Cohort.
          // We do the reverse on load.
-         let memento = cohort.memento();
+         let memento = business.memento();
 
          memento._administratorIds = this.makePersonIds(prevAdmins);
-         memento._memberIds = this.makePersonIds(prevMembers);
          memento._administrators = new Array<PersonMemento>();
-         memento._members = new Array<PersonMemento>();
 
-         let result = await (new cohortModel(memento)).save({ isNew: cohort.persistenceDetails.key ? true : false });
+         let result = await (new businessModel(memento)).save({ isNew: business.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())
@@ -112,21 +87,18 @@ export class CohortDb implements IBusinessStore {
 
          // Restore the object arrays before sending back to client
          result._doc._administrators = prevAdmins;
-         result._doc._members = prevMembers;
 
          return this._codec.tryCreateFrom(result._doc);
       } catch (err) {
          let logger: Logger = new Logger();
-         logger.logError("CohortDb", "save", "Error:", err);
+         logger.logError("BusinessDb", "save", "Error:", err);
          return null;
       }
 
    }
 }
 
-const cohortTypes: Array<string> = (Object.values(ECohortType));
-
-const cohortSchema = new mongoose.Schema({
+const businessSchema = new mongoose.Schema({
    _persistenceDetails: {
       _key: {
          type: String,
@@ -147,32 +119,18 @@ const cohortSchema = new mongoose.Schema({
          required: true
       }
    },
-   _period: {
-      _startDate: {
-         type: Date,
-         required: true
-      },
-      _period: {
+   _thumbnailUrl: {
+      _url: {
          type: String,
-         enum: ["Week",  "TwoWeeks",  "ThreeWeeks", "FourWeeks", "Month"],
-         required: true
+         required: false
       },
-      _numberOfPeriods: {
-         type: Number,
-         required: true
+      _isUrlVerified: {
+         type: Boolean,
+         required: false
       }
    },
    _administratorIds: {
       type: [String],
-      required: true
-   },
-   _memberIds: {
-      type: [String],
-      required: true
-   },
-   _cohortType: {
-      type: String,
-      enum: cohortTypes,
       required: true
    }
 },
@@ -180,4 +138,4 @@ const cohortSchema = new mongoose.Schema({
       timestamps: true
 });
 
-const cohortModel = mongoose.model("Cohort", cohortSchema);
+const businessModel = mongoose.model("Business", businessSchema);

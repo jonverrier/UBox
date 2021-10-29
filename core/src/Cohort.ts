@@ -3,7 +3,7 @@
 import { InvalidParameterError } from './CoreError';
 import { PersistenceDetailsMemento, PersistenceDetails, Persistence } from "./Persistence";
 import { Name, NameMemento } from "./Party";
-import { EmailAddress, PersonMemento, Person, personArraysAreEqual } from "./Person";
+import { EmailAddress, PersonMemento, Person } from "./Person";
 
 export enum ECohortPeriod { Week = "Week", TwoWeeks = "TwoWeeks", ThreeWeeks = "ThreeWeeks", FourWeeks = "FourWeeks", Month = "Month" }
 
@@ -124,12 +124,12 @@ export class CohortTimePeriod {
 }
 
 export class CohortMemento {
-   _persistenceDetails: PersistenceDetailsMemento;
-   _name: NameMemento;
-   _period: CohortTimePeriodMemento;
-   _administrators: Array<PersonMemento>;
-   _members: Array<PersonMemento>;
-   _cohortType: ECohortType;
+   readonly _persistenceDetails: PersistenceDetailsMemento;
+   readonly _name: NameMemento;
+   readonly _period: CohortTimePeriodMemento;
+   _administrators: Array<PersonMemento>; // Not readonly as database needs to manually set
+   _members: Array<PersonMemento>;        // Not readonly as database needs to manually set
+   readonly _cohortType: ECohortType;
 
    // These are used to allow the Db layer to swizzle object references to string Ids on save, and the reverse on load
    // so separate documents/tables can be used in the DB
@@ -274,20 +274,11 @@ export class Cohort extends Persistence {
    */
    memento(): CohortMemento {
 
-      var i: number = 0;
-      let administrators = new Array<PersonMemento>(this._administrators.length);
-      for (i = 0; i < this._administrators.length; i++)
-         administrators[i] = this._administrators[i].memento();
-
-      let members = new Array<PersonMemento>(this._members.length);
-      for (i = 0; i < this._members.length; i++)
-         members[i] = this._members[i].memento();
-
       return new CohortMemento (this.persistenceDetails.memento(), 
          this._name.memento(),
          this._period.memento(),
-         administrators,
-         members,
+         Person.peopleMemento(this._administrators),
+         Person.peopleMemento(this._members),
          this._cohortType);
    }
 
@@ -300,8 +291,8 @@ export class Cohort extends Persistence {
 
       return (super.equals(rhs) &&
          this._name.equals(rhs._name) &&
-         personArraysAreEqual(this._administrators, rhs._administrators) &&
-         personArraysAreEqual(this._members, rhs._members) &&
+         Person.peopleAreEqual(this._administrators, rhs._administrators) &&
+         Person.peopleAreEqual(this._members, rhs._members) &&
          this._cohortType === rhs._cohortType &&
          this._period.equals(rhs._period));
    }
@@ -357,7 +348,7 @@ export class Cohort extends Persistence {
    }
 }
 
-export interface ICohortStore {
+export interface IBusinessStore {
    loadOne(id: string): Promise<Cohort | null>;
    save(cohort: Cohort): Promise<Cohort | null>;
 }
