@@ -6,6 +6,7 @@ import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { Name, Url } from "../../core/src/Party";
 import { ELoginProvider, LoginDetails, EmailAddress, Person } from "../../core/src/Person";
+import { Business } from '../../core/src/Business';
 import { ECohortPeriod, CohortTimePeriod, Cohort, ECohortType } from "../../core/src/Cohort";
 import { CohortApi } from '../src/CohortApi';
 
@@ -31,12 +32,17 @@ describe("CohortApi", function () {
    beforeEach(function () {
 
       let people = new Array<Person>();
-      people.push(person); 
+      people.push(person);
+
+      let business = new Business(new PersistenceDetails(null, 1, 1),
+         new Name("XFit Dulwich2"),
+         new Url("https://xfit.pics.com", false),
+         people);
 
       cohort1 = new Cohort(new PersistenceDetails(null, 1, 1),
+         business,
          new Name("Joe"),
          period,
-         people,
          people,
          ECohortType.OlympicLifting);
    });
@@ -57,6 +63,7 @@ describe("CohortApi", function () {
 
       try {
          const savedCohort = await cohortApi.save(cohort1);
+         console.log(savedCohort);
          const response2 = await cohortApi.loadOne(savedCohort.persistenceDetails.key);
 
          done();

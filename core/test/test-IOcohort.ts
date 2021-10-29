@@ -4,7 +4,8 @@
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
 import { Url, Name } from "../src/Party";
-import { LoginDetails, EmailAddress, Person, ELoginProvider} from '../src/Person';
+import { LoginDetails, EmailAddress, Person, ELoginProvider } from '../src/Person';
+import { Business } from '../src/Business';
 import { ECohortType, CohortTimePeriod, ECohortPeriod, Cohort } from '../src/Cohort';
 import { CohortTimePeriodCodec, CohortCodec } from '../src/IOCohort';
 
@@ -79,10 +80,15 @@ describe("IOCohort", function () {
    let people = new Array<Person>();
    people.push(person);
 
+   let business = new Business(new PersistenceDetails(null, 1, 1),
+      new Name("XFit Dulwich2"),
+      new Url("https://xfit.pics.com", false),
+      people);
+
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),
+      business,
       new Name("Joe"),
       period,
-      people,
       people,
       ECohortType.Conditioning);
 
@@ -118,6 +124,7 @@ describe("IOCohort", function () {
 
       try {
          decoded = codec.tryCreateFrom(encoded);
+
       } catch (e) {
          var logger = new Logger();
          logger.logError("Cohort", "Decode", "Error", e.toString());

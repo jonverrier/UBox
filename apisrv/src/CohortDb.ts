@@ -5,9 +5,10 @@ import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
 import { ECohortType, Cohort, IBusinessStore } from '../../core/src/Cohort';
 import { Person, PersonMemento } from '../../core/src/Person';
+import { Business } from '../../core/src/Business';
 import { CohortCodec } from '../../core/src/IOCohort';
 import { PersonDb } from './PersonDb';
-
+import { BusinessDb } from './BusinessDb';
 
 export class CohortDb implements IBusinessStore {
    private _codec;
@@ -36,6 +37,11 @@ export class CohortDb implements IBusinessStore {
 
    }
 
+   private makeId(business: Business): string {
+
+      return business.persistenceDetails.key;
+   }
+
    async loadOne (id: string): Promise<Cohort | null>  {
 
       const result = await cohortModel.findOne().where('_id').eq(id).exec();
@@ -45,26 +51,26 @@ export class CohortDb implements IBusinessStore {
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())
             result._doc._persistenceDetails._key = result._doc._id.toString();
 
+         var businessDb: BusinessDb = new BusinessDb();
          var personDb: PersonDb = new PersonDb();
 
-         // Switch adminstrators from an array of Ids to an array of objects by loading them up 
-         let adminIds = this.makeIdArray(result._doc._administratorIds);
+         // Switch members & business from Ids to objects by loading them up 
          let memberIds = this.makeIdArray(result._doc._memberIds);
-         let admins = await personDb.loadMany(adminIds);
+
+         // TODO - should be able to run these in parallel and then chain them. Does not seem to work per below ... 
          let members = await personDb.loadMany(memberIds);
+         let business = await businessDb.loadOne(result._doc._businessId);
 
-
-         /* admins.then(data => {
-            result._doc._administrators = data ? data : new Array<Person>();
+         /* members.then(data => {
+            result._doc._members = data ? data : new Array<Person>();
             return members;
          })
          .then(data => {
-            result._doc._members = data ? data : new Array<Person>();
+            result._doc.business = data;
             return this._codec.tryCreateFrom(result._doc);
          }); */
 
-         // TODO - should be able to run these in parallel and then chain them. Does not seem to work per above ... 
-         result._doc._administrators = admins ? admins : new Array<Person>();
+         result._doc._business = business;
          result._doc._members = members ? members : new Array<Person>();
 
          return this._codec.tryCreateFrom(result._doc);
@@ -76,16 +82,15 @@ export class CohortDb implements IBusinessStore {
 
    async save(cohort: Cohort): Promise<Cohort | null> {
       try {
-         var prevAdmins: Array<Person> = cohort.administrators;
+         var prevBusiness:Business = cohort.business;
          var prevMembers: Array<Person> = cohort.members;
 
+         var businessDb: BusinessDb = new BusinessDb();
          var personDb: PersonDb = new PersonDb();
 
-         // For any Admins that do not have valid key, save them
-         for (var i = 0; i < prevAdmins.length; i++) {
-            if (!prevAdmins[i].persistenceDetails.hasValidKey()) {
-               prevAdmins[i] = await personDb.save(prevAdmins[i]);
-            }
+         // if the embedded Business not have valid key, save them
+         if (!prevBusiness.persistenceDetails.hasValidKey()) {
+            prevBusiness = await businessDb.save(prevBusiness);
          }
 
          // For any Members that do not have valid key, save them
@@ -99,9 +104,8 @@ export class CohortDb implements IBusinessStore {
          // We do the reverse on load.
          let memento = cohort.memento();
 
-         memento._administratorIds = this.makePersonIds(prevAdmins);
+         memento._businessId = this.makeId(prevBusiness);
          memento._memberIds = this.makePersonIds(prevMembers);
-         memento._administrators = new Array<PersonMemento>();
          memento._members = new Array<PersonMemento>();
 
          let result = await (new cohortModel(memento)).save({ isNew: cohort.persistenceDetails.key ? true : false });
@@ -111,7 +115,7 @@ export class CohortDb implements IBusinessStore {
             result._doc._persistenceDetails._key = result._doc._id.toString();
 
          // Restore the object arrays before sending back to client
-         result._doc._administrators = prevAdmins;
+         result._doc._business = prevBusiness;
          result._doc._members = prevMembers;
 
          return this._codec.tryCreateFrom(result._doc);
@@ -154,7 +158,7 @@ const cohortSchema = new mongoose.Schema({
       },
       _period: {
          type: String,
-         enum: ["Week",  "TwoWeeks",  "ThreeWeeks", "FourWeeks", "Month"],
+         enum: ["One Week",  "Two Weeks",  "Three Weeks", "Four Weeks", "One Month"],
          required: true
       },
       _numberOfPeriods: {
@@ -162,8 +166,8 @@ const cohortSchema = new mongoose.Schema({
          required: true
       }
    },
-   _administratorIds: {
-      type: [String],
+   _businessId: {
+      type: String,
       required: true
    },
    _memberIds: {
