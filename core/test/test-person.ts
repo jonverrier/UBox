@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name, UrlMemento } from "../src/Party";
-import { LoginDetails, EmailAddress, Roles, Person, PersonMemento, personArraysAreEqual, IPersonStore, ERoleType, ELoginProvider } from '../src/Person';
+import { LoginDetails, EmailAddress, Roles, Person, PersonMemento, IPersonStore, ERoleType, ELoginProvider } from '../src/Person';
 
 var expect = require("chai").expect;
 
@@ -365,11 +365,11 @@ describe("Person", function () {
       people3.push(person2);
       people3.push(person2);
 
-      expect(personArraysAreEqual(people, people)).to.equal(true);
-      expect(personArraysAreEqual(people, null)).to.equal(false);
-      expect(personArraysAreEqual(null, people)).to.equal(false);
-      expect(personArraysAreEqual(people2, people)).to.equal(false);
-      expect(personArraysAreEqual(people3, people)).to.equal(false);
+      expect(Person.peopleAreEqual(people, people)).to.equal(true);
+      expect(Person.peopleAreEqual(people, null)).to.equal(false);
+      expect(Person.peopleAreEqual(null, people)).to.equal(false);
+      expect(Person.peopleAreEqual(people2, people)).to.equal(false);
+      expect(Person.peopleAreEqual(people3, people)).to.equal(false);
    });
 
    it("Needs to convert to and from memento()", function () {

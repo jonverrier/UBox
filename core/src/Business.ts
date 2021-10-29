@@ -1,14 +1,14 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { InvalidParameterError } from './CoreError';
 import { Name, NameMemento, Url, UrlMemento } from './Party';
-import { EmailAddress, Person, PersonMemento, personArraysAreEqual } from './Person';
+import { EmailAddress, Person, PersonMemento } from './Person';
 import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
 
 export class BusinessMemento {
    readonly _persistenceDetails: PersistenceDetailsMemento;
    readonly _name: NameMemento;
    readonly _thumbnailUrl: UrlMemento;
-   readonly _administrators: Array<PersonMemento>;
+   _administrators: Array<PersonMemento>; // Not readonly as database needs to manually set
 
    // These are used to allow the Db layer to switch object references to string Ids on save, and the reverse on load
    // so separate documents/tables can be used in the DB
@@ -24,8 +24,8 @@ export class BusinessMemento {
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
       name: NameMemento,
-      thumbnailUrl: Url,
-      administrators: Array<Person>) {
+      thumbnailUrl: UrlMemento,
+      administrators: Array<PersonMemento>) {
 
       if ((!administrators) || administrators.length < 1)
          throw new InvalidParameterError("Business must have at least one Administrator");
@@ -34,11 +34,11 @@ export class BusinessMemento {
 
       this._persistenceDetails = persistenceDetails;
       this._name = name;
-      this._thumbnailUrl = thumbnailUrl.memento();
+      this._thumbnailUrl = thumbnailUrl;
 
       this._administrators = new Array<PersonMemento>(administrators.length);
       for (i = 0; i < administrators.length; i++)
-         this._administrators[i] = administrators[i].memento();
+         this._administrators[i] = administrators[i];
 
       this._administratorIds = null;
    }
@@ -76,7 +76,7 @@ export class Business extends Persistence {
             memento._persistenceDetails._sequenceNumber));
 
          this._name = new Name(memento._name._displayName);
-         this._thumbnailUrl = new Url(memento._thumbnailUrl.url, memento._thumbnailUrl.isUrlVerified);
+         this._thumbnailUrl = new Url(memento._thumbnailUrl._url, memento._thumbnailUrl._isUrlVerified);
 
          this._administrators = new Array<Person>(memento._administrators.length);
          for (i = 0; i < memento._administrators.length; i++)
@@ -123,10 +123,11 @@ export class Business extends Persistence {
    * memento() returns a copy of internal state
    */
    memento(): BusinessMemento {
+
       return new BusinessMemento(this.persistenceDetails.memento(),
          this._name.memento(),
-         this._thumbnailUrl,
-         this._administrators);
+         this._thumbnailUrl.memento(),
+         Person.peopleMemento(this._administrators));
    }
 
    /**
@@ -139,7 +140,7 @@ export class Business extends Persistence {
       return (super.equals(rhs) &&
          (this._name.equals (rhs._name)) &&
          this._thumbnailUrl.equals(rhs._thumbnailUrl) &&
-         personArraysAreEqual(this._administrators, rhs._administrators) );
+         Person.peopleAreEqual(this._administrators, rhs._administrators) );
    }
 
    /**
@@ -166,6 +167,6 @@ export class Business extends Persistence {
 }
 
 export interface IBusinessStore {
-   load(id: string): Promise<Business | null>;
+   loadOne(id: string): Promise<Business | null>;
    save(business: Business): Promise<Business | null>;
 }

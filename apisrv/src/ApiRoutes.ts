@@ -5,16 +5,16 @@ import express from 'express';
 import { URL, URLSearchParams} from 'url';
 
 import { Logger } from '../../core/src/Logger';
-import { EBaseUnitDimension } from '../../core/src/Unit';
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
 
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { PersonDb } from './PersonDb';
 import { MeasurementCodec, MeasurementsCodec } from '../../core/src/IOObservation';
 import { MeasurementDb } from './ObservationDb';
-
 import { CohortCodec } from '../../core/src/IOCohort';
 import { CohortDb } from './CohortDb';
+import { BusinessCodec } from '../../core/src/IOBusiness';
+import { BusinessDb } from './BusinessDb';
 
 import { EApiUrls } from './ApiUrls';
 
@@ -224,6 +224,49 @@ ApiRoutes.put(EApiUrls.SaveCohort, function (req, res) {
    } catch (e) {
       var logger = new Logger();
       logger.logError("Cohort", "Save", "Error", e.toString());
+      res.send(null);
+   }
+});
+
+// Retrieve a Business
+ApiRoutes.get(EApiUrls.QueryBusiness, function (req, res) {
+
+   try {
+      let codec = new BusinessCodec();
+      let db = new BusinessDb();
+
+      let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
+      let params = new URLSearchParams(url.search);
+
+      let result = db.loadOne(params.get('_key'));
+      result.then(data => {
+         res.send(data ? codec.encode(data) : null);
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("Business", "Load", "Error", e.toString());
+      res.send(null);
+   }
+})
+
+// Save a Business
+ApiRoutes.put(EApiUrls.SaveBusiness, function (req, res) {
+
+   try {
+      let codec = new BusinessCodec();
+      let db = new BusinessDb();
+
+      let encoded = req.body;
+      let decoded = codec.tryCreateFrom(encoded);
+
+      let result = db.save(decoded);
+      result.then(data => {
+         res.send(codec.encode(data ? data : null));
+      });
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("Business", "Save", "Error", e.toString());
       res.send(null);
    }
 });

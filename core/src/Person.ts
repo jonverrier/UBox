@@ -384,6 +384,36 @@ export class Person extends Persistence {
          this._roles ? this.roles.memento() : null);
    }
 
+   static peopleMemento(people: Array<Person>): Array<PersonMemento> {
+
+      let peopleMemento = new Array<PersonMemento>(people.length);
+
+      for (var i: number = 0; i < people.length; i++)
+         peopleMemento[i] = people[i].memento();
+
+      return peopleMemento;
+   }
+
+   
+   static peopleAreEqual(lhs: Array<Person>, rhs: Array<Person>): boolean {
+
+      // if we have mis-matched false values, return false
+      if (lhs && !rhs || !lhs && rhs)
+         return false;
+
+      // if we have mis-matched sizes, return false
+      if (lhs.length !== rhs.length)
+         return false;
+
+      // lse compare all entries
+      for (var i = 0; i < lhs.length; i++) {
+         if (!lhs[i].equals(rhs[i])) {
+            return false;
+         }
+      }
+      return true;
+    }
+
    /**
     * test if a person has a given role  
     * @param role - the roles to check 
@@ -408,21 +438,6 @@ export class Person extends Persistence {
          (this._roles ? this._roles.equals(rhs._roles) : (rhs._roles === null))
          );
    }
-}
-
-
-export function personArraysAreEqual(lhs: Array<Person>, rhs: Array<Person>): boolean {
-
-   // if we have mis-matched false values, return false
-   if (lhs && !rhs || !lhs && rhs)
-      return false;
-
-   for (var i = 0; i < lhs.length; i++) {
-      if (!lhs[i].equals(rhs[i])) {
-         return false;
-      }
-   }
-   return true;
 }
 
 export interface IPersonStore {

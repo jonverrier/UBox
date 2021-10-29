@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name } from "../src/Party";
-import { LoginDetails, EmailAddress, Person, personArraysAreEqual, ELoginProvider } from '../src/Person';
+import { LoginDetails, EmailAddress, Person, ELoginProvider } from '../src/Person';
 import { ECohortType, CohortTimePeriod, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
 
 
@@ -130,8 +130,8 @@ describe("Cohort", function () {
 
       expect(cohort1.name.equals(new Name("Joe"))).to.equal(true);
       expect(cohort1.period.equals(period)).to.equal(true);
-      expect(personArraysAreEqual(cohort1.members, cohort2.members)).to.equal(true);
-      expect(personArraysAreEqual(cohort1.administrators, cohort2.administrators)).to.equal(true);
+      expect(Person.peopleAreEqual(cohort1.members, cohort2.members)).to.equal(true);
+      expect(Person.peopleAreEqual(cohort1.administrators, cohort2.administrators)).to.equal(true);
       expect(cohort1.cohortType).to.equal(ECohortType.OlympicLifting);
    });
 
@@ -152,8 +152,8 @@ describe("Cohort", function () {
 
       expect(cohort1.name.equals(newName)).to.equal(true);
       expect(cohort1.period.equals(newPeriod)).to.equal(true);
-      expect(personArraysAreEqual(cohort1.members, people)).to.equal(true);
-      expect(personArraysAreEqual(cohort1.administrators, people)).to.equal(true);
+      expect(Person.peopleAreEqual(cohort1.members, people)).to.equal(true);
+      expect(Person.peopleAreEqual(cohort1.administrators, people)).to.equal(true);
       expect(cohort1.cohortType).to.equal(ECohortType.Conditioning);
    });
 
