@@ -119,11 +119,11 @@ export class MeasurementDb implements IMeasurementStore {
          if (!measurement.persistenceDetails.hasValidKey()) {
             // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
             // Records are the same if they are: 
-            // same subject, same measurementType, same cohortPeriod. 
+            // same subject, same measurementType, same timestampRounded.
             var whereClause = {
                '_subjectKey': measurement.subjectKey,
                '_measurementType': measurement.measurementType.measurementType,
-               '_cohortPeriod': measurement.cohortPeriod
+               '_timestampRounded': measurement.timestampRounded
             };
 
             const existing = await measurementModel.findOne(whereClause).exec();
@@ -234,7 +234,7 @@ const measurementSchema = new mongoose.Schema({
       type: Number,
       required: true
    },
-   _cohortPeriod: {
+   _timestampRounded: {
        type: Number,
        required: true
    },

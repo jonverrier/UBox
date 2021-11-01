@@ -139,9 +139,9 @@ describe("MeasurementApi - heterogenous", function () {
    let weightMeasurementType = MeasurementTypes.snatch;
 
    var timeMeasurement: Measurement = new Measurement(
-      new PersistenceDetails(null, 1, 2), quantityOfTime, repeats, 0, timeMeasurementType, "1234");
+      new PersistenceDetails(null, 1, 2), quantityOfTime, repeats, Measurement.timeStampNow(), timeMeasurementType, "1234");
    var weightMeasurement: Measurement = new Measurement(
-      new PersistenceDetails(null, 1, 2), quantityOfWeight, repeats, 0, weightMeasurementType, "1234");
+      new PersistenceDetails(null, 1, 2), quantityOfWeight, repeats, Measurement.timeStampNow(), weightMeasurementType, "1234");
 
    let api: MeasurementApi = new MeasurementApi(root);
 
