@@ -150,8 +150,10 @@ export class Measurement extends Persistence {
       // round to nearest 15 minutes
       var m: number = (((minutes + 7.5) / 15 | 0) * 15) % 60;
       var h: number = ((((minutes / 105) + .5) | 0) + hours) % 24;
-
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0).getMilliseconds();
+      var date: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
+      console.log(date);
+      console.log(date.getTime());
+      return date.getTime();
    }
 
    static timeStampNow(): number {

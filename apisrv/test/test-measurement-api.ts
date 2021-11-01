@@ -35,7 +35,7 @@ describe("MeasurementApi", function () {
    let api: MeasurementApi = new MeasurementApi(root);
 
    var measurement1: Measurement = new Measurement(
-      new PersistenceDetails(null, 1, 2), quantity, repeats, 0, measurementType, "1234");
+      new PersistenceDetails(null, 1, 2), quantity, repeats, Measurement.timeStampNow(), measurementType, "1234");
 
    it("Needs to save a new Measurement", async function (done) {
 
