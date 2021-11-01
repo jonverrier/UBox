@@ -82,6 +82,7 @@ export class CohortDb implements IBusinessStore {
 
    async save(cohort: Cohort): Promise<Cohort | null> {
       try {
+
          var prevBusiness:Business = cohort.business;
          var prevMembers: Array<Person> = cohort.members;
 
@@ -107,6 +108,34 @@ export class CohortDb implements IBusinessStore {
          memento._businessId = this.makeId(prevBusiness);
          memento._memberIds = this.makePersonIds(prevMembers);
          memento._members = new Array<PersonMemento>();
+
+         if (!cohort.persistenceDetails.hasValidKey()) {
+            // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
+            // Records are the same if they are: 
+            // same business, same name, same cohortType
+            var whereClause = {
+               '_businessId': memento._business._persistenceDetails._key,
+               '_name._displayName': memento._name._displayName,
+               '_cohortType': memento._cohortType
+            };
+
+            const existing = await cohortModel.findOne(whereClause).exec();
+
+            // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
+            if (existing && existing._doc._persistenceDetails._sequenceNumber >= cohort.persistenceDetails.sequenceNumber) {
+
+               // If we have an existing document, copy the Mongo ID to persistenceDetails
+               if (existing._doc._persistenceDetails._key !== existing._doc._id.toString())
+                  existing._doc._persistenceDetails._key = existing._doc._id.toString();
+
+               // Restore the object arrays before sending back to client
+               existing._doc._business = prevBusiness;
+               existing._doc._members = prevMembers;
+
+               // Return a constructed object via codec 
+               return this._codec.tryCreateFrom(existing._doc);
+            }
+         }
 
          let result = await (new cohortModel(memento)).save({ isNew: cohort.persistenceDetails.key ? true : false });
 

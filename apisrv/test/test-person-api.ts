@@ -23,8 +23,8 @@ describe("PersonApi", function () {
    beforeEach(function () {
       person1 = new Person(new PersistenceDetails(null, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe"),
-         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false),
+         new Name("Jon V"),
+         new EmailAddress("jonathanverrier@hotmail.com", true), new Url("https://jonv.pics.com", false),
          new Roles(Array<ERoleType>(ERoleType.Member)));
 
       api = new PersonApi(root);

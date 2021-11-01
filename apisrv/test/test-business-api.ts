@@ -7,6 +7,7 @@ import { PersistenceDetails } from "../../core/src/Persistence";
 import { Name, Url } from "../../core/src/Party";
 import { ELoginProvider, LoginDetails, EmailAddress, Person } from "../../core/src/Person";
 import { Business } from "../../core/src/Business";
+import { PersonApi } from '../src/PersonApi';
 import { BusinessApi } from '../src/BusinessApi';
 
 var expect = require("chai").expect;
@@ -17,6 +18,7 @@ var root: string = 'http://localhost:4000';
 
 describe("BusinessApi", function () {
 
+   var personApi: PersonApi = new PersonApi(root);
    var businessApi: BusinessApi = new BusinessApi(root);
 
    let business1;
@@ -27,13 +29,14 @@ describe("BusinessApi", function () {
       new EmailAddress("Joe@mail.com", true),
       new Url("https://jo.pics.com", false), null);
 
-   beforeEach(function () {
+   beforeEach(async function () {
 
       let people = new Array<Person>();
-      people.push(person); 
+      let savedPerson = await personApi.save(person);
+      people.push(savedPerson);
 
       business1 = new Business(new PersistenceDetails(null, 1, 1),
-         new Name("Joe"),
+         new Name("Fortitude Dulwich"),
          new Url("https://jo.pics.com", false),
          people);
    });

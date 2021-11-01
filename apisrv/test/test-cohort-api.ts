@@ -8,6 +8,7 @@ import { Name, Url } from "../../core/src/Party";
 import { ELoginProvider, LoginDetails, EmailAddress, Person } from "../../core/src/Person";
 import { Business } from '../../core/src/Business';
 import { ECohortPeriod, CohortTimePeriod, Cohort, ECohortType } from "../../core/src/Cohort";
+import { BusinessApi } from '../src/BusinessApi';
 import { CohortApi } from '../src/CohortApi';
 
 var expect = require("chai").expect;
@@ -18,6 +19,7 @@ var root: string = 'http://localhost:4000';
 
 describe("CohortApi", function () {
 
+   var businessApi: BusinessApi = new BusinessApi(root);
    var cohortApi: CohortApi = new CohortApi(root);
 
    let cohort1;
@@ -25,23 +27,25 @@ describe("CohortApi", function () {
 
    let person = new Person(new PersistenceDetails(null, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe"),
-      new EmailAddress("Joe@mail.com", true),
-      new Url("https://jo.pics.com", false), null);
+      new Name("Jon V"),
+      new EmailAddress("jonathanverrier@hotmail.com", true),
+      new Url("https://jonv.pics.com", false), null);
 
-   beforeEach(function () {
+   beforeEach(async function () {
 
       let people = new Array<Person>();
       people.push(person);
 
       let business = new Business(new PersistenceDetails(null, 1, 1),
-         new Name("XFit Dulwich2"),
+         new Name("Fortitude Dulwich"),
          new Url("https://xfit.pics.com", false),
          people);
 
+      let newBusiness:Business = await businessApi.save(business);
+
       cohort1 = new Cohort(new PersistenceDetails(null, 1, 1),
-         business,
-         new Name("Joe"),
+         newBusiness,
+         new Name("Olympic Lifting"),
          period,
          people,
          ECohortType.OlympicLifting);
@@ -63,7 +67,6 @@ describe("CohortApi", function () {
 
       try {
          const savedCohort = await cohortApi.save(cohort1);
-         console.log(savedCohort);
          const response2 = await cohortApi.loadOne(savedCohort.persistenceDetails.key);
 
          done();
