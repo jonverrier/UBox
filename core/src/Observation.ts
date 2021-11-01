@@ -13,7 +13,7 @@ export class MeasurementMemento {
    readonly _persistenceDetails: PersistenceDetailsMemento;
    readonly _quantity: QuantityMemento;
    readonly _repeats: number;
-   readonly _cohortPeriod: number;
+   readonly _timestampRounded: number;
    readonly _measurementType: EMeasurementType;
    readonly _subjectKey: string;
 
@@ -22,21 +22,20 @@ export class MeasurementMemento {
     * @param persistenceDetails - (from Persistence) for the database layer to use and assign
     * @param quantity - the value of the measurement (amount and units)
     * @param repeats - the number of reps (for weight), number of distance units (for time measurements)
-    * @param cohortPeriod - the period in which the measurement was taken
+    * @param timestampRounded - the period in which the measurement was taken. This is a timestamp in msecs rounded to nearest 15 minute interval
     * @param measurementType - key to the class that defines the type of measurement
-    * @param measurementTypeFactory - factory class to create an actual measurement type
     * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
     * Design - all memento classes must depend only on base types, value types, or other Mementos*
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
-      quantity: QuantityMemento, repeats: number, cohortPeriod: number,
+      quantity: QuantityMemento, repeats: number, timestampRounded: number,
       measurementType: EMeasurementType,
       subjectKey: string)
    {
       this._persistenceDetails = persistenceDetails;
       this._quantity = quantity;
       this._repeats = repeats;
-      this._cohortPeriod = cohortPeriod;
+      this._timestampRounded = timestampRounded;
       this._measurementType = measurementType;
       this._subjectKey = subjectKey;
    }
@@ -45,7 +44,7 @@ export class MeasurementMemento {
 export class Measurement extends Persistence {
    private _quantity: Quantity
    private _repeats: number;
-   private _cohortPeriod: number;
+   private _timestampRounded: number;
    private _measurementType: MeasurementType;
    private _subjectKey: string; 
 
@@ -54,12 +53,12 @@ export class Measurement extends Persistence {
  * @param persistenceDetails - (from Persistence) for the database layer to use and assign
  * @param quantity - the value of the measurement (amount and units)
  * @param repeats - the number of reps (for weight), number of distance units (for time measurements)
- * @param cohortPeriod - the period in which the measurement was taken
+ * @param timestampRounded - the period in which the measurement was taken. This is a timestamp in msecs rounded to nearest 15 minute interval
  * @param measurementType - reference to the class that defines the type of measurement
  * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
  */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: Quantity, repeats: number, cohortPeriod: number, measurementType: MeasurementType, subjectKey: string)
+      quantity: Quantity, repeats: number, timestampRounded: number, measurementType: MeasurementType, subjectKey: string)
    public constructor(memento: MeasurementMemento);
    public constructor(...params: any[]) {
 
@@ -78,7 +77,7 @@ export class Measurement extends Persistence {
          this._quantity = new Quantity(memento._quantity._amount,
             new BaseUnit(memento._quantity._unit));
          this._repeats = memento._repeats;
-         this._cohortPeriod = memento._cohortPeriod;
+         this._timestampRounded = memento._timestampRounded;
          this._measurementType = measurementType;
          this._subjectKey = memento._subjectKey;
 
@@ -91,7 +90,7 @@ export class Measurement extends Persistence {
          }
          this._quantity = params[1];
          this._repeats = params[2];
-         this._cohortPeriod = params[3];
+         this._timestampRounded = params[3];
          this._measurementType = params[4];
          this._subjectKey = params[5];
       }
@@ -106,8 +105,8 @@ export class Measurement extends Persistence {
    get repeats(): number {
       return this._repeats;
    }
-   get cohortPeriod(): number {
-      return this._cohortPeriod;
+   get timestampRounded(): number {
+      return this._timestampRounded;
    }
    get measurementType(): MeasurementType {
       return this._measurementType;
@@ -122,7 +121,7 @@ export class Measurement extends Persistence {
    memento(): MeasurementMemento  {
       return new MeasurementMemento(this.persistenceDetails.memento(),
          this._quantity.memento(),
-         this._repeats, this._cohortPeriod,
+         this._repeats, this._timestampRounded,
          this._measurementType.measurementType,
          this._subjectKey);
    }
@@ -137,9 +136,26 @@ export class Measurement extends Persistence {
       return (super.equals (rhs) && 
          this._quantity.equals(rhs._quantity) &&
          this._repeats === rhs._repeats &&
-         this._cohortPeriod === rhs._cohortPeriod &&
+         this._timestampRounded === rhs._timestampRounded &&
          this._measurementType.equals(rhs.measurementType) &&
          this._subjectKey === rhs._subjectKey);
+   }
+
+   // Returns a number that is timestamp rounded to nearest 15 mins
+   // https://stackoverflow.com/questions/4968250/how-to-round-time-to-the-nearest-quarter-hour-in-javascript
+   static timeStamp(now: Date): number {
+      var minutes:number = now.getMinutes();
+      var hours: number = now.getHours();
+
+      // round to nearest 15 minutes
+      var m: number = (((minutes + 7.5) / 15 | 0) * 15) % 60;
+      var h: number = ((((minutes / 105) + .5) | 0) + hours) % 24;
+
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0).getMilliseconds();
+   }
+
+   static timeStampNow(): number {
+      return Measurement.timeStamp(new Date());
    }
 }
 

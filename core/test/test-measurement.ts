@@ -83,7 +83,8 @@ function testConstruct(quantity: Quantity,
                               repeats: number,
                               measurementType: MeasurementType) {
 
-   let measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+   let stamp = Measurement.timeStampNow();
+   let measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, stamp, measurementType, "1234");
 
    expect(measurement.persistenceDetails.key).to.equal("id");
    expect(measurement.persistenceDetails.schemaVersion).to.equal(1);
@@ -91,7 +92,7 @@ function testConstruct(quantity: Quantity,
 
    expect(measurement.quantity.equals(quantity)).to.equal(true);
    expect(measurement.repeats === repeats).to.equal(true);
-   expect(measurement.cohortPeriod).to.equal(0);
+   expect(measurement.timestampRounded).to.equal(stamp);
    expect(measurement.measurementType.equals(measurementType)).to.equal(true);
    expect(measurement.subjectKey).to.equal("1234");
 }
@@ -110,7 +111,6 @@ function testEquals(quantity: Quantity,
 }
 
 describe("Measurement", function () {
-   let measurementTypes: MeasurementTypes = new MeasurementTypes();
 
    it("Needs to construct Snatch correctly", function () {
       let quantity = new Quantity(60, BaseUnits.kilogram);
