@@ -79,6 +79,31 @@ export class BusinessDb implements IBusinessStore {
          memento._administratorIds = this.makePersonIds(prevAdmins);
          memento._administrators = new Array<PersonMemento>();
 
+         if (!business.persistenceDetails.hasValidKey()) {
+            // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
+            // Records are the same if they are: 
+            //    same name 
+            var whereClause = {
+               '_name._displayName': business.name.displayName
+            };
+
+            const existing = await businessModel.findOne(whereClause).exec();
+
+            // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
+            if (existing && existing._doc._persistenceDetails._sequenceNumber >= business.persistenceDetails.sequenceNumber) {
+
+               // If we have an existing document, copy the Mongo ID to persistenceDetails
+               if (existing._doc._persistenceDetails._key !== existing._doc._id.toString())
+                  existing._doc._persistenceDetails._key = existing._doc._id.toString();
+
+               // Restore the object arrays before sending back to client
+               existing._doc._administrators = prevAdmins;
+
+               // Return a constructed object via codec 
+               return this._codec.tryCreateFrom(existing._doc);
+            }
+         }
+
          let result = await (new businessModel(memento)).save({ isNew: business.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails

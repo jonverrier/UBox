@@ -8,7 +8,7 @@ import { Business, BusinessMemento } from './Business';
 
 export enum ECohortPeriod { Week = "One Week", TwoWeeks = "Two Weeks", ThreeWeeks = "Three Weeks", FourWeeks = "Four Weeks", Month = "One Month" }
 
-export enum ECohortType {OlympicLifting = "Olymplic Lifting", Powerlifting = "Power Lifting", Conditioning = "Conditioning"}
+export enum ECohortType {OlympicLifting = "Olympic Lifting", Powerlifting = "Power Lifting", Conditioning = "Conditioning"}
 
 export class CohortTimePeriodMemento {
    _startDate: Date;

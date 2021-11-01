@@ -122,7 +122,7 @@ export class MeasurementDb implements IMeasurementStore {
             // same subject, same measurementType, same cohortPeriod. 
             var whereClause = {
                '_subjectKey': measurement.subjectKey,
-               '_measurementType._measurementType': measurement.measurementType.measurementType,
+               '_measurementType': measurement.measurementType.measurementType,
                '_cohortPeriod': measurement.cohortPeriod
             };
 
