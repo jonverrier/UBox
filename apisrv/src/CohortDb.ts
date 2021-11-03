@@ -137,7 +137,8 @@ export class CohortDb implements IBusinessStore {
             }
          }
 
-         let result = await (new cohortModel(memento)).save({ isNew: cohort.persistenceDetails.key ? true : false });
+         let doc = new cohortModel(memento);
+         let result = await doc.save({ isNew: cohort.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())

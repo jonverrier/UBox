@@ -104,7 +104,8 @@ export class BusinessDb implements IBusinessStore {
             }
          }
 
-         let result = await (new businessModel(memento)).save({ isNew: business.persistenceDetails.key ? true : false });
+         let doc = new businessModel(memento);
+         let result = await (doc).save({ isNew : business.persistenceDetails.key ? true : false});
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())

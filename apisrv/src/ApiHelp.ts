@@ -4,7 +4,6 @@
 
 import axios from 'axios';
 
-import { Logger } from '../../core/src/Logger';
 import { IdListCodec, IdList, ICodec} from '../../core/src/IOCommon';
 
 const getCircularReplacer = () => {
@@ -48,7 +47,6 @@ export class SingletonApiHelper<Entity> {
 
          return this._codec.tryCreateFrom(response.data);
       } catch (e) {
-         console.log("LoadOne:\n" + JSON.stringify(response, getCircularReplacer));
          throw (e);
       }
    }
@@ -68,7 +66,6 @@ export class SingletonApiHelper<Entity> {
          response = await axios.put(this._saveUrl, encoded);
          return this._codec.tryCreateFrom(response.data);
       } catch (e) {
-         console.log("save:\n" + JSON.stringify(response, getCircularReplacer));
          throw (e);
       }
    }
