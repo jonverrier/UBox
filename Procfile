@@ -1,1 +1,1 @@
-web:node apisrv/src/app.js
+web:npm start
