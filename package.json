@@ -39,6 +39,7 @@
       "url": "https://github.com/jonverrier/ubox.git"
    },
    "engines": {
-      "node": ">=16.8"
+      "node": ">=16.8",
+      "npm": ">=1.x"
    }
 }
