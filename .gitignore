@@ -39,5 +39,13 @@ uiapp/windows
 uiapp/*.binlog
 uiapp/__tests__/*.js
 uiapp/__tests__/*.js.map
+uiweb/node_modules/*
+uiweb/.vs/*
+uiweb/*.js
+uiweb/*.js.map
+uiweb/src/*.js
+uiweb/src/*.js.map
+uiweb/test/*.js
+uiweb/test/*.js.map
 
 

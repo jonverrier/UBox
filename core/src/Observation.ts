@@ -151,8 +151,6 @@ export class Measurement extends Persistence {
       var m: number = (((minutes + 7.5) / 15 | 0) * 15) % 60;
       var h: number = ((((minutes / 105) + .5) | 0) + hours) % 24;
       var date: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
-      console.log(date);
-      console.log(date.getTime());
       return date.getTime();
    }
 

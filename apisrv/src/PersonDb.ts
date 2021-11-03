@@ -67,8 +67,9 @@ export class PersonDb implements IPersonStore {
                return this._codec.tryCreateFrom(existing._doc);
             }
          }
+
          // only save if we are a later sequence number 
-         let result = await (new personModel(person)).save({ isNew: person.persistenceDetails.key ? true : false });
+         let result = await (new personModel(person)).save ({ isNew: person.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())

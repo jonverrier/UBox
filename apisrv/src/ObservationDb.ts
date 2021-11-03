@@ -139,10 +139,11 @@ export class MeasurementDb implements IMeasurementStore {
                return this._codec.tryCreateFrom(existing._doc);
             }
          }
-         let result = await (new measurementModel(measurement.memento())).save({ isNew: measurement.persistenceDetails.key ? true : false });
+         let doc = new measurementModel(measurement.memento());
+         let result = await doc.save({ isNew: measurement.persistenceDetails.key ? true : false});
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
+         if (result._persistenceDetails._key !== result._id.toString())
             result._doc._persistenceDetails._key = result._doc._id.toString();
 
          return this._codec.tryCreateFrom(result._doc);

@@ -1,4 +1,4 @@
-# Core
+# UIApp
 
 ## UltraBox UIApp - Table of Contents
 * [General info](#general-info)
@@ -10,7 +10,7 @@ UltraBox creates tools to help boutique gym operators create engaging online exp
 
 ## Technologies
 
-Typescript only. Depends on both the API server component, and the Core component.  
+Client component using React Native. Typescript only. Depends on both the API server component, and the Core component.  
 
 ## Licence
 
