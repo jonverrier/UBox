@@ -34,6 +34,7 @@
     <None Include="src\app.ts" />
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
+    <Content Include="public\app.html" />
     <Content Include="public\assets\css\style.css" />
     <Content Include="public\assets\img\apple-touch-icon.png" />
     <Content Include="public\assets\img\coach.jpg" />

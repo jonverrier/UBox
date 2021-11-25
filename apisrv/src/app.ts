@@ -116,7 +116,7 @@ app.post('/contact', (req, res) => {
 });
 
 app.get('/ping', (req, res) => {
-   res.send('pong')
+   res.send('pong');
 });
 
 const port = process.env.PORT || 4000
