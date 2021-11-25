@@ -123,7 +123,7 @@ export class MeasurementDb implements IMeasurementStore {
             var whereClause = {
                '_subjectKey': measurement.subjectKey,
                '_measurementType': measurement.measurementType.measurementType,
-               '_timestampRounded': measurement.timestampRounded
+               '_timestampRounded': measurement.timestamp
             };
 
             const existing = await measurementModel.findOne(whereClause).exec();
@@ -235,7 +235,7 @@ const measurementSchema = new mongoose.Schema({
       type: Number,
       required: true
    },
-   _timestampRounded: {
+   _timestamp: {
        type: Number,
        required: true
    },

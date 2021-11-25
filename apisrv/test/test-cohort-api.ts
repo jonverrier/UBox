@@ -7,7 +7,7 @@ import { PersistenceDetails } from "../../core/src/Persistence";
 import { Name, Url } from "../../core/src/Party";
 import { ELoginProvider, LoginDetails, EmailAddress, Person } from "../../core/src/Person";
 import { Business } from '../../core/src/Business';
-import { ECohortPeriod, CohortTimePeriod, Cohort, ECohortType } from "../../core/src/Cohort";
+import { ECohortPeriod, Cohort, ECohortType } from "../../core/src/Cohort";
 import { BusinessApi } from '../src/BusinessApi';
 import { CohortApi } from '../src/CohortApi';
 
@@ -23,7 +23,7 @@ describe("CohortApi", function () {
    var cohortApi: CohortApi = new CohortApi(root);
 
    let cohort1;
-   let period = new CohortTimePeriod(new Date(), ECohortPeriod.Week, 1);
+   let period = 1;
 
    let person = new Person(new PersistenceDetails(null, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),

@@ -74,7 +74,7 @@ export const measurementIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
    _quantity: quantityIoType,
    _repeats: IoTs.number,
-   _timestampRounded: IoTs.number,
+   _timestamp: IoTs.number,
    _measurementType: IoTs.string,
    _subjectKey: IoTs.string
 });
