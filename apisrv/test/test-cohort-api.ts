@@ -39,7 +39,7 @@ describe("CohortApi", function () {
       let business = new Business(new PersistenceDetails(null, 1, 1),
          new Name("Fortitude Dulwich"),
          new Url("https://xfit.pics.com", false),
-         people);
+         people, people);
 
       let newBusiness:Business = await businessApi.save(business);
 
@@ -47,7 +47,6 @@ describe("CohortApi", function () {
          newBusiness,
          new Name("Olympic Lifting"),
          period,
-         people,
          ECohortType.OlympicLifting);
    });
 

@@ -34,7 +34,6 @@
     <None Include="src\app.ts" />
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
-    <Content Include="public\app.html" />
     <Content Include="public\assets\css\style.css" />
     <Content Include="public\assets\img\apple-touch-icon.png" />
     <Content Include="public\assets\img\coach.jpg" />
@@ -60,6 +59,7 @@
     <Content Include="public\assets\vendor\isotope-layout\isotope.pkgd.js" />
     <Content Include="public\assets\vendor\isotope-layout\isotope.pkgd.min.js" />
     <Content Include="public\assets\vendor\purecounter\purecounter.js" />
+    <Content Include="public\whiteboard.html" />
     <Content Include="public\index.html" />
     <Content Include="README.md" />
     <Content Include="tsconfig.json" />

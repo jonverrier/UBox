@@ -36,12 +36,13 @@ describe("Business", function () {
       business1 = new Business(new PersistenceDetails("id", 1, 1),
          initialName,
          url,
+         people,
          people);
 
       business2 = new Business(new PersistenceDetails("id", 1, 1),
          newName,
          url,
-         people);
+         people, people);
    });
    
    it("Needs to compare for equality and inequality", function () {
@@ -55,6 +56,7 @@ describe("Business", function () {
       expect(business1.name.equals (initialName)).to.equal(true);
       expect(business1.thumbnailUrl.equals(url)).to.equal(true);
       expect(Person.peopleAreEqual(business1.administrators, business2.administrators)).to.equal(true);
+      expect(Person.peopleAreEqual(business1.members, business2.members)).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
@@ -67,10 +69,12 @@ describe("Business", function () {
       business1.name = newName;
       business1.thumbnailUrl = newUrl;
       business1.administrators = people;
+      business1.members = people;
 
       expect(business1.name.equals (newName)).to.equal(true);
       expect(business1.thumbnailUrl.equals(newUrl)).to.equal(true);
       expect(Person.peopleAreEqual(business1.administrators, people)).to.equal(true);
+      expect(Person.peopleAreEqual(business1.members, people)).to.equal(true);
    });
 
    it("Needs to test membership", function () {
@@ -79,6 +83,11 @@ describe("Business", function () {
       expect(business1.includesAdministrator(person2)).to.equal(false);
       expect(business1.includesAdministratorEmail(person.email)).to.equal(true);
       expect(business1.includesAdministratorEmail(person2.email)).to.equal(false);
+
+      expect(business1.includesMember(person)).to.equal(true);
+      expect(business1.includesMember(person2)).to.equal(false);
+      expect(business1.includesMemberEmail(person.email)).to.equal(true);
+      expect(business1.includesMemberEmail(person2.email)).to.equal(false);
    });
 
    it("Needs to convert to and from memento()", function () {

@@ -38,7 +38,7 @@ describe("BusinessApi", function () {
       business1 = new Business(new PersistenceDetails(null, 1, 1),
          new Name("Fortitude Dulwich"),
          new Url("https://jo.pics.com", false),
-         people);
+         people, people);
    });
 
    it("Needs to save a new Business", async function (done) {

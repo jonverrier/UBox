@@ -2,13 +2,13 @@
 // Copyright TXPCo ltd, 2021
 // Implements IMeasurementStore over a web API
 
-import { Cohort, IBusinessStore} from '../../core/src/Cohort';
+import { Cohort, ICohortStore} from '../../core/src/Cohort';
 import { CohortCodec } from '../../core/src/IOCohort';
 import { SingletonApiHelper } from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
 
-export class CohortApi implements IBusinessStore {
+export class CohortApi implements ICohortStore {
    private _singletonApiHelper: SingletonApiHelper<Cohort>;
 
    constructor(serverUrl: string) {
