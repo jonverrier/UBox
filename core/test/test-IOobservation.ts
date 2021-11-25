@@ -97,7 +97,7 @@ describe("IOMeasurement", function () {
             _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
             _quantity: quantity,
             _repeats: repeats,
-            _timestampRounded: 1,
+            _timestamp: 1,
             _measurementType: measurementType.measurementType,
             _subjectKey: "teststring"
          });

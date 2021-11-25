@@ -64,6 +64,7 @@
     <TypeScriptCompile Include="src\Range.ts" />
     <TypeScriptCompile Include="src\CoreError.ts" />
     <TypeScriptCompile Include="src\Persistence.ts" />
+    <TypeScriptCompile Include="src\Timestamp.ts" />
     <TypeScriptCompile Include="src\Unit.ts" />
     <TypeScriptCompile Include="test\test-business.ts" />
     <TypeScriptCompile Include="test\test-cohort.ts">

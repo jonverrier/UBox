@@ -3,6 +3,7 @@
 import { PersistenceDetails } from "../src/Persistence";
 import { EBaseUnitDimension, BaseUnits } from '../src/Unit';
 import { Quantity } from '../src/Quantity';
+import { Timestamper } from '../src/Timestamp';
 
 import { EPositiveTrend, EMeasurementType, MeasurementType, measurementTypeArraysAreEqual} from '../src/Observationtype';
 
@@ -83,7 +84,7 @@ function testConstruct(quantity: Quantity,
                               repeats: number,
                               measurementType: MeasurementType) {
 
-   let stamp = Measurement.timeStampNow();
+   let stamp = Timestamper.now();
    let measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, stamp, measurementType, "1234");
 
    expect(measurement.persistenceDetails.key).to.equal("id");
@@ -92,7 +93,7 @@ function testConstruct(quantity: Quantity,
 
    expect(measurement.quantity.equals(quantity)).to.equal(true);
    expect(measurement.repeats === repeats).to.equal(true);
-   expect(measurement.timestampRounded).to.equal(stamp);
+   expect(measurement.timestamp).to.equal(stamp);
    expect(measurement.measurementType.equals(measurementType)).to.equal(true);
    expect(measurement.subjectKey).to.equal("1234");
 }

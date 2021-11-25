@@ -135,20 +135,9 @@ const cohortSchema = new mongoose.Schema({
          required: true
       }
    },
-   _period: {
-      _startDate: {
-         type: Date,
-         required: true
-      },
-      _period: {
-         type: String,
-         enum: ["One Week",  "Two Weeks",  "Three Weeks", "Four Weeks", "One Month"],
-         required: true
-      },
-      _numberOfPeriods: {
-         type: Number,
-         required: true
-      }
+   _creationTimestamp: {
+      type: Number,
+      required: true
    },
    _businessId: {
       type: String,

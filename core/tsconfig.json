@@ -17,5 +17,6 @@
    "awesomeTypescriptLoaderOptions": {
       "useCache": true,
       "useBabel": true
-   }
+   },
+   "strictPropertyInitialization" :  true
 }

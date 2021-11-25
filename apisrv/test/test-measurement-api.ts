@@ -3,6 +3,7 @@
 import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
+import { Timestamper } from '../../core/src/Timestamp';
 import { BaseUnits } from '../../core/src/Unit';
 import { Quantity } from "../../core/src/Quantity";
 import { PersistenceDetails } from "../../core/src/Persistence";
@@ -35,7 +36,7 @@ describe("MeasurementApi", function () {
    let api: MeasurementApi = new MeasurementApi(root);
 
    var measurement1: Measurement = new Measurement(
-      new PersistenceDetails(null, 1, 2), quantity, repeats, Measurement.timeStampNow(), measurementType, "1234");
+      new PersistenceDetails(null, 1, 2), quantity, repeats, Timestamper.now(), measurementType, "1234");
 
    it("Needs to save a new Measurement", async function (done) {
 
@@ -139,9 +140,9 @@ describe("MeasurementApi - heterogenous", function () {
    let weightMeasurementType = MeasurementTypes.snatch;
 
    var timeMeasurement: Measurement = new Measurement(
-      new PersistenceDetails(null, 1, 2), quantityOfTime, repeats, Measurement.timeStampNow(), timeMeasurementType, "1234");
+      new PersistenceDetails(null, 1, 2), quantityOfTime, repeats, Timestamper.now(), timeMeasurementType, "1234");
    var weightMeasurement: Measurement = new Measurement(
-      new PersistenceDetails(null, 1, 2), quantityOfWeight, repeats, Measurement.timeStampNow(), weightMeasurementType, "1234");
+      new PersistenceDetails(null, 1, 2), quantityOfWeight, repeats, Timestamper.now(), weightMeasurementType, "1234");
 
    let api: MeasurementApi = new MeasurementApi(root);
 
