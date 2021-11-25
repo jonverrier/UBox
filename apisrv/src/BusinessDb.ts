@@ -52,6 +52,11 @@ export class BusinessDb implements IBusinessStore {
          let admins = await personDb.loadMany(adminIds);
          result._doc._administrators = admins ? admins : new Array<Person>();
 
+         // Switch members from an array of Ids to an array of objects by loading them up 
+         let memberIds = this.makeIdArray(result._doc._memberIds);
+         let members = await personDb.loadMany(memberIds);
+         result._doc._members = members ? members : new Array<Person>();
+
          return this._codec.tryCreateFrom(result._doc);
 
       } else {
@@ -62,6 +67,7 @@ export class BusinessDb implements IBusinessStore {
    async save(business: Business): Promise<Business | null> {
       try {
          var prevAdmins: Array<Person> = business.administrators;
+         var prevMembers: Array<Person> = business.members;
 
          var personDb: PersonDb = new PersonDb();
 
@@ -72,12 +78,21 @@ export class BusinessDb implements IBusinessStore {
             }
          }
 
+         // For any Members that do not have valid key, save them
+         for (var i = 0; i < prevMembers.length; i++) {
+            if (!prevMembers[i].persistenceDetails.hasValidKey()) {
+               prevMembers[i] = await personDb.save(prevMembers[i]);
+            }
+         }
+
          // Before saving to DB, we convert object references to Ids, save the Ids on the memento, and remove object references from the Cohort.
          // We do the reverse on load.
          let memento = business.memento();
 
          memento._administratorIds = this.makePersonIds(prevAdmins);
          memento._administrators = new Array<PersonMemento>();
+         memento._memberIds = this.makePersonIds(prevMembers);
+         memento._members = new Array<PersonMemento>();
 
          if (!business.persistenceDetails.hasValidKey()) {
             // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
@@ -98,6 +113,7 @@ export class BusinessDb implements IBusinessStore {
 
                // Restore the object arrays before sending back to client
                existing._doc._administrators = prevAdmins;
+               existing._doc._members = prevMembers;
 
                // Return a constructed object via codec 
                return this._codec.tryCreateFrom(existing._doc);
@@ -113,6 +129,7 @@ export class BusinessDb implements IBusinessStore {
 
          // Restore the object arrays before sending back to client
          result._doc._administrators = prevAdmins;
+         result._doc._members = prevMembers;
 
          return this._codec.tryCreateFrom(result._doc);
       } catch (err) {
@@ -156,6 +173,10 @@ const businessSchema = new mongoose.Schema({
       }
    },
    _administratorIds: {
+      type: [String],
+      required: true
+   },
+   _memberIds: {
       type: [String],
       required: true
    }

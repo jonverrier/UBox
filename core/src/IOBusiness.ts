@@ -23,6 +23,7 @@ export const businessIoType = IoTs.type({
    _name: nameIoType,
    _thumbnailUrl: urlIoType,
    _administrators: IoTs.array(personIoType),
+   _members: IoTs.array(personIoType),
 });
 
 export class BusinessCodec implements ICodec<Business> {

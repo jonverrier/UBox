@@ -35,7 +35,8 @@ describe("IOBusiness", function () {
             _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
             _name: { _displayName: "Joe"},
             _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true },
-            _administrators: people
+            _administrators: people,
+            _members: people
          });
       } catch (e) {
          caught = true;
@@ -48,7 +49,7 @@ describe("IOBusiness", function () {
 
       let encoded: BusinessMemento = codec.encode(new Business(new PersistenceDetails(1, 1, 1),
          new Name("Joe"),
-         new Url("https://jo.pics.com", false), people));
+         new Url("https://jo.pics.com", false), people, people));
 
       expect(encoded._persistenceDetails._key).to.equal(1);
       expect(encoded._persistenceDetails._schemaVersion).to.equal(1);
@@ -59,7 +60,7 @@ describe("IOBusiness", function () {
 
       let initial = new Business(new PersistenceDetails(1, 1, 1),
          new Name("Joe"),
-         new Url("https://jo.pics.com", false), people);
+         new Url("https://jo.pics.com", false), people, people);
       let encoded = codec.encode(initial);
       let decoded: Business;
 

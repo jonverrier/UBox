@@ -8,7 +8,10 @@ import { Business, BusinessMemento } from './Business';
 
 export enum ECohortPeriod { Week = "One Week", TwoWeeks = "Two Weeks", ThreeWeeks = "Three Weeks", FourWeeks = "Four Weeks", Month = "One Month" }
 
-export enum ECohortType {OlympicLifting = "Olympic Lifting", Powerlifting = "Power Lifting", Conditioning = "Conditioning"}
+export enum ECohortType {
+    OlympicLifting = "Olympic Lifting", Powerlifting = "Power Lifting", Conditioning = "Conditioning",
+    WorkoutForReps = "Workout for Reps", WorkoutForTime = "Workout for Time", WorkoutForWeight = "Workout for Weight"
+}
 
 export class CohortTimePeriodMemento {
    _startDate: Date;
@@ -129,14 +132,11 @@ export class CohortMemento {
    _business: BusinessMemento; // Not readonly as database needs to manually set
    readonly _name: NameMemento;   
    readonly _period: CohortTimePeriodMemento;
-   _administrators: Array<PersonMemento>; // Not readonly as database needs to manually set
-   _members: Array<PersonMemento>;        // Not readonly as database needs to manually set
    readonly _cohortType: ECohortType;
 
    // These are used to allow the Db layer to swizzle object references to string Ids on save, and the reverse on load
    // so separate documents/tables can be used in the DB
    _businessId: string;
-   _memberIds: Array<string>;
 
    /**
     * Create a CohortMemento object
@@ -144,7 +144,6 @@ export class CohortMemento {
     * @param business - the business that set up the Cohort
     * @param name - plain text name for the cohort
     * @param period - CohortTimePeriod to specifiy start date, period, number of period*
-    * @param members - array of People, may be zero length 
     * @param cohortType - purpose of the cohort (Oly, Power, Conditioning, ...)
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
@@ -152,7 +151,6 @@ export class CohortMemento {
       business: BusinessMemento,
       name: NameMemento, 
       period: CohortTimePeriodMemento,
-      members: Array<PersonMemento>,
       cohortType: ECohortType) {
 
       var i: number = 0;
@@ -161,11 +159,9 @@ export class CohortMemento {
       this._business = business;
       this._name = name;
       this._period = period;
-      this._members = members;
       this._cohortType = cohortType;
 
       this._businessId = null;
-      this._memberIds = null;
    }
 }
 
@@ -173,20 +169,14 @@ export class Cohort extends Persistence {
    private _business: Business; 
    private _name: Name;
    private _period: CohortTimePeriod;
-   private _members: Array<Person>;
+
    private _cohortType: ECohortType;
 
-   // These are used to allow the Db layer to swizzle object references to string Ids on save, and the reverse on load
-   // so separate documents/tables can be used in the DB
-   private _adminstratorIds: Array<string>;
-   private _memberIds: Array<string>;
 /**
  * Create a Cohort object
  * @param persistenceDetails - (from Persistence) for the database layer to use and assign
  * @param business - the business that set up the Cohort*
  * @param name - plain text name for the cohort
- * @param administrators - array of People
- * @param members - array of People
  * @param period - CohortTimePeriod to specifiy start date, period, number of period
  * @param cohortType - purpose of the cohort (Oly, Power, Conditioning, ...)
  */
@@ -194,7 +184,6 @@ export class Cohort extends Persistence {
       business: Business,
       name: Name,
       period: CohortTimePeriod,
-      members: Array<Person>,
       cohortType: ECohortType);
    public constructor(memento: CohortMemento);
    public constructor(...params: any[]) {
@@ -211,14 +200,7 @@ export class Cohort extends Persistence {
          this._name = new Name(memento._name._displayName);
          this._period = new CohortTimePeriod(memento._period.startDate, memento._period.period, memento._period.numberOfPeriods);
 
-         this._members = new Array<Person>(memento._members.length);
-         for (i = 0; i < memento._members.length; i++)
-            this._members[i] = new Person(memento._members[i]);
-
          this._cohortType = memento._cohortType;
-
-         this._adminstratorIds = null;
-         this._memberIds = null;
 
       } else {
 
@@ -227,10 +209,7 @@ export class Cohort extends Persistence {
          this._business = params[1];
          this._name = params[2];
          this._period = params[3];
-         this._members = params[4];
-         this._cohortType = params[5];
-         this._adminstratorIds = null;
-         this._memberIds = null;
+         this._cohortType = params[4];
       }
    }
 
@@ -242,9 +221,6 @@ export class Cohort extends Persistence {
    }
    get name(): Name {
       return this._name;
-   }
-   get members(): Array<Person> {
-      return this._members;
    }
    get period(): CohortTimePeriod {
       return this._period;
@@ -262,9 +238,6 @@ export class Cohort extends Persistence {
    set period(period: CohortTimePeriod) {
       this._period = period;
    }
-   set members(people: Array<Person>) {
-      this._members = people;
-   }
    set cohortType(cohortType: ECohortType)  {
       this._cohortType = cohortType;
    }
@@ -279,7 +252,6 @@ export class Cohort extends Persistence {
          this._business.memento(),
          this._name.memento(),
          this._period.memento(),
-         Person.peopleMemento(this._members),
          this._cohortType);
    }
 
@@ -293,45 +265,12 @@ export class Cohort extends Persistence {
       return (super.equals(rhs) &&
          this._business.equals (rhs._business) &&
          this._name.equals(rhs._name) &&
-         Person.peopleAreEqual(this._members, rhs._members) &&
          this._cohortType === rhs._cohortType &&
          this._period.equals(rhs._period));
    }
-
-   /**
-    * test if a cohort includes a person as a member 
-    * @param person - the person to check
-    */
-   includesMember (person: Person): boolean {
-
-      return (this._members.includes(person));
-   }
-
-   /**
-    * test if a cohort includes a person as a member 
-    * @param email - the person to check
-    */
-   includesMemberEmail (email: EmailAddress): boolean {
-
-      return this.includesEmail(email, this._members);
-   }
-
-   /**
-    * internal function to test if array includes a person with the email.
-    * @param email - the person to check
-    * @param people - an array of person objects to look inside to see if email is present
-    */
-   private includesEmail(email: EmailAddress, people: Array<Person>): boolean {
-
-      for (let item of people) {
-         if (item.email.equals(email))
-            return true;
-      }
-      return false;
-   }
 }
 
-export interface IBusinessStore {
+export interface ICohortStore {
    loadOne(id: string): Promise<Cohort | null>;
    save(cohort: Cohort): Promise<Cohort | null>;
 }

@@ -107,7 +107,7 @@ describe("Cohort", function () {
    let business = new Business(new PersistenceDetails(null, 1, 1),
       new Name("XFit Dulwich"),
       new Url("https://xfit.pics.com", false),
-      people);
+      people, people);
 
    beforeEach(function () {
 
@@ -116,14 +116,12 @@ describe("Cohort", function () {
          business,
          new Name("Joe"),
          period,
-         people,
          ECohortType.OlympicLifting);
 
       cohort2 = new Cohort(new PersistenceDetails("id", 1, 1),
          business,
          new Name("Bill"),
          period,
-         people,
          ECohortType.OlympicLifting);
    });
    
@@ -138,7 +136,6 @@ describe("Cohort", function () {
       expect(cohort1.name.equals(new Name("Joe"))).to.equal(true);
       expect(cohort1.business.equals(business)).to.equal(true);
       expect(cohort1.period.equals(period)).to.equal(true);
-      expect(Person.peopleAreEqual(cohort1.members, cohort2.members)).to.equal(true);
       expect(cohort1.cohortType).to.equal(ECohortType.OlympicLifting);
    });
 
@@ -154,27 +151,17 @@ describe("Cohort", function () {
       let newBusiness = new Business(new PersistenceDetails(null, 1, 1),
          new Name("XFit Dulwich2"),
          new Url("https://xfit.pics.com", false),
-         people);
+         people, people);
 
       cohort1.business = newBusiness;
       cohort1.name = newName;
-      cohort1.members = people;
       cohort1.cohortType = ECohortType.Conditioning;
       cohort1.period = newPeriod;
 
       expect(cohort1.business.equals(newBusiness)).to.equal(true);
       expect(cohort1.name.equals(newName)).to.equal(true);
       expect(cohort1.period.equals(newPeriod)).to.equal(true);
-      expect(Person.peopleAreEqual(cohort1.members, people)).to.equal(true);
       expect(cohort1.cohortType).to.equal(ECohortType.Conditioning);
-   });
-
-   it("Needs to test membership", function () {
-
-      expect(cohort1.includesMember(person)).to.equal(true);
-      expect(cohort1.includesMember(person2)).to.equal(false);
-      expect(cohort1.includesMemberEmail(person.email)).to.equal(true);
-      expect(cohort1.includesMemberEmail(person2.email)).to.equal(false);
    });
 
    it("Needs to convert to and from memento()", function () {

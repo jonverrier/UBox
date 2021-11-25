@@ -83,13 +83,12 @@ describe("IOCohort", function () {
    let business = new Business(new PersistenceDetails(null, 1, 1),
       new Name("XFit Dulwich2"),
       new Url("https://xfit.pics.com", false),
-      people);
+      people, people);
 
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),
       business,
       new Name("Joe"),
       period,
-      people,
       ECohortType.Conditioning);
 
    it("Needs to decode a Cohort from clean input.", function () {

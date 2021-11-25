@@ -24,6 +24,9 @@ if (process.env.NODE_ENV === 'development') {
    console.log('Using production options');
 }
 
+// Threshold for allowing a contact to be registered as not a robot 
+const googleVerificationThreshold = 0.5;
+
 // Initialize status middleware - files, cache etc
 // Set cache parameter to one day unless in development, and include 'dev' directory if we are in development mode
 // Note: do this BEFORE adding sessions, else sessions get called multiple times, 
@@ -102,7 +105,7 @@ app.post('/contact', (req, res) => {
    axios.post('https://www.google.com/recaptcha/api/siteverify', query, config)
       .then(googleRes => {
 
-         if (googleRes.data.success === true && googleRes.data.score >= 0.5) {
+         if (googleRes.data.success === true && googleRes.data.score >= googleVerificationThreshold) {
             let contactDb = new ContactDb();
             contactDb.save(req.body.email, false);
          }

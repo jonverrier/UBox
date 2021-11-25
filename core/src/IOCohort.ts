@@ -52,7 +52,6 @@ const cohortIoType = IoTs.type({
    _business: businessIoType,
    _name: nameIoType,
    _period: cohortPeriodIoType,
-   _members: IoTs.array(personIoType),
    _cohortType: createEnumType<ECohortType>(ECohortType, 'ECohortType')
 });
 
@@ -69,17 +68,12 @@ export class CohortCodec implements ICodec<Cohort> {
    tryCreateFrom(data: any): Cohort {
 
       let temp = this.decode (data); // If types dont match an exception will be thrown here
-      var i: number;
-
-      let members = new Array<Person>(temp._members.length);
-      for (i = 0; i < members.length; i++)
-         members[i] = new Person(temp._members[i]);    
 
       return new Cohort(new PersistenceDetails(temp._persistenceDetails._key, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
          new Business (temp._business),
          new Name(temp._name._displayName),
          new CohortTimePeriod(new Date(temp._period._startDate), temp._period._period, temp._period._numberOfPeriods),
-         members,
+
          temp._cohortType);
    }
 }

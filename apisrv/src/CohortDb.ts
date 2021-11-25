@@ -3,39 +3,20 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { ECohortType, Cohort, IBusinessStore } from '../../core/src/Cohort';
+import { ECohortType, Cohort, ICohortStore } from '../../core/src/Cohort';
 import { Person, PersonMemento } from '../../core/src/Person';
 import { Business } from '../../core/src/Business';
 import { CohortCodec } from '../../core/src/IOCohort';
 import { PersonDb } from './PersonDb';
 import { BusinessDb } from './BusinessDb';
 
-export class CohortDb implements IBusinessStore {
+export class CohortDb implements ICohortStore {
    private _codec;
 
    constructor() {
       this._codec = new CohortCodec();;
    }
 
-   private makeIdArray(input: Array<any>) : Array<string> {
-      var output: Array<string> = new Array<string>(input.length);
-
-      for (var i = 0; i < input.length; i++) {
-         output[i] = input[i].toString();
-      }
-      return output;
-   }
-
-   private makePersonIds(people: Array<Person>): Array<string> {
-      var ids: Array<string> = new Array<string>();
-      var i: number;
-
-      for (i = 0; i < people.length; i++) {
-         ids.push(people[i].persistenceDetails.key);
-      }
-      return ids;
-
-   }
 
    private makeId(business: Business): string {
 
@@ -54,24 +35,9 @@ export class CohortDb implements IBusinessStore {
          var businessDb: BusinessDb = new BusinessDb();
          var personDb: PersonDb = new PersonDb();
 
-         // Switch members & business from Ids to objects by loading them up 
-         let memberIds = this.makeIdArray(result._doc._memberIds);
-
-         // TODO - should be able to run these in parallel and then chain them. Does not seem to work per below ... 
-         let members = await personDb.loadMany(memberIds);
          let business = await businessDb.loadOne(result._doc._businessId);
 
-         /* members.then(data => {
-            result._doc._members = data ? data : new Array<Person>();
-            return members;
-         })
-         .then(data => {
-            result._doc.business = data;
-            return this._codec.tryCreateFrom(result._doc);
-         }); */
-
          result._doc._business = business;
-         result._doc._members = members ? members : new Array<Person>();
 
          return this._codec.tryCreateFrom(result._doc);
 
@@ -84,7 +50,6 @@ export class CohortDb implements IBusinessStore {
       try {
 
          var prevBusiness:Business = cohort.business;
-         var prevMembers: Array<Person> = cohort.members;
 
          var businessDb: BusinessDb = new BusinessDb();
          var personDb: PersonDb = new PersonDb();
@@ -94,20 +59,11 @@ export class CohortDb implements IBusinessStore {
             prevBusiness = await businessDb.save(prevBusiness);
          }
 
-         // For any Members that do not have valid key, save them
-         for (var i = 0; i < prevMembers.length; i++) {
-            if (!prevMembers[i].persistenceDetails.hasValidKey()) {
-               prevMembers[i] = await personDb.save(prevMembers[i]);
-            }
-         }
-
          // Before saving to DB, we convert object references to Ids, save the Ids on the memento, and remove object references from the Cohort.
          // We do the reverse on load.
          let memento = cohort.memento();
 
          memento._businessId = this.makeId(prevBusiness);
-         memento._memberIds = this.makePersonIds(prevMembers);
-         memento._members = new Array<PersonMemento>();
 
          if (!cohort.persistenceDetails.hasValidKey()) {
             // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
@@ -130,7 +86,6 @@ export class CohortDb implements IBusinessStore {
 
                // Restore the object arrays before sending back to client
                existing._doc._business = prevBusiness;
-               existing._doc._members = prevMembers;
 
                // Return a constructed object via codec 
                return this._codec.tryCreateFrom(existing._doc);
@@ -146,7 +101,6 @@ export class CohortDb implements IBusinessStore {
 
          // Restore the object arrays before sending back to client
          result._doc._business = prevBusiness;
-         result._doc._members = prevMembers;
 
          return this._codec.tryCreateFrom(result._doc);
       } catch (err) {
@@ -198,10 +152,6 @@ const cohortSchema = new mongoose.Schema({
    },
    _businessId: {
       type: String,
-      required: true
-   },
-   _memberIds: {
-      type: [String],
       required: true
    },
    _cohortType: {
