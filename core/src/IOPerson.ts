@@ -1,40 +1,17 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { LoginDetails, EmailAddress, Roles, Person, PersonMemento, ERoleType, ELoginProvider } from "./Person";
+import { EmailAddress, Roles, Person, PersonMemento, ERoleType } from "./Person";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
-import { nameIoType, urlIoType, personaIoType } from '../src/IOPersona';
+import { personaIoType } from '../src/IOPersona';
 
 import * as IoTs from 'io-ts';
 
-// Rule summary for a Persistent Object: 
-// - derives from IPersistence, which contains a PersistentDetails member object. 
-// - can save itself to a Memento object, which contains internal state. 
-// - has a Codec class, which can transform to and from the Memento format. 
+// Rule summary for a Persistent Object:
+// - derives from IPersistence, which contains a PersistentDetails member object.
+// - can save itself to a Memento object, which contains internal state.
+// - has a Codec class, which can transform to and from the Memento format.
 // - Memento versions are transmitted over the wire, and stored in the database.
 
-
-// LoginDetails Codec
-// ==========
-const loginIoType = IoTs.type({
-   _provider: createEnumType<ELoginProvider>(ELoginProvider, 'ELoginProvider'),
-   _token: IoTs.string // token must be non-null
-});
-
-export class LoginDetailsCodec implements ICodec<LoginDetails> {
-
-   decode(data: any): any {
-      return decodeWith(loginIoType)(data);
-   }
-
-   encode(data: LoginDetails): any {
-      return encodeWith(loginIoType)(data.memento());
-   }
-
-   tryCreateFrom(data: any): LoginDetails {
-      let temp = this.decode (data); // If types dont match an exception will be thrown here
-      return new LoginDetails(temp._provider, temp._token);
-   }
-}
 
 // Email Codec
 // ==========
@@ -92,7 +69,6 @@ export class RolesCodec implements ICodec<Roles> {
 
 export const personIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
-   _loginDetails: loginIoType,
    _persona: personaIoType,
    _roles: rolesIoType
 });

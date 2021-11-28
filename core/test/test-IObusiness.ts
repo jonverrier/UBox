@@ -3,7 +3,7 @@
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
 import { Url, Name, Persona } from "../src/Persona";
-import { LoginDetails, EmailAddress, Roles, Person, ERoleType, ELoginProvider, PersonMemento } from '../src/Person';
+import { EmailAddress, Person } from '../src/Person';
 import { Business, BusinessMemento } from '../src/Business';
 import { BusinessCodec } from '../src/IOBusiness';
 
@@ -14,7 +14,6 @@ describe("IOBusiness", function () {
 
    var codec: BusinessCodec;
    let person = new Person(new PersistenceDetails(1, 1, 1),
-      new LoginDetails(ELoginProvider.Apple, "xxx"),
       new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
       null);

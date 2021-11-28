@@ -9,6 +9,7 @@ import { EMeasurementType, EPositiveTrend } from '../../core/src/ObservationType
 import { MeasurementTypes } from '../../core/src/ObservationTypeDictionary';
 import { Measurement, IMeasurementStore } from '../../core/src/Observation';
 import { MeasurementCodec } from '../../core/src/IOObservation';
+import { persistenceDetailsSchema } from './PersistenceDb';
 
 export class MeasurementDb implements IMeasurementStore {
    private _codec: MeasurementCodec;
@@ -216,20 +217,7 @@ export const measurementTypeSchema = new mongoose.Schema({
 });
 
 const measurementSchema = new mongoose.Schema({
-   _persistenceDetails: {
-      _key: {
-         type: String,
-         required: false
-      },
-      _schemaVersion: {
-         type: Number,
-         required: true
-      },
-      _sequenceNumber: {
-         type: Number,
-         required: true
-      },
-   },
+   _persistenceDetails: persistenceDetailsSchema,
    _quantity: quantitySchema,
    _repeats: {
       type: Number,
@@ -244,6 +232,10 @@ const measurementSchema = new mongoose.Schema({
       required: true
    },
    _subjectKey: {
+      type: String,
+      required: true
+   },
+   _cohortKey: {
       type: String,
       required: true
    }

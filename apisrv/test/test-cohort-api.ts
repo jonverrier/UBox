@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { Name, Url, Persona } from "../../core/src/Persona";
-import { ELoginProvider, LoginDetails, EmailAddress, Person } from "../../core/src/Person";
+import { EmailAddress, Person } from "../../core/src/Person";
 import { Business } from '../../core/src/Business';
 import { ECohortPeriod, Cohort, ECohortType } from "../../core/src/Cohort";
 import { BusinessApi } from '../src/BusinessApi';
@@ -26,7 +26,6 @@ describe("CohortApi", function () {
    let period = 1;
 
    let person = new Person(new PersistenceDetails(null, 1, 1),
-      new LoginDetails(ELoginProvider.Apple, "xxx"),
       new Persona(new Name("Jon V"), new Url("https://jonv.pics.com", false)),
       new EmailAddress("jonathanverrier@hotmail.com", true),
       null);

@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name, UrlMemento, Persona } from "../src/Persona";
-import { LoginDetails, EmailAddress, Roles, Person, PersonMemento, IPersonStore, ERoleType, ELoginProvider } from '../src/Person';
+import { EmailAddress, Roles, Person, PersonMemento, IPersonStore, ERoleType} from '../src/Person';
 
 var expect = require("chai").expect;
 
@@ -12,7 +12,6 @@ class StubLoader implements IPersonStore {
 
    constructor() {
       this.person = new Person(new PersistenceDetails(1, 1, 1),
-         new LoginDetails(ELoginProvider.Apple, "123"),
          new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
          new EmailAddress("Joe@mail.com", true), null);
    }
@@ -65,6 +64,7 @@ describe("Name", function () {
    });
 });
 
+/*
 describe("LoginDetails", function () {
    var login1: LoginDetails, login2: LoginDetails, login3: LoginDetails;
 
@@ -100,6 +100,8 @@ describe("LoginDetails", function () {
       expect(login1.token).to.equal("xxx");
    });
 });
+
+*/
 
 describe("Url", function () {
    var url1: Url, url2: Url, url3: Url;
@@ -270,12 +272,10 @@ describe("Person", function () {
    
    beforeEach(function () {
       person1 = new Person(new PersistenceDetails(1, 1, 1),
-         new LoginDetails(ELoginProvider.Apple, "123"),
          new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
          new EmailAddress("Joe@mail.com", true), null);
 
-      person2 = new Person(new PersistenceDetails(1, 1, 1),
-         new LoginDetails(ELoginProvider.Apple, "1234"),
+      person2 = new Person(new PersistenceDetails(2, 1, 1),
          new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
          new EmailAddress ("Joe@mail.com", true), null);
    });
@@ -283,7 +283,6 @@ describe("Person", function () {
    it("Needs to construct with null email", function () {
 
       let nullperson = new Person(new PersistenceDetails(1, 1, 1),
-         new LoginDetails(ELoginProvider.Apple, "1234"),
          new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
          null, null);
 
@@ -294,7 +293,6 @@ describe("Person", function () {
    it("Needs to construct with null Url ", function () {
 
       let nullperson = new Person(new PersistenceDetails(1, 1, 1),
-         new LoginDetails(ELoginProvider.Apple, "1234"),
          new Persona (new Name("Joe"), null),
          new EmailAddress("Joe@mail.com", true), null);
 
@@ -306,7 +304,6 @@ describe("Person", function () {
 
       let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
       let roleperson = new Person(new PersistenceDetails(1, 1, 1),
-         new LoginDetails(ELoginProvider.Apple, "1234"),
          new Persona (new Name("Joe"), null),
          new EmailAddress("Joe@mail.com", true), roles);
 
@@ -323,13 +320,11 @@ describe("Person", function () {
    
    it("Needs to correctly store attributes", function () {
          
-      expect(person1.loginDetails.equals(new LoginDetails(ELoginProvider.Apple, "123")) ).to.equal(true);
       expect(person1.persona.name.equals(new Name("Joe"))).to.equal(true);
       expect(person1.email.equals(new EmailAddress("Joe@mail.com", true))).to.equal(true);
       expect(person1.persona.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
       expect(person1.roles).to.equal(null);
 
-      expect(person1.memento()._loginDetails._provider === person1.loginDetails.memento()._provider).to.equal(true);
       expect(person1.memento()._persona._name._displayName === person1.persona.memento()._name._displayName).to.equal(true);
       expect(person1.memento()._persona._thumbnailUrl.url === person1.persona.thumbnailUrl.memento().url).to.equal(true);
       expect(person1.memento()._email._email === person1.email.memento()._email).to.equal(true);
@@ -412,7 +407,6 @@ describe("PersonStorer", function () {
 
       try {
          storer.save(new Person(new PersistenceDetails(1, 1, 1),
-            new LoginDetails(ELoginProvider.Apple, "123"),
             new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
             new EmailAddress("Joe@mail.com", true), null));
       } catch {

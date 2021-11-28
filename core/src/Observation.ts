@@ -13,6 +13,7 @@ export class MeasurementMemento {
    readonly _timestamp: number;
    readonly _measurementType: EMeasurementType;
    readonly _subjectKey: string;
+   readonly _cohortKey: string;
 
    /**
     * Create a MeasurementMementoOf object - a quantity, with a range of validity, and a marker of the positive trend (is it good if quantity goes up, or down)
@@ -22,12 +23,13 @@ export class MeasurementMemento {
     * @param timestamp - the period in which the measurement was taken. This is a timestamp in msecs rounded to nearest 15 minute interval
     * @param measurementType - key to the class that defines the type of measurement
     * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
+    * @param cohortKey - reference to the cohort entity for which the measurement was recorded. 
     * Design - all memento classes must depend only on base types, value types, or other Mementos*
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
       quantity: QuantityMemento, repeats: number, timestamp: number,
       measurementType: EMeasurementType,
-      subjectKey: string)
+      subjectKey: string, cohortKey: string)
    {
       this._persistenceDetails = persistenceDetails;
       this._quantity = quantity;
@@ -35,6 +37,7 @@ export class MeasurementMemento {
       this._timestamp = timestamp;
       this._measurementType = measurementType;
       this._subjectKey = subjectKey;
+      this._cohortKey = cohortKey;
    }
 }
 
@@ -44,6 +47,7 @@ export class Measurement extends Persistence {
    private _timestamp: number;
    private _measurementType: MeasurementType;
    private _subjectKey: string; 
+   private _cohortKey: string;
 
 /**
  * Create a Measurement object - a quantity, with a range of validity, and a marker of the positive trend (is it good if quantity goes up, or down)
@@ -53,9 +57,11 @@ export class Measurement extends Persistence {
  * @param timestamp - the period in which the measurement was taken. This is a timestamp in msecs rounded to nearest 15 minute interval
  * @param measurementType - reference to the class that defines the type of measurement
  * @param subjectKey - reference to the entity to which the measurement applies  - usually a Person
+ * @param cohortKey - reference to the cohort entity for which the measurement was recorded. * 
  */
    constructor(persistenceDetails: PersistenceDetails,
-      quantity: Quantity, repeats: number, timestamp: number, measurementType: MeasurementType, subjectKey: string)
+      quantity: Quantity, repeats: number, timestamp: number, measurementType: MeasurementType,
+      subjectKey: string, cohortKey: string)
    public constructor(memento: MeasurementMemento);
    public constructor(...params: any[]) {
 
@@ -77,6 +83,7 @@ export class Measurement extends Persistence {
          this._timestamp = memento._timestamp;
          this._measurementType = measurementType;
          this._subjectKey = memento._subjectKey;
+         this._cohortKey = memento._cohortKey;
 
       } else {
 
@@ -90,6 +97,7 @@ export class Measurement extends Persistence {
          this._timestamp = params[3];
          this._measurementType = params[4];
          this._subjectKey = params[5];
+         this._cohortKey = params[6];
       }
    }
 
@@ -111,6 +119,9 @@ export class Measurement extends Persistence {
    get subjectKey(): string {
       return this._subjectKey;
    }
+   get cohortKey(): string {
+      return this._cohortKey;
+   }
 
    /**
    * memento() returns a copy of internal state
@@ -120,7 +131,7 @@ export class Measurement extends Persistence {
          this._quantity.memento(),
          this._repeats, this._timestamp,
          this._measurementType.measurementType,
-         this._subjectKey);
+         this._subjectKey, this._cohortKey);
    }
 
    /**
@@ -135,7 +146,8 @@ export class Measurement extends Persistence {
          this._repeats === rhs._repeats &&
          this._timestamp === rhs._timestamp &&
          this._measurementType.equals(rhs.measurementType) &&
-         this._subjectKey === rhs._subjectKey);
+         this._subjectKey === rhs._subjectKey &&
+         this._cohortKey === rhs._cohortKey);
    }
 
 }

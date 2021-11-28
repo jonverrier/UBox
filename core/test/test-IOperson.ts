@@ -3,11 +3,12 @@
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
 import { Url, Name, Persona } from "../src/Persona";
-import { LoginDetails, EmailAddress, Roles, Person, ERoleType, ELoginProvider, PersonMemento } from '../src/Person';
-import { LoginDetailsCodec, EmailAddressCodec, RolesCodec, PersonCodec, PeopleCodec } from '../src/IOPerson';
+import { EmailAddress, Roles, Person, ERoleType, PersonMemento } from '../src/Person';
+import { EmailAddressCodec, RolesCodec, PersonCodec, PeopleCodec } from '../src/IOPerson';
 
 var expect = require("chai").expect;
 
+/*
 
 describe("IOLoginDetails", function () {
 
@@ -70,6 +71,8 @@ describe("IOLoginDetails", function () {
       expect(decoded.equals(initial)).to.equal(true);
    });
 });
+
+*/
 
 describe("IOEmail", function () {
 
@@ -210,7 +213,6 @@ describe("IOPerson", function () {
       try {
          codec.decode({
             _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
-            _loginDetails: { _provider: ELoginProvider.Apple, _token: "123" },
             _persona: {
                _name: { _displayName: "Joe" },
                _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true },
@@ -228,7 +230,6 @@ describe("IOPerson", function () {
    it("Needs to encode Person.", function () {
 
       let encoded: PersonMemento = codec.encode(new Person(new PersistenceDetails(1, 1, 1),
-         new LoginDetails(ELoginProvider.Apple, "123"),
          new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
          new EmailAddress("Joe@mail.com", true), null));
 
@@ -240,7 +241,6 @@ describe("IOPerson", function () {
    it("Needs to encode then decode Person.", function () {
 
       let initial = new Person(new PersistenceDetails(1, 1, 1),
-         new LoginDetails(ELoginProvider.Apple, "123"),
          new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
          new EmailAddress("Joe@mail.com", true), null);
       let encoded = codec.encode(initial);
@@ -263,7 +263,6 @@ describe("IOPerson", function () {
    it("Needs to encode & decode multiple People", function () {
 
       let initial = new Person(new PersistenceDetails(1, 1, 1),
-         new LoginDetails(ELoginProvider.Apple, "123"),
          new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
          new EmailAddress("Joe@mail.com", true), null);
 

@@ -5,7 +5,7 @@ import { Logger } from '../src/Logger';
 import { Timestamper } from '../src/Timestamp';
 import { PersistenceDetails } from '../src/Persistence';
 import { Url, Name, Persona } from "../src/Persona";
-import { LoginDetails, EmailAddress, Person, ELoginProvider } from '../src/Person';
+import { EmailAddress, Person } from '../src/Person';
 import { Business } from '../src/Business';
 import { ECohortType, ECohortPeriod, Cohort } from '../src/Cohort';
 import { CohortCodec } from '../src/IOCohort';
@@ -20,7 +20,6 @@ describe("IOCohort", function () {
    let creationTimestamp = Timestamper.now();
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
-      new LoginDetails(ELoginProvider.Apple, "xxx"),
       new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
       null);
