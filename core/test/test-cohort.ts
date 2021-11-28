@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name, Persona } from "../src/Persona";
-import { LoginDetails, EmailAddress, Person, ELoginProvider } from '../src/Person';
+import { EmailAddress, Person } from '../src/Person';
 import { Business } from '../src/Business';
 import { ECohortType, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
 
@@ -14,13 +14,11 @@ describe("Cohort", function () {
    let period = 1;
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
-      new LoginDetails(ELoginProvider.Apple, "xxx"),
       new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
       null);
 
    let person2 = new Person(new PersistenceDetails(1, 1, 1),
-      new LoginDetails(ELoginProvider.Apple, "xxx"),
       new Persona(new Name("Jenny"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Jenny@mail.com", true),
       null);

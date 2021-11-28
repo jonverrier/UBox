@@ -85,7 +85,7 @@ function testConstruct(quantity: Quantity,
                               measurementType: MeasurementType) {
 
    let stamp = Timestamper.now();
-   let measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, stamp, measurementType, "1234");
+   let measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, stamp, measurementType, "1234", "1234");
 
    expect(measurement.persistenceDetails.key).to.equal("id");
    expect(measurement.persistenceDetails.schemaVersion).to.equal(1);
@@ -102,9 +102,9 @@ function testEquals(quantity: Quantity,
    repeats: number,
    measurementType: MeasurementType) {
 
-   let measurement1 = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
-   let measurement2 = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 1, measurementType, "1234");
-   let measurement3 = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+   let measurement1 = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234", "1234");
+   let measurement2 = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 1, measurementType, "1234", "1234");
+   let measurement3 = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234", "1234");
 
    expect(measurement1.equals(measurement1)).to.equal(true);
    expect(measurement1.equals(measurement2)).to.equal(false);
@@ -204,7 +204,7 @@ describe("Measurement", function () {
       let caught = false;
 
       try {
-         let measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+         let measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234", "1234");
       } catch {
          caught = true;
       }
@@ -221,7 +221,7 @@ class StubStore implements IMeasurementStore {
       let repeats = 1;
       let measurementType = MeasurementTypes.snatch;
 
-      return new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234");
+      return new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234", "1234");
    }
 
    async save(measurement: Measurement | Measurement): Promise<Measurement | Measurement | null> {
@@ -260,7 +260,7 @@ describe("MeasurementStorer", function () {
          let repeats = 1;
          let measurementType = MeasurementTypes.snatch;
          let measurement = new Measurement(new PersistenceDetails("id", 1, 2),
-            quantity, repeats, 0, measurementType, "1234");
+            quantity, repeats, 0, measurementType, "1234", "1234");
 
          storer.save(measurement);
       } catch {

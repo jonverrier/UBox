@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name, Persona } from "../src/Persona";
-import { LoginDetails, EmailAddress, Person, ELoginProvider } from '../src/Person';
+import { EmailAddress, Person } from '../src/Person';
 import { Business, BusinessMemento } from '../src/Business';
 
 
@@ -16,13 +16,11 @@ describe("Business", function () {
    let newName: Name = new Name("CrossFit Dulwich Garden Extension");
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
-      new LoginDetails(ELoginProvider.Apple, "xxx"),
       new Persona(new Name("Joe"), url),
       new EmailAddress("Joe@mail.com", true),
       null);
 
    let person2 = new Person(new PersistenceDetails(1, 1, 1),
-      new LoginDetails(ELoginProvider.Apple, "xxx"),
       new Persona(new Name("Jenny"), url),
       new EmailAddress("Jenny@mail.com", true),
       null);

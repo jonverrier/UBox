@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { Name, Url, Persona } from "../../core/src/Persona";
-import { ELoginProvider, LoginDetails, EmailAddress, Person } from "../../core/src/Person";
+import { EmailAddress, Person } from "../../core/src/Person";
 import { Business } from "../../core/src/Business";
 import { PersonApi } from '../src/PersonApi';
 import { BusinessApi } from '../src/BusinessApi';
@@ -24,7 +24,6 @@ describe("BusinessApi", function () {
    let business1;
 
    let person = new Person(new PersistenceDetails(null, 1, 1),
-      new LoginDetails(ELoginProvider.Apple, "xxx"),
       new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
       null);

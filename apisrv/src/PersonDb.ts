@@ -89,18 +89,6 @@ export class PersonDb implements IPersonStore {
 
 const personSchema = new mongoose.Schema({
    _persistenceDetails: persistenceDetailsSchema,
-   _loginDetails: {
-      _provider: {
-         type: String,
-         enum: ["Apple", "Google", "Private"],
-         required: true
-      },
-      _token: {
-         type: String,
-         required: true,
-         index: true
-      }
-   },
    _persona: personaSchema,
    _email: {
       _email: {

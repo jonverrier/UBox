@@ -14,86 +14,6 @@ export enum ERoleType {
    Prospect = "Prospect", Member = "Member", Coach = "Coach"
 }
 
-export enum ELoginProvider {
-   Apple = "Apple", Google = "Google", Private = "Private"
-}
-
-export class LoginDetailsMemento {
-   readonly _provider: ELoginProvider;
-   readonly _token: string;
-
-   /**
-    * Create a LoginDetailsMemento object
-    * @param name - user first name
-    * @param surname - user family name, can be null
-    */
-   constructor(provider: ELoginProvider, token: string) {
-
-      this._provider = provider;
-      this._token = token;
-   }
-}
-
-export class LoginDetails {
-   private _provider: ELoginProvider;
-   private _token: string;
-
-   /**
-    * Create a LoginDetails object
-    * @param provider - which login provider was used 
-    * @param token - token provided by the external provider 
-    */
-   constructor(provider: ELoginProvider, token: string) {
-
-      if (!LoginDetails.isValidLoginDetails(token)) {
-         throw new InvalidParameterError("LoginDetails");
-      }
-
-      this._provider = provider;
-      this._token = token;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get provider(): ELoginProvider {
-      return this._provider;
-   }
-   get token(): string {
-      return this._token;
-   }
-
-   /**
-   * memento() returns a copy of internal state
-   */
-   memento(): LoginDetailsMemento {
-      return new LoginDetailsMemento(this._provider, this._token);
-   }
-
-   /**
-    * test for equality - checks all fields are the same. 
-    * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
-    * @param rhs - the object to compare this one to.  
-    */
-   equals(rhs: LoginDetails): boolean {
-
-      return (
-         (this._provider === rhs._provider) &&
-         (this._token === rhs._token));
-   }
-
-   /**
-    * test for valid login token 
-    * @param token - the string to test
-    */
-   static isValidLoginDetails(token: string): boolean {
-      if (token === null || token.length === 0)
-         return false;
-
-      return (true);
-   }
-}
-
 export class EmailAddressMemento {
    readonly _email: string;
    readonly _isEmailVerified: boolean;
@@ -266,7 +186,6 @@ export class Roles {
 
 export class PersonMemento {
    _persistenceDetails: PersistenceDetailsMemento;
-   _loginDetails: LoginDetailsMemento;
    _persona: PersonaMemento;
    _email: EmailAddressMemento | null;
    _roles: RolesMemento | null;
@@ -282,10 +201,9 @@ export class PersonMemento {
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
-      loginDetails: LoginDetailsMemento, persona: PersonaMemento, email: EmailAddressMemento | null, roles: RolesMemento | null) {
+      persona: PersonaMemento, email: EmailAddressMemento | null, roles: RolesMemento | null) {
 
       this._persistenceDetails = persistenceDetails;
-      this._loginDetails = loginDetails;
       this._persona = persona;
       this._email = email;
       this._roles = roles;
@@ -293,7 +211,6 @@ export class PersonMemento {
 }
 
 export class Person extends Persistence {
-   private _loginDetails: LoginDetails;
    private _persona: Persona;
    private _email: EmailAddress | null;
    private _roles: Roles | null;
@@ -308,7 +225,7 @@ export class Person extends Persistence {
  * @param roles - list of roles the Person plays, can be null
  */
    public constructor(persistenceDetails: PersistenceDetails,
-      loginDetails: LoginDetails, persona: Persona, email: EmailAddress | null, roles: Roles | null);
+      persona: Persona, email: EmailAddress | null, roles: Roles | null);
    public constructor(memento: PersonMemento);
    public constructor(...params: any[]) {
 
@@ -320,7 +237,6 @@ export class Person extends Persistence {
             memento._persistenceDetails._schemaVersion,
             memento._persistenceDetails._sequenceNumber));
 
-         this._loginDetails = new LoginDetails(memento._loginDetails._provider, memento._loginDetails._token);
          this._email = memento._email ? new EmailAddress(memento._email._email, memento._email._isEmailVerified) : null;
          this._persona = new Persona (memento._persona);
          this._roles = memento._roles ? new Roles(memento._roles._roles) : null;
@@ -329,19 +245,15 @@ export class Person extends Persistence {
 
          super(params[0]);
 
-         this._loginDetails = params[1];
-         this._persona = params[2];
-         this._email = params[3];
-         this._roles = params[4];
+         this._persona = params[1];
+         this._email = params[2];
+         this._roles = params[3];
       }
    }
 
    /**
    * set of 'getters' for private variables
    */
-   get loginDetails(): LoginDetails {
-      return this._loginDetails;
-   }
    get persona(): Persona {
       return this._persona;
    }
@@ -368,7 +280,6 @@ export class Person extends Persistence {
    */
    memento(): PersonMemento {
       return new PersonMemento(this.persistenceDetails.memento(),
-         this._loginDetails.memento(),
          this._persona ? this.persona.memento() : null,
          this._email ? this.email.memento() : null,
          this._roles ? this.roles.memento() : null);
@@ -421,7 +332,6 @@ export class Person extends Persistence {
     equals (rhs: Person) : boolean {
 
        return ((super.equals(rhs)) &&
-         (this._loginDetails.equals(rhs._loginDetails)) &&
          (this._persona.equals (rhs._persona)) &&
          (this._email ? this._email.equals(rhs._email) : (rhs.email === null)) &&
          (this._roles ? this._roles.equals(rhs._roles) : (rhs._roles === null))
