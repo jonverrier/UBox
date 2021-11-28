@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { Name, Url } from "../../core/src/Party";
+import { Name, Url, Persona } from "../../core/src/Persona";
 import { ELoginProvider, LoginDetails, EmailAddress, Person } from "../../core/src/Person";
 import { Business } from "../../core/src/Business";
 import { PersonApi } from '../src/PersonApi';
@@ -25,9 +25,9 @@ describe("BusinessApi", function () {
 
    let person = new Person(new PersistenceDetails(null, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe"),
+      new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
-      new Url("https://jo.pics.com", false), null);
+      null);
 
    beforeEach(async function () {
 
@@ -36,8 +36,7 @@ describe("BusinessApi", function () {
       people.push(savedPerson);
 
       business1 = new Business(new PersistenceDetails(null, 1, 1),
-         new Name("Fortitude Dulwich"),
-         new Url("https://jo.pics.com", false),
+         new Persona (new Name("Fortitude Dulwich"), new Url("https://jo.pics.com", false)),
          people, people);
    });
 

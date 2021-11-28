@@ -1,9 +1,8 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { Url, Name} from "./Party";
 import { Business } from "./Business";
 import { decodeWith, encodeWith, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
-import { nameIoType, urlIoType, } from '../src/IOParty';
+import { personaIoType} from '../src/IOPersona';
 import { personIoType, } from '../src/IOPerson';
 
 import * as IoTs from 'io-ts';
@@ -20,8 +19,7 @@ import * as IoTs from 'io-ts';
 
 export const businessIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
-   _name: nameIoType,
-   _thumbnailUrl: urlIoType,
+   _persona: personaIoType,
    _administrators: IoTs.array(personIoType),
    _members: IoTs.array(personIoType),
 });

@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
-import { Url, Name } from "../src/Party";
+import { Url, Name, Persona } from "../src/Persona";
 import { LoginDetails, EmailAddress, Roles, Person, ERoleType, ELoginProvider, PersonMemento } from '../src/Person';
 import { LoginDetailsCodec, EmailAddressCodec, RolesCodec, PersonCodec, PeopleCodec } from '../src/IOPerson';
 
@@ -211,9 +211,11 @@ describe("IOPerson", function () {
          codec.decode({
             _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
             _loginDetails: { _provider: ELoginProvider.Apple, _token: "123" },
-            _name: { _displayName: "Joe"},
+            _persona: {
+               _name: { _displayName: "Joe" },
+               _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true },
+            },
             _email: { _email: "Joe@mail.com", _isEmailVerified: false },
-            _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true },
             _roles: { _roles: null } 
          });
       } catch (e) {
@@ -227,8 +229,8 @@ describe("IOPerson", function () {
 
       let encoded: PersonMemento = codec.encode(new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe"),
-         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null));
+         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+         new EmailAddress("Joe@mail.com", true), null));
 
       expect(encoded._persistenceDetails._key).to.equal(1);
       expect(encoded._persistenceDetails._schemaVersion).to.equal(1);
@@ -239,8 +241,8 @@ describe("IOPerson", function () {
 
       let initial = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe"),
-         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
+         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+         new EmailAddress("Joe@mail.com", true), null);
       let encoded = codec.encode(initial);
       let decoded: Person;
 
@@ -262,8 +264,8 @@ describe("IOPerson", function () {
 
       let initial = new Person(new PersistenceDetails(1, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Joe"),
-         new EmailAddress("Joe@mail.com", true), new Url("https://jo.pics.com", false), null);
+         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+         new EmailAddress("Joe@mail.com", true), null);
 
       var people: Array<Person> = new Array<Person>();
       people.push(initial);

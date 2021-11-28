@@ -4,7 +4,7 @@
 import { Logger } from '../src/Logger';
 import { Timestamper } from '../src/Timestamp';
 import { PersistenceDetails } from '../src/Persistence';
-import { Url, Name } from "../src/Party";
+import { Url, Name, Persona } from "../src/Persona";
 import { LoginDetails, EmailAddress, Person, ELoginProvider } from '../src/Person';
 import { Business } from '../src/Business';
 import { ECohortType, ECohortPeriod, Cohort } from '../src/Cohort';
@@ -21,16 +21,15 @@ describe("IOCohort", function () {
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe"),
+      new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
-      new Url("https://jo.pics.com", false), null);
+      null);
 
    let people = new Array<Person>();
    people.push(person);
 
    let business = new Business(new PersistenceDetails(null, 1, 1),
-      new Name("XFit Dulwich2"),
-      new Url("https://xfit.pics.com", false),
+      new Persona (new Name("XFit Dulwich2"), new Url("https://xfit.pics.com", false)),
       people, people);
 
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),

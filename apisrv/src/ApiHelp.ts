@@ -23,7 +23,6 @@ export class SingletonApiHelper<Entity> {
    private _codec: ICodec<Entity>;
    private _saveUrl: string;
    private _queryUrl: string;
-   private _queryManyUrl: string;
 
 
    constructor(serverUrl: string, loadUrl:string, saveUrl:string, codec: ICodec<Entity>, ) {

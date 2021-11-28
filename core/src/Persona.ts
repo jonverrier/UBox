@@ -161,3 +161,113 @@ export class Url {
          (this._isUrlVerified === rhs._isUrlVerified));
    }
 }
+
+export class PersonaMemento {
+   _name: NameMemento;
+   _thumbnailUrl: UrlMemento | null;
+
+   /**
+    * Create a PersonMemento object
+    * @param name - plain text user name. Cannot be null. 
+    * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
+    * Design - all memento classes must depend only on base types, value types, or other Mementos
+    */
+   constructor( name: NameMemento, thumbnailUrl: UrlMemento | null) {
+
+      this._name = name;
+      this._thumbnailUrl = thumbnailUrl;
+   }
+}
+
+export class Persona {
+   private _name: Name;
+   private _thumbnailUrl: Url | null;
+
+   /**
+    * Create a Persona object
+    * @param name - plain text user name. Cannot be null.
+    * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
+    */
+   public constructor(name: Name, thumbnailUrl: Url | null)
+   public constructor(memento: PersonaMemento);
+   public constructor(...params: any[]) {
+
+      if (params.length === 1) {
+         let memento: PersonaMemento = params[0];
+
+         this._name = new Name(memento._name._displayName);
+         this._thumbnailUrl = new Url(memento._thumbnailUrl._url, memento._thumbnailUrl._isUrlVerified);
+      }
+      else {
+         this._name = params[0];
+         this._thumbnailUrl = params[1];
+      }
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get name(): Name {
+      return this._name;
+   }
+   get thumbnailUrl(): Url | null {
+      return this._thumbnailUrl;
+   }
+   set name(name: Name) {
+      this._name = name;
+   }
+   set thumbnailUrl(thumbnailUrl: Url) {
+      this._thumbnailUrl = thumbnailUrl;
+   }
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): PersonaMemento {
+      return new PersonaMemento(
+         this._name.memento(),
+         this._thumbnailUrl.memento());
+   }
+
+   static mementos (people: Array<Persona>): Array<PersonaMemento> {
+
+      let peopleMemento = new Array<PersonaMemento>(people.length);
+
+      for (var i: number = 0; i < people.length; i++)
+         peopleMemento[i] = people[i].memento();
+
+      return peopleMemento;
+   }
+
+
+   static areEqual(lhs: Array<Persona>, rhs: Array<Persona>): boolean {
+
+      // if we have mis-matched false values, return false
+      if (lhs && !rhs || !lhs && rhs)
+         return false;
+
+      // if we have mis-matched sizes, return false
+      if (lhs.length !== rhs.length)
+         return false;
+
+      // lse compare all entries
+      for (var i = 0; i < lhs.length; i++) {
+         if (!lhs[i].equals(rhs[i])) {
+            return false;
+         }
+      }
+      return true;
+   }
+
+
+   /**
+    * test for equality - checks all fields are the same. 
+    * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
+    * @param rhs - the object to compare this one to.  
+    */
+   equals(rhs: Persona): boolean {
+
+      return (this._name.equals(rhs._name)) &&
+         (this._thumbnailUrl ? this._thumbnailUrl.equals(rhs._thumbnailUrl) : (rhs.thumbnailUrl === null));
+   }
+}

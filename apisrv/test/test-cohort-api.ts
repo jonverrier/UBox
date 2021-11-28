@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { Name, Url } from "../../core/src/Party";
+import { Name, Url, Persona } from "../../core/src/Persona";
 import { ELoginProvider, LoginDetails, EmailAddress, Person } from "../../core/src/Person";
 import { Business } from '../../core/src/Business';
 import { ECohortPeriod, Cohort, ECohortType } from "../../core/src/Cohort";
@@ -27,9 +27,9 @@ describe("CohortApi", function () {
 
    let person = new Person(new PersistenceDetails(null, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Jon V"),
+      new Persona(new Name("Jon V"), new Url("https://jonv.pics.com", false)),
       new EmailAddress("jonathanverrier@hotmail.com", true),
-      new Url("https://jonv.pics.com", false), null);
+      null);
 
    beforeEach(async function () {
 
@@ -37,8 +37,7 @@ describe("CohortApi", function () {
       people.push(person);
 
       let business = new Business(new PersistenceDetails(null, 1, 1),
-         new Name("Fortitude Dulwich"),
-         new Url("https://xfit.pics.com", false),
+         new Persona (new Name("Fortitude Dulwich"), new Url("https://xfit.pics.com", false)),
          people, people);
 
       let newBusiness:Business = await businessApi.save(business);

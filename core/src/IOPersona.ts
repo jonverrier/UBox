@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { Url, Name} from "./Party";
+import { Url, Name, Persona} from "./Persona";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 
 import * as IoTs from 'io-ts';
@@ -56,3 +56,25 @@ export class UrlCodec implements ICodec<Url> {
    }
 }
 
+// Persona Codec
+// ==========
+export const personaIoType = IoTs.type({
+   _name: nameIoType, 
+   _thumbnailUrl: urlIoType
+});
+
+export class PersonaCodec implements ICodec<Persona> {
+
+   decode(data: any): any {
+      return decodeWith(personaIoType)(data);
+   }
+
+   encode(data: Persona): any {
+      return encodeWith(personaIoType)(data.memento());
+   }
+
+   tryCreateFrom(data: any): Persona {
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
+      return new Persona(temp);
+   }
+}

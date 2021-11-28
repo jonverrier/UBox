@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
-import { Url, Name } from "../src/Party";
+import { Url, Name, Persona } from "../src/Persona";
 import { LoginDetails, EmailAddress, Person, ELoginProvider } from '../src/Person';
 import { Business, BusinessMemento } from '../src/Business';
 
@@ -17,15 +17,14 @@ describe("Business", function () {
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe"),
+      new Persona(new Name("Joe"), url),
       new EmailAddress("Joe@mail.com", true),
-      url, null);
+      null);
 
    let person2 = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Jenny"),
+      new Persona(new Name("Jenny"), url),
       new EmailAddress("Jenny@mail.com", true),
-      url,
       null);
 
    beforeEach(function () {
@@ -34,14 +33,12 @@ describe("Business", function () {
       people.push(person);
 
       business1 = new Business(new PersistenceDetails("id", 1, 1),
-         initialName,
-         url,
+         new Persona (initialName, url),
          people,
          people);
 
-      business2 = new Business(new PersistenceDetails("id", 1, 1),
-         newName,
-         url,
+      business2 = new Business(new PersistenceDetails("id2", 1, 1),
+         new Persona(initialName, url),
          people, people);
    });
    
@@ -53,10 +50,10 @@ describe("Business", function () {
    
    it("Needs to correctly store attributes", function () {
 
-      expect(business1.name.equals (initialName)).to.equal(true);
-      expect(business1.thumbnailUrl.equals(url)).to.equal(true);
-      expect(Person.peopleAreEqual(business1.administrators, business2.administrators)).to.equal(true);
-      expect(Person.peopleAreEqual(business1.members, business2.members)).to.equal(true);
+      expect(business1.persona.name.equals(initialName)).to.equal(true);
+      expect(business1.persona.thumbnailUrl.equals(url)).to.equal(true);
+      expect(Person.areEqual(business1.administrators, business2.administrators)).to.equal(true);
+      expect(Person.areEqual(business1.members, business2.members)).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
@@ -66,15 +63,14 @@ describe("Business", function () {
       let people = new Array<Person>();
       people.push(person2);
 
-      business1.name = newName;
-      business1.thumbnailUrl = newUrl;
+      business1.persona = new Persona(newName, newUrl);
       business1.administrators = people;
       business1.members = people;
 
-      expect(business1.name.equals (newName)).to.equal(true);
-      expect(business1.thumbnailUrl.equals(newUrl)).to.equal(true);
-      expect(Person.peopleAreEqual(business1.administrators, people)).to.equal(true);
-      expect(Person.peopleAreEqual(business1.members, people)).to.equal(true);
+      expect(business1.persona.name.equals(newName)).to.equal(true);
+      expect(business1.persona.thumbnailUrl.equals(newUrl)).to.equal(true);
+      expect(Person.areEqual(business1.administrators, people)).to.equal(true);
+      expect(Person.areEqual(business1.members, people)).to.equal(true);
    });
 
    it("Needs to test membership", function () {
