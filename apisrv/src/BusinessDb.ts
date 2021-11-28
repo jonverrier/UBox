@@ -7,7 +7,8 @@ import { Person, PersonMemento } from '../../core/src/Person';
 import { Business, IBusinessStore } from '../../core/src/Business';
 import { BusinessCodec } from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
-
+import { persistenceDetailsSchema } from './PersistenceDb';
+import { personaSchema } from './PersonaDb';
 
 export class BusinessDb implements IBusinessStore {
    private _codec;
@@ -99,7 +100,7 @@ export class BusinessDb implements IBusinessStore {
             // Records are the same if they are: 
             //    same name 
             var whereClause = {
-               '_name._displayName': business.name.displayName
+               '_name._displayName': business.persona.name.displayName
             };
 
             const existing = await businessModel.findOne(whereClause).exec();
@@ -142,36 +143,8 @@ export class BusinessDb implements IBusinessStore {
 }
 
 const businessSchema = new mongoose.Schema({
-   _persistenceDetails: {
-      _key: {
-         type: String,
-         required: false
-      },
-      _schemaVersion: {
-         type: Number,
-         required: true
-      },
-      _sequenceNumber: {
-         type: Number,
-         required: true
-      }
-   },
-   _name: {
-      _displayName: {
-         type: String,
-         required: true
-      }
-   },
-   _thumbnailUrl: {
-      _url: {
-         type: String,
-         required: false
-      },
-      _isUrlVerified: {
-         type: Boolean,
-         required: false
-      }
-   },
+   _persistenceDetails: persistenceDetailsSchema,
+   _persona: personaSchema,
    _administratorIds: {
       type: [String],
       required: true

@@ -3,12 +3,12 @@
 import * as IoTs from 'io-ts';
 import * as IoTsTypes from 'io-ts-types';
 
-import { Name } from './Party';
+import { Name } from './Persona';
 import { Business } from './Business';
 import { ECohortType, Cohort } from './Cohort';
 import { PersistenceDetails } from './Persistence';
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from './IOCommon';
-import { nameIoType } from './IOParty';
+import { nameIoType } from './IOPersona';
 import { businessIoType } from './IOBusiness';
 
 // Rule summary for a Persistent Object: 

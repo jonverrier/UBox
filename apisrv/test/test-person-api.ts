@@ -3,7 +3,7 @@
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { Name, Url} from "../../core/src/Party";
+import { Name, Url, Persona } from "../../core/src/Persona";
 import { ELoginProvider, ERoleType, LoginDetails, EmailAddress, Roles, Person } from "../../core/src/Person";
 import { PersonApi } from '../src/PersonApi';
 
@@ -23,8 +23,8 @@ describe("PersonApi", function () {
    beforeEach(function () {
       person1 = new Person(new PersistenceDetails(null, 1, 1),
          new LoginDetails(ELoginProvider.Apple, "123"),
-         new Name("Jon V"),
-         new EmailAddress("jonathanverrier@hotmail.com", true), new Url("https://jonv.pics.com", false),
+         new Persona(new Name("Jon V"), new Url("https://jonv.pics.com", false)),
+         new EmailAddress("jonathanverrier@hotmail.com", true), 
          new Roles(Array<ERoleType>(ERoleType.Member)));
 
       api = new PersonApi(root);

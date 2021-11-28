@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
-import { Url, Name } from "../src/Party";
+import { Url, Name, Persona } from "../src/Persona";
 import { LoginDetails, EmailAddress, Roles, Person, ERoleType, ELoginProvider, PersonMemento } from '../src/Person';
 import { Business, BusinessMemento } from '../src/Business';
 import { BusinessCodec } from '../src/IOBusiness';
@@ -15,9 +15,9 @@ describe("IOBusiness", function () {
    var codec: BusinessCodec;
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe"),
+      new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
-      new Url("https://jo.pics.com", false), null);
+      null);
 
    let people = new Array<Person>();
    people.push(person);
@@ -33,8 +33,10 @@ describe("IOBusiness", function () {
       try {
          codec.decode({
             _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
-            _name: { _displayName: "Joe"},
-            _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true },
+            _persona: {
+               _name: { _displayName: "Joe" },
+               _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true }
+            },
             _administrators: people,
             _members: people
          });
@@ -48,8 +50,8 @@ describe("IOBusiness", function () {
    it("Needs to encode Business.", function () {
 
       let encoded: BusinessMemento = codec.encode(new Business(new PersistenceDetails(1, 1, 1),
-         new Name("Joe"),
-         new Url("https://jo.pics.com", false), people, people));
+         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+         people, people));
 
       expect(encoded._persistenceDetails._key).to.equal(1);
       expect(encoded._persistenceDetails._schemaVersion).to.equal(1);
@@ -59,8 +61,8 @@ describe("IOBusiness", function () {
    it("Needs to encode then decode Business.", function () {
 
       let initial = new Business(new PersistenceDetails(1, 1, 1),
-         new Name("Joe"),
-         new Url("https://jo.pics.com", false), people, people);
+         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+         people, people);
       let encoded = codec.encode(initial);
       let decoded: Business;
 

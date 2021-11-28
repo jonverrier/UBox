@@ -1,9 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { InvalidParameterError } from './CoreError';
 import { PersistenceDetailsMemento, PersistenceDetails, Persistence } from "./Persistence";
-import { Name, NameMemento } from "./Party";
-import { EmailAddress, PersonMemento, Person } from "./Person";
+import { Name, NameMemento } from "./Persona";
 import { Business, BusinessMemento } from './Business';
 
 export enum ECohortPeriod { Week = "One Week", TwoWeeks = "Two Weeks", ThreeWeeks = "Three Weeks", FourWeeks = "Four Weeks", Month = "One Month" }

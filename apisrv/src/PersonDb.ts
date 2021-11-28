@@ -5,6 +5,8 @@ import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
 import { Person, IPersonStore } from '../../core/src/Person';
 import { PersonCodec } from '../../core/src/IOPerson';
+import { persistenceDetailsSchema } from './PersistenceDb';
+import { personaSchema } from './PersonaDb';
 
 
 export class PersonDb implements IPersonStore {
@@ -86,20 +88,7 @@ export class PersonDb implements IPersonStore {
 }
 
 const personSchema = new mongoose.Schema({
-   _persistenceDetails: {
-      _key: {
-         type: String,
-         required: false
-      },
-      _schemaVersion: {
-         type: Number,
-         required: true
-      },
-      _sequenceNumber: {
-         type: Number,
-         required: true
-      }
-   },
+   _persistenceDetails: persistenceDetailsSchema,
    _loginDetails: {
       _provider: {
          type: String,
@@ -112,13 +101,7 @@ const personSchema = new mongoose.Schema({
          index: true
       }
    },
-   _name: {
-      _displayName: {
-         type: String,
-         required: true,
-         index: true
-      }
-   },
+   _persona: personaSchema,
    _email: {
       _email: {
          type: String,
@@ -126,16 +109,6 @@ const personSchema = new mongoose.Schema({
          index: true
       },
       _isEmailVerified: {
-         type: Boolean,
-         required: false
-      }
-   },
-   _thumbnailUrl: {
-      _url: {
-         type: String,
-         required: false
-      },
-      _isUrlVerified: {
          type: Boolean,
          required: false
       }

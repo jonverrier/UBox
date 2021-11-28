@@ -1,8 +1,8 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { Logger } from '../src/Logger';
-import { Url, Name } from "../src/Party";
-import { NameCodec, UrlCodec } from '../src/IOParty';
+import { Url, Name } from "../src/Persona";
+import { NameCodec, UrlCodec } from '../src/IOPersona';
 
 var expect = require("chai").expect;
 

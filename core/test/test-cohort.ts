@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
-import { Url, Name } from "../src/Party";
+import { Url, Name, Persona } from "../src/Persona";
 import { LoginDetails, EmailAddress, Person, ELoginProvider } from '../src/Person';
 import { Business } from '../src/Business';
 import { ECohortType, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
@@ -15,23 +15,21 @@ describe("Cohort", function () {
 
    let person = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Joe"),
+      new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
-      new Url("https://jo.pics.com", false), null);
+      null);
 
    let person2 = new Person(new PersistenceDetails(1, 1, 1),
       new LoginDetails(ELoginProvider.Apple, "xxx"),
-      new Name("Jenny"),
+      new Persona(new Name("Jenny"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Jenny@mail.com", true),
-      new Url("https://jo.pics.com", false),
       null);
 
    let people = new Array<Person>();
    people.push(person);
 
    let business = new Business(new PersistenceDetails(null, 1, 1),
-      new Name("XFit Dulwich"),
-      new Url("https://xfit.pics.com", false),
+      new Persona (new Name("XFit Dulwich"), new Url("https://xfit.pics.com", false)),
       people, people);
 
    beforeEach(function () {
@@ -74,8 +72,7 @@ describe("Cohort", function () {
       let newPeriod = 2;
 
       let newBusiness = new Business(new PersistenceDetails(null, 1, 1),
-         new Name("XFit Dulwich2"),
-         new Url("https://xfit.pics.com", false),
+         new Persona (new Name("XFit Dulwich2"), new Url("https://xfit.pics.com", false)),
          people, people);
 
       cohort1.business = newBusiness;

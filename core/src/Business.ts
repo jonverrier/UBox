@@ -1,13 +1,12 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { InvalidParameterError } from './CoreError';
-import { Name, NameMemento, Url, UrlMemento } from './Party';
+import { Persona, PersonaMemento } from './Persona';
 import { EmailAddress, Person, PersonMemento } from './Person';
 import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
 
 export class BusinessMemento {
    readonly _persistenceDetails: PersistenceDetailsMemento;
-   readonly _name: NameMemento;
-   readonly _thumbnailUrl: UrlMemento;
+   readonly _persona: PersonaMemento;
    _administrators: Array<PersonMemento>; // Not readonly as database needs to manually set
    _members: Array<PersonMemento>;        // Not readonly as database needs to manually set
 
@@ -19,15 +18,14 @@ export class BusinessMemento {
    /**
     * Create a BusinessMemento object
     * @param persistenceDetailsMemento - (from Persistence) for the database layer to use and assign
-    * @param name - plain text name for the cohort
+    * @param persona - persona for the business (display name and URL)
     * @param thumbnailUrl - Url to the thumbnail image
     * @param administrators - array of People, may be zero length // TODO - must have at least one adminsistrator
     * @param members - array of People, may be zero length // TODO - must have at least one adminsistrator* 
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
-      name: NameMemento,
-      thumbnailUrl: UrlMemento,
+      persona: PersonaMemento,
       administrators: Array<PersonMemento>,
       members: Array<PersonMemento>) {
 
@@ -37,8 +35,7 @@ export class BusinessMemento {
       var i: number = 0;
 
       this._persistenceDetails = persistenceDetails;
-      this._name = name;
-      this._thumbnailUrl = thumbnailUrl;
+      this._persona = persona;
 
       this._administrators = new Array<PersonMemento>(administrators.length);
       for (i = 0; i < administrators.length; i++)
@@ -54,8 +51,7 @@ export class BusinessMemento {
 }
 
 export class Business extends Persistence {
-   private _name: Name;
-   private _thumbnailUrl: Url;
+   private _persona: Persona;
    private _administrators: Array<Person>;
    private _members: Array<Person>;
 
@@ -67,14 +63,12 @@ export class Business extends Persistence {
    /**
     * Create a Business object
     * @param persistenceDetails - (from Persistence) for the database layer to use and assign
-    * @param name - plain text name for the business
-    * @param thumbnailUrl - Url to the thumbnail image
+    * @param persona - persona for the business
     * @param administrators - array of People
     * @param members - array of People
     */
    constructor(persistenceDetails: PersistenceDetails,
-      name: Name,
-      thumbnailUrl: Url,
+      persona: Persona,
       administrators: Array<Person>,
       members: Array<Person>);
    public constructor(memento: BusinessMemento);
@@ -88,8 +82,7 @@ export class Business extends Persistence {
             memento._persistenceDetails._schemaVersion,
             memento._persistenceDetails._sequenceNumber));
 
-         this._name = new Name(memento._name._displayName);
-         this._thumbnailUrl = new Url(memento._thumbnailUrl._url, memento._thumbnailUrl._isUrlVerified);
+         this._persona = new Persona(memento._persona);
 
          this._administrators = new Array<Person>(memento._administrators.length);
          for (i = 0; i < memento._administrators.length; i++)
@@ -106,10 +99,9 @@ export class Business extends Persistence {
 
          super(params[0]);
 
-         this._name = params[1];
-         this._thumbnailUrl = params[2];
-         this._administrators = params[3];
-         this._members = params[4];
+         this._persona = params[1];
+         this._administrators = params[2];
+         this._members = params[3];
 
          this._administratorIds = null;
          this._memberIds = null;
@@ -119,11 +111,8 @@ export class Business extends Persistence {
    /**
    * set of 'getters' and setters for private variables
    */
-   get name(): Name {
-      return this._name;
-   }
-   get thumbnailUrl(): Url {
-      return this._thumbnailUrl;
+   get persona(): Persona {
+      return this._persona;
    }
    get administrators(): Array<Person> {
       return this._administrators;
@@ -131,11 +120,8 @@ export class Business extends Persistence {
    get members(): Array<Person> {
       return this._members;
    }
-   set name(name: Name) {
-      this._name = name;
-   }
-   set thumbnailUrl(thumbnailUrl: Url) {
-      this._thumbnailUrl = thumbnailUrl;
+   set persona(persona: Persona) {
+      this._persona = persona;
    }
    set administrators(people: Array<Person>) {
       this._administrators = people;
@@ -151,10 +137,9 @@ export class Business extends Persistence {
    memento(): BusinessMemento {
 
       return new BusinessMemento(this.persistenceDetails.memento(),
-         this._name.memento(),
-         this._thumbnailUrl.memento(),
-         Person.peopleMemento(this._administrators),
-         Person.peopleMemento(this._members));
+         this._persona.memento(),
+         Person.mementos(this._administrators),
+         Person.mementos(this._members));
    }
 
    /**
@@ -165,10 +150,9 @@ export class Business extends Persistence {
    equals(rhs: Business): boolean {
 
       return (super.equals(rhs) &&
-         (this._name.equals (rhs._name)) &&
-         this._thumbnailUrl.equals(rhs._thumbnailUrl) &&
-         Person.peopleAreEqual(this._administrators, rhs._administrators) &&
-         Person.peopleAreEqual(this._members, rhs._members));
+         (this._persona.equals (rhs._persona)) &&
+         Person.areEqual(this._administrators, rhs._administrators) &&
+         Person.areEqual(this._members, rhs._members));
    }
 
    /**

@@ -50,14 +50,14 @@
     <TypeScriptCompile Include="src\IOBusiness.ts" />
     <TypeScriptCompile Include="src\IOCohort.ts" />
     <TypeScriptCompile Include="src\IOObservation.ts" />
-    <TypeScriptCompile Include="src\IOParty.ts" />
+    <TypeScriptCompile Include="src\IOPersona.ts" />
     <TypeScriptCompile Include="src\Localisation.ts" />
     <TypeScriptCompile Include="src\Logger.ts" />
     <TypeScriptCompile Include="src\Observation.ts" />
     <TypeScriptCompile Include="src\IOCommon.ts" />
     <TypeScriptCompile Include="src\ObservationType.ts" />
     <TypeScriptCompile Include="src\ObservationTypeDictionary.ts" />
-    <TypeScriptCompile Include="src\Party.ts" />
+    <TypeScriptCompile Include="src\Persona.ts" />
     <TypeScriptCompile Include="src\Person.ts" />
     <TypeScriptCompile Include="src\IOPerson.ts" />
     <TypeScriptCompile Include="src\Quantity.ts" />
