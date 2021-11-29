@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { URL } from 'url'
 import { InvalidParameterError } from './CoreError';
-import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
+import { PersistenceDetails} from "./Persistence";
 import { Persona, PersonaMemento} from './Persona';
 
 // Rule summary for a Persistent Object: 
@@ -121,7 +121,12 @@ export class Roles {
 
       // Sort the list as we do an item by item equality test
       roles.sort();
-      this._roles = roles;
+      this._roles = new Array<ERoleType>(roles.length);
+
+      // duplicate into a clean array in case we are passed (for example) a Mongo array
+      for (let i in roles) {
+         this._roles[i] = roles[i]; 
+      }
    }
 
    /**
@@ -156,8 +161,8 @@ export class Roles {
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
     */
-   static rolesArraysAreEqual(lhs: Array<ERoleType>,
-                              rhs: Array<ERoleType>): boolean {
+   static areEqual(lhs: Array<ERoleType>,
+                   rhs: Array<ERoleType>): boolean {
 
       // compare lengths - can save a lot of time 
       if (lhs.length != rhs.length)
@@ -180,52 +185,45 @@ export class Roles {
 
    equals(rhs: Roles): boolean {
 
-      return (Roles.rolesArraysAreEqual(this._roles, rhs._roles));
+      return (Roles.areEqual(this._roles, rhs._roles));
    }
 }
 
-export class PersonMemento {
-   _persistenceDetails: PersistenceDetailsMemento;
+export class PersonMemento extends PersonaMemento {
    _persona: PersonaMemento;
    _email: EmailAddressMemento | null;
    _roles: RolesMemento | null;
 
    /**
     * Create a PersonMemento object
-    * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.
-    * @param loginDetails - ID assigned by external system (like facebook). Cannot be null. 
     * @param persona - personal (name and imageUrl)
     * @param email - user email, can be null if not provided
-    * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
-    * @param roles - list of roles the Person plays, can be null
+    * @param roles - list of roles the Person plays
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor(persistenceDetails: PersistenceDetailsMemento,
-      persona: PersonaMemento, email: EmailAddressMemento | null, roles: RolesMemento | null) {
+   constructor(persona: PersonaMemento, email: EmailAddressMemento, roles: RolesMemento) {
 
-      this._persistenceDetails = persistenceDetails;
-      this._persona = persona;
+      super(persona._persistenceDetails, persona._name, persona._thumbnailUrl);
+
+      this._persona = persona; 
       this._email = email;
       this._roles = roles;
    }
 }
 
-export class Person extends Persistence {
-   private _persona: Persona;
-   private _email: EmailAddress | null;
-   private _roles: Roles | null;
+export class Person extends Persona {
+   private _email: EmailAddress ;
+   private _roles: Roles ;
 
 /**
  * Create a Person object
- * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.
- * @param loginDetails - ID assigned by external system (like facebook). Cannot be null.
  * @param persona - plain text user name. Cannot be null.
  * @param email - user email, can be null if not provided
  * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
  * @param roles - list of roles the Person plays, can be null
  */
-   public constructor(persistenceDetails: PersistenceDetails,
-      persona: Persona, email: EmailAddress | null, roles: Roles | null);
+   public constructor(
+      persona: Persona, email: EmailAddress , roles: Roles );
    public constructor(memento: PersonMemento);
    public constructor(...params: any[]) {
 
@@ -233,39 +231,29 @@ export class Person extends Persistence {
 
          let memento: PersonMemento = params[0];
 
-         super(new PersistenceDetails(memento._persistenceDetails._key,
-            memento._persistenceDetails._schemaVersion,
-            memento._persistenceDetails._sequenceNumber));
+         super(params[0]._persona);
 
-         this._email = memento._email ? new EmailAddress(memento._email._email, memento._email._isEmailVerified) : null;
-         this._persona = new Persona (memento._persona);
-         this._roles = memento._roles ? new Roles(memento._roles._roles) : null;
+         this._email = new EmailAddress(memento._email._email, memento._email._isEmailVerified);
+         this._roles = new Roles(memento._roles._roles);
 
       } else {
 
          super(params[0]);
 
-         this._persona = params[1];
-         this._email = params[2];
-         this._roles = params[3];
+         this._email = params[1];
+         this._roles = params[2];
       }
    }
 
    /**
    * set of 'getters' for private variables
    */
-   get persona(): Persona {
-      return this._persona;
-   }
-   get email(): EmailAddress | null {
+   get email(): EmailAddress {
       return this._email;
    }
 
-   get roles(): Roles | null {
+   get roles(): Roles {
       return this._roles;
-   }
-   set persona(persona: Persona) {
-      this._persona = persona;
    }
    set email(email: EmailAddress) {
       this._email = email;
@@ -279,8 +267,7 @@ export class Person extends Persistence {
    * memento() returns a copy of internal state
    */
    memento(): PersonMemento {
-      return new PersonMemento(this.persistenceDetails.memento(),
-         this._persona ? this.persona.memento() : null,
+      return new PersonMemento(super.memento(),
          this._email ? this.email.memento() : null,
          this._roles ? this.roles.memento() : null);
    }
@@ -332,9 +319,8 @@ export class Person extends Persistence {
     equals (rhs: Person) : boolean {
 
        return ((super.equals(rhs)) &&
-         (this._persona.equals (rhs._persona)) &&
-         (this._email ? this._email.equals(rhs._email) : (rhs.email === null)) &&
-         (this._roles ? this._roles.equals(rhs._roles) : (rhs._roles === null))
+         (this._email.equals(rhs._email)) &&
+         (this._roles.equals(rhs._roles))
          );
    }
 }

@@ -1,9 +1,10 @@
 'use strict';
 // Copyright TXPCo ltd, 2020, 2021
 
-import mongoose from "mongoose";
+import { persistenceDetailsSchema } from './PersistenceDb';
 
-export const personaSchema = new mongoose.Schema({
+export const personaSchema = {
+   _persistenceDetails: persistenceDetailsSchema,
    _name: {
       _displayName: {
          type: String,
@@ -21,4 +22,4 @@ export const personaSchema = new mongoose.Schema({
          required: true
       }
    }
-});
+};

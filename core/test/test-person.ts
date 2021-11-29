@@ -11,8 +11,8 @@ class StubLoader implements IPersonStore {
    person: Person;
 
    constructor() {
-      this.person = new Person(new PersistenceDetails(1, 1, 1),
-         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+      this.person = new Person(
+         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
          new EmailAddress("Joe@mail.com", true), null);
    }
 
@@ -28,138 +28,6 @@ class StubLoader implements IPersonStore {
       return person;
    }
 }
-
-describe("Name", function () {
-   var name1: Name, name2: Name, name3: Name;
-
-   beforeEach(function () {
-      name1 = new Name("Joe");
-      name2 = new Name("Bill");
-      name3 = new Name("Joe");
-   });
-
-   it("Needs to compare for equality and inequality", function () {
-
-      expect(name1.equals(name1)).to.equal(true);
-      expect(name1.equals(name2)).to.equal(false);
-      expect(name1.equals(name3)).to.equal(true);
-   });
-
-   it("Needs to catch invalid name", function () {
-
-      let caught = false;
-
-      try {
-         let name4 = new Name("");
-      }
-      catch {
-         caught = true;
-      }
-      expect(caught).to.equal(true);
-   });
-
-   it("Needs to correctly store attributes", function () {
-
-      expect(name1.displayName).to.equal("Joe");
-   });
-});
-
-/*
-describe("LoginDetails", function () {
-   var login1: LoginDetails, login2: LoginDetails, login3: LoginDetails;
-
-   beforeEach(function () {
-      login1 = new LoginDetails(ELoginProvider.Apple, "xxx");
-      login2 = new LoginDetails(ELoginProvider.Google, "xxx");
-      login3 = new LoginDetails(ELoginProvider.Apple, "xxx");
-   });
-
-   it("Needs to compare for equality and inequality", function () {
-
-      expect(login1.equals(login1)).to.equal(true);
-      expect(login1.equals(login2)).to.equal(false);
-      expect(login1.equals(login3)).to.equal(true);
-   });
-
-   it("Needs to catch invalid login", function () {
-
-      let caught = false;
-
-      try {
-         let name4 = new LoginDetails (ELoginProvider.Apple, "");
-      }
-      catch {
-         caught = true;
-      }
-      expect(caught).to.equal(true);
-   });
-
-   it("Needs to correctly store attributes", function () {
-
-      expect(login1.provider).to.equal(ELoginProvider.Apple);
-      expect(login1.token).to.equal("xxx");
-   });
-});
-
-*/
-
-describe("Url", function () {
-   var url1: Url, url2: Url, url3: Url;
-
-   beforeEach(function () {
-      url1 = new Url("https://jo.pics.com", true);
-      url2 = new Url("https://jo.pics.com", false);
-      url3 = new Url("https://jo.pics.com", false);
-   });
-
-   it("Needs to compare for equality and inequality", function () {
-
-      expect(url1.equals(url1)).to.equal(true);
-      expect(url1.equals(url2)).to.equal(false);
-      expect(url1.equals(url3)).to.equal(false);
-   });
-
-   it("Needs to catch invalid url", function () {
-
-      let caught = false;
-
-      try {
-         let email4 = new Url("11", false);
-      }
-      catch {
-         caught = true;
-      }
-      expect(caught).to.equal(true);
-   });
-
-
-   it("Needs to catch empty url", function () {
-
-      let caught = false;
-
-      try {
-         let email4 = new Url("", false);
-      }
-      catch {
-         caught = true;
-      }
-      expect(caught).to.equal(true);
-   });
-
-   it("Needs to correctly store attributes", function () {
-
-      expect(url1.url).to.equal("https://jo.pics.com");
-      expect(url1.isUrlVerified).to.equal(true);
-   });
-
-   it("Needs to convert to and from memento()", function () {
-
-      let memento:UrlMemento = url1.memento();
-      let newUrl = new Url(memento.url, memento.isUrlVerified);
-
-      expect(url1.equals (newUrl)).to.equal(true);
-   });
-});
 
 describe("EmailAddress", function () {
    var email1: EmailAddress, email2: EmailAddress, email3: EmailAddress;
@@ -268,43 +136,24 @@ describe("Roles", function () {
 });
 
 describe("Person", function () {
+   let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
+
    var person1: Person, person2: Person;
+
+   person1 = new Person(
+      new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
+      new EmailAddress("Joe@mail.com", true), roles);
+
+   person2 = new Person(
+      new Persona(new PersistenceDetails("2", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
+      new EmailAddress("Joe@mail.com", true), roles);
    
-   beforeEach(function () {
-      person1 = new Person(new PersistenceDetails(1, 1, 1),
-         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
-         new EmailAddress("Joe@mail.com", true), null);
-
-      person2 = new Person(new PersistenceDetails(2, 1, 1),
-         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
-         new EmailAddress ("Joe@mail.com", true), null);
-   });
-
-   it("Needs to construct with null email", function () {
-
-      let nullperson = new Person(new PersistenceDetails(1, 1, 1),
-         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
-         null, null);
-
-      expect(nullperson.email).to.equal(null);
-      expect(nullperson.equals(nullperson)).to.equal(true);
-   });
-
-   it("Needs to construct with null Url ", function () {
-
-      let nullperson = new Person(new PersistenceDetails(1, 1, 1),
-         new Persona (new Name("Joe"), null),
-         new EmailAddress("Joe@mail.com", true), null);
-
-      expect(nullperson.persona.thumbnailUrl).to.equal(null);
-      expect(nullperson.equals(nullperson)).to.equal(true);
-   });
 
    it("Needs to construct with a role list ", function () {
 
       let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
-      let roleperson = new Person(new PersistenceDetails(1, 1, 1),
-         new Persona (new Name("Joe"), null),
+      let roleperson = new Person(
+         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
          new EmailAddress("Joe@mail.com", true), roles);
 
       expect(roleperson.equals(roleperson)).to.equal(true);
@@ -320,16 +169,15 @@ describe("Person", function () {
    
    it("Needs to correctly store attributes", function () {
          
-      expect(person1.persona.name.equals(new Name("Joe"))).to.equal(true);
+      expect(person1.name.equals(new Name("Joe"))).to.equal(true);
       expect(person1.email.equals(new EmailAddress("Joe@mail.com", true))).to.equal(true);
-      expect(person1.persona.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
-      expect(person1.roles).to.equal(null);
+      expect(person1.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
+      expect(person1.roles).to.equal(roles);
 
-      expect(person1.memento()._persona._name._displayName === person1.persona.memento()._name._displayName).to.equal(true);
-      expect(person1.memento()._persona._thumbnailUrl.url === person1.persona.thumbnailUrl.memento().url).to.equal(true);
+      expect(person1.memento()._persona._name._displayName === person1.memento()._name._displayName).to.equal(true);
+      expect(person1.memento()._persona._thumbnailUrl.url === person1.thumbnailUrl.memento().url).to.equal(true);
       expect(person1.memento()._email._email === person1.email.memento()._email).to.equal(true);
-      expect(person1.memento()._roles === null
-         || Roles.rolesArraysAreEqual(person1.memento()._roles._roles, person1.roles.memento()._roles)).to.equal(true);
+      expect(Roles.areEqual(person1.memento()._roles._roles, person1.roles.memento()._roles)).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
@@ -340,12 +188,9 @@ describe("Person", function () {
       let newRoles = new Roles([]);
 
       person1.email = newMail;
-      person1.persona = new Persona(newName, newUrl);
       person1.roles = newRoles;
 
       expect(person1.email).to.equal(newMail);
-      expect(person1.persona.thumbnailUrl).to.equal(newUrl);
-      expect(person1.persona.name.equals(newName)).to.equal(true);
       expect(person1.roles.equals(newRoles)).to.equal(true);
    });
 
@@ -406,8 +251,8 @@ describe("PersonStorer", function () {
       let caught = false;
 
       try {
-         storer.save(new Person(new PersistenceDetails(1, 1, 1),
-            new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+         storer.save(new Person(
+            new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
             new EmailAddress("Joe@mail.com", true), null));
       } catch {
          caught = true;

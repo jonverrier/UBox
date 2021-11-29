@@ -21,8 +21,8 @@ describe("PersonApi", function () {
    var api: PersonApi;
 
    beforeEach(function () {
-      person1 = new Person(new PersistenceDetails(null, 1, 1),
-         new Persona(new Name("Jon V"), new Url("https://jonv.pics.com", false)),
+      person1 = new Person(
+         new Persona(new PersistenceDetails(null, 1, 1), new Name("Jon V"), new Url("https://jonv.pics.com", false)),
          new EmailAddress("jonathanverrier@hotmail.com", true), 
          new Roles(Array<ERoleType>(ERoleType.Member)));
 

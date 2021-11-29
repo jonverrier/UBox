@@ -3,7 +3,7 @@
 import { Business } from "./Business";
 import { decodeWith, encodeWith, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 import { personaIoType} from '../src/IOPersona';
-import { personIoType, } from '../src/IOPerson';
+import { peopleIoType, } from '../src/IOPerson';
 
 import * as IoTs from 'io-ts';
 
@@ -18,10 +18,9 @@ import * as IoTs from 'io-ts';
 // ==========
 
 export const businessIoType = IoTs.type({
-   _persistenceDetails: persistenceDetailsIoType,
    _persona: personaIoType,
-   _administrators: IoTs.array(personIoType),
-   _members: IoTs.array(personIoType),
+   _administrators: peopleIoType,
+   _members: peopleIoType,
 });
 
 export class BusinessCodec implements ICodec<Business> {

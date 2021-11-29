@@ -29,7 +29,7 @@ export class PersistenceDetails {
     * @param sequenceNumber - used to allow idempotent queries (all objects in a sequence range)
     * Design - all memento classes must depend only on base types, value types, or other Mementos*
     */
-   public constructor(id: any, schemaVersion: number, sequenceNumber: number);
+   public constructor(id: string, schemaVersion: number, sequenceNumber: number);
    public constructor(memento: PersistenceDetailsMemento);
    public constructor(...paramArray: any[]) {
 

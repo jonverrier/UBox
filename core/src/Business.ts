@@ -2,10 +2,8 @@
 import { InvalidParameterError } from './CoreError';
 import { Persona, PersonaMemento } from './Persona';
 import { EmailAddress, Person, PersonMemento } from './Person';
-import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
 
-export class BusinessMemento {
-   readonly _persistenceDetails: PersistenceDetailsMemento;
+export class BusinessMemento extends PersonaMemento {
    readonly _persona: PersonaMemento;
    _administrators: Array<PersonMemento>; // Not readonly as database needs to manually set
    _members: Array<PersonMemento>;        // Not readonly as database needs to manually set
@@ -17,24 +15,23 @@ export class BusinessMemento {
 
    /**
     * Create a BusinessMemento object
-    * @param persistenceDetailsMemento - (from Persistence) for the database layer to use and assign
     * @param persona - persona for the business (display name and URL)
     * @param thumbnailUrl - Url to the thumbnail image
     * @param administrators - array of People, may be zero length // TODO - must have at least one adminsistrator
     * @param members - array of People, may be zero length // TODO - must have at least one adminsistrator* 
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor(persistenceDetails: PersistenceDetailsMemento,
-      persona: PersonaMemento,
+   constructor(persona: PersonaMemento,
       administrators: Array<PersonMemento>,
       members: Array<PersonMemento>) {
+
+      super(persona._persistenceDetails, persona._name, persona._thumbnailUrl);
 
       if ((!administrators) || administrators.length < 1)
          throw new InvalidParameterError("Business must have at least one Administrator");
 
       var i: number = 0;
 
-      this._persistenceDetails = persistenceDetails;
       this._persona = persona;
 
       this._administrators = new Array<PersonMemento>(administrators.length);
@@ -45,13 +42,12 @@ export class BusinessMemento {
       for (i = 0; i < members.length; i++)
          this._members[i] = members[i];
 
-      this._administratorIds = null;
-      this._memberIds = null;
+      this._administratorIds = new Array<string>();
+      this._memberIds = new Array<string>();
    }
 }
 
-export class Business extends Persistence {
-   private _persona: Persona;
+export class Business extends Persona {
    private _administrators: Array<Person>;
    private _members: Array<Person>;
 
@@ -62,13 +58,11 @@ export class Business extends Persistence {
 
    /**
     * Create a Business object
-    * @param persistenceDetails - (from Persistence) for the database layer to use and assign
     * @param persona - persona for the business
     * @param administrators - array of People
     * @param members - array of People
     */
-   constructor(persistenceDetails: PersistenceDetails,
-      persona: Persona,
+   constructor(persona: Persona,
       administrators: Array<Person>,
       members: Array<Person>);
    public constructor(memento: BusinessMemento);
@@ -78,11 +72,7 @@ export class Business extends Persistence {
          var i: number;
          let memento: BusinessMemento = params[0];
 
-         super(new PersistenceDetails(memento._persistenceDetails._key,
-            memento._persistenceDetails._schemaVersion,
-            memento._persistenceDetails._sequenceNumber));
-
-         this._persona = new Persona(memento._persona);
+         super(memento._persona);
 
          this._administrators = new Array<Person>(memento._administrators.length);
          for (i = 0; i < memento._administrators.length; i++)
@@ -92,36 +82,29 @@ export class Business extends Persistence {
          for (i = 0; i < memento._members.length; i++)
             this._members[i] = new Person(memento._members[i]);
 
-         this._administratorIds = null;
-         this._memberIds = null;
+         this._administratorIds = new Array<string>();
+         this._memberIds = new Array<string>();
 
       } else {
 
          super(params[0]);
 
-         this._persona = params[1];
-         this._administrators = params[2];
-         this._members = params[3];
+         this._administrators = params[1];
+         this._members = params[2];
 
-         this._administratorIds = null;
-         this._memberIds = null;
+         this._administratorIds = new Array<string>();
+         this._memberIds = new Array<string>();
       }
    }
 
    /**
    * set of 'getters' and setters for private variables
    */
-   get persona(): Persona {
-      return this._persona;
-   }
    get administrators(): Array<Person> {
       return this._administrators;
    }
    get members(): Array<Person> {
       return this._members;
-   }
-   set persona(persona: Persona) {
-      this._persona = persona;
    }
    set administrators(people: Array<Person>) {
       this._administrators = people;
@@ -136,8 +119,7 @@ export class Business extends Persistence {
    */
    memento(): BusinessMemento {
 
-      return new BusinessMemento(this.persistenceDetails.memento(),
-         this._persona.memento(),
+      return new BusinessMemento(super.memento(),
          Person.mementos(this._administrators),
          Person.mementos(this._members));
    }
@@ -150,7 +132,6 @@ export class Business extends Persistence {
    equals(rhs: Business): boolean {
 
       return (super.equals(rhs) &&
-         (this._persona.equals (rhs._persona)) &&
          Person.areEqual(this._administrators, rhs._administrators) &&
          Person.areEqual(this._members, rhs._members));
    }

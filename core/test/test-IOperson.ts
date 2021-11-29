@@ -201,6 +201,7 @@ describe("IORoles", function () {
 describe("IOPerson", function () {
 
    var codec: PersonCodec;
+   let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
    beforeEach(function () {
       codec = new PersonCodec();
@@ -212,13 +213,13 @@ describe("IOPerson", function () {
 
       try {
          codec.decode({
-            _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
             _persona: {
+               _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
                _name: { _displayName: "Joe" },
                _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true },
             },
             _email: { _email: "Joe@mail.com", _isEmailVerified: false },
-            _roles: { _roles: null } 
+            _roles: roles 
          });
       } catch (e) {
          caught = true;
@@ -229,20 +230,20 @@ describe("IOPerson", function () {
 
    it("Needs to encode Person.", function () {
 
-      let encoded: PersonMemento = codec.encode(new Person(new PersistenceDetails(1, 1, 1),
-         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+      let encoded: PersonMemento = codec.encode(new Person(
+         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
          new EmailAddress("Joe@mail.com", true), null));
 
-      expect(encoded._persistenceDetails._key).to.equal(1);
+      expect(encoded._persistenceDetails._key).to.equal("1");
       expect(encoded._persistenceDetails._schemaVersion).to.equal(1);
       expect(encoded._persistenceDetails._sequenceNumber).to.equal(1);
    });
 
    it("Needs to encode then decode Person.", function () {
 
-      let initial = new Person(new PersistenceDetails(1, 1, 1),
-         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
-         new EmailAddress("Joe@mail.com", true), null);
+      let initial = new Person(
+         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
+         new EmailAddress("Joe@mail.com", true), roles);
       let encoded = codec.encode(initial);
       let decoded: Person;
 
@@ -262,9 +263,10 @@ describe("IOPerson", function () {
 
    it("Needs to encode & decode multiple People", function () {
 
-      let initial = new Person(new PersistenceDetails(1, 1, 1),
-         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
-         new EmailAddress("Joe@mail.com", true), null);
+      let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
+      let initial = new Person(
+         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
+         new EmailAddress("Joe@mail.com", true), roles);
 
       var people: Array<Person> = new Array<Person>();
       people.push(initial);

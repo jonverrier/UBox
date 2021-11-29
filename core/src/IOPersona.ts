@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { Url, Name, Persona} from "./Persona";
+import { Url, Name, Persona, PersonaMemento} from "./Persona";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 
 import * as IoTs from 'io-ts';
@@ -59,6 +59,7 @@ export class UrlCodec implements ICodec<Url> {
 // Persona Codec
 // ==========
 export const personaIoType = IoTs.type({
+   _persistenceDetails: persistenceDetailsIoType,
    _name: nameIoType, 
    _thumbnailUrl: urlIoType
 });
@@ -76,5 +77,42 @@ export class PersonaCodec implements ICodec<Persona> {
    tryCreateFrom(data: any): Persona {
       let temp = this.decode(data); // If types dont match an exception will be thrown here
       return new Persona(temp);
+   }
+}
+
+// Personas Codec
+// ==========
+
+export const personasIoType = IoTs.array(personaIoType);
+
+export class PersonasCodec implements ICodec<Array<Persona>> {
+
+   decode(data: any): any {
+
+      return decodeWith(personasIoType)(data);
+   }
+
+   encode(data: Array<Persona>): any {
+      var i: number;
+      var mementos: Array<PersonaMemento> = new Array<PersonaMemento>();
+
+      for (i = 0; i < data.length; i++) {
+         mementos[i] = data[i].memento();
+      }
+      return encodeWith(personasIoType)(mementos);
+   }
+
+   tryCreateFrom(data: any): Array<Persona> {
+
+      var i: number;
+      var people: Array<Persona> = new Array<Persona>(data.length);
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
+
+      for (i = 0; i < temp.length; i++) {
+
+         people[i] = new Persona(temp[i]);
+      }
+
+      return people;
    }
 }

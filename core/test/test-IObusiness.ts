@@ -3,7 +3,7 @@
 import { Logger } from '../src/Logger';
 import { PersistenceDetails } from '../src/Persistence';
 import { Url, Name, Persona } from "../src/Persona";
-import { EmailAddress, Person } from '../src/Person';
+import { EmailAddress, Roles, ERoleType, PersonMemento, Person } from '../src/Person';
 import { Business, BusinessMemento } from '../src/Business';
 import { BusinessCodec } from '../src/IOBusiness';
 
@@ -13,13 +13,17 @@ var expect = require("chai").expect;
 describe("IOBusiness", function () {
 
    var codec: BusinessCodec;
-   let person = new Person(new PersistenceDetails(1, 1, 1),
-      new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+   let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
+   let person = new Person(
+      new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
-      null);
+      roles);
 
    let people = new Array<Person>();
    people.push(person);
+
+   let peopleMementos = new Array<PersonMemento>();
+   peopleMementos.push(person.memento());
 
    beforeEach(function () {
       codec = new BusinessCodec();
@@ -30,16 +34,23 @@ describe("IOBusiness", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({
-            _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
+         let encoded = {
             _persona: {
-               _name: { _displayName: "Joe" },
-               _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true }
+               _persistenceDetails: {
+                  _key: '1',
+                  _schemaVersion: 1,
+                  _sequenceNumber: 1
+               },
+               _name: { _displayName: 'Joe' },
+               _thumbnailUrl: { _url: 'https://jo.pics.com', _isUrlVerified: false }
             },
-            _administrators: people,
-            _members: people
-         });
+            _administrators: peopleMementos,
+            _members: peopleMementos
+         };
+         codec.decode(encoded);
+         
       } catch (e) {
+
          caught = true;
       }
 
@@ -48,19 +59,19 @@ describe("IOBusiness", function () {
 
    it("Needs to encode Business.", function () {
 
-      let encoded: BusinessMemento = codec.encode(new Business(new PersistenceDetails(1, 1, 1),
-         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+      let encoded: BusinessMemento = codec.encode(new Business(
+         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
          people, people));
 
-      expect(encoded._persistenceDetails._key).to.equal(1);
+      expect(encoded._persistenceDetails._key).to.equal("1");
       expect(encoded._persistenceDetails._schemaVersion).to.equal(1);
       expect(encoded._persistenceDetails._sequenceNumber).to.equal(1);
    });
 
    it("Needs to encode then decode Business.", function () {
 
-      let initial = new Business(new PersistenceDetails(1, 1, 1),
-         new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+      let initial = new Business(
+         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
          people, people);
       let encoded = codec.encode(initial);
       let decoded: Business;

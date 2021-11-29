@@ -5,9 +5,9 @@ import axios from 'axios';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { Name, Url, Persona } from "../../core/src/Persona";
-import { EmailAddress, Person } from "../../core/src/Person";
+import { EmailAddress, Roles, ERoleType, Person } from "../../core/src/Person";
 import { Business } from '../../core/src/Business';
-import { ECohortPeriod, Cohort, ECohortType } from "../../core/src/Cohort";
+import { Cohort, ECohortType } from "../../core/src/Cohort";
 import { BusinessApi } from '../src/BusinessApi';
 import { CohortApi } from '../src/CohortApi';
 
@@ -25,18 +25,18 @@ describe("CohortApi", function () {
    let cohort1;
    let period = 1;
 
-   let person = new Person(new PersistenceDetails(null, 1, 1),
-      new Persona(new Name("Jon V"), new Url("https://jonv.pics.com", false)),
+   let person = new Person(
+      new Persona(new PersistenceDetails(null, 1, 1), new Name("Jon V"), new Url("https://jonv.pics.com", false)),
       new EmailAddress("jonathanverrier@hotmail.com", true),
-      null);
+      new Roles(Array<ERoleType>(ERoleType.Member)));
 
    beforeEach(async function () {
 
       let people = new Array<Person>();
       people.push(person);
 
-      let business = new Business(new PersistenceDetails(null, 1, 1),
-         new Persona (new Name("Fortitude Dulwich"), new Url("https://xfit.pics.com", false)),
+      let business = new Business(
+         new Persona (new PersistenceDetails(null, 1, 1), new Name("Fortitude Dulwich"), new Url("https://xfit.pics.com", false)),
          people, people);
 
       let newBusiness:Business = await businessApi.save(business);
