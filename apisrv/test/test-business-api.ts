@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { Name, Url, Persona } from "../../core/src/Persona";
-import { EmailAddress, Person } from "../../core/src/Person";
+import { EmailAddress, Roles, ERoleType, Person } from "../../core/src/Person";
 import { Business } from "../../core/src/Business";
 import { PersonApi } from '../src/PersonApi';
 import { BusinessApi } from '../src/BusinessApi';
@@ -23,10 +23,10 @@ describe("BusinessApi", function () {
 
    let business1;
 
-   let person = new Person(new PersistenceDetails(null, 1, 1),
-      new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+   let person = new Person(
+      new Persona(new PersistenceDetails(null, 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
-      null);
+      new Roles(Array<ERoleType>(ERoleType.Member)));
 
    beforeEach(async function () {
 
@@ -34,8 +34,8 @@ describe("BusinessApi", function () {
       let savedPerson = await personApi.save(person);
       people.push(savedPerson);
 
-      business1 = new Business(new PersistenceDetails(null, 1, 1),
-         new Persona (new Name("Fortitude Dulwich"), new Url("https://jo.pics.com", false)),
+      business1 = new Business(
+         new Persona (new PersistenceDetails(null, 1, 1), new Name("Fortitude Dulwich"), new Url("https://jo.pics.com", false)),
          people, people);
    });
 

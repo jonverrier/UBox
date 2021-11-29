@@ -44,8 +44,6 @@ export class CohortMemento {
       this._name = name;
       this._creationTimestamp = creationTimestamp;
       this._cohortType = cohortType;
-
-      this._businessId = null;
    }
 }
 

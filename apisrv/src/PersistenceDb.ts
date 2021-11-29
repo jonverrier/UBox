@@ -1,9 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2020, 2021
 
-import mongoose from "mongoose";
-
-export const persistenceDetailsSchema = new mongoose.Schema({
+export const persistenceDetailsSchema = {
    _key: {
       type: String,
       required: false
@@ -16,4 +14,4 @@ export const persistenceDetailsSchema = new mongoose.Schema({
       type: Number,
       required: true
    }
-});
+};

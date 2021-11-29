@@ -77,7 +77,7 @@
     <TypeScriptCompile Include="test\test-IOcommon.ts" />
     <TypeScriptCompile Include="test\test-IOlogincontext.ts" />
     <TypeScriptCompile Include="test\test-IOobservation.ts" />
-    <TypeScriptCompile Include="test\test-IOparty.ts" />
+    <TypeScriptCompile Include="test\test-IOpersona.ts" />
     <TypeScriptCompile Include="test\test-localisation.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
@@ -92,6 +92,7 @@
     <TypeScriptCompile Include="test\test-IOperson.ts">
       <TestFramework>mocha</TestFramework>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\test-persona.ts" />
     <TypeScriptCompile Include="test\test-range.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>

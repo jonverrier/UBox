@@ -9,6 +9,7 @@ import { Business } from '../../core/src/Business';
 import { CohortCodec } from '../../core/src/IOCohort';
 import { PersonDb } from './PersonDb';
 import { BusinessDb } from './BusinessDb';
+import { persistenceDetailsSchema } from './PersistenceDb';
 
 export class CohortDb implements ICohortStore {
    private _codec;
@@ -37,7 +38,7 @@ export class CohortDb implements ICohortStore {
 
          let business = await businessDb.loadOne(result._doc._businessId);
 
-         result._doc._business = business;
+         result._doc._business = business.memento();
 
          return this._codec.tryCreateFrom(result._doc);
 
@@ -85,7 +86,7 @@ export class CohortDb implements ICohortStore {
                   existing._doc._persistenceDetails._key = existing._doc._id.toString();
 
                // Restore the object arrays before sending back to client
-               existing._doc._business = prevBusiness;
+               existing._doc._business = prevBusiness.memento();
 
                // Return a constructed object via codec 
                return this._codec.tryCreateFrom(existing._doc);
@@ -95,14 +96,8 @@ export class CohortDb implements ICohortStore {
          let doc = new cohortModel(memento);
          let result = await doc.save({ isNew: cohort.persistenceDetails.key ? true : false });
 
-         // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
-            result._doc._persistenceDetails._key = result._doc._id.toString();
+         return this.postProcessfromSave(result._doc, prevBusiness);
 
-         // Restore the object arrays before sending back to client
-         result._doc._business = prevBusiness;
-
-         return this._codec.tryCreateFrom(result._doc);
       } catch (err) {
          let logger: Logger = new Logger();
          logger.logError("CohortDb", "save", "Error:", err);
@@ -110,25 +105,25 @@ export class CohortDb implements ICohortStore {
       }
 
    }
+
+   postProcessfromSave(doc, prevBusiness: Business): Cohort {
+      var cohort: Cohort;
+
+      // If we saved a new document, copy the new Mongo ID to persistenceDetails
+      if (doc._persistenceDetails._key !== doc._id.toString())
+         doc._persistenceDetails._key = doc._id.toString();
+
+      doc._business = prevBusiness.memento();
+      cohort = this._codec.tryCreateFrom(doc);
+
+      return cohort;
+   }
 }
 
 const cohortTypes: Array<string> = (Object.values(ECohortType));
 
 const cohortSchema = new mongoose.Schema({
-   _persistenceDetails: {
-      _key: {
-         type: String,
-         required: false
-      },
-      _schemaVersion: {
-         type: Number,
-         required: true
-      },
-      _sequenceNumber: {
-         type: Number,
-         required: true
-      }
-   },
+   _persistenceDetails: persistenceDetailsSchema,
    _name: {
       _displayName: {
          type: String,

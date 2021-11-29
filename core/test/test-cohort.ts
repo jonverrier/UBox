@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name, Persona } from "../src/Persona";
-import { EmailAddress, Person } from '../src/Person';
+import { EmailAddress, Roles, ERoleType, Person } from '../src/Person';
 import { Business } from '../src/Business';
 import { ECohortType, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
 
@@ -12,22 +12,23 @@ var expect = require("chai").expect;
 describe("Cohort", function () {
    let cohort1: Cohort, cohort2: Cohort;
    let period = 1;
+   let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
-   let person = new Person(new PersistenceDetails(1, 1, 1),
-      new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+   let person = new Person(
+      new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
-      null);
+      roles);
 
-   let person2 = new Person(new PersistenceDetails(1, 1, 1),
-      new Persona(new Name("Jenny"), new Url("https://jo.pics.com", false)),
+   let person2 = new Person(
+      new Persona(new PersistenceDetails("1", 1, 1), new Name("Jenny"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Jenny@mail.com", true),
-      null);
+      roles);
 
    let people = new Array<Person>();
    people.push(person);
 
-   let business = new Business(new PersistenceDetails(null, 1, 1),
-      new Persona (new Name("XFit Dulwich"), new Url("https://xfit.pics.com", false)),
+   let business = new Business(
+      new Persona (new PersistenceDetails(null, 1, 1), new Name("XFit Dulwich"), new Url("https://xfit.pics.com", false)),
       people, people);
 
    beforeEach(function () {
@@ -69,8 +70,8 @@ describe("Cohort", function () {
 
       let newPeriod = 2;
 
-      let newBusiness = new Business(new PersistenceDetails(null, 1, 1),
-         new Persona (new Name("XFit Dulwich2"), new Url("https://xfit.pics.com", false)),
+      let newBusiness = new Business(
+         new Persona (new PersistenceDetails(null, 1, 1), new Name("XFit Dulwich2"), new Url("https://xfit.pics.com", false)),
          people, people);
 
       cohort1.business = newBusiness;

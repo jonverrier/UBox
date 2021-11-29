@@ -39,14 +39,9 @@ export class EmailAddressCodec implements ICodec<EmailAddress> {
 // Roles Codec
 // ==========
 
-const rolesArrayIoType = IoTs.type({
-   _roles: IoTs.union([
-      IoTs.null,
-      IoTs.undefined,
-      IoTs.array(createEnumType<ERoleType>(ERoleType, 'ERoleType'))]) // Either an enum list, or null / undefined
+const rolesIoType = IoTs.type({
+   _roles: IoTs.array(createEnumType<ERoleType>(ERoleType, 'ERoleType')) 
 });
-
-const rolesIoType = IoTs.union([IoTs.null, IoTs.undefined, rolesArrayIoType]);  // Either an enum list, or null / undefined
 
 export class RolesCodec implements ICodec<Roles> {
 
@@ -68,8 +63,8 @@ export class RolesCodec implements ICodec<Roles> {
 // ==========
 
 export const personIoType = IoTs.type({
-   _persistenceDetails: persistenceDetailsIoType,
    _persona: personaIoType,
+   _email: emailIoType,
    _roles: rolesIoType
 });
 

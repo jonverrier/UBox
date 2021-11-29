@@ -3,6 +3,7 @@
 
 import { URL } from 'url'
 import { InvalidParameterError } from './CoreError';
+import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
 
 export class NameMemento {
    readonly _displayName: string;
@@ -163,44 +164,55 @@ export class Url {
 }
 
 export class PersonaMemento {
+   _persistenceDetails: PersistenceDetailsMemento;
    _name: NameMemento;
    _thumbnailUrl: UrlMemento | null;
 
    /**
     * Create a PersonMemento object
+    * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.* 
     * @param name - plain text user name. Cannot be null. 
-    * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
+    * @param thumbnailUrl - URL to thumbnail image. Cannot be null.
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor( name: NameMemento, thumbnailUrl: UrlMemento | null) {
+   constructor(persistenceDetails: PersistenceDetailsMemento,
+      name: NameMemento, thumbnailUrl: UrlMemento) {
 
+      this._persistenceDetails = persistenceDetails;
       this._name = name;
       this._thumbnailUrl = thumbnailUrl;
    }
 }
 
-export class Persona {
+export class Persona extends Persistence {
    private _name: Name;
    private _thumbnailUrl: Url | null;
 
    /**
     * Create a Persona object
     * @param name - plain text user name. Cannot be null.
-    * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
+    * @param thumbnailUrl - URL to thumbnail image
     */
-   public constructor(name: Name, thumbnailUrl: Url | null)
+   public constructor(persistenceDetails: PersistenceDetails,
+      name: Name, thumbnailUrl: Url)
    public constructor(memento: PersonaMemento);
    public constructor(...params: any[]) {
 
       if (params.length === 1) {
          let memento: PersonaMemento = params[0];
 
+         super(new PersistenceDetails(memento._persistenceDetails._key,
+            memento._persistenceDetails._schemaVersion,
+            memento._persistenceDetails._sequenceNumber));
+
          this._name = new Name(memento._name._displayName);
          this._thumbnailUrl = new Url(memento._thumbnailUrl._url, memento._thumbnailUrl._isUrlVerified);
       }
       else {
-         this._name = params[0];
-         this._thumbnailUrl = params[1];
+         super(params[0]);
+
+         this._name = params[1];
+         this._thumbnailUrl = params[2];
       }
    }
 
@@ -210,7 +222,7 @@ export class Persona {
    get name(): Name {
       return this._name;
    }
-   get thumbnailUrl(): Url | null {
+   get thumbnailUrl(): Url {
       return this._thumbnailUrl;
    }
    set name(name: Name) {
@@ -224,7 +236,7 @@ export class Persona {
    * memento() returns a copy of internal state
    */
    memento(): PersonaMemento {
-      return new PersonaMemento(
+      return new PersonaMemento(this.persistenceDetails.memento(),
          this._name.memento(),
          this._thumbnailUrl.memento());
    }
@@ -267,7 +279,8 @@ export class Persona {
     */
    equals(rhs: Persona): boolean {
 
-      return (this._name.equals(rhs._name)) &&
-         (this._thumbnailUrl ? this._thumbnailUrl.equals(rhs._thumbnailUrl) : (rhs.thumbnailUrl === null));
+      return (super.equals(rhs) &&
+         this._name.equals(rhs._name)) &&
+         (this._thumbnailUrl.equals(rhs._thumbnailUrl));
    }
 }

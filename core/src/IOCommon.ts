@@ -84,7 +84,7 @@ export interface ICodec<Target> {
 // Persistence Codec
 // ==========
 export const persistenceDetailsIoType = IoTs.type({
-   _key: IoTs.union([IoTs.null,IoTs.unknown]),
+   _key: IoTs.union([IoTs.null,IoTs.string]),
    _schemaVersion: IoTs.number,
    _sequenceNumber: IoTs.number
 });

@@ -43,7 +43,6 @@ export class SingletonApiHelper<Entity> {
 
       try {
          response = await axios.get(this._queryUrl, { params: { _key: id } });
-
          return this._codec.tryCreateFrom(response.data);
       } catch (e) {
          throw (e);

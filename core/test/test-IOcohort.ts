@@ -5,7 +5,7 @@ import { Logger } from '../src/Logger';
 import { Timestamper } from '../src/Timestamp';
 import { PersistenceDetails } from '../src/Persistence';
 import { Url, Name, Persona } from "../src/Persona";
-import { EmailAddress, Person } from '../src/Person';
+import { EmailAddress, Roles, ERoleType, Person } from '../src/Person';
 import { Business } from '../src/Business';
 import { ECohortType, ECohortPeriod, Cohort } from '../src/Cohort';
 import { CohortCodec } from '../src/IOCohort';
@@ -18,17 +18,17 @@ describe("IOCohort", function () {
    var cohort: Cohort;
 
    let creationTimestamp = Timestamper.now();
-
-   let person = new Person(new PersistenceDetails(1, 1, 1),
-      new Persona(new Name("Joe"), new Url("https://jo.pics.com", false)),
+   let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
+   let person = new Person(
+      new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
       new EmailAddress("Joe@mail.com", true),
-      null);
+      roles);
 
    let people = new Array<Person>();
    people.push(person);
 
-   let business = new Business(new PersistenceDetails(null, 1, 1),
-      new Persona (new Name("XFit Dulwich2"), new Url("https://xfit.pics.com", false)),
+   let business = new Business(
+      new Persona (new PersistenceDetails(null, 1, 1), new Name("XFit Dulwich2"), new Url("https://xfit.pics.com", false)),
       people, people);
 
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),
