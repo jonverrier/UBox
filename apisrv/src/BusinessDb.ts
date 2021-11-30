@@ -84,7 +84,7 @@ export class BusinessDb implements IBusinessStore {
             // Records are the same if they are: 
             //    same name 
             var whereClause = {
-               '_persona._personaDetails._name._displayName': business.personaDetails.name.displayName
+               '_personaDetails._name._displayName': business.personaDetails.name.displayName
             };
 
             const existing = await businessModel.findOne(whereClause).exec();

@@ -3,19 +3,22 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
+import { Persona } from '../../core/src/Persona';
 import { Person, IPersonStore } from '../../core/src/Person';
+import { ICodec } from '../../core/src/IOCommon';
+import { PersonaCodec } from '../../core/src/IOPersona';
 import { PersonCodec } from '../../core/src/IOPerson';
 import { persistenceDetailsSchema } from './PersistenceDb';
 import { personaDetailsSchema } from './PersonaDb';
 
-export class PersonDb implements IPersonStore {
+class StoreImplFor<T> {
    private _codec;
 
-   constructor() {
-      this._codec = new PersonCodec();;
+   constructor(codec: ICodec<T>) {
+      this._codec = codec;
    }
 
-   async loadOne(id: string): Promise<Person | null>  {
+   async loadOne(id: string): Promise<T | null> {
 
       const result = await personModel.findOne().where('_id').eq(id).exec();
 
@@ -30,13 +33,13 @@ export class PersonDb implements IPersonStore {
       }
    }
 
-   async loadMany(ids: Array<string>): Promise<Array<Person>> {
+   async loadMany (ids: Array<string>, ): Promise<Array<T>> {
 
       const result = await personModel.find().where('_id').in(ids).exec();
 
       if (result && result.length > 0) {
          var i: number;
-         var people: Array<Person> = new Array<Person>();
+         var people: Array<T> = new Array<T>();
 
          for (i = 0; i < result.length; i++) {
             // If we saved a new document, copy the new Mongo ID up to persistenceDetails
@@ -50,6 +53,49 @@ export class PersonDb implements IPersonStore {
       } else {
          return null;
       }
+   }
+}
+
+/*
+export class PersonaDb implements IPersonaStore {
+   private _personaCodec: PersonaCodec;
+   private _personaStore: StoreImplFor<Persona>;
+
+   constructor() {
+      this._personaCodec = new PersonaCodec();
+      this._personaStore = new StoreImplFor<Persona>(this._personaCodec);
+   }
+
+   loadOne(id: string): Promise<Persona | null> {
+
+      return this._personaStore.loadOne(id);
+   }
+
+   loadMany(ids: Array<string>): Promise<Array<Persona>> {
+
+      return this._personaStore.loadMany(ids);
+   }
+
+}
+*/
+
+export class PersonDb implements IPersonStore {
+   private _personCodec: PersonCodec;
+   private _personStore: StoreImplFor<Person>;
+
+   constructor() {
+      this._personCodec = new PersonCodec();
+      this._personStore = new StoreImplFor<Person>(this._personCodec);
+   }
+
+   loadOne(id: string): Promise<Person | null>  {
+
+      return this._personStore.loadOne(id);
+   }
+
+   loadMany(ids: Array<string>): Promise<Array<Person>> {
+
+      return this._personStore.loadMany(ids);
    }
 
    async save(person: Person): Promise<Person | null> {
@@ -65,18 +111,18 @@ export class PersonDb implements IPersonStore {
                if (existing._doc._persistenceDetails._key !== existing._doc._id.toString())
                   existing._doc._persistenceDetails._key = existing._doc._id.toString();
 
-               return this._codec.tryCreateFrom(existing._doc);
+               return this._personCodec.tryCreateFrom(existing._doc);
             }
          }
 
          // only save if we are a later sequence number 
-         let result = await (new personModel(this._codec.encode(person))).save ({ isNew: person.persistenceDetails.key ? true : false });
+         let result = await (new personModel(this._personCodec.encode(person))).save ({ isNew: person.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
          if (result._doc._persistenceDetails._key !== result._doc._id.toString())
             result._doc._persistenceDetails._key = result._doc._id.toString();
 
-         return this._codec.tryCreateFrom(result._doc);
+         return this._personCodec.tryCreateFrom(result._doc);
       } catch (err) {
          let logger: Logger = new Logger();
          logger.logError("PersonDb", "save", "Error:", err);
