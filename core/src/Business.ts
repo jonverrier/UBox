@@ -1,10 +1,14 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { InvalidParameterError } from './CoreError';
-import { Persona, PersonaMemento } from './Persona';
+import { PersistenceDetails, PersistenceDetailsMemento } from './Persistence';
+import { Persona, PersonaDetails, PersonaMemento, PersonaDetailsMemento} from './Persona';
 import { EmailAddress, Person, PersonMemento } from './Person';
 
+// Design note - classes derived from persona should have the same layout for IO. This means Persona classes can be constructed from wire/Db representations of derived classes.
+// This enables Personas to be used for Lists etc & saves duplicate classes/code for each derived type
 export class BusinessMemento extends PersonaMemento {
-   readonly _persona: PersonaMemento;
+   _persistenceDetails: PersistenceDetailsMemento;
+   _personaDetails: PersonaDetailsMemento;
    _administrators: Array<PersonMemento>; // Not readonly as database needs to manually set
    _members: Array<PersonMemento>;        // Not readonly as database needs to manually set
 
@@ -15,24 +19,23 @@ export class BusinessMemento extends PersonaMemento {
 
    /**
     * Create a BusinessMemento object
-    * @param persona - persona for the business (display name and URL)
-    * @param thumbnailUrl - Url to the thumbnail image
+    * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.* 
+    * @param personaDetails - agrregate of information to represent a Persona 
     * @param administrators - array of People, may be zero length // TODO - must have at least one adminsistrator
     * @param members - array of People, may be zero length // TODO - must have at least one adminsistrator* 
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor(persona: PersonaMemento,
+   constructor(persistenceDetails: PersistenceDetailsMemento,
+      personaDetails: PersonaDetailsMemento,
       administrators: Array<PersonMemento>,
       members: Array<PersonMemento>) {
 
-      super(persona._persistenceDetails, persona._name, persona._thumbnailUrl);
-
-      if ((!administrators) || administrators.length < 1)
-         throw new InvalidParameterError("Business must have at least one Administrator");
+      super(persistenceDetails, personaDetails);
 
       var i: number = 0;
 
-      this._persona = persona;
+      this._persistenceDetails = persistenceDetails;
+      this._personaDetails = personaDetails;
 
       this._administrators = new Array<PersonMemento>(administrators.length);
       for (i = 0; i < administrators.length; i++)
@@ -58,11 +61,13 @@ export class Business extends Persona {
 
    /**
     * Create a Business object
-    * @param persona - persona for the business
+    * @param persistenceDetails - details for the DB layer to save/load entities
+    * @param personaDetails - plain text user name, profile picture.
     * @param administrators - array of People
     * @param members - array of People
     */
-   constructor(persona: Persona,
+   constructor(persistenceDetails: PersistenceDetails,
+      personaDetails: PersonaDetails,
       administrators: Array<Person>,
       members: Array<Person>);
    public constructor(memento: BusinessMemento);
@@ -72,7 +77,7 @@ export class Business extends Persona {
          var i: number;
          let memento: BusinessMemento = params[0];
 
-         super(memento._persona);
+         super(new PersistenceDetails(memento._persistenceDetails), new PersonaDetails(memento._personaDetails));
 
          this._administrators = new Array<Person>(memento._administrators.length);
          for (i = 0; i < memento._administrators.length; i++)
@@ -87,10 +92,10 @@ export class Business extends Persona {
 
       } else {
 
-         super(params[0]);
+         super(params[0], params[1]);
 
-         this._administrators = params[1];
-         this._members = params[2];
+         this._administrators = params[2];
+         this._members = params[3];
 
          this._administratorIds = new Array<string>();
          this._memberIds = new Array<string>();
@@ -119,7 +124,8 @@ export class Business extends Persona {
    */
    memento(): BusinessMemento {
 
-      return new BusinessMemento(super.memento(),
+      return new BusinessMemento(super.persistenceDetails.memento(),
+         super.personaDetails.memento(),
          Person.mementos(this._administrators),
          Person.mementos(this._members));
    }

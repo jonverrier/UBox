@@ -5,8 +5,8 @@ import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
 import { Person, IPersonStore } from '../../core/src/Person';
 import { PersonCodec } from '../../core/src/IOPerson';
-import { personaSchema } from './PersonaDb';
-
+import { persistenceDetailsSchema } from './PersistenceDb';
+import { personaDetailsSchema } from './PersonaDb';
 
 export class PersonDb implements IPersonStore {
    private _codec;
@@ -21,8 +21,8 @@ export class PersonDb implements IPersonStore {
 
       if (result) {
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persona._persistenceDetails._key !== result._doc._id.toString())
-            result._doc._persona._persistenceDetails._key = result._doc._id.toString();
+         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
+            result._doc._persistenceDetails._key = result._doc._id.toString();
 
          return this._codec.tryCreateFrom(result._doc);
       } else {
@@ -40,8 +40,8 @@ export class PersonDb implements IPersonStore {
 
          for (i = 0; i < result.length; i++) {
             // If we saved a new document, copy the new Mongo ID up to persistenceDetails
-            if (result[i]._doc._persona._persistenceDetails._key !== result[i]._doc._id.toString())
-               result[i]._doc._persona._persistenceDetails._key = result[i]._doc._id.toString();
+            if (result[i]._doc._persistenceDetails._key !== result[i]._doc._id.toString())
+               result[i]._doc._persistenceDetails._key = result[i]._doc._id.toString();
 
             people.push(this._codec.tryCreateFrom(result[i]._doc));
          }
@@ -59,11 +59,11 @@ export class PersonDb implements IPersonStore {
             const existing = await personModel.findOne().where('_email._email').eq(person.email.email).exec();
 
             // if the saved version has a later or equal sequence number, do not overwrite it
-            if (existing && existing._doc._persona._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
+            if (existing && existing._doc._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
 
                // If we have an existing document, copy the new Mongo ID to persistenceDetails
-               if (existing._doc._persona._persistenceDetails._key !== existing._doc._id.toString())
-                  existing._doc._persona._persistenceDetails._key = existing._doc._id.toString();
+               if (existing._doc._persistenceDetails._key !== existing._doc._id.toString())
+                  existing._doc._persistenceDetails._key = existing._doc._id.toString();
 
                return this._codec.tryCreateFrom(existing._doc);
             }
@@ -73,8 +73,8 @@ export class PersonDb implements IPersonStore {
          let result = await (new personModel(this._codec.encode(person))).save ({ isNew: person.persistenceDetails.key ? true : false });
 
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persona._persistenceDetails._key !== result._doc._id.toString())
-            result._doc._persona._persistenceDetails._key = result._doc._id.toString();
+         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
+            result._doc._persistenceDetails._key = result._doc._id.toString();
 
          return this._codec.tryCreateFrom(result._doc);
       } catch (err) {
@@ -87,7 +87,8 @@ export class PersonDb implements IPersonStore {
 }
 
 const personSchema = new mongoose.Schema({
-   _persona: personaSchema,
+   _persistenceDetails: persistenceDetailsSchema,
+   _personaDetails: personaDetailsSchema,
    _email: {
       _email: {
          type: String,

@@ -10,6 +10,7 @@ import { Business } from '../../core/src/Business';
 import { Cohort, ECohortType } from "../../core/src/Cohort";
 import { BusinessApi } from '../src/BusinessApi';
 import { CohortApi } from '../src/CohortApi';
+import { PersonaTestHelper, PersonTestHelper } from '../../core/test/testHelpers';
 
 var expect = require("chai").expect;
 
@@ -25,18 +26,15 @@ describe("CohortApi", function () {
    let cohort1;
    let period = 1;
 
-   let person = new Person(
-      new Persona(new PersistenceDetails(null, 1, 1), new Name("Jon V"), new Url("https://jonv.pics.com", false)),
-      new EmailAddress("jonathanverrier@hotmail.com", true),
-      new Roles(Array<ERoleType>(ERoleType.Member)));
+   let person = PersonTestHelper.createMeForInsert();
 
    beforeEach(async function () {
 
       let people = new Array<Person>();
       people.push(person);
 
-      let business = new Business(
-         new Persona (new PersistenceDetails(null, 1, 1), new Name("Fortitude Dulwich"), new Url("https://xfit.pics.com", false)),
+      let business = new Business(new PersistenceDetails(null, 0, 0),
+         PersonaTestHelper.createXFitDulwichDetails(),
          people, people);
 
       let newBusiness:Business = await businessApi.save(business);

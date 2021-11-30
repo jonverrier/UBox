@@ -1,8 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
-import { URL } from 'url'
 import { InvalidParameterError } from './CoreError';
-import { PersistenceDetails} from "./Persistence";
-import { Persona, PersonaMemento} from './Persona';
+import { PersistenceDetails, PersistenceDetailsMemento } from "./Persistence";
+import { Persona, PersonaDetails, PersonaDetailsMemento, PersonaMemento} from './Persona';
 
 // Rule summary for a Persistent Object: 
 // - derives from IPersistence, which contains a PersistentDetails member object. 
@@ -189,23 +188,30 @@ export class Roles {
    }
 }
 
+// Design note - classes derived from persona should have the same layout for IO. This means Persona classes can be constructed from wire/Db representations of derived classes. 
+// This enables Personas to be used for Lists etc & saves duplicate classes/code for each derived type
 export class PersonMemento extends PersonaMemento {
-   _persona: PersonaMemento;
-   _email: EmailAddressMemento | null;
-   _roles: RolesMemento | null;
+   _persistenceDetails: PersistenceDetailsMemento;
+   _personaDetails: PersonaDetailsMemento;
+   _email: EmailAddressMemento;
+   _roles: RolesMemento;
 
    /**
     * Create a PersonMemento object
-    * @param persona - personal (name and imageUrl)
+    * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.* 
+    * @param personaDetails - agrregate of information to represent a Persona 
     * @param email - user email, can be null if not provided
     * @param roles - list of roles the Person plays
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor(persona: PersonaMemento, email: EmailAddressMemento, roles: RolesMemento) {
+   constructor(persistenceDetails: PersistenceDetailsMemento,
+      personaDetails: PersonaDetailsMemento,
+      email: EmailAddressMemento, roles: RolesMemento) {
 
-      super(persona._persistenceDetails, persona._name, persona._thumbnailUrl);
+      super(persistenceDetails, personaDetails);
 
-      this._persona = persona; 
+      this._persistenceDetails = persistenceDetails; 
+      this._personaDetails = personaDetails;
       this._email = email;
       this._roles = roles;
    }
@@ -217,13 +223,15 @@ export class Person extends Persona {
 
 /**
  * Create a Person object
- * @param persona - plain text user name. Cannot be null.
- * @param email - user email, can be null if not provided
- * @param thumbnailUrl - URL to thumbnail image, can be null if not provided
+ * @param persistenceDetails - details for the DB layer to save/load entities
+ * @param personaDetails - plain text user name, profile picture.
+ * @param email - user email
  * @param roles - list of roles the Person plays, can be null
  */
    public constructor(
-      persona: Persona, email: EmailAddress , roles: Roles );
+      persistenceDetails: PersistenceDetails,
+      personaDetails: PersonaDetails,
+      email: EmailAddress, roles: Roles);
    public constructor(memento: PersonMemento);
    public constructor(...params: any[]) {
 
@@ -231,17 +239,17 @@ export class Person extends Persona {
 
          let memento: PersonMemento = params[0];
 
-         super(params[0]._persona);
+         super(new PersistenceDetails (memento._persistenceDetails), new PersonaDetails (memento._personaDetails));
 
          this._email = new EmailAddress(memento._email._email, memento._email._isEmailVerified);
          this._roles = new Roles(memento._roles._roles);
 
       } else {
 
-         super(params[0]);
+         super(params[0], params[1]);
 
-         this._email = params[1];
-         this._roles = params[2];
+         this._email = params[2];
+         this._roles = params[3];
       }
    }
 
@@ -267,7 +275,8 @@ export class Person extends Persona {
    * memento() returns a copy of internal state
    */
    memento(): PersonMemento {
-      return new PersonMemento(super.memento(),
+      return new PersonMemento(super.persistenceDetails.memento(),
+         super.personaDetails.memento(),
          this._email ? this.email.memento() : null,
          this._roles ? this.roles.memento() : null);
    }
@@ -309,6 +318,33 @@ export class Person extends Persona {
    hasRole(role: ERoleType): boolean {
 
       return (this._roles.includesRole(role));
+   }
+
+   /**
+    * test if a person is a Member
+    * @param role - the roles to check 
+    */
+   isMember(): boolean {
+
+      return (this._roles.includesRole(ERoleType.Member));
+   }
+
+   /**
+    * test if a person is a Coach
+    * @param role - the roles to check 
+    */
+   isCoach(): boolean {
+
+      return (this._roles.includesRole(ERoleType.Coach));
+   }
+
+   /**
+    * test if a person is a Prospect
+    * @param role - the roles to check 
+    */
+   isProspect (): boolean {
+
+      return (this._roles.includesRole(ERoleType.Prospect));
    }
 
    /**

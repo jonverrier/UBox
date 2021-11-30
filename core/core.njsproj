@@ -103,6 +103,7 @@
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-unit.ts" />
+    <TypeScriptCompile Include="test\testHelpers.ts" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>

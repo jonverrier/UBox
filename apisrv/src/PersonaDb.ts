@@ -1,10 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2020, 2021
 
-import { persistenceDetailsSchema } from './PersistenceDb';
-
-export const personaSchema = {
-   _persistenceDetails: persistenceDetailsSchema,
+export const personaDetailsSchema = {
    _name: {
       _displayName: {
          type: String,
