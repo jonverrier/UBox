@@ -9,6 +9,7 @@ import { EmailAddress, Roles, ERoleType, Person } from "../../core/src/Person";
 import { Business } from "../../core/src/Business";
 import { PersonApi } from '../src/PersonApi';
 import { BusinessApi } from '../src/BusinessApi';
+import { PersonaTestHelper, PersonTestHelper } from '../../core/test/testHelpers';
 
 var expect = require("chai").expect;
 
@@ -23,10 +24,7 @@ describe("BusinessApi", function () {
 
    let business1;
 
-   let person = new Person(
-      new Persona(new PersistenceDetails(null, 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-      new EmailAddress("Joe@mail.com", true),
-      new Roles(Array<ERoleType>(ERoleType.Member)));
+   let person = PersonTestHelper.createJoeForInsert();
 
    beforeEach(async function () {
 
@@ -34,8 +32,8 @@ describe("BusinessApi", function () {
       let savedPerson = await personApi.save(person);
       people.push(savedPerson);
 
-      business1 = new Business(
-         new Persona (new PersistenceDetails(null, 1, 1), new Name("Fortitude Dulwich"), new Url("https://jo.pics.com", false)),
+      business1 = new Business(new PersistenceDetails (null, 0, 0),
+         PersonaTestHelper.createXFitDulwichDetails(),
          people, people);
    });
 

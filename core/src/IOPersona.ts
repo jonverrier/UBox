@@ -58,10 +58,18 @@ export class UrlCodec implements ICodec<Url> {
 
 // Persona Codec
 // ==========
+
+// PersonaDetails Codec
+// ==========
+
+export const personaDetailsIoType = IoTs.type({
+   _name: nameIoType,
+   _thumbnailUrl: urlIoType
+})
+
 export const personaIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
-   _name: nameIoType, 
-   _thumbnailUrl: urlIoType
+   _personaDetails: personaDetailsIoType
 });
 
 export class PersonaCodec implements ICodec<Persona> {

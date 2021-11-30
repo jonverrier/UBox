@@ -5,6 +5,8 @@ import { PersistenceDetails } from '../src/Persistence';
 import { Url, Name, PersonaMemento, Persona } from "../src/Persona";
 import { NameCodec, UrlCodec, PersonaCodec, PersonasCodec} from '../src/IOPersona';
 
+import { PersonaTestHelper } from './testHelpers';
+
 var expect = require("chai").expect;
 
 describe("IOName", function () {
@@ -136,15 +138,17 @@ describe("IOPersona", function () {
       codec = new PersonaCodec();
    });
 
-   it("Needs to decode Person from clean input.", function () {
+   it("Needs to decode Persona from clean input.", function () {
 
       var caught: boolean = false;
 
       try {
          codec.decode({
             _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
-            _name: { _displayName: "Joe" },
-            _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true },
+            _personaDetails: {
+               _name: { _displayName: "Joe" },
+               _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true }
+            }
          });
       } catch (e) {
          caught = true;
@@ -156,16 +160,16 @@ describe("IOPersona", function () {
    it("Needs to encode Persona.", function () {
 
       let encoded: PersonaMemento = codec.encode(
-         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)));
+         PersonaTestHelper.createJoe());
 
       expect(encoded._persistenceDetails._key).to.equal("1");
-      expect(encoded._persistenceDetails._schemaVersion).to.equal(1);
-      expect(encoded._persistenceDetails._sequenceNumber).to.equal(1);
+      expect(encoded._persistenceDetails._schemaVersion).to.equal(0);
+      expect(encoded._persistenceDetails._sequenceNumber).to.equal(0);
    });
 
-   it("Needs to encode then decode Person.", function () {
+   it("Needs to encode then decode Persona.", function () {
 
-      let initial = new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false));
+      let initial = PersonaTestHelper.createJoe();
       let encoded = codec.encode(initial);
       let decoded: Persona;
 
@@ -185,7 +189,7 @@ describe("IOPersona", function () {
 
    it("Needs to encode & decode multiple Personas", function () {
 
-      let initial = new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false));
+      let initial = PersonaTestHelper.createJoe();
 
       var people: Array<Persona> = new Array<Persona>();
       people.push(initial);

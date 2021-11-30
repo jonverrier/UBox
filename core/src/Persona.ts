@@ -163,56 +163,46 @@ export class Url {
    }
 }
 
-export class PersonaMemento {
-   _persistenceDetails: PersistenceDetailsMemento;
+export class PersonaDetailsMemento {
    _name: NameMemento;
-   _thumbnailUrl: UrlMemento | null;
+   _thumbnailUrl: UrlMemento;
 
    /**
     * Create a PersonMemento object
-    * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.* 
-    * @param name - plain text user name. Cannot be null. 
-    * @param thumbnailUrl - URL to thumbnail image. Cannot be null.
+    * @param name - plain text user name.
+    * @param thumbnailUrl - URL to thumbnail image.
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor(persistenceDetails: PersistenceDetailsMemento,
-      name: NameMemento, thumbnailUrl: UrlMemento) {
+   constructor(name: NameMemento,
+      thumbnailUrl: UrlMemento) {
 
-      this._persistenceDetails = persistenceDetails;
       this._name = name;
       this._thumbnailUrl = thumbnailUrl;
    }
 }
 
-export class Persona extends Persistence {
+// PersonaDetails - really just aggregates name & URL to reduce number of parameters for setup of new objects
+export class PersonaDetails  {
    private _name: Name;
-   private _thumbnailUrl: Url | null;
+   private _thumbnailUrl: Url;
 
    /**
-    * Create a Persona object
-    * @param name - plain text user name. Cannot be null.
-    * @param thumbnailUrl - URL to thumbnail image
+    * Create a PersonaDetails object
+    * @param name - plain text user name.
+    * @param thumbnailUrl - URL to thumbnail image.
     */
-   public constructor(persistenceDetails: PersistenceDetails,
-      name: Name, thumbnailUrl: Url)
-   public constructor(memento: PersonaMemento);
+   public constructor(name: Name, thumbnailUrl: Url)
+   public constructor(memento: PersonaDetailsMemento);
    public constructor(...params: any[]) {
 
       if (params.length === 1) {
-         let memento: PersonaMemento = params[0];
-
-         super(new PersistenceDetails(memento._persistenceDetails._key,
-            memento._persistenceDetails._schemaVersion,
-            memento._persistenceDetails._sequenceNumber));
-
+         let memento: PersonaDetailsMemento = params[0];
          this._name = new Name(memento._name._displayName);
          this._thumbnailUrl = new Url(memento._thumbnailUrl._url, memento._thumbnailUrl._isUrlVerified);
       }
       else {
-         super(params[0]);
-
-         this._name = params[1];
-         this._thumbnailUrl = params[2];
+         this._name = params[0];
+         this._thumbnailUrl = params[1];
       }
    }
 
@@ -233,12 +223,91 @@ export class Persona extends Persistence {
    }
 
    /**
+    * test for equality - checks all fields are the same. 
+    * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
+    * @param rhs - the object to compare this one to.  
+    */
+   equals(rhs: PersonaDetails): boolean {
+
+      return (this._name.equals(rhs._name)) &&
+         (this._thumbnailUrl.equals(rhs._thumbnailUrl));
+   }
+
+   /**
+   * memento() returns a copy of internal state
+   */
+   memento(): PersonaDetailsMemento {
+      return new PersonaDetailsMemento(this.name.memento(),
+         this.thumbnailUrl.memento());
+   }
+}
+
+// Design note - classes derived from persona should have the same layout for IO. This means Persona classes can be constructed from wire/Db representations of derived classes.
+// This enables Personas to be used for Lists etc & saves duplicate classes/code for each derived type
+export class PersonaMemento {
+   _persistenceDetails: PersistenceDetailsMemento;
+   _personaDetails: PersonaDetailsMemento;
+
+   /**
+    * Create a PersonMemento object
+    * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.* 
+    * @param personaDetails - agrregate of information to represent a Persona 
+    * Design - all memento classes must depend only on base types, value types, or other Mementos
+    */
+   constructor(persistenceDetails: PersistenceDetailsMemento,
+      personaDetails: PersonaDetailsMemento) {
+
+      this._persistenceDetails = persistenceDetails;
+      this._personaDetails = personaDetails;
+   }
+}
+
+export class Persona extends Persistence {
+   private _personaDetails: PersonaDetails;
+
+   /**
+    * Create a Persona object
+    * @param personaDetails - plain text user name. Cannot be null.
+    * @param thumbnailUrl - URL to thumbnail image
+    */
+   public constructor(persistenceDetails: PersistenceDetails,
+      personaDetails: PersonaDetails)
+   public constructor(memento: PersonaMemento);
+   public constructor(...params: any[]) {
+
+      if (params.length === 1) {
+         let memento: PersonaMemento = params[0];
+
+         super(new PersistenceDetails(memento._persistenceDetails._key,
+            memento._persistenceDetails._schemaVersion,
+            memento._persistenceDetails._sequenceNumber));
+
+         this._personaDetails = new PersonaDetails (new Name(memento._personaDetails._name._displayName),
+                                                    new Url(memento._personaDetails._thumbnailUrl._url, memento._personaDetails._thumbnailUrl._isUrlVerified));
+      }
+      else {
+         super(params[0]);
+
+         this._personaDetails = params[1];
+      }
+   }
+
+   /**
+   * set of 'getters' for private variables
+   */
+   get personaDetails(): PersonaDetails {
+      return this._personaDetails;
+   }
+   set personaDetails(personaDetails: PersonaDetails) {
+      this._personaDetails = personaDetails;
+   }
+
+   /**
    * memento() returns a copy of internal state
    */
    memento(): PersonaMemento {
       return new PersonaMemento(this.persistenceDetails.memento(),
-         this._name.memento(),
-         this._thumbnailUrl.memento());
+         this._personaDetails.memento());
    }
 
    static mementos (people: Array<Persona>): Array<PersonaMemento> {
@@ -250,7 +319,6 @@ export class Persona extends Persistence {
 
       return peopleMemento;
    }
-
 
    static areEqual(lhs: Array<Persona>, rhs: Array<Persona>): boolean {
 
@@ -271,7 +339,6 @@ export class Persona extends Persistence {
       return true;
    }
 
-
    /**
     * test for equality - checks all fields are the same. 
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
@@ -280,7 +347,6 @@ export class Persona extends Persistence {
    equals(rhs: Persona): boolean {
 
       return (super.equals(rhs) &&
-         this._name.equals(rhs._name)) &&
-         (this._thumbnailUrl.equals(rhs._thumbnailUrl));
+         this._personaDetails.equals(rhs._personaDetails));
    }
 }

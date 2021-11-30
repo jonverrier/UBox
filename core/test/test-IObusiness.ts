@@ -7,17 +7,15 @@ import { EmailAddress, Roles, ERoleType, PersonMemento, Person } from '../src/Pe
 import { Business, BusinessMemento } from '../src/Business';
 import { BusinessCodec } from '../src/IOBusiness';
 
-var expect = require("chai").expect;
+import { PersistenceTestHelper, PersonaTestHelper, PersonTestHelper } from './testHelpers';
 
+var expect = require("chai").expect;
 
 describe("IOBusiness", function () {
 
    var codec: BusinessCodec;
    let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
-   let person = new Person(
-      new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-      new EmailAddress("Joe@mail.com", true),
-      roles);
+   let person = PersonTestHelper.createJoeMember();
 
    let people = new Array<Person>();
    people.push(person);
@@ -35,12 +33,12 @@ describe("IOBusiness", function () {
 
       try {
          let encoded = {
-            _persona: {
-               _persistenceDetails: {
-                  _key: '1',
-                  _schemaVersion: 1,
-                  _sequenceNumber: 1
-               },
+            _persistenceDetails: {
+               _key: '1',
+               _schemaVersion: 1,
+               _sequenceNumber: 1
+            },
+            _personaDetails: {
                _name: { _displayName: 'Joe' },
                _thumbnailUrl: { _url: 'https://jo.pics.com', _isUrlVerified: false }
             },
@@ -60,18 +58,20 @@ describe("IOBusiness", function () {
    it("Needs to encode Business.", function () {
 
       let encoded: BusinessMemento = codec.encode(new Business(
-         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
+         PersistenceTestHelper.createKey1(),
+         PersonaTestHelper.createJoeDetails(),
          people, people));
 
       expect(encoded._persistenceDetails._key).to.equal("1");
-      expect(encoded._persistenceDetails._schemaVersion).to.equal(1);
-      expect(encoded._persistenceDetails._sequenceNumber).to.equal(1);
+      expect(encoded._persistenceDetails._schemaVersion).to.equal(0);
+      expect(encoded._persistenceDetails._sequenceNumber).to.equal(0);
    });
 
    it("Needs to encode then decode Business.", function () {
 
       let initial = new Business(
-         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
+         PersistenceTestHelper.createKey1(),
+         PersonaTestHelper.createJoeDetails(),
          people, people);
       let encoded = codec.encode(initial);
       let decoded: Business;

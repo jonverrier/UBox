@@ -1,8 +1,8 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { PersistenceDetails } from "../src/Persistence";
-import { Url, Name, UrlMemento, Persona } from "../src/Persona";
+import { Url, Name } from "../src/Persona";
 import { EmailAddress, Roles, Person, PersonMemento, IPersonStore, ERoleType} from '../src/Person';
+import { PersonTestHelper } from './testHelpers';
 
 var expect = require("chai").expect;
 
@@ -11,9 +11,7 @@ class StubLoader implements IPersonStore {
    person: Person;
 
    constructor() {
-      this.person = new Person(
-         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-         new EmailAddress("Joe@mail.com", true), null);
+      this.person = PersonTestHelper.createJoeMember(); 
    }
 
    async loadOne(id: any): Promise<Person | null> {
@@ -136,28 +134,22 @@ describe("Roles", function () {
 });
 
 describe("Person", function () {
-   let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
    var person1: Person, person2: Person;
 
-   person1 = new Person(
-      new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-      new EmailAddress("Joe@mail.com", true), roles);
+   person1 = PersonTestHelper.createJoeMember();
 
-   person2 = new Person(
-      new Persona(new PersistenceDetails("2", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-      new EmailAddress("Joe@mail.com", true), roles);
+   person2 = PersonTestHelper.createJoeMember2();
    
 
    it("Needs to construct with a role list ", function () {
 
       let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
-      let roleperson = new Person(
-         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-         new EmailAddress("Joe@mail.com", true), roles);
+      let roleperson = PersonTestHelper.createJoeCoachMember();
 
       expect(roleperson.equals(roleperson)).to.equal(true);
       expect(roleperson.hasRole(ERoleType.Member)).to.equal(true);
+      expect(roleperson.hasRole(ERoleType.Coach)).to.equal(true);
       expect(roleperson.hasRole(ERoleType.Prospect)).to.equal(false);
    });
 
@@ -169,13 +161,13 @@ describe("Person", function () {
    
    it("Needs to correctly store attributes", function () {
          
-      expect(person1.name.equals(new Name("Joe"))).to.equal(true);
+      expect(person1.personaDetails.name.equals(new Name("Joe"))).to.equal(true);
       expect(person1.email.equals(new EmailAddress("Joe@mail.com", true))).to.equal(true);
-      expect(person1.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
-      expect(person1.roles).to.equal(roles);
+      expect(person1.personaDetails.thumbnailUrl.equals(new Url("https://joe.thumbnails.com", false))).to.equal(true);
+      expect(person1.isMember()).to.equal(true);
 
-      expect(person1.memento()._persona._name._displayName === person1.memento()._name._displayName).to.equal(true);
-      expect(person1.memento()._persona._thumbnailUrl.url === person1.thumbnailUrl.memento().url).to.equal(true);
+      expect(person1.memento()._personaDetails._name._displayName === person1.memento()._personaDetails._name._displayName).to.equal(true);
+      expect(person1.memento()._personaDetails._thumbnailUrl.url === person1.personaDetails.thumbnailUrl.memento().url).to.equal(true);
       expect(person1.memento()._email._email === person1.email.memento()._email).to.equal(true);
       expect(Roles.areEqual(person1.memento()._roles._roles, person1.roles.memento()._roles)).to.equal(true);
    });
@@ -251,9 +243,7 @@ describe("PersonStorer", function () {
       let caught = false;
 
       try {
-         storer.save(new Person(
-            new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-            new EmailAddress("Joe@mail.com", true), null));
+         storer.save(PersonTestHelper.createJoeMember());
       } catch {
          caught = true;
       }

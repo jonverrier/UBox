@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { PersistenceDetails } from "../src/Persistence";
 import { Url, Name, UrlMemento , Persona, PersonaMemento} from '../src/Persona';
+import { PersistenceTestHelper, PersonaTestHelper } from './testHelpers';
 
 var expect = require("chai").expect;
 
@@ -102,9 +102,9 @@ describe("Persona", function () {
 
    var person1: Persona, person2: Persona;
 
-   person1 = new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false));
+   person1 = new Persona (PersistenceTestHelper.createKey1(), PersonaTestHelper.createJoeDetails());
 
-   person2 = new Persona(new PersistenceDetails("2", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false));
+   person2 = new Persona(PersistenceTestHelper.createKey2(), PersonaTestHelper.createJoe2Details());
   
 
    it("Needs to compare for equality and inequality", function () {
@@ -115,11 +115,11 @@ describe("Persona", function () {
    
    it("Needs to correctly store attributes", function () {
          
-      expect(person1.name.equals(new Name("Joe"))).to.equal(true);
-      expect(person1.thumbnailUrl.equals(new Url("https://jo.pics.com", false))).to.equal(true);
+      expect(person1.personaDetails.name.equals(new Name("Joe"))).to.equal(true);
+      expect(person1.personaDetails.thumbnailUrl.equals(new Url("https://joe.thumbnails.com", false))).to.equal(true);
 
-      expect(person1.memento()._name._displayName === person1.memento()._name._displayName).to.equal(true);
-      expect(person1.memento()._thumbnailUrl.url === person1.thumbnailUrl.memento().url).to.equal(true);
+      expect(person1.memento()._personaDetails._name._displayName === person1.memento()._personaDetails._name._displayName).to.equal(true);
+      expect(person1.memento()._personaDetails._thumbnailUrl._url === person1.personaDetails.thumbnailUrl.memento().url).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
@@ -127,11 +127,11 @@ describe("Persona", function () {
       let newUrl = new Url("https://jo.newpics.com", false);
       let newName = new Name("NewJoe");
 
-      person1.name = newName;
-      person1.thumbnailUrl = newUrl;
+      person1.personaDetails.name = newName;
+      person1.personaDetails.thumbnailUrl = newUrl;
 
-      expect(person1.name.equals (newName)).to.equal(true);
-      expect(person1.thumbnailUrl.equals(newUrl)).to.equal(true);
+      expect(person1.personaDetails.name.equals (newName)).to.equal(true);
+      expect(person1.personaDetails.thumbnailUrl.equals(newUrl)).to.equal(true);
    });
 
    it("Needs to compare arrays", function () {

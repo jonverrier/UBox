@@ -7,7 +7,8 @@ import { Person, PersonMemento } from '../../core/src/Person';
 import { Business, IBusinessStore } from '../../core/src/Business';
 import { BusinessCodec } from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
-import { personaSchema } from './PersonaDb';
+import { persistenceDetailsSchema } from './PersistenceDb';
+import { personaDetailsSchema } from './PersonaDb';
 
 export class BusinessDb implements IBusinessStore {
    private _codec;
@@ -83,13 +84,13 @@ export class BusinessDb implements IBusinessStore {
             // Records are the same if they are: 
             //    same name 
             var whereClause = {
-               '_persona._name._displayName': business.name.displayName
+               '_persona._personaDetails._name._displayName': business.personaDetails.name.displayName
             };
 
             const existing = await businessModel.findOne(whereClause).exec();
 
             // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
-            if (existing && existing._doc._persona._persistenceDetails._sequenceNumber >= business.persistenceDetails.sequenceNumber) {
+            if (existing && existing._doc._persistenceDetails._sequenceNumber >= business.persistenceDetails.sequenceNumber) {
 
                return this.postProcessFromSave(existing._doc, prevAdmins, prevMembers);
             }
@@ -114,8 +115,8 @@ export class BusinessDb implements IBusinessStore {
       var newBusiness: Business;
 
       // If we saved a new document, copy the new Mongo ID to persistenceDetails
-      if (doc._persona._persistenceDetails._key !== doc._id.toString())
-         doc._persona._persistenceDetails._key = doc._id.toString();
+      if (doc._persistenceDetails._key !== doc._id.toString())
+         doc._persistenceDetails._key = doc._id.toString();
       
       doc._administrators = new Array();
       doc._members = new Array();
@@ -134,8 +135,8 @@ export class BusinessDb implements IBusinessStore {
       var newBusiness: Business;
 
       // If we saved a new document, copy the new Mongo ID to persistenceDetails
-      if (doc._persona._persistenceDetails._key !== doc._id.toString())
-         doc._persona._persistenceDetails._key = doc._id.toString();
+      if (doc._persistenceDetails._key !== doc._id.toString())
+         doc._persistenceDetails._key = doc._id.toString();
 
       var personDb: PersonDb = new PersonDb();
 
@@ -160,7 +161,8 @@ export class BusinessDb implements IBusinessStore {
 }
 
 const businessSchema = new mongoose.Schema({
-   _persona: personaSchema,
+   _persistenceDetails: persistenceDetailsSchema,
+   _personaDetails: personaDetailsSchema,
    _administratorIds: {
       type: [String],
       required: true

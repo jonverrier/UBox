@@ -6,6 +6,7 @@ import { EmailAddress, Roles, ERoleType, Person } from '../src/Person';
 import { Business } from '../src/Business';
 import { ECohortType, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
 
+import { PersistenceTestHelper, PersonaTestHelper, PersonTestHelper } from './testHelpers';
 
 var expect = require("chai").expect;
 
@@ -14,32 +15,30 @@ describe("Cohort", function () {
    let period = 1;
    let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
-   let person = new Person(
-      new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-      new EmailAddress("Joe@mail.com", true),
-      roles);
+   let person: Person;
+   let person2: Person;
 
-   let person2 = new Person(
-      new Persona(new PersistenceDetails("1", 1, 1), new Name("Jenny"), new Url("https://jo.pics.com", false)),
-      new EmailAddress("Jenny@mail.com", true),
-      roles);
-
-   let people = new Array<Person>();
-   people.push(person);
-
-   let business = new Business(
-      new Persona (new PersistenceDetails(null, 1, 1), new Name("XFit Dulwich"), new Url("https://xfit.pics.com", false)),
-      people, people);
+   let people: Array<Person>;
+   let business: Business;
 
    beforeEach(function () {
 
+      person = PersonTestHelper.createJoeMember();
+      person2 = PersonTestHelper.createJoeMember2();
+
+      people = new Array<Person>();
+      people.push(person);
+
+      business = new Business(PersistenceTestHelper.createKey1(),
+         PersonaTestHelper.createXFitDulwichDetails(),
+         people, people);
 
       cohort1 = new Cohort(new PersistenceDetails("id", 1, 1),
          business,
          new Name("Joe"),
          period,
          ECohortType.OlympicLifting);
-
+         
       cohort2 = new Cohort(new PersistenceDetails("id", 1, 1),
          business,
          new Name("Bill"),
@@ -70,8 +69,8 @@ describe("Cohort", function () {
 
       let newPeriod = 2;
 
-      let newBusiness = new Business(
-         new Persona (new PersistenceDetails(null, 1, 1), new Name("XFit Dulwich2"), new Url("https://xfit.pics.com", false)),
+      let newBusiness = new Business(PersistenceTestHelper.createKey1(),
+         PersonaTestHelper.createXFitDulwichDetails(),
          people, people);
 
       cohort1.business = newBusiness;

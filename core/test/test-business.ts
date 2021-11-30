@@ -1,43 +1,33 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { PersistenceDetails } from "../src/Persistence";
-import { Url, Name, Persona } from "../src/Persona";
-import { EmailAddress, Roles, ERoleType, Person } from '../src/Person';
+import { Person } from '../src/Person';
 import { Business, BusinessMemento } from '../src/Business';
 
+import { PersistenceTestHelper, PersonaTestHelper, PersonTestHelper } from './testHelpers';
 
 var expect = require("chai").expect;
 
 
 describe("Business", function () {
    let business1: Business, business2: Business;
-   let url: Url = new Url("https://jo.pics.com", false);
-   let initialName: Name = new Name("CrossFit Dulwich");
-   let newName: Name = new Name("CrossFit Dulwich Garden Extension");
-
-   let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
-   let person = new Person(
-      new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), url),
-      new EmailAddress("Joe@mail.com", true),
-      roles);
-
-   let person2 = new Person(
-      new Persona(new PersistenceDetails("1", 1, 1), new Name("Jenny"), url),
-      new EmailAddress("Jenny@mail.com", true),
-      roles);
+   let person: Person; 
+   let person2: Person; 
 
    beforeEach(function () {
+
+      person = PersonTestHelper.createJoeMember();
+      person2 = PersonTestHelper.createJoeMember2();
 
       let people = new Array<Person>();
       people.push(person);
 
-      business1 = new Business(
-         new Persona (new PersistenceDetails("id", 1, 1), initialName, url),
+      business1 = new Business(PersistenceTestHelper.createKey1(),
+         PersonaTestHelper.createXFitDulwichDetails(),
          people,
          people);
 
-      business2 = new Business(
-         new Persona(new PersistenceDetails("id2", 1, 1), initialName, url),
+      business2 = new Business(PersistenceTestHelper.createKey2(),
+         PersonaTestHelper.createJoeDetails(),
          people, people);
    });
    
@@ -49,17 +39,19 @@ describe("Business", function () {
    
    it("Needs to correctly store attributes", function () {
 
-      expect(business1.name.equals(initialName)).to.equal(true);
-      expect(business1.thumbnailUrl.equals(url)).to.equal(true);
+      expect(business1.personaDetails.name.equals(business1.personaDetails.name)).to.equal(true);
+      expect(business1.personaDetails.thumbnailUrl.equals(business1.personaDetails.thumbnailUrl)).to.equal(true);
+
+      expect(business1.personaDetails.name.equals(business2.personaDetails.name)).to.equal(false);
+      expect(business1.personaDetails.thumbnailUrl.equals(business2.personaDetails.thumbnailUrl)).to.equal(false);
+
       expect(Person.areEqual(business1.administrators, business2.administrators)).to.equal(true);
       expect(Person.areEqual(business1.members, business2.members)).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
 
-      let newUrl: Url = new Url("https://newjo.pics.com", false);
-
-      let people = new Array<Person>();
+       let people = new Array<Person>();
       people.push(person2);
 
       business1.administrators = people;

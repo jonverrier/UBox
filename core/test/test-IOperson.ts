@@ -1,78 +1,12 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { Logger } from '../src/Logger';
-import { PersistenceDetails } from '../src/Persistence';
-import { Url, Name, Persona } from "../src/Persona";
 import { EmailAddress, Roles, Person, ERoleType, PersonMemento } from '../src/Person';
 import { EmailAddressCodec, RolesCodec, PersonCodec, PeopleCodec } from '../src/IOPerson';
 
+import { PersonTestHelper } from './testHelpers';
+
 var expect = require("chai").expect;
-
-/*
-
-describe("IOLoginDetails", function () {
-
-
-   var codec: LoginDetailsCodec;
-
-   beforeEach(function () {
-      codec = new LoginDetailsCodec();
-   });
-
-   it("Needs to decode LoginDetails from clean input.", function () {
-
-      var caught: boolean = false;
-
-      try {
-         codec.decode({ _provider: ELoginProvider.Apple, _token: "123" });
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-   });
-
-   it("Needs to throw exception if token is null.", function () {
-
-      var caught: boolean = false;
-
-      try {
-         codec.decode({ _provider: ELoginProvider.Apple});
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(true);
-   });
-
-   it("Needs to encode LoginDetails.", function () {
-
-      let encoded = codec.encode(new LoginDetails(ELoginProvider.Apple, "123"));
-
-      expect(encoded._provider).to.equal(ELoginProvider.Apple);
-      expect(encoded._token).to.equal("123");
-   });
-
-   it("Needs to encode then decode LoginDetails.", function () {
-
-      let initial = new LoginDetails(ELoginProvider.Apple, "123");
-      let encoded = codec.encode(initial);
-      let decoded: LoginDetails;
-
-      var caught: boolean = false;
-
-      try {
-         decoded = codec.tryCreateFrom(encoded);
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-      expect(decoded.equals(initial)).to.equal(true);
-   });
-});
-
-*/
 
 describe("IOEmail", function () {
 
@@ -213,10 +147,10 @@ describe("IOPerson", function () {
 
       try {
          codec.decode({
-            _persona: {
-               _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
+            _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
+            _personaDetails : {
                _name: { _displayName: "Joe" },
-               _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true },
+               _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true }
             },
             _email: { _email: "Joe@mail.com", _isEmailVerified: false },
             _roles: roles 
@@ -230,9 +164,7 @@ describe("IOPerson", function () {
 
    it("Needs to encode Person.", function () {
 
-      let encoded: PersonMemento = codec.encode(new Person(
-         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-         new EmailAddress("Joe@mail.com", true), null));
+      let encoded: PersonMemento = codec.encode(PersonTestHelper.createJoeMember());
 
       expect(encoded._persistenceDetails._key).to.equal("1");
       expect(encoded._persistenceDetails._schemaVersion).to.equal(1);
@@ -241,9 +173,7 @@ describe("IOPerson", function () {
 
    it("Needs to encode then decode Person.", function () {
 
-      let initial = new Person(
-         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-         new EmailAddress("Joe@mail.com", true), roles);
+      let initial = PersonTestHelper.createJoeMember();
       let encoded = codec.encode(initial);
       let decoded: Person;
 
@@ -263,10 +193,7 @@ describe("IOPerson", function () {
 
    it("Needs to encode & decode multiple People", function () {
 
-      let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
-      let initial = new Person(
-         new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-         new EmailAddress("Joe@mail.com", true), roles);
+      let initial = PersonTestHelper.createJoeMember();
 
       var people: Array<Person> = new Array<Person>();
       people.push(initial);

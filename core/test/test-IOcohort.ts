@@ -10,6 +10,8 @@ import { Business } from '../src/Business';
 import { ECohortType, ECohortPeriod, Cohort } from '../src/Cohort';
 import { CohortCodec } from '../src/IOCohort';
 
+import { PersistenceTestHelper, PersonaTestHelper, PersonTestHelper } from './testHelpers';
+
 var expect = require("chai").expect;
 
 describe("IOCohort", function () {
@@ -19,16 +21,14 @@ describe("IOCohort", function () {
 
    let creationTimestamp = Timestamper.now();
    let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
-   let person = new Person(
-      new Persona(new PersistenceDetails("1", 1, 1), new Name("Joe"), new Url("https://jo.pics.com", false)),
-      new EmailAddress("Joe@mail.com", true),
-      roles);
+   let person = PersonTestHelper.createJoeMember();
 
    let people = new Array<Person>();
    people.push(person);
 
    let business = new Business(
-      new Persona (new PersistenceDetails(null, 1, 1), new Name("XFit Dulwich2"), new Url("https://xfit.pics.com", false)),
+      PersistenceTestHelper.createKey1(),
+      PersonaTestHelper.createXFitDulwichDetails(),
       people, people);
 
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),

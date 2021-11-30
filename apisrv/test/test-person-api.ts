@@ -2,10 +2,9 @@
 // Copyright TXPCo ltd, 2021
 
 import { Logger } from '../../core/src/Logger';
-import { PersistenceDetails } from "../../core/src/Persistence";
-import { Name, Url, Persona } from "../../core/src/Persona";
 import { ERoleType, EmailAddress, Roles, Person } from "../../core/src/Person";
 import { PersonApi } from '../src/PersonApi';
+import { PersonTestHelper } from '../../core/test/testHelpers';
 
 var expect = require("chai").expect;
 
@@ -21,10 +20,7 @@ describe("PersonApi", function () {
    var api: PersonApi;
 
    beforeEach(function () {
-      person1 = new Person(
-         new Persona(new PersistenceDetails(null, 1, 1), new Name("Jon V"), new Url("https://jonv.pics.com", false)),
-         new EmailAddress("jonathanverrier@hotmail.com", true), 
-         new Roles(Array<ERoleType>(ERoleType.Member)));
+      person1 = PersonTestHelper.createMeForInsert();
 
       api = new PersonApi(root);
    });

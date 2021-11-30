@@ -2,7 +2,7 @@
 
 import { EmailAddress, Roles, Person, PersonMemento, ERoleType } from "./Person";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
-import { personaIoType } from '../src/IOPersona';
+import { personaDetailsIoType } from '../src/IOPersona';
 
 import * as IoTs from 'io-ts';
 
@@ -63,7 +63,8 @@ export class RolesCodec implements ICodec<Roles> {
 // ==========
 
 export const personIoType = IoTs.type({
-   _persona: personaIoType,
+   _persistenceDetails: persistenceDetailsIoType,
+   _personaDetails: personaDetailsIoType,
    _email: emailIoType,
    _roles: rolesIoType
 });
