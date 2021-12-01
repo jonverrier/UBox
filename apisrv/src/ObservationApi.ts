@@ -8,18 +8,19 @@ import { Logger } from '../../core/src/Logger';
 import { Measurement, IMeasurementStore } from '../../core/src/Observation';
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
 import { MeasurementCodec, MeasurementsCodec} from '../../core/src/IOObservation';
-import { SingletonApiHelper, MultiApiHelper } from './ApiHelp';
+import { LoadApiHelper, SaveApiHelper, MultiApiHelper } from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
 
 export class MeasurementApi implements IMeasurementStore {
-   private _singletonApiHelper: SingletonApiHelper<Measurement>;
+   private _loadApiHelper: LoadApiHelper<Measurement>;
+   private _saveApiHelper: SaveApiHelper<Measurement>;
    private _multiApiHelper: MultiApiHelper<Measurement>;
    private _multiApiHelper2: MultiApiHelper<Measurement>;
-
    constructor(serverUrl: string) {
 
-      this._singletonApiHelper = new SingletonApiHelper<Measurement>(serverUrl, EApiUrls.QueryMeasurement, EApiUrls.SaveMeasurement, new MeasurementCodec());
+      this._loadApiHelper = new LoadApiHelper<Measurement>(serverUrl, EApiUrls.QueryMeasurement, new MeasurementCodec());
+      this._saveApiHelper = new SaveApiHelper<Measurement>(serverUrl, EApiUrls.SaveMeasurement, new MeasurementCodec());
       this._multiApiHelper = new MultiApiHelper<Measurement>(serverUrl, EApiUrls.QueryMeasurements, new MeasurementsCodec());
       this._multiApiHelper2 = new MultiApiHelper<Measurement>(serverUrl, EApiUrls.QueryMeasurementsForPeople, new MeasurementsCodec());
    }
@@ -31,7 +32,7 @@ export class MeasurementApi implements IMeasurementStore {
     */
    async loadOne (id: any): Promise<Measurement | null> {
 
-      return this._singletonApiHelper.loadOne(id);
+      return this._loadApiHelper.loadOne(id);
    }
 
    /**
@@ -41,7 +42,7 @@ export class MeasurementApi implements IMeasurementStore {
     */
    async save(measurement: Measurement): Promise<Measurement | null> {
 
-      return this._singletonApiHelper.save(measurement);
+      return this._saveApiHelper.save(measurement);
    }
 
    /**

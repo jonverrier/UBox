@@ -6,7 +6,7 @@ import { URL, URLSearchParams} from 'url';
 
 import { Logger } from '../../core/src/Logger';
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
-
+import { PersonasCodec } from '../../core/src/IOPersona';
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { PersonDb } from './PersonDb';
 import { MeasurementCodec, MeasurementsCodec } from '../../core/src/IOObservation';
@@ -19,6 +19,30 @@ import { BusinessDb } from './BusinessDb';
 import { EApiUrls } from './ApiUrls';
 
 export var ApiRoutes = express.Router();
+
+// Retrieve multiple Persona objects
+// This uses the fact that Personas are a compatible subset of Person in wire/Db format, so you can just restore a Persona from a saved representation of a Person
+ApiRoutes.put(EApiUrls.QueryPersonas, function (req, res) {
+
+   try {
+      let personasCodec = new PersonasCodec();
+      let db = new PersonDb();
+
+      let idCodec = new IdListCodec();
+
+      var ids: IdList = idCodec.decode(req.body);
+
+      let result = db.loadMany(ids._ids);
+      result.then(data => {
+         res.send(personasCodec.encode(data));
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("People", "Query", "Error", e.toString());
+      res.send(null);
+   }
+})
 
 // Retrieve a Person
 ApiRoutes.get(EApiUrls.QueryPerson, function (req, res) {

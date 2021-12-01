@@ -4,16 +4,18 @@
 
 import { Business, IBusinessStore} from '../../core/src/Business';
 import { BusinessCodec } from '../../core/src/IOBusiness';
-import { SingletonApiHelper } from './ApiHelp';
+import { LoadApiHelper, SaveApiHelper } from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
 
 export class BusinessApi implements IBusinessStore {
-   private _singletonApiHelper: SingletonApiHelper<Business>;
+   private _loadApiHelper: LoadApiHelper<Business>;
+   private _saveApiHelper: SaveApiHelper<Business>;
 
    constructor(serverUrl: string) {
 
-      this._singletonApiHelper = new SingletonApiHelper<Business>(serverUrl, EApiUrls.QueryBusiness, EApiUrls.SaveBusiness, new BusinessCodec());
+      this._loadApiHelper = new LoadApiHelper<Business>(serverUrl, EApiUrls.QueryBusiness, new BusinessCodec());
+      this._saveApiHelper = new SaveApiHelper<Business>(serverUrl, EApiUrls.SaveBusiness, new BusinessCodec());
    }
 
    /**
@@ -23,7 +25,7 @@ export class BusinessApi implements IBusinessStore {
     */
    async loadOne(id: string): Promise<Business | null> {
 
-      return this._singletonApiHelper.loadOne(id);
+      return this._loadApiHelper.loadOne(id);
    }
 
    /**
@@ -33,7 +35,7 @@ export class BusinessApi implements IBusinessStore {
     */
    async save(cohort: Business): Promise<Business | null> {
 
-      return this._singletonApiHelper.save(cohort);
+      return this._saveApiHelper.save(cohort);
    }
 
 }

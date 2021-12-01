@@ -3,7 +3,7 @@
 
 import { URL } from 'url'
 import { InvalidParameterError } from './CoreError';
-import { PersistenceDetails, PersistenceDetailsMemento, Persistence } from "./Persistence";
+import { PersistenceDetails, PersistenceDetailsMemento, Persistence, IMultiLoaderFor } from "./Persistence";
 
 export class NameMemento {
    readonly _displayName: string;
@@ -349,4 +349,8 @@ export class Persona extends Persistence {
       return (super.equals(rhs) &&
          this._personaDetails.equals(rhs._personaDetails));
    }
+}
+
+export interface IPersonaStore extends IMultiLoaderFor<Persona> {
+
 }

@@ -2,6 +2,7 @@
 // Copyright TXPCo ltd, 2020, 2021
 
 export enum EApiUrls {
+   QueryPersonas = "/api/queryPersonas",
    QueryPerson = "/api/queryPerson",
    QueryPeople = "/api/queryPeople",
    SavePerson = "/api/savePerson",
