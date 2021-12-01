@@ -19,21 +19,18 @@ const getCircularReplacer = () => {
    };
 };
 
-export class SingletonApiHelper<Entity> {
+export class LoadApiHelper<Entity> {
    private _codec: ICodec<Entity>;
-   private _saveUrl: string;
    private _queryUrl: string;
 
 
-   constructor(serverUrl: string, loadUrl:string, saveUrl:string, codec: ICodec<Entity>, ) {
+   constructor(serverUrl: string, loadUrl:string, codec: ICodec<Entity>) {
       this._codec = codec;
-
-      this._saveUrl = serverUrl + saveUrl;
       this._queryUrl = serverUrl + loadUrl;
    }
 
    /**
-    * load a Entity
+    * load an Entity
     * @param id - id for the object to load
     * @returns - a constructed object or null if not found. 
     */
@@ -48,10 +45,21 @@ export class SingletonApiHelper<Entity> {
          throw (e);
       }
    }
+}
 
+export class SaveApiHelper<Entity> {
+   private _codec: ICodec<Entity>;
+   private _saveUrl: string;
+
+
+   constructor(serverUrl: string, saveUrl: string, codec: ICodec<Entity>,) {
+      this._codec = codec;
+
+      this._saveUrl = serverUrl + saveUrl;
+   }
 
    /**
-    * save a Entity
+    * save an Entity
     * @param entity - the object to save
     * @returns - a copy of what was saved - useful if saving a new object, as the store will assign a new key
     */

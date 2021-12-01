@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 
 import { Logger } from '../../core/src/Logger';
-import { ERoleType, EmailAddress, Roles, Person } from "../../core/src/Person";
+import { Person } from "../../core/src/Person";
 import { PersonApi } from '../src/PersonApi';
 import { PersonTestHelper } from '../../core/test/testHelpers';
 
@@ -11,9 +11,6 @@ var expect = require("chai").expect;
 import { EApiUrls } from '../src/ApiUrls';
 
 var root: string = 'http://localhost:4000';
-var saveUrl: string = root + EApiUrls.SavePerson;
-var queryUrl: string = root + EApiUrls.QueryPerson;
-var queryManyUrl: string = root + EApiUrls.QueryPeople;
 
 describe("PersonApi", function () {
    var person1: Person;

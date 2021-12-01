@@ -4,16 +4,18 @@
 
 import { Cohort, ICohortStore} from '../../core/src/Cohort';
 import { CohortCodec } from '../../core/src/IOCohort';
-import { SingletonApiHelper } from './ApiHelp';
+import { LoadApiHelper, SaveApiHelper } from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
 
 export class CohortApi implements ICohortStore {
-   private _singletonApiHelper: SingletonApiHelper<Cohort>;
+   private _loadApiHelper: LoadApiHelper<Cohort>;
+   private _saveApiHelper: SaveApiHelper<Cohort>;
 
    constructor(serverUrl: string) {
 
-      this._singletonApiHelper = new SingletonApiHelper<Cohort>(serverUrl, EApiUrls.QueryCohort, EApiUrls.SaveCohort, new CohortCodec());
+      this._loadApiHelper = new LoadApiHelper<Cohort>(serverUrl, EApiUrls.QueryCohort, new CohortCodec());
+      this._saveApiHelper = new SaveApiHelper<Cohort>(serverUrl, EApiUrls.SaveCohort, new CohortCodec());
    }
 
    /**
@@ -23,7 +25,7 @@ export class CohortApi implements ICohortStore {
     */
    async loadOne(id: string): Promise<Cohort | null> {
 
-      return this._singletonApiHelper.loadOne(id);
+      return this._loadApiHelper.loadOne(id);
    }
 
    /**
@@ -33,7 +35,7 @@ export class CohortApi implements ICohortStore {
     */
    async save(cohort: Cohort): Promise<Cohort | null> {
 
-      return this._singletonApiHelper.save(cohort);
+      return this._saveApiHelper.save(cohort);
    }
 
 }

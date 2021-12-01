@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { InvalidParameterError } from './CoreError';
-import { PersistenceDetails, PersistenceDetailsMemento } from "./Persistence";
+import { PersistenceDetails, PersistenceDetailsMemento, ILoaderFor, ISaverFor, IMultiLoaderFor } from "./Persistence";
 import { Persona, PersonaDetails, PersonaDetailsMemento, PersonaMemento} from './Persona';
 
 // Rule summary for a Persistent Object: 
@@ -361,8 +361,6 @@ export class Person extends Persona {
    }
 }
 
-export interface IPersonStore {
-   loadOne(id: string): Promise<Person | null>;
-   loadMany(ids: Array<string>): Promise <Array<Person>>;
-   save(person: Person): Promise<Person | null>;
+export interface IPersonStore extends ILoaderFor<Person>, ISaverFor<Person>, IMultiLoaderFor<Person> {
+
 }

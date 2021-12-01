@@ -4,17 +4,19 @@
 
 import { Person, IPersonStore} from '../../core/src/Person';
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
-import { SingletonApiHelper, MultiApiHelper } from './ApiHelp';
+import { LoadApiHelper, SaveApiHelper, MultiApiHelper } from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
 
 export class PersonApi implements IPersonStore {
-   private _singletonApiHelper: SingletonApiHelper<Person>;
+   private _loadApiHelper: LoadApiHelper<Person>;
+   private _saveApiHelper: SaveApiHelper<Person>;
    private _multiApiHelper: MultiApiHelper<Person>;
 
    constructor(serverUrl: string) {
 
-      this._singletonApiHelper = new SingletonApiHelper<Person>(serverUrl, EApiUrls.QueryPerson, EApiUrls.SavePerson, new PersonCodec());
+      this._loadApiHelper = new LoadApiHelper<Person>(serverUrl, EApiUrls.QueryPerson, new PersonCodec());
+      this._saveApiHelper = new SaveApiHelper<Person>(serverUrl, EApiUrls.SavePerson, new PersonCodec());
       this._multiApiHelper = new MultiApiHelper<Person>(serverUrl, EApiUrls.QueryPeople, new PeopleCodec());
    }
 
@@ -25,7 +27,7 @@ export class PersonApi implements IPersonStore {
     */
    async loadOne(id: string): Promise<Person | null> {
 
-      return this._singletonApiHelper.loadOne(id);
+      return this._loadApiHelper.loadOne(id);
    }
 
 
@@ -36,7 +38,7 @@ export class PersonApi implements IPersonStore {
     */
    async save(person: Person): Promise<Person | null> {
 
-      return this._singletonApiHelper.save(person);
+      return this._saveApiHelper.save(person);
    }
 
    /**
@@ -48,5 +50,4 @@ export class PersonApi implements IPersonStore {
 
       return this._multiApiHelper.loadMany(ids);
    }
-
 }

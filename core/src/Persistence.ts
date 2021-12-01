@@ -115,3 +115,14 @@ export class Persistence {
    }
 }
 
+export interface ILoaderFor<T> {
+   loadOne(id: string): Promise<T | null>;
+}
+
+export interface ISaverFor<T> {
+   save(entity: T): Promise<T | null>;
+}
+
+export interface IMultiLoaderFor<T> {
+   loadMany(ids: Array<string>): Promise<Array<T>>;
+}
