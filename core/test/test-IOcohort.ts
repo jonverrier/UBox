@@ -32,6 +32,7 @@ describe("IOCohort", function () {
       people, people);
 
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),
+      PersonaTestHelper.createXFitDulwichDetails(),
       business,
       new Name("Joe"),
       creationTimestamp,

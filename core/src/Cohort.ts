@@ -3,6 +3,7 @@
 import { PersistenceDetailsMemento, PersistenceDetails, Persistence } from "./Persistence";
 import { Name, NameMemento } from "./Persona";
 import { Business, BusinessMemento } from './Business';
+import { Persona, PersonaDetails, PersonaMemento, PersonaDetailsMemento } from './Persona'
 
 export enum ECohortPeriod { Week = "One Week", TwoWeeks = "Two Weeks", ThreeWeeks = "Three Weeks", FourWeeks = "Four Weeks", Month = "One Month" }
 
@@ -11,8 +12,11 @@ export enum ECohortType {
     WorkoutForReps = "Workout for Reps", WorkoutForTime = "Workout for Time", WorkoutForWeight = "Workout for Weight"
 }
 
-export class CohortMemento {
+// Design note - classes derived from persona should have the same layout for IO. This means Persona classes can be constructed from wire/Db representations of derived classes.
+// This enables Personas to be used for Lists etc & saves duplicate classes/code for each derived type
+export class CohortMemento extends PersonaMemento {
    readonly _persistenceDetails: PersistenceDetailsMemento;
+   readonly _personaDetails: PersonaDetailsMemento;
    _business: BusinessMemento; // Not readonly as database needs to manually set
    readonly _name: NameMemento;   
    readonly _creationTimestamp: number;
@@ -24,7 +28,8 @@ export class CohortMemento {
 
    /**
     * Create a CohortMemento object
-    * @param persistenceDetails - (from Persistence) for the database layer to use and assign
+    * @param persistenceDetails - (from Persistence) for the database layer to use and assign.
+    * @param personaDetails - agrregate of information to represent a Persona 
     * @param business - the business that set up the Cohort
     * @param name - plain text name for the cohort
     * @param creationTimestamp - the time at which the cohort was created. This is a timestamp in msecs rounded to nearest 15 minute interval
@@ -32,10 +37,13 @@ export class CohortMemento {
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
+      personaDetails: PersonaDetailsMemento,
       business: BusinessMemento,
       name: NameMemento, 
       creationTimestamp: number,
       cohortType: ECohortType) {
+
+      super(persistenceDetails, personaDetails);
 
       var i: number = 0;
 
@@ -47,7 +55,7 @@ export class CohortMemento {
    }
 }
 
-export class Cohort extends Persistence {
+export class Cohort extends Persona {
    private _business: Business; 
    private _name: Name;
    private _creationTimestamp: number;
@@ -56,7 +64,8 @@ export class Cohort extends Persistence {
 
 /**
  * Create a Cohort object
- * @param persistenceDetails - (from Persistence) for the database layer to use and assign
+ * @param persistenceDetails - details for the DB layer to save/load entities
+ * @param personaDetails - plain text user name, profile picture.
  * @param business - the business that set up the Cohort. Note - this may be a dubious but of modelling.
  * A Business creates Cohorts, but we have the Cohort holding the reference. 
  * Should probably be businessId, but that would then mean another query to pull back the most used data for current cohort. 
@@ -65,6 +74,7 @@ export class Cohort extends Persistence {
  * @param cohortType - purpose of the cohort (Oly, Power, Conditioning, ...)
  */
    constructor(persistenceDetails: PersistenceDetails,
+      personaDetails: PersonaDetails,
       business: Business,
       name: Name,
       creationTimestamp: number,
@@ -76,9 +86,7 @@ export class Cohort extends Persistence {
          var i: number;
          let memento: CohortMemento = params[0];
 
-         super(new PersistenceDetails(memento._persistenceDetails._key,
-            memento._persistenceDetails._schemaVersion,
-            memento._persistenceDetails._sequenceNumber));
+         super(new PersistenceDetails(memento._persistenceDetails), new PersonaDetails(memento._personaDetails));
 
          this._business = new Business (memento._business);
          this._name = new Name(memento._name._displayName);
@@ -88,12 +96,12 @@ export class Cohort extends Persistence {
 
       } else {
 
-         super(params[0]);
+         super(params[0], params[1]);
 
-         this._business = params[1];
-         this._name = params[2];
-         this._creationTimestamp = params[3];
-         this._cohortType = params[4];
+         this._business = params[2];
+         this._name = params[3];
+         this._creationTimestamp = params[4];
+         this._cohortType = params[5];
       }
    }
 
@@ -133,6 +141,7 @@ export class Cohort extends Persistence {
    memento(): CohortMemento {
 
       return new CohortMemento(this.persistenceDetails.memento(),
+         this.personaDetails.memento(),
          this._business.memento(),
          this._name.memento(),
          this._creationTimestamp,

@@ -40,6 +40,7 @@ describe("CohortApi", function () {
       let newBusiness:Business = await businessApi.save(business);
 
       cohort1 = new Cohort(new PersistenceDetails(null, 1, 1),
+         PersonaTestHelper.createXFitDulwichDetails(),
          newBusiness,
          new Name("Olympic Lifting"),
          period,

@@ -34,12 +34,14 @@ describe("Cohort", function () {
          people, people);
 
       cohort1 = new Cohort(new PersistenceDetails("id", 1, 1),
+         PersonaTestHelper.createXFitDulwichDetails(),
          business,
          new Name("Joe"),
          period,
          ECohortType.OlympicLifting);
          
       cohort2 = new Cohort(new PersistenceDetails("id", 1, 1),
+         PersonaTestHelper.createXFitDulwichDetails(),
          business,
          new Name("Bill"),
          period,

@@ -4,12 +4,12 @@
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
 import { ECohortType, Cohort, ICohortStore } from '../../core/src/Cohort';
-import { Person, PersonMemento } from '../../core/src/Person';
 import { Business } from '../../core/src/Business';
 import { CohortCodec } from '../../core/src/IOCohort';
 import { PersonDb } from './PersonDb';
 import { BusinessDb } from './BusinessDb';
 import { persistenceDetailsSchema } from './PersistenceDb';
+import { personaDetailsSchema } from './PersonaDb';
 
 export class CohortDb implements ICohortStore {
    private _codec;
@@ -17,7 +17,6 @@ export class CohortDb implements ICohortStore {
    constructor() {
       this._codec = new CohortCodec();;
    }
-
 
    private makeId(business: Business): string {
 
@@ -124,6 +123,7 @@ const cohortTypes: Array<string> = (Object.values(ECohortType));
 
 const cohortSchema = new mongoose.Schema({
    _persistenceDetails: persistenceDetailsSchema,
+   _personaDetails: personaDetailsSchema,
    _name: {
       _displayName: {
          type: String,
