@@ -57,7 +57,9 @@ export class Cohort extends Persistence {
 /**
  * Create a Cohort object
  * @param persistenceDetails - (from Persistence) for the database layer to use and assign
- * @param business - the business that set up the Cohort*
+ * @param business - the business that set up the Cohort. Note - this may be a dubious but of modelling.
+ * A Business creates Cohorts, but we have the Cohort holding the reference. 
+ * Should probably be businessId, but that would then mean another query to pull back the most used data for current cohort. 
  * @param name - plain text name for the cohort
  * @param creationTimestamp - the time at which the cohort was created. This is a timestamp in msecs rounded to nearest 15 minute interval
  * @param cohortType - purpose of the cohort (Oly, Power, Conditioning, ...)
