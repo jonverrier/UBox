@@ -33,7 +33,7 @@ class StoreImplFor<T> {
       }
    }
 
-   async loadMany (ids: Array<string>, ): Promise<Array<T>> {
+   async loadMany (ids: Array<string>): Promise<Array<T>> {
 
       const result = await personModel.find().where('_id').in(ids).exec();
 
@@ -55,29 +55,6 @@ class StoreImplFor<T> {
       }
    }
 }
-
-/*
-export class PersonaDb implements IPersonaStore {
-   private _personaCodec: PersonaCodec;
-   private _personaStore: StoreImplFor<Persona>;
-
-   constructor() {
-      this._personaCodec = new PersonaCodec();
-      this._personaStore = new StoreImplFor<Persona>(this._personaCodec);
-   }
-
-   loadOne(id: string): Promise<Persona | null> {
-
-      return this._personaStore.loadOne(id);
-   }
-
-   loadMany(ids: Array<string>): Promise<Array<Persona>> {
-
-      return this._personaStore.loadMany(ids);
-   }
-
-}
-*/
 
 export class PersonDb implements IPersonStore {
    private _personCodec: PersonCodec;

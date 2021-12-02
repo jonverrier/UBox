@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { InvalidParameterError } from './CoreError';
-import { PersistenceDetails, PersistenceDetailsMemento } from './Persistence';
+import { PersistenceDetails, PersistenceDetailsMemento, ILoaderFor, ISaverFor, IMultiLoaderFor} from './Persistence';
 import { Persona, PersonaDetails, PersonaMemento, PersonaDetailsMemento} from './Persona';
 import { EmailAddress, Person, PersonMemento } from './Person';
 
@@ -193,7 +193,9 @@ export class Business extends Persona {
    }
 }
 
-export interface IBusinessStore {
-   loadOne(id: string): Promise<Business | null>;
-   save(business: Business): Promise<Business | null>;
+export interface IBusinessStore extends ILoaderFor<Business>, ISaverFor<Business> {
+
+}
+
+export interface IMyBusinessesStore extends IMultiLoaderFor<Business> {
 }

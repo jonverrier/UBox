@@ -1,11 +1,9 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { Logger } from '../src/Logger';
-import { PersistenceDetails } from '../src/Persistence';
-import { Url, Name, Persona } from "../src/Persona";
-import { EmailAddress, Roles, ERoleType, PersonMemento, Person } from '../src/Person';
+import { Roles, ERoleType, PersonMemento, Person } from '../src/Person';
 import { Business, BusinessMemento } from '../src/Business';
-import { BusinessCodec } from '../src/IOBusiness';
+import { BusinessCodec, BusinessesCodec } from '../src/IOBusiness';
 
 import { PersistenceTestHelper, PersonaTestHelper, PersonTestHelper } from './testHelpers';
 
@@ -14,7 +12,7 @@ var expect = require("chai").expect;
 describe("IOBusiness", function () {
 
    var codec: BusinessCodec;
-   let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
+   var arrayCodec: BusinessesCodec;
    let person = PersonTestHelper.createJoeMember();
 
    let people = new Array<Person>();
@@ -25,6 +23,7 @@ describe("IOBusiness", function () {
 
    beforeEach(function () {
       codec = new BusinessCodec();
+      arrayCodec = new BusinessesCodec();
    });
 
    it("Needs to decode Business from clean input.", function () {
@@ -88,5 +87,28 @@ describe("IOBusiness", function () {
 
       expect(caught).to.equal(false);
       expect(decoded.equals(initial)).to.equal(true);
+   });
+
+   it("Needs to decode Business from an array.", function () {
+
+      let initial = new Business(
+         PersistenceTestHelper.createKey1(),
+         PersonaTestHelper.createJoeDetails(),
+         people, people);
+      let encoded = codec.encode(initial);
+      let encodedArray = new Array<BusinessMemento>();
+      encodedArray.push(encoded);
+
+      var caught: boolean = false;
+
+      try {
+         let decoded = arrayCodec.tryCreateFrom(encodedArray);
+
+         expect(decoded[0].equals(initial)).to.equal(true);
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("Person", "Decode from array.", "Error", e.toString());
+         caught = true;
+      }
    });
 });

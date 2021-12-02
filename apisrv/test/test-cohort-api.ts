@@ -8,6 +8,7 @@ import { Name, Url, Persona } from "../../core/src/Persona";
 import { EmailAddress, Roles, ERoleType, Person } from "../../core/src/Person";
 import { Business } from '../../core/src/Business';
 import { Cohort, ECohortType } from "../../core/src/Cohort";
+import { PersonApi } from '../src/PersonApi';
 import { BusinessApi } from '../src/BusinessApi';
 import { CohortApi } from '../src/CohortApi';
 import { PersonaTestHelper, PersonTestHelper } from '../../core/test/testHelpers';
@@ -20,6 +21,7 @@ var root: string = 'http://localhost:4000';
 
 describe("CohortApi", function () {
 
+   var personApi: PersonApi = new PersonApi(root);
    var businessApi: BusinessApi = new BusinessApi(root);
    var cohortApi: CohortApi = new CohortApi(root);
 
@@ -27,11 +29,13 @@ describe("CohortApi", function () {
    let period = 1;
 
    let person = PersonTestHelper.createMeForInsert();
+   var savedPerson: Person;
 
    beforeEach(async function () {
 
+      savedPerson = await personApi.save(person);
       let people = new Array<Person>();
-      people.push(person);
+      people.push(savedPerson);
 
       let business = new Business(new PersistenceDetails(null, 0, 0),
          PersonaTestHelper.createXFitDulwichDetails(),
@@ -69,6 +73,35 @@ describe("CohortApi", function () {
       } catch (e) {
          var logger = new Logger();
          logger.logError("CohortApi", "Save-Load", "Error", e.toString());
+         done(e);
+      }
+
+   });
+
+
+   it("Needs to retrieve Cohorts using lists", async function (done) {
+
+      try {
+
+         // Build array query & ask for a list of my Cohorts
+         let ids = new Array<string>();
+         ids.push(savedPerson.persistenceDetails.key);
+
+         const decoded = await cohortApi.loadMany(ids);
+
+         // test is that we at least one business back
+         if (decoded.length > 0) {
+            done();
+         } else {
+            var logger = new Logger();
+            var e: string = "Returned: " + decoded;
+            logger.logError("CohortApi", "LoadMany", "Error", e);
+            done(e)
+         }
+
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("CohortApi", "LoadMany", "Error", e.toString());
          done(e);
       }
 

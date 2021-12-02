@@ -3,19 +3,21 @@
 // Implements IMeasurementStore over a web API
 
 import { Cohort, ICohortStore} from '../../core/src/Cohort';
-import { CohortCodec } from '../../core/src/IOCohort';
-import { LoadApiHelper, SaveApiHelper } from './ApiHelp';
+import { CohortCodec, CohortsCodec} from '../../core/src/IOCohort';
+import { LoadApiHelper, SaveApiHelper, MultiApiHelper} from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
 
 export class CohortApi implements ICohortStore {
    private _loadApiHelper: LoadApiHelper<Cohort>;
    private _saveApiHelper: SaveApiHelper<Cohort>;
+   private _multiApiHelper: MultiApiHelper<Cohort>;
 
    constructor(serverUrl: string) {
 
       this._loadApiHelper = new LoadApiHelper<Cohort>(serverUrl, EApiUrls.QueryCohort, new CohortCodec());
       this._saveApiHelper = new SaveApiHelper<Cohort>(serverUrl, EApiUrls.SaveCohort, new CohortCodec());
+      this._multiApiHelper = new MultiApiHelper<Cohort>(serverUrl, EApiUrls.QueryMyCohorts, new CohortsCodec());
    }
 
    /**
@@ -36,6 +38,17 @@ export class CohortApi implements ICohortStore {
    async save(cohort: Cohort): Promise<Cohort | null> {
 
       return this._saveApiHelper.save(cohort);
+   }
+
+
+   /**
+    * load multiple Cohort objects
+    * @param ids - an array of ids for the objects to load
+    * @returns - an array of constructed object or null if not found.
+    */
+   async loadMany(ids: Array<string>): Promise<Array<Cohort>> {
+
+      return this._multiApiHelper.loadMany(ids);
    }
 
 }

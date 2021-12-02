@@ -3,11 +3,11 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { ECohortType, Cohort, ICohortStore } from '../../core/src/Cohort';
+import { ECohortType, Cohort, ICohortStore, IMyCohortsStore } from '../../core/src/Cohort';
 import { Business } from '../../core/src/Business';
-import { CohortCodec } from '../../core/src/IOCohort';
+import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
 import { PersonDb } from './PersonDb';
-import { BusinessDb } from './BusinessDb';
+import { BusinessDb, MyBusinessesDb } from './BusinessDb';
 import { persistenceDetailsSchema } from './PersistenceDb';
 import { personaDetailsSchema } from './PersonaDb';
 
@@ -116,6 +116,57 @@ export class CohortDb implements ICohortStore {
       cohort = this._codec.tryCreateFrom(doc);
 
       return cohort;
+   }
+}
+
+export class MyCohortsDb implements IMyCohortsStore {
+   private _codec;
+
+   constructor() {
+      this._codec = new CohortCodec();
+   }
+
+   async loadMany(ids: Array<string>,): Promise<Array<Cohort>> {
+
+      // TODO - this is not very efficient - loading a full Business object involves multiple queries.
+      // At some point this can be duplicated down so it just loads ids directlt from the DB
+      // For the moment we keep the simpler / more encapsulated version
+
+      // Step 1 - load all businesses where the provided ID is an administrator or member
+      var businessesDb: MyBusinessesDb = new MyBusinessesDb()
+      var businesses: Array<Business> = await businessesDb.loadMany(ids);
+
+      // Step 2 - build a list of IDs
+      var businessIds: Array<string> = new Array<string>();
+      for (var i = 0; i < businesses.length; i++)
+         businessIds.push(businesses[i].persistenceDetails.key);
+
+      // Step 2 - Load all the cohorts for the businesses loaded in Step 1
+      const result = await cohortModel.find().where('_businessId').in(businessIds).exec();
+
+      if (result && result.length > 0) {
+         var i: number;
+         var cohorts: Array<Cohort> = new Array<Cohort>();
+
+         for (i = 0; i < result.length; i++) {
+            // If we saved a new document, copy the new Mongo ID up to persistenceDetails
+            if (result[i]._doc._persistenceDetails._key !== result[i]._doc._id.toString())
+               result[i]._doc._persistenceDetails._key = result[i]._doc._id.toString();
+
+            // Put the full Business object on the Cohort
+            result[i]._doc._business = businesses[i].memento();
+
+            cohorts.push(this._codec.tryCreateFrom(result[i]._doc));
+         }
+
+         return cohorts;
+      } else {
+         return null;
+      }
+
+      var cohorts: Array<Cohort> = new Array<Cohort>();
+
+      return null;
    }
 }
 

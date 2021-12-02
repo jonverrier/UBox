@@ -3,27 +3,58 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
+import { Persona } from '../../core/src/Persona';
 import { Person, PersonMemento } from '../../core/src/Person';
-import { Business, IBusinessStore } from '../../core/src/Business';
-import { BusinessCodec } from '../../core/src/IOBusiness';
+import { Business, BusinessMemento, IBusinessStore, IMyBusinessesStore } from '../../core/src/Business';
+import { BusinessCodec, BusinessesCodec} from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
 import { persistenceDetailsSchema } from './PersistenceDb';
 import { personaDetailsSchema } from './PersonaDb';
 
+
+function makeIdArray(input: Array<any>) : Array < string > {
+   var output: Array<string> = new Array<string>(input.length);
+
+   for(var i = 0; i<input.length; i++) {
+      output[i] = input[i].toString();
+   }
+   return output;
+}
+
+async function postProcessFromLoad(doc: any, codec: BusinessCodec): Promise <Business> {
+
+   var newBusiness: Business;
+
+   // If we saved a new document, copy the new Mongo ID to persistenceDetails
+   if(doc._persistenceDetails._key !== doc._id.toString())
+      doc._persistenceDetails._key = doc._id.toString();
+
+   var personDb: PersonDb = new PersonDb();
+
+   // Switch adminstrators from an array of Ids to an array of objects by loading them up 
+   let adminIds = makeIdArray(doc._administratorIds);
+   let admins = await personDb.loadMany(adminIds);
+
+   // Switch members from an array of Ids to an array of objects by loading them up 
+   let memberIds = makeIdArray(doc._memberIds);
+   let members = await personDb.loadMany(memberIds);
+
+   doc._administrators = new Array();
+   doc._members = new Array();
+
+   newBusiness = codec.tryCreateFrom(doc);
+
+   newBusiness.administrators = admins ? admins : new Array<Person>();
+   newBusiness.members = members ? members : new Array<Person>();
+
+   return newBusiness;
+}
+
 export class BusinessDb implements IBusinessStore {
-   private _codec;
+   private _codec: BusinessCodec;
 
    constructor() {
-      this._codec = new BusinessCodec();;
-   }
-
-   private makeIdArray(input: Array<any>) : Array<string> {
-      var output: Array<string> = new Array<string>(input.length);
-
-      for (var i = 0; i < input.length; i++) {
-         output[i] = input[i].toString();
-      }
-      return output;
+      this._codec = new BusinessCodec();
    }
 
    private makePersonIds(people: Array<Person>): Array<string> {
@@ -42,7 +73,7 @@ export class BusinessDb implements IBusinessStore {
       const result = await businessModel.findOne().where('_id').eq(id).exec();
 
       if (result) {
-         return this.postProcessFromLoad(result._doc);
+         return postProcessFromLoad(result._doc, this._codec);
 
       } else {
          return null;
@@ -129,34 +160,59 @@ export class BusinessDb implements IBusinessStore {
 
       return newBusiness;
    }
+}
 
-   async postProcessFromLoad(doc): Promise<Business> {
 
-      var newBusiness: Business;
+export class MyBusinessesDb implements IMyBusinessesStore {
+   private _codec;
 
-      // If we saved a new document, copy the new Mongo ID to persistenceDetails
-      if (doc._persistenceDetails._key !== doc._id.toString())
-         doc._persistenceDetails._key = doc._id.toString();
+   constructor() {
+      this._codec = new BusinessCodec();
+   }
 
-      var personDb: PersonDb = new PersonDb();
+   processResults(results: any): Array<BusinessMemento> {
+      var businesses: Array<BusinessMemento> = new Array<BusinessMemento>();
 
-      // Switch adminstrators from an array of Ids to an array of objects by loading them up 
-      let adminIds = this.makeIdArray(doc._administratorIds);
-      let admins = await personDb.loadMany(adminIds);
+      if (results && results.length > 0) {
+         var i: number;
 
-      // Switch members from an array of Ids to an array of objects by loading them up 
-      let memberIds = this.makeIdArray(doc._memberIds);
-      let members = await personDb.loadMany(memberIds);
+         for (i = 0; i < results.length; i++) {
+            // If we saved a new document, copy the new Mongo ID up to persistenceDetails
+            if (results[i]._doc._persistenceDetails._key !== results[i]._doc._id.toString())
+               results[i]._doc._persistenceDetails._key = results[i]._doc._id.toString();
+            businesses.push(results[i]);
+         }
+      }
+      return businesses;
+   }
 
-      doc._administrators = new Array();
-      doc._members = new Array();
+   async loadMany(ids: Array<string>): Promise<Array<Business>> {
 
-      newBusiness = this._codec.tryCreateFrom(doc);
+      // Build lists of the business entities with ids[0] as a member
+      const admins = await businessModel.find().where({ _administratorIds: ids[0] }).exec();
+      const members = await businessModel.find().where({ _memberIds: ids[0] }).exec();
 
-      newBusiness.administrators = admins ? admins : new Array<Person>();
-      newBusiness.members = members ? members : new Array<Person>();
+      // Concatenate
+      var results: Array<BusinessMemento> = this.processResults(admins);
+      var results2: Array<BusinessMemento> = this.processResults(members);
+      results.concat(results2);
 
-      return newBusiness;
+      // Build a list of IDs
+      var ids: Array<string> = new Array<string>(results.length);
+      var postProcessed: Array<Business> = new Array<Business>();
+
+      for (var i = 0; i < results.length; i++ ) {
+         ids.push(results[i]._persistenceDetails._key);
+         postProcessed[i] = await postProcessFromLoad(results[i], this._codec);
+      }
+
+      // Query all cohorts with the ids as key
+      if (postProcessed.length > 0) {
+
+         return postProcessed;
+      } else {
+         return null;
+      }
    }
 }
 

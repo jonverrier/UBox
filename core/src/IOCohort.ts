@@ -52,3 +52,40 @@ export class CohortCodec implements ICodec<Cohort> {
          temp._cohortType);
    }
 }
+
+// Cohorts (plural) Codec
+// ==========
+
+export const cohortsIoType = IoTs.array(cohortIoType);
+
+export class CohortsCodec implements ICodec<Array<Cohort>> {
+
+   decode(data: any): any {
+
+      return decodeWith(cohortsIoType)(data);
+   }
+
+   encode(data: Array<Cohort>): any {
+      var i: number;
+      var mementos: Array<CohortMemento> = new Array<CohortMemento>();
+
+      for (i = 0; i < data.length; i++) {
+         mementos[i] = data[i].memento();
+      }
+      return encodeWith(cohortsIoType)(mementos);
+   }
+
+   tryCreateFrom(data: any): Array<Cohort> {
+
+      var i: number;
+      var cohorts: Array<Cohort> = new Array<Cohort>(data.length);
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
+
+      for (i = 0; i < temp.length; i++) {
+
+         cohorts[i] = new Cohort(temp[i]);
+      }
+
+      return cohorts;
+   }
+}

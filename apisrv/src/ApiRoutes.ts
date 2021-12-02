@@ -11,10 +11,10 @@ import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { PersonDb } from './PersonDb';
 import { MeasurementCodec, MeasurementsCodec } from '../../core/src/IOObservation';
 import { MeasurementDb } from './ObservationDb';
-import { CohortCodec } from '../../core/src/IOCohort';
-import { CohortDb } from './CohortDb';
-import { BusinessCodec } from '../../core/src/IOBusiness';
-import { BusinessDb } from './BusinessDb';
+import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
+import { CohortDb, MyCohortsDb} from './CohortDb';
+import { BusinessCodec, BusinessesCodec } from '../../core/src/IOBusiness';
+import { BusinessDb, MyBusinessesDb} from './BusinessDb';
 
 import { EApiUrls } from './ApiUrls';
 
@@ -252,6 +252,30 @@ ApiRoutes.put(EApiUrls.SaveCohort, function (req, res) {
    }
 });
 
+// Retrieve multiple Cohort objects
+// This version takes person ID as query parameter - query looks inside each business object to see of the supplied id is a member or an admin.
+ApiRoutes.put(EApiUrls.QueryMyCohorts, function (req, res) {
+
+   try {
+      let codec = new CohortsCodec();
+      let db = new MyCohortsDb();
+
+      let idCodec = new IdListCodec();
+
+      var ids: IdList = idCodec.decode(req.body);
+
+      let result = db.loadMany(ids._ids);
+      result.then(data => {
+         res.send(data ? codec.encode(data) : null);
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("Cohort", "QueryMany", "Error", e.toString());
+      res.send(null);
+   }
+})
+
 // Retrieve a Business
 ApiRoutes.get(EApiUrls.QueryBusiness, function (req, res) {
 
@@ -294,3 +318,27 @@ ApiRoutes.put(EApiUrls.SaveBusiness, function (req, res) {
       res.send(null);
    }
 });
+
+// Retrieve multiple Business objects
+// This version takes person ID as query parameter - query looks inside each business object to see of the supplied id is a member or an admin.
+ApiRoutes.put(EApiUrls.QueryMyBusinesses, function (req, res) {
+
+   try {
+      let codec = new BusinessesCodec();
+      let db = new MyBusinessesDb();
+
+      let idCodec = new IdListCodec();
+
+      var ids: IdList = idCodec.decode(req.body);
+
+      let result = db.loadMany(ids._ids);
+      result.then(data => {
+         res.send(data ? codec.encode(data) : null);
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("Businesses", "QueryMany", "Error", e.toString());
+      res.send(null);
+   }
+})

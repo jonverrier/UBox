@@ -1,9 +1,9 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { PersistenceDetailsMemento, PersistenceDetails, Persistence } from "./Persistence";
+import { PersistenceDetailsMemento, PersistenceDetails, ILoaderFor, ISaverFor, IMultiLoaderFor } from "./Persistence";
 import { Name, NameMemento } from "./Persona";
 import { Business, BusinessMemento } from './Business';
-import { Persona, PersonaDetails, PersonaMemento, PersonaDetailsMemento } from './Persona'
+import { Persona, PersonaDetails, PersonaMemento, PersonaDetailsMemento } from './Persona';
 
 export enum ECohortPeriod { Week = "One Week", TwoWeeks = "Two Weeks", ThreeWeeks = "Three Weeks", FourWeeks = "Four Weeks", Month = "One Month" }
 
@@ -163,7 +163,8 @@ export class Cohort extends Persona {
    }
 }
 
-export interface ICohortStore {
-   loadOne(id: string): Promise<Cohort | null>;
-   save(cohort: Cohort): Promise<Cohort | null>;
+export interface ICohortStore extends ILoaderFor<Cohort>, ISaverFor<Cohort> {
+}
+
+export interface IMyCohortsStore extends IMultiLoaderFor<Cohort> {
 }

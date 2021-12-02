@@ -3,19 +3,21 @@
 // Implements IMeasurementStore over a web API
 
 import { Business, IBusinessStore} from '../../core/src/Business';
-import { BusinessCodec } from '../../core/src/IOBusiness';
-import { LoadApiHelper, SaveApiHelper } from './ApiHelp';
+import { BusinessCodec, BusinessesCodec} from '../../core/src/IOBusiness';
+import { LoadApiHelper, SaveApiHelper, MultiApiHelper} from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
 
 export class BusinessApi implements IBusinessStore {
    private _loadApiHelper: LoadApiHelper<Business>;
    private _saveApiHelper: SaveApiHelper<Business>;
+   private _multiApiHelper: MultiApiHelper<Business>;
 
    constructor(serverUrl: string) {
 
       this._loadApiHelper = new LoadApiHelper<Business>(serverUrl, EApiUrls.QueryBusiness, new BusinessCodec());
       this._saveApiHelper = new SaveApiHelper<Business>(serverUrl, EApiUrls.SaveBusiness, new BusinessCodec());
+      this._multiApiHelper = new MultiApiHelper<Business>(serverUrl, EApiUrls.QueryMyBusinesses, new BusinessesCodec());
    }
 
    /**
@@ -38,4 +40,14 @@ export class BusinessApi implements IBusinessStore {
       return this._saveApiHelper.save(cohort);
    }
 
+
+   /**
+    * load multiple Business objects
+    * @param ids - an array of ids for the objects to load
+    * @returns - an array of constructed object or null if not found.
+    */
+   async loadMany(ids: Array<string>): Promise<Array<Business>> {
+
+      return this._multiApiHelper.loadMany(ids);
+   }
 }
