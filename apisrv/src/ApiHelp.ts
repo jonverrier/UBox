@@ -91,7 +91,7 @@ export class MultiApiHelper<Entity> {
 
    /**
     * load multiple Entity objects
-    * @param ids - an array of ids for the objects to load
+    * @param id - an array of ids for the objects to load
     * @returns - an array of constructed object or null if not found.
     */
    async loadMany(ids: Array<string>): Promise<Array<Entity>> {
@@ -104,6 +104,33 @@ export class MultiApiHelper<Entity> {
 
       // ask for a list
       const response = await axios.put(this._queryManyUrl, encoded);
+
+      // reconstruct proper objects & return
+      return this._codec.tryCreateFrom(response.data);
+   }
+}
+
+export class KeyMultiApiHelper<Entity> {
+   private _codec: ICodec<Array<Entity>>;
+   private _queryManyUrl: string;
+
+
+   constructor(serverUrl: string, queryManyUrl: string, codec: ICodec<Array<Entity>>,) {
+      this._codec = codec;
+
+      this._queryManyUrl = serverUrl + queryManyUrl;
+   }
+
+
+   /**
+    * load multiple Entity objects
+    * @param id - aid for the objects to load
+    * @returns - an array of constructed object or null if not found.
+    */
+   async loadMany(id: string): Promise<Array<Entity>> {
+
+      // ask for a list
+      const response = await axios.put(this._queryManyUrl, { key: id });
 
       // reconstruct proper objects & return
       return this._codec.tryCreateFrom(response.data);

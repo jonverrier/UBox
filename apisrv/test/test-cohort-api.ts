@@ -83,11 +83,7 @@ describe("CohortApi", function () {
 
       try {
 
-         // Build array query & ask for a list of my Cohorts
-         let ids = new Array<string>();
-         ids.push(savedPerson.persistenceDetails.key);
-
-         const decoded = await cohortApi.loadMany(ids);
+         const decoded = await cohortApi.loadMany(savedPerson.persistenceDetails.key);
 
          // test is that we at least one business back
          if (decoded.length > 0) {

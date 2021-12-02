@@ -4,20 +4,20 @@
 
 import { Business, IBusinessStore} from '../../core/src/Business';
 import { BusinessCodec, BusinessesCodec} from '../../core/src/IOBusiness';
-import { LoadApiHelper, SaveApiHelper, MultiApiHelper} from './ApiHelp';
+import { LoadApiHelper, SaveApiHelper, KeyMultiApiHelper} from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
 
 export class BusinessApi implements IBusinessStore {
    private _loadApiHelper: LoadApiHelper<Business>;
    private _saveApiHelper: SaveApiHelper<Business>;
-   private _multiApiHelper: MultiApiHelper<Business>;
+   private _multiApiHelper: KeyMultiApiHelper<Business>;
 
    constructor(serverUrl: string) {
 
       this._loadApiHelper = new LoadApiHelper<Business>(serverUrl, EApiUrls.QueryBusiness, new BusinessCodec());
       this._saveApiHelper = new SaveApiHelper<Business>(serverUrl, EApiUrls.SaveBusiness, new BusinessCodec());
-      this._multiApiHelper = new MultiApiHelper<Business>(serverUrl, EApiUrls.QueryMyBusinesses, new BusinessesCodec());
+      this._multiApiHelper = new KeyMultiApiHelper<Business>(serverUrl, EApiUrls.QueryMyBusinesses, new BusinessesCodec());
    }
 
    /**
@@ -42,12 +42,12 @@ export class BusinessApi implements IBusinessStore {
 
 
    /**
-    * load multiple Business objects
-    * @param ids - an array of ids for the objects to load
+    * load multiple Entity objects
+    * @param id - aid for the objects to load
     * @returns - an array of constructed object or null if not found.
     */
-   async loadMany(ids: Array<string>): Promise<Array<Business>> {
+   async loadMany(id: string): Promise<Array<Business>> {
 
-      return this._multiApiHelper.loadMany(ids);
+      return this._multiApiHelper.loadMany(id);
    }
 }
