@@ -95,10 +95,10 @@ describe("IOBusiness", function () {
          PersistenceTestHelper.createKey1(),
          PersonaTestHelper.createJoeDetails(),
          people, people);
-      let encoded = codec.encode(initial);
-      let encodedArray = new Array<BusinessMemento>();
-      encodedArray.push(encoded);
+      let list: Array<Business> = new Array<Business>();
+      list.push(initial);
 
+      let encodedArray = arrayCodec.encode(list);
       var caught: boolean = false;
 
       try {
