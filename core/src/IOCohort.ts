@@ -3,12 +3,12 @@
 import * as IoTs from 'io-ts';
 import * as IoTsTypes from 'io-ts-types';
 
-import { Name } from './Persona';
+import { Name, Url, PersonaDetails } from './Persona';
 import { Business } from './Business';
-import { ECohortType, Cohort } from './Cohort';
+import { ECohortType, Cohort, CohortMemento} from './Cohort';
 import { PersistenceDetails } from './Persistence';
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType } from './IOCommon';
-import { nameIoType } from './IOPersona';
+import { nameIoType, personaDetailsIoType} from './IOPersona';
 import { businessIoType } from './IOBusiness';
 
 // Rule summary for a Persistent Object: 
@@ -23,6 +23,7 @@ import { businessIoType } from './IOBusiness';
 
 const cohortIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
+   _personaDetails: personaDetailsIoType,
    _business: businessIoType,
    _name: nameIoType,
    _creationTimestamp: IoTs.number,
@@ -41,12 +42,50 @@ export class CohortCodec implements ICodec<Cohort> {
 
    tryCreateFrom(data: any): Cohort {
 
-      let temp = this.decode (data); // If types dont match an exception will be thrown here
+      let temp: CohortMemento = this.decode (data); // If types dont match an exception will be thrown here
 
       return new Cohort(new PersistenceDetails(temp._persistenceDetails._key, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
+         new PersonaDetails(new Name (temp._personaDetails._name._displayName), new Url (temp._personaDetails._thumbnailUrl._url, temp._personaDetails._thumbnailUrl._isUrlVerified)),
          new Business (temp._business),
          new Name(temp._name._displayName),
          temp._creationTimestamp,
          temp._cohortType);
+   }
+}
+
+// Cohorts (plural) Codec
+// ==========
+
+export const cohortsIoType = IoTs.array(cohortIoType);
+
+export class CohortsCodec implements ICodec<Array<Cohort>> {
+
+   decode(data: any): any {
+
+      return decodeWith(cohortsIoType)(data);
+   }
+
+   encode(data: Array<Cohort>): any {
+      var i: number;
+      var mementos: Array<CohortMemento> = new Array<CohortMemento>();
+
+      for (i = 0; i < data.length; i++) {
+         mementos[i] = data[i].memento();
+      }
+      return encodeWith(cohortsIoType)(mementos);
+   }
+
+   tryCreateFrom(data: any): Array<Cohort> {
+
+      var i: number;
+      var cohorts: Array<Cohort> = new Array<Cohort>(data.length);
+      let temp = this.decode(data); // If types dont match an exception will be thrown here
+
+      for (i = 0; i < temp.length; i++) {
+
+         cohorts[i] = new Cohort(temp[i]);
+      }
+
+      return cohorts;
    }
 }

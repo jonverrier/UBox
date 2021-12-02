@@ -23,7 +23,7 @@ describe("PersonaApi", function () {
    });
 
 
-   it("Needs to save and then retrieve a Persona using lists", async function (done) {
+   it("Needs to retrieve a Persona using lists", async function (done) {
 
       try {
          // Save a new Person object then read it back
@@ -47,7 +47,7 @@ describe("PersonaApi", function () {
 
       } catch (e) {
          var logger = new Logger();
-         logger.logError("PersonaApi", "Save-LoadMany", "Error", e.toString());
+         logger.logError("PersonaApi", "LoadMany", "Error", e.toString());
          done(e);
       }
    });

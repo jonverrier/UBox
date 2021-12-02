@@ -1,14 +1,14 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { InvalidParameterError } from './CoreError';
-import { PersistenceDetails, PersistenceDetailsMemento } from './Persistence';
+import { PersistenceDetails, PersistenceDetailsMemento, ILoaderFor, ISaverFor, IMultiLoaderFor} from './Persistence';
 import { Persona, PersonaDetails, PersonaMemento, PersonaDetailsMemento} from './Persona';
 import { EmailAddress, Person, PersonMemento } from './Person';
 
 // Design note - classes derived from persona should have the same layout for IO. This means Persona classes can be constructed from wire/Db representations of derived classes.
 // This enables Personas to be used for Lists etc & saves duplicate classes/code for each derived type
 export class BusinessMemento extends PersonaMemento {
-   _persistenceDetails: PersistenceDetailsMemento;
-   _personaDetails: PersonaDetailsMemento;
+   readonly _persistenceDetails: PersistenceDetailsMemento;
+   readonly _personaDetails: PersonaDetailsMemento;
    _administrators: Array<PersonMemento>; // Not readonly as database needs to manually set
    _members: Array<PersonMemento>;        // Not readonly as database needs to manually set
 
@@ -19,7 +19,7 @@ export class BusinessMemento extends PersonaMemento {
 
    /**
     * Create a BusinessMemento object
-    * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.* 
+    * @param persistenceDetails - (from Persistence) for the database layer to use and assign.
     * @param personaDetails - agrregate of information to represent a Persona 
     * @param administrators - array of People, may be zero length // TODO - must have at least one adminsistrator
     * @param members - array of People, may be zero length // TODO - must have at least one adminsistrator* 
@@ -193,7 +193,9 @@ export class Business extends Persona {
    }
 }
 
-export interface IBusinessStore {
-   loadOne(id: string): Promise<Business | null>;
-   save(business: Business): Promise<Business | null>;
+export interface IBusinessStore extends ILoaderFor<Business>, ISaverFor<Business> {
+
+}
+
+export interface IMyBusinessesStore extends IMultiLoaderFor<Business> {
 }

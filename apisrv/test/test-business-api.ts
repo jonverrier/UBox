@@ -24,12 +24,13 @@ describe("BusinessApi", function () {
 
    let business1;
 
-   let person = PersonTestHelper.createJoeForInsert();
+   let person = PersonTestHelper.createMeForInsert();
+   var savedPerson: Person;
 
    beforeEach(async function () {
 
       let people = new Array<Person>();
-      let savedPerson = await personApi.save(person);
+      savedPerson = await personApi.save(person);
       people.push(savedPerson);
 
       business1 = new Business(new PersistenceDetails (null, 0, 0),
@@ -59,6 +60,34 @@ describe("BusinessApi", function () {
       } catch (e) {
          var logger = new Logger();
          logger.logError("BusinessApi", "Save-Load", "Error", e.toString());
+         done(e);
+      }
+
+   });
+
+   it("Needs to retrieve Businesses using lists", async function (done) {
+
+      try {
+
+         // Build array query & ask for a list of my businesses
+         let ids = new Array<string>();
+         ids.push(savedPerson.persistenceDetails.key);
+
+         const decoded = await businessApi.loadMany(ids);
+
+         // test is that we at least one business back
+         if (decoded.length > 0) {
+            done();
+         } else {
+            var logger = new Logger();
+            var e: string = "Returned: " + decoded;
+            logger.logError("BusinessApi", "LoadMany", "Error", e);
+            done(e)
+         }
+
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("BusinessApi", "LoadMany", "Error", e.toString());
          done(e);
       }
 

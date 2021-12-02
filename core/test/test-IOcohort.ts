@@ -4,11 +4,11 @@
 import { Logger } from '../src/Logger';
 import { Timestamper } from '../src/Timestamp';
 import { PersistenceDetails } from '../src/Persistence';
-import { Url, Name, Persona } from "../src/Persona";
-import { EmailAddress, Roles, ERoleType, Person } from '../src/Person';
+import { Name } from "../src/Persona";
+import { Roles, ERoleType, Person } from '../src/Person';
 import { Business } from '../src/Business';
-import { ECohortType, ECohortPeriod, Cohort } from '../src/Cohort';
-import { CohortCodec } from '../src/IOCohort';
+import { ECohortType, CohortMemento, Cohort } from '../src/Cohort';
+import { CohortCodec, CohortsCodec } from '../src/IOCohort';
 
 import { PersistenceTestHelper, PersonaTestHelper, PersonTestHelper } from './testHelpers';
 
@@ -17,6 +17,7 @@ var expect = require("chai").expect;
 describe("IOCohort", function () {
 
    var codec: CohortCodec = new CohortCodec();
+   var arrayCodec: CohortsCodec = new CohortsCodec();
    var cohort: Cohort;
 
    let creationTimestamp = Timestamper.now();
@@ -32,6 +33,7 @@ describe("IOCohort", function () {
       people, people);
 
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),
+      PersonaTestHelper.createXFitDulwichDetails(),
       business,
       new Name("Joe"),
       creationTimestamp,
@@ -78,5 +80,24 @@ describe("IOCohort", function () {
 
       expect(caught).to.equal(false);
       expect(decoded.equals(cohort)).to.equal(true);
+   });
+
+   it("Needs to decode Cohorts from an array.", function () {
+
+      let encoded = codec.encode(cohort);
+      let encodedArray = new Array<CohortMemento>();
+      encodedArray.push(encoded);
+
+      var caught: boolean = false;
+
+      try {
+         let decoded = arrayCodec.tryCreateFrom(encodedArray);
+
+         expect(decoded[0].equals(cohort)).to.equal(true);
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("Cohort", "Decode from array.", "Error", e.toString());
+         caught = true;
+      }
    });
 });

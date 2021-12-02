@@ -12,6 +12,8 @@ export enum EApiUrls {
    SaveMeasurement = "/api/saveMeasurement",
    QueryCohort = "/api/queryCohort",
    SaveCohort = "/api/saveCohort",
+   QueryMyCohorts = '/api/QueryMyCohorts',
    QueryBusiness = "/api/queryBusiness",
-   SaveBusiness = "/api/saveBusiness"
+   SaveBusiness = "/api/saveBusiness",
+   QueryMyBusinesses = "/api/queryMyBusinesses"
 }
