@@ -84,15 +84,16 @@ describe("IOCohort", function () {
 
    it("Needs to decode Cohorts from an array.", function () {
 
-      let encoded = codec.encode(cohort);
-      let encodedArray = new Array<CohortMemento>();
-      encodedArray.push(encoded);
+      var caught: boolean = false;
 
+      let list: Array<Cohort> = new Array<Cohort>();
+      list.push(cohort);
+
+      let encodedArray = arrayCodec.encode(list);
       var caught: boolean = false;
 
       try {
          let decoded = arrayCodec.tryCreateFrom(encodedArray);
-
          expect(decoded[0].equals(cohort)).to.equal(true);
       } catch (e) {
          var logger = new Logger();
