@@ -126,3 +126,7 @@ export interface ISaverFor<T> {
 export interface IMultiLoaderFor<T> {
    loadMany(ids: Array<string>): Promise<Array<T>>;
 }
+
+export interface IKeyMultiLoaderFor<T> {
+   loadMany(id: string): Promise<Array<T>>;
+}

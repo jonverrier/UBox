@@ -253,18 +253,14 @@ ApiRoutes.put(EApiUrls.SaveCohort, function (req, res) {
 });
 
 // Retrieve multiple Cohort objects
-// This version takes person ID as query parameter - query looks inside each business object to see of the supplied id is a member or an admin.
+// This version takes person key as query parameter - query looks inside each business object to see of the supplied id is a member or an admin.
 ApiRoutes.put(EApiUrls.QueryMyCohorts, function (req, res) {
 
    try {
       let codec = new CohortsCodec();
       let db = new MyCohortsDb();
 
-      let idCodec = new IdListCodec();
-
-      var ids: IdList = idCodec.decode(req.body);
-
-      let result = db.loadMany(ids._ids);
+      let result = db.loadMany(req.body.key);
       result.then(data => {
          res.send(data ? codec.encode(data) : null);
       });
@@ -320,18 +316,14 @@ ApiRoutes.put(EApiUrls.SaveBusiness, function (req, res) {
 });
 
 // Retrieve multiple Business objects
-// This version takes person ID as query parameter - query looks inside each business object to see of the supplied id is a member or an admin.
+// This version takes person key as query parameter - query looks inside each business object to see of the supplied id is a member or an admin.
 ApiRoutes.put(EApiUrls.QueryMyBusinesses, function (req, res) {
 
    try {
       let codec = new BusinessesCodec();
       let db = new MyBusinessesDb();
 
-      let idCodec = new IdListCodec();
-
-      var ids: IdList = idCodec.decode(req.body);
-
-      let result = db.loadMany(ids._ids);
+      let result = db.loadMany(req.body.key);
       result.then(data => {
          res.send(data ? codec.encode(data) : null);
       });

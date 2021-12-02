@@ -4,20 +4,20 @@
 
 import { Cohort, ICohortStore} from '../../core/src/Cohort';
 import { CohortCodec, CohortsCodec} from '../../core/src/IOCohort';
-import { LoadApiHelper, SaveApiHelper, MultiApiHelper} from './ApiHelp';
+import { LoadApiHelper, SaveApiHelper, KeyMultiApiHelper} from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
 
 export class CohortApi implements ICohortStore {
    private _loadApiHelper: LoadApiHelper<Cohort>;
    private _saveApiHelper: SaveApiHelper<Cohort>;
-   private _multiApiHelper: MultiApiHelper<Cohort>;
+   private _multiApiHelper: KeyMultiApiHelper<Cohort>;
 
    constructor(serverUrl: string) {
 
       this._loadApiHelper = new LoadApiHelper<Cohort>(serverUrl, EApiUrls.QueryCohort, new CohortCodec());
       this._saveApiHelper = new SaveApiHelper<Cohort>(serverUrl, EApiUrls.SaveCohort, new CohortCodec());
-      this._multiApiHelper = new MultiApiHelper<Cohort>(serverUrl, EApiUrls.QueryMyCohorts, new CohortsCodec());
+      this._multiApiHelper = new KeyMultiApiHelper<Cohort>(serverUrl, EApiUrls.QueryMyCohorts, new CohortsCodec());
    }
 
    /**
@@ -42,13 +42,13 @@ export class CohortApi implements ICohortStore {
 
 
    /**
-    * load multiple Cohort objects
-    * @param ids - an array of ids for the objects to load
+    * load multiple Entity objects
+    * @param id - aid for the objects to load
     * @returns - an array of constructed object or null if not found.
     */
-   async loadMany(ids: Array<string>): Promise<Array<Cohort>> {
+   async loadMany(id: string): Promise<Array<Cohort>> {
 
-      return this._multiApiHelper.loadMany(ids);
+      return this._multiApiHelper.loadMany(id);
    }
 
 }

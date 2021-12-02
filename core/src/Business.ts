@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { InvalidParameterError } from './CoreError';
-import { PersistenceDetails, PersistenceDetailsMemento, ILoaderFor, ISaverFor, IMultiLoaderFor} from './Persistence';
+import { PersistenceDetails, PersistenceDetailsMemento, ILoaderFor, ISaverFor, IKeyMultiLoaderFor} from './Persistence';
 import { Persona, PersonaDetails, PersonaMemento, PersonaDetailsMemento} from './Persona';
 import { EmailAddress, Person, PersonMemento } from './Person';
 
@@ -197,5 +197,5 @@ export interface IBusinessStore extends ILoaderFor<Business>, ISaverFor<Business
 
 }
 
-export interface IMyBusinessesStore extends IMultiLoaderFor<Business> {
+export interface IMyBusinessesStore extends IKeyMultiLoaderFor<Business> {
 }

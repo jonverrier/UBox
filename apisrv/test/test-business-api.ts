@@ -68,12 +68,7 @@ describe("BusinessApi", function () {
    it("Needs to retrieve Businesses using lists", async function (done) {
 
       try {
-
-         // Build array query & ask for a list of my businesses
-         let ids = new Array<string>();
-         ids.push(savedPerson.persistenceDetails.key);
-
-         const decoded = await businessApi.loadMany(ids);
+         const decoded = await businessApi.loadMany(savedPerson.persistenceDetails.key);
 
          // test is that we at least one business back
          if (decoded.length > 0) {

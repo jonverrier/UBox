@@ -186,11 +186,11 @@ export class MyBusinessesDb implements IMyBusinessesStore {
       return businesses;
    }
 
-   async loadMany(ids: Array<string>): Promise<Array<Business>> {
+   async loadMany(id: string): Promise<Array<Business>> {
 
       // Build lists of the business entities with ids[0] as a member
-      const admins = await businessModel.find().where({ _administratorIds: ids[0] }).exec();
-      const members = await businessModel.find().where({ _memberIds: ids[0] }).exec();
+      const admins = await businessModel.find().where({ _administratorIds: id }).exec();
+      const members = await businessModel.find().where({ _memberIds: id }).exec();
 
       // Concatenate
       var results: Array<BusinessMemento> = this.processResults(admins);

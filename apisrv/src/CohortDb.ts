@@ -126,7 +126,7 @@ export class MyCohortsDb implements IMyCohortsStore {
       this._codec = new CohortCodec();
    }
 
-   async loadMany(ids: Array<string>,): Promise<Array<Cohort>> {
+   async loadMany(id: string): Promise<Array<Cohort>> {
 
       // TODO - this is not very efficient - loading a full Business object involves multiple queries.
       // At some point this can be duplicated down so it just loads ids directlt from the DB
@@ -134,7 +134,7 @@ export class MyCohortsDb implements IMyCohortsStore {
 
       // Step 1 - load all businesses where the provided ID is an administrator or member
       var businessesDb: MyBusinessesDb = new MyBusinessesDb()
-      var businesses: Array<Business> = await businessesDb.loadMany(ids);
+      var businesses: Array<Business> = await businessesDb.loadMany(id);
 
       // Step 2 - build a list of IDs
       var businessIds: Array<string> = new Array<string>();
