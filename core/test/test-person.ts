@@ -151,6 +151,9 @@ describe("Person", function () {
       expect(roleperson.hasRole(ERoleType.Member)).to.equal(true);
       expect(roleperson.hasRole(ERoleType.Coach)).to.equal(true);
       expect(roleperson.hasRole(ERoleType.Prospect)).to.equal(false);
+      expect(roleperson.isCoach()).to.equal(true);
+      expect(roleperson.isMember()).to.equal(true);
+      expect(roleperson.isProspect()).to.equal(false);
    });
 
    it("Needs to compare for equality and inequality", function () {

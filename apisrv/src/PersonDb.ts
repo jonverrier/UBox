@@ -3,10 +3,8 @@
 
 import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { Persona } from '../../core/src/Persona';
-import { Person, IPersonStore } from '../../core/src/Person';
+import { Person, IPersonStore, IMyPersonStore } from '../../core/src/Person';
 import { ICodec } from '../../core/src/IOCommon';
-import { PersonaCodec } from '../../core/src/IOPersona';
 import { PersonCodec } from '../../core/src/IOPerson';
 import { persistenceDetailsSchema } from './PersistenceDb';
 import { personaDetailsSchema } from './PersonaDb';
@@ -21,6 +19,21 @@ class StoreImplFor<T> {
    async loadOne(id: string): Promise<T | null> {
 
       const result = await personModel.findOne().where('_id').eq(id).exec();
+
+      if (result) {
+         // If we saved a new document, copy the new Mongo ID to persistenceDetails
+         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
+            result._doc._persistenceDetails._key = result._doc._id.toString();
+
+         return this._codec.tryCreateFrom(result._doc);
+      } else {
+         return null;
+      }
+   }
+
+   async loadOneFromEmail (email: string): Promise<T | null> {
+
+      const result = await personModel.findOne().where('_email._email').eq(email).exec();
 
       if (result) {
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
@@ -106,6 +119,21 @@ export class PersonDb implements IPersonStore {
          return null;
       }
 
+   }
+}
+
+export class MyPersonDb implements IMyPersonStore {
+   private _personCodec: PersonCodec;
+   private _personStore: StoreImplFor<Person>;
+
+   constructor() {
+      this._personCodec = new PersonCodec();
+      this._personStore = new StoreImplFor<Person>(this._personCodec);
+   }
+
+   loadOne(email: string): Promise<Person | null> {
+
+      return this._personStore.loadOneFromEmail(email);
    }
 }
 
