@@ -15,10 +15,10 @@ Work in progress for a multi-user app to support:
 - Throwdowns, where participants from multiple gyms complete the same series of workouts though heats to final.
 
 ## Modules
-Core - all domain logic. No dependencies on Node, or on front end frameworks. Pure typescript. 
-Apisrv - Node.js server, serves both status content pages and the APIs used by the web app & mobile apps.
-UIWeb - a react.js front end for the Whiteboard application 
-UIApp (not started) - a React native front end for the whiteboard application. 
+- Core - all domain logic. No dependencies on Node, or on front end frameworks. Pure typescript. 
+- Apisrv - Node.js server, serves both status content pages and the APIs used by the web app & mobile apps.
+- UIWeb - a react.js web app end for the Whiteboard application 
+- UIApp (not started) - a React native front end for the Whiteboard application. 
 
 
 ## Technologies
