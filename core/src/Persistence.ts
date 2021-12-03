@@ -83,6 +83,10 @@ export class PersistenceDetails {
    hasValidKey(): boolean  {
       return this._key !== null;
    }
+
+   static newPersistenceDetails(schemaVersion: number, sequenceNumber: number): PersistenceDetails {
+      return new PersistenceDetails(null, schemaVersion, sequenceNumber);
+   }
 }
 
 export class Persistence {
@@ -113,6 +117,7 @@ export class Persistence {
 
        return (this._persistenceDetails.equals (rhs._persistenceDetails));
    }
+   
 }
 
 export interface ILoaderFor<T> {

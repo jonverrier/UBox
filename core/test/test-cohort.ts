@@ -1,8 +1,11 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
+import { Quantity } from '../src/Quantity';
+import { BaseUnits } from '../src/Unit';
 import { PersistenceDetails } from "../src/Persistence";
-import { Url, Name, Persona } from "../src/Persona";
-import { EmailAddress, Roles, ERoleType, Person } from '../src/Person';
+import { Roles, ERoleType, Person } from '../src/Person';
+import { Measurement } from '../src/Observation';
+import { MeasurementTypes } from '../src/ObservationTypeDictionary';
 import { Business } from '../src/Business';
 import { ECohortType, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
 
@@ -36,14 +39,12 @@ describe("Cohort", function () {
       cohort1 = new Cohort(new PersistenceDetails("id", 1, 1),
          PersonaTestHelper.createXFitDulwichDetails(),
          business,
-         new Name("Joe"),
          period,
          ECohortType.OlympicLifting);
          
-      cohort2 = new Cohort(new PersistenceDetails("id", 1, 1),
+      cohort2 = new Cohort(new PersistenceDetails("id2", 1, 1),
          PersonaTestHelper.createXFitDulwichDetails(),
          business,
-         new Name("Bill"),
          period,
          ECohortType.OlympicLifting);
    });
@@ -56,15 +57,12 @@ describe("Cohort", function () {
    
    it("Needs to correctly store attributes", function () {
 
-      expect(cohort1.name.equals(new Name("Joe"))).to.equal(true);
       expect(cohort1.business.equals(business)).to.equal(true);
       expect(cohort1.creationTimestamp === period).to.equal(true);
       expect(cohort1.cohortType).to.equal(ECohortType.OlympicLifting);
    });
 
    it("Needs to correctly change attributes", function () {
-
-      let newName = new Name ("NewJoe");
 
       let people = new Array<Person>();
       people.push(person2);
@@ -76,12 +74,10 @@ describe("Cohort", function () {
          people, people);
 
       cohort1.business = newBusiness;
-      cohort1.name = newName;
       cohort1.cohortType = ECohortType.Conditioning;
       cohort1.creationTimestamp = newPeriod;
 
       expect(cohort1.business.equals(newBusiness)).to.equal(true);
-      expect(cohort1.name.equals(newName)).to.equal(true);
       expect(cohort1.creationTimestamp === newPeriod).to.equal(true);
       expect(cohort1.cohortType).to.equal(ECohortType.Conditioning);
    });
@@ -92,6 +88,17 @@ describe("Cohort", function () {
       let newCohort = new Cohort (memento);
 
       expect(cohort1.equals(newCohort)).to.equal(true);
+   });
+
+   it("Needs to create a Measurement", function () {
+
+      var quantity = new Quantity(50, BaseUnits.kilogram);
+
+      var measurement: Measurement = cohort1.createMeasurement(quantity, 1, MeasurementTypes.clean, "1234");
+
+      expect(measurement.quantity.equals(quantity)).to.equal(true);
+      expect(measurement.repeats === 1).to.equal(true);
+      expect(measurement.subjectKey).to.equal("1234");
    });
 });
 

@@ -2,12 +2,16 @@
 // Copyright TXPCo ltd, 2021
 import axios from 'axios';
 
+import { Quantity } from '../../core/src/Quantity';
+import { BaseUnits } from '../../core/src/Unit';
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { Name } from "../../core/src/Persona";
+import { Measurement } from '../../core/src/Observation';
+import { MeasurementTypes } from '../../core/src/ObservationTypeDictionary';
 import { Person } from "../../core/src/Person";
 import { Business } from '../../core/src/Business';
 import { Cohort, ECohortType } from "../../core/src/Cohort";
+import { MeasurementApi, CohortMeasurementApi} from '../src/ObservationApi';
 import { PersonApi } from '../src/PersonApi';
 import { BusinessApi } from '../src/BusinessApi';
 import { CohortApi, MyCohortsApi, MyEmailCohortsApi } from '../src/CohortApi';
@@ -26,8 +30,9 @@ describe("CohortApi", function () {
    var cohortApi: CohortApi = new CohortApi(root);
    var myCohortsApi: MyCohortsApi = new MyCohortsApi(root);
    var myEmailCohortsApi: MyEmailCohortsApi = new MyEmailCohortsApi(root);
+   var cohortMeasurementApi: CohortMeasurementApi = new CohortMeasurementApi(root);
 
-   let cohort1;
+   let cohort1:Cohort;
    let period = 1;
 
    let person = PersonTestHelper.createMeForInsert();
@@ -46,9 +51,8 @@ describe("CohortApi", function () {
       let newBusiness:Business = await businessApi.save(business);
 
       cohort1 = new Cohort(new PersistenceDetails(null, 1, 1),
-         PersonaTestHelper.createXFitDulwichDetails(),
+         PersonaTestHelper.createOlyLiftDetails(),
          newBusiness,
-         new Name("Olympic Lifting"),
          period,
          ECohortType.OlympicLifting);
    });
@@ -129,6 +133,41 @@ describe("CohortApi", function () {
 
    });
 
+   it("Needs to retrieve a Measurements for the Cohort", async function (done) {
+
+      try {
+         // Save the cohort
+         let savedCohort = await cohortApi.save(cohort1);
+
+         // Save a new Measurement object 
+         var quantity = new Quantity(50, BaseUnits.kilogram);
+         var measurement: Measurement = savedCohort.createMeasurement(quantity, 1, MeasurementTypes.clean, "1234");
+
+         // Save it
+         let api: MeasurementApi = new MeasurementApi(root);
+         const firstSave = await api.save(measurement);
+
+         // Query all the measurements back 
+         const response2 = await cohortMeasurementApi.loadMany(savedCohort.persistenceDetails.key);
+
+         let secondSave = response2[0];
+
+         // test is that we at least one measurement back and it matches the cohort 
+         if (response2.length > 0 && response2[0].cohortKey === savedCohort.persistenceDetails.key) {
+            done();
+         } else {
+            var logger = new Logger();
+            logger.logError("CohortApi", "LoadManyForCohort", "Error", null);
+            done(new Error());
+         }
+
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("CohortApi", "LoadManyForCohort", "Error", e.toString());
+         done(e);
+      }
+
+   });
 });
 
 

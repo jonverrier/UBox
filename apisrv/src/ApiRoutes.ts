@@ -231,6 +231,25 @@ ApiRoutes.put(EApiUrls.QueryMeasurementsForPeople, function (req, res) {
    }
 })
 
+// Retrieve multiple Measurement objects
+ApiRoutes.put(EApiUrls.QueryMeasurementsForCohort, function (req, res) {
+
+   try {
+      let measurementsCodec = new MeasurementsCodec();
+      let db = new MeasurementDb();
+
+      let result = db.loadManyForCohort(req.body.key);
+      result.then(data => {
+         res.send(measurementsCodec.encode(data));
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("Measurements", "QueryMeasurementsForCohort", "Error", e.toString());
+      res.send(null);
+   }
+})
+
 // Retrieve a Cohort
 ApiRoutes.get(EApiUrls.QueryCohort, function (req, res) {
 

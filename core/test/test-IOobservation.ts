@@ -99,7 +99,8 @@ describe("IOMeasurement", function () {
             _repeats: repeats,
             _timestamp: 1,
             _measurementType: measurementType.measurementType,
-            _subjectKey: "teststring"
+            _subjectKey: "teststring",
+            _cohortKey: "1234"
          });
       } catch (e) {
          var logger = new Logger();

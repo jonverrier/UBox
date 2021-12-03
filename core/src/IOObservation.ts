@@ -76,7 +76,8 @@ export const measurementIoType = IoTs.type({
    _repeats: IoTs.number,
    _timestamp: IoTs.number,
    _measurementType: IoTs.string,
-   _subjectKey: IoTs.string
+   _subjectKey: IoTs.string,
+   _cohortKey: IoTs.string
 });
 
 export class MeasurementCodec implements ICodec<Measurement> {

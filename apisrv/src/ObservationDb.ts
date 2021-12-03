@@ -105,7 +105,26 @@ export class MeasurementDb implements IMeasurementStore {
 
       } catch (err) {
          let logger: Logger = new Logger();
-         logger.logError("MeasurementDb", "loadMany", "Error:", err);
+         logger.logError("MeasurementDb", "loadManyForPeople", "Error:", err);
+         return null;
+      }
+   }
+
+   /**
+    * load multiple measurement objects
+    * @param id - athe cohort ID
+    * @returns - an array of constructed object or null if not found.
+    */
+   async loadManyForCohort(id: string): Promise<Array<Measurement>> {
+
+      try {
+         const result = await measurementModel.find().where({ '_cohortKey': id }).exec();
+
+         return this.processManyResults(result);
+
+      } catch (err) {
+         let logger: Logger = new Logger();
+         logger.logError("MeasurementDb", "loadManyForCohort", "Error:", err);
          return null;
       }
    }

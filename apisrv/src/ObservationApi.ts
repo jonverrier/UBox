@@ -4,11 +4,9 @@
 
 import axios from 'axios';
 
-import { Logger } from '../../core/src/Logger';
-import { Measurement, IMeasurementStore } from '../../core/src/Observation';
-import { IdListCodec, IdList } from '../../core/src/IOCommon';
+import { Measurement, IMeasurementStore, ICohortMeasurementStore } from '../../core/src/Observation';
 import { MeasurementCodec, MeasurementsCodec} from '../../core/src/IOObservation';
-import { LoadApiHelper, SaveApiHelper, MultiApiHelper } from './ApiHelp';
+import { LoadApiHelper, SaveApiHelper, MultiApiHelper, KeyMultiApiHelper } from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
 
@@ -30,7 +28,7 @@ export class MeasurementApi implements IMeasurementStore {
     * @param id - id for the object to load
     * @returns - a constructed object or null if not found. 
     */
-   async loadOne (id: any): Promise<Measurement | null> {
+   async loadOne (id: string): Promise<Measurement | null> {
 
       return this._loadApiHelper.loadOne(id);
    }
@@ -50,7 +48,7 @@ export class MeasurementApi implements IMeasurementStore {
     * @param ids - an array of ids for the objects to load
     * @returns - an array of constructed object or null if not found.
     */
-   async loadMany(ids: Array<any>): Promise<Array<Measurement>> {
+   async loadMany(ids: Array<string>): Promise<Array<Measurement>> {
 
       return this._multiApiHelper.loadMany(ids);
    }
@@ -65,4 +63,23 @@ export class MeasurementApi implements IMeasurementStore {
       return this._multiApiHelper2.loadMany(ids);
    }
 
+}
+
+export class CohortMeasurementApi implements ICohortMeasurementStore {
+   private _multiApiHelper: KeyMultiApiHelper<Measurement>;
+
+   constructor(serverUrl: string) {
+
+      this._multiApiHelper = new KeyMultiApiHelper<Measurement>(serverUrl, EApiUrls.QueryMeasurementsForCohort, new MeasurementsCodec());
+   }
+
+   /**
+    * load multiple measurement objects
+    * @param ids - an array of ids for the objects to load
+    * @returns - an array of constructed object or null if not found.
+    */
+   async loadMany(id: string): Promise<Array<Measurement>> {
+
+      return this._multiApiHelper.loadMany(id);
+   }
 }

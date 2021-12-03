@@ -9,6 +9,7 @@ export enum EApiUrls {
    SavePerson = "/api/savePerson",
    QueryMeasurement = "/api/queryMeasurement",
    QueryMeasurements = "/api/queryMeasurements",
+   QueryMeasurementsForCohort = "/api/queryMeasurementsForCohort",
    QueryMeasurementsForPeople = "/api/queryMeasurementsForPeople",
    SaveMeasurement = "/api/saveMeasurement",
    QueryCohort = "/api/queryCohort",
