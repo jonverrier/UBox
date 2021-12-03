@@ -6,7 +6,8 @@ import { Logger } from '../../core/src/Logger';
 import { ECohortType, Cohort, ICohortStore, IMyCohortsStore } from '../../core/src/Cohort';
 import { Business } from '../../core/src/Business';
 import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
-import { PersonDb } from './PersonDb';
+import { Person } from '../../core/src/Person';
+import { PersonDb, MyPersonDb } from './PersonDb';
 import { BusinessDb, MyBusinessesDb } from './BusinessDb';
 import { persistenceDetailsSchema } from './PersistenceDb';
 import { personaDetailsSchema } from './PersonaDb';
@@ -167,6 +168,27 @@ export class MyCohortsDb implements IMyCohortsStore {
       var cohorts: Array<Cohort> = new Array<Cohort>();
 
       return null;
+   }
+}
+
+// Aapter to load Cohorts associated with an email ID
+// First loads the person, then loads Cohorts using the ID
+export class MyEmailCohortsDb implements IMyCohortsStore {
+   private _myPersonDb:MyPersonDb;
+   private _myCohortsDb:MyCohortsDb;
+
+   constructor() {
+      this._myPersonDb = new MyPersonDb();
+      this._myCohortsDb = new MyCohortsDb();
+   }
+
+   async loadMany(id: string): Promise<Array<Cohort>> {
+      var person: Person = await this._myPersonDb.loadOne(id);
+      if (person) {
+         return await this._myCohortsDb.loadMany(person.persistenceDetails.key);
+      }
+      else
+         return null;
    }
 }
 

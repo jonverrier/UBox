@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 // Implements IMeasurementStore over a web API
 
-import { Person, IPersonStore} from '../../core/src/Person';
+import { Person, IPersonStore, IMyPersonStore} from '../../core/src/Person';
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { LoadApiHelper, SaveApiHelper, MultiApiHelper } from './ApiHelp';
 
@@ -49,5 +49,20 @@ export class PersonApi implements IPersonStore {
    async loadMany(ids: Array<string>): Promise<Array<Person>> {
 
       return this._multiApiHelper.loadMany(ids);
+   }
+}
+
+export class MyPersonApi implements IMyPersonStore {
+   private _personCodec: PersonCodec;
+   private _loadApiHelper: LoadApiHelper<Person>;
+
+   constructor(serverUrl: string) {
+      this._personCodec = new PersonCodec();
+      this._loadApiHelper = new LoadApiHelper<Person>(serverUrl, EApiUrls.QueryPersonByEmail, new PersonCodec());
+   }
+
+   loadOne(email: string): Promise<Person | null> {
+
+      return this._loadApiHelper.loadOne(email);
    }
 }

@@ -364,3 +364,7 @@ export class Person extends Persona {
 export interface IPersonStore extends ILoaderFor<Person>, ISaverFor<Person>, IMultiLoaderFor<Person> {
 
 }
+
+export interface IMyPersonStore extends ILoaderFor<Person> {
+
+}

@@ -168,3 +168,6 @@ export interface ICohortStore extends ILoaderFor<Cohort>, ISaverFor<Cohort> {
 
 export interface IMyCohortsStore extends IKeyMultiLoaderFor<Cohort> {
 }
+
+export interface IMyEmailCohortsStore extends IKeyMultiLoaderFor<Cohort> {
+}

@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 // Implements IMeasurementStore over a web API
 
-import { Cohort, ICohortStore} from '../../core/src/Cohort';
+import { Cohort, ICohortStore, IMyCohortsStore, IMyEmailCohortsStore} from '../../core/src/Cohort';
 import { CohortCodec, CohortsCodec} from '../../core/src/IOCohort';
 import { LoadApiHelper, SaveApiHelper, KeyMultiApiHelper} from './ApiHelp';
 
@@ -40,15 +40,45 @@ export class CohortApi implements ICohortStore {
       return this._saveApiHelper.save(cohort);
    }
 
+}
+
+export class MyCohortsApi implements IMyCohortsStore {
+   private _multiApiHelper: KeyMultiApiHelper<Cohort>;
+
+   constructor(serverUrl: string) {
+      this._multiApiHelper = new KeyMultiApiHelper<Cohort>(serverUrl, EApiUrls.QueryMyCohorts, new CohortsCodec());
+   }
+
 
    /**
     * load multiple Entity objects
-    * @param id - aid for the objects to load
+    * @param email - email address of the Person for the objects to load
     * @returns - an array of constructed object or null if not found.
     */
-   async loadMany(id: string): Promise<Array<Cohort>> {
+   async loadMany(email: string): Promise<Array<Cohort>> {
 
-      return this._multiApiHelper.loadMany(id);
+      return this._multiApiHelper.loadMany(email);
+   }
+
+}
+
+
+export class MyEmailCohortsApi implements IMyEmailCohortsStore {
+   private _multiApiHelper: KeyMultiApiHelper<Cohort>;
+
+   constructor(serverUrl: string) {
+      this._multiApiHelper = new KeyMultiApiHelper<Cohort>(serverUrl, EApiUrls.QueryMyCohortsByEmail, new CohortsCodec());
+   }
+
+
+   /**
+    * load multiple Entity objects
+    * @param email - email address of the Person for the objects to load
+    * @returns - an array of constructed object or null if not found.
+    */
+   async loadMany(email: string): Promise<Array<Cohort>> {
+
+      return this._multiApiHelper.loadMany(email);
    }
 
 }

@@ -4,13 +4,13 @@ import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { Name, Url, Persona } from "../../core/src/Persona";
-import { EmailAddress, Roles, ERoleType, Person } from "../../core/src/Person";
+import { Name } from "../../core/src/Persona";
+import { Person } from "../../core/src/Person";
 import { Business } from '../../core/src/Business';
 import { Cohort, ECohortType } from "../../core/src/Cohort";
 import { PersonApi } from '../src/PersonApi';
 import { BusinessApi } from '../src/BusinessApi';
-import { CohortApi } from '../src/CohortApi';
+import { CohortApi, MyCohortsApi, MyEmailCohortsApi } from '../src/CohortApi';
 import { PersonaTestHelper, PersonTestHelper } from '../../core/test/testHelpers';
 
 var expect = require("chai").expect;
@@ -24,6 +24,8 @@ describe("CohortApi", function () {
    var personApi: PersonApi = new PersonApi(root);
    var businessApi: BusinessApi = new BusinessApi(root);
    var cohortApi: CohortApi = new CohortApi(root);
+   var myCohortsApi: MyCohortsApi = new MyCohortsApi(root);
+   var myEmailCohortsApi: MyEmailCohortsApi = new MyEmailCohortsApi(root);
 
    let cohort1;
    let period = 1;
@@ -79,11 +81,35 @@ describe("CohortApi", function () {
    });
 
 
-   it("Needs to retrieve Cohorts using lists", async function (done) {
+   it("Needs to retrieve Cohorts using a person key", async function (done) {
 
       try {
 
-         const decoded = await cohortApi.loadMany(savedPerson.persistenceDetails.key);
+         const decoded = await myCohortsApi.loadMany(savedPerson.persistenceDetails.key);
+
+         // test is that we at least one business back
+         if (decoded.length > 0) {
+            done();
+         } else {
+            var logger = new Logger();
+            var e: string = "Returned: " + decoded;
+            logger.logError("CohortApi", "LoadMany", "Error", e);
+            done(e)
+         }
+
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("CohortApi", "LoadMany", "Error", e.toString());
+         done(e);
+      }
+
+   });
+
+   it("Needs to retrieve Cohorts using a person email", async function (done) {
+
+      try {
+
+         const decoded = await myEmailCohortsApi.loadMany(savedPerson.email.email);
 
          // test is that we at least one business back
          if (decoded.length > 0) {

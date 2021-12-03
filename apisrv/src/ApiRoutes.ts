@@ -8,11 +8,11 @@ import { Logger } from '../../core/src/Logger';
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
 import { PersonasCodec } from '../../core/src/IOPersona';
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
-import { PersonDb } from './PersonDb';
+import { PersonDb, MyPersonDb} from './PersonDb';
 import { MeasurementCodec, MeasurementsCodec } from '../../core/src/IOObservation';
 import { MeasurementDb } from './ObservationDb';
 import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
-import { CohortDb, MyCohortsDb} from './CohortDb';
+import { CohortDb, MyCohortsDb, MyEmailCohortsDb} from './CohortDb';
 import { BusinessCodec, BusinessesCodec } from '../../core/src/IOBusiness';
 import { BusinessDb, MyBusinessesDb} from './BusinessDb';
 
@@ -62,6 +62,28 @@ ApiRoutes.get(EApiUrls.QueryPerson, function (req, res) {
    } catch (e) {
       var logger = new Logger();
       logger.logError("Person", "Query", "Error", e.toString());
+      res.send(null);
+   }
+})
+
+// Retrieve a Person
+ApiRoutes.get(EApiUrls.QueryPersonByEmail, function (req, res) {
+
+   try {
+      let codec = new PersonCodec();
+      let db = new MyPersonDb();
+
+      let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
+      let params = new URLSearchParams(url.search);
+
+      let result = db.loadOne(params.get('_key'));
+      result.then(data => {
+         res.send(codec.encode(data ? data : null));
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("Person", "QueryByEmail", "Error", e.toString());
       res.send(null);
    }
 })
@@ -268,6 +290,26 @@ ApiRoutes.put(EApiUrls.QueryMyCohorts, function (req, res) {
    } catch (e) {
       var logger = new Logger();
       logger.logError("Cohort", "QueryMany", "Error", e.toString());
+      res.send(null);
+   }
+})
+
+// Retrieve multiple Cohort objects
+// This version takes person email as query parameter - query looks up the person, then inside each business object to see of the supplied id is a member or an admin.
+ApiRoutes.put(EApiUrls.QueryMyCohortsByEmail, function (req, res) {
+
+   try {
+      let codec = new CohortsCodec();
+      let db = new MyEmailCohortsDb();
+
+      let result = db.loadMany(req.body.key);
+      result.then(data => {
+         res.send(data ? codec.encode(data) : null);
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("Cohort", "QueryManyByEmail", "Error", e.toString());
       res.send(null);
    }
 })
