@@ -4,10 +4,9 @@
 import { Logger } from '../src/Logger';
 import { Timestamper } from '../src/Timestamp';
 import { PersistenceDetails } from '../src/Persistence';
-import { Name } from "../src/Persona";
 import { Roles, ERoleType, Person } from '../src/Person';
 import { Business } from '../src/Business';
-import { ECohortType, CohortMemento, Cohort } from '../src/Cohort';
+import { ECohortType, Cohort } from '../src/Cohort';
 import { CohortCodec, CohortsCodec } from '../src/IOCohort';
 
 import { PersistenceTestHelper, PersonaTestHelper, PersonTestHelper } from './testHelpers';
@@ -35,7 +34,6 @@ describe("IOCohort", function () {
    cohort = new Cohort(new PersistenceDetails("id", 1, 1),
       PersonaTestHelper.createXFitDulwichDetails(),
       business,
-      new Name("Joe"),
       creationTimestamp,
       ECohortType.Conditioning);
 

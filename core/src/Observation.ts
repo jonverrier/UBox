@@ -2,9 +2,11 @@
 
 import { BaseUnit } from './Unit';
 import { QuantityMemento, Quantity } from "./Quantity";
-import { Persistence, PersistenceDetails, PersistenceDetailsMemento } from "./Persistence";
+import { Persistence, PersistenceDetails, PersistenceDetailsMemento, ILoaderFor, ISaverFor, IMultiLoaderFor, IKeyMultiLoaderFor} from "./Persistence";
 import { EMeasurementType, MeasurementType } from './ObservationType';
 import { MeasurementTypes } from './ObservationTypeDictionary';
+
+const measurementSchemaVersion = 0;
 
 export class MeasurementMemento {
    readonly _persistenceDetails: PersistenceDetailsMemento;
@@ -150,10 +152,13 @@ export class Measurement extends Persistence {
          this._cohortKey === rhs._cohortKey);
    }
 
+   static schemaVersion(): number {
+      return measurementSchemaVersion;
+   }
 }
 
-export interface IMeasurementStore {
-   loadOne (id: string): Promise<Measurement | null>;
-   loadMany (ids: Array<string>): Promise<Array<Measurement>>;
-   save (measurement: Measurement): Promise<Measurement | null>;
+export interface IMeasurementStore extends ILoaderFor<Measurement>, ISaverFor<Measurement>, IMultiLoaderFor<Measurement> {
+}
+
+export interface ICohortMeasurementStore extends IKeyMultiLoaderFor<Measurement> {
 }

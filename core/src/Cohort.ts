@@ -1,7 +1,10 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import { PersistenceDetailsMemento, PersistenceDetails, ILoaderFor, ISaverFor, IKeyMultiLoaderFor } from "./Persistence";
-import { Name, NameMemento } from "./Persona";
+import { Timestamper } from './Timestamp';
+import { Quantity } from './Quantity';
+import { Measurement } from './Observation';
+import { MeasurementType } from './ObservationType';
 import { Business, BusinessMemento } from './Business';
 import { Persona, PersonaDetails, PersonaMemento, PersonaDetailsMemento } from './Persona';
 
@@ -17,8 +20,7 @@ export enum ECohortType {
 export class CohortMemento extends PersonaMemento {
    readonly _persistenceDetails: PersistenceDetailsMemento;
    readonly _personaDetails: PersonaDetailsMemento;
-   _business: BusinessMemento; // Not readonly as database needs to manually set
-   readonly _name: NameMemento;   
+   _business: BusinessMemento; // Not readonly as database needs to manually set   
    readonly _creationTimestamp: number;
    readonly _cohortType: ECohortType;
 
@@ -31,7 +33,6 @@ export class CohortMemento extends PersonaMemento {
     * @param persistenceDetails - (from Persistence) for the database layer to use and assign.
     * @param personaDetails - agrregate of information to represent a Persona 
     * @param business - the business that set up the Cohort
-    * @param name - plain text name for the cohort
     * @param creationTimestamp - the time at which the cohort was created. This is a timestamp in msecs rounded to nearest 15 minute interval
     * @param cohortType - purpose of the cohort (Oly, Power, Conditioning, ...)
     * Design - all memento classes must depend only on base types, value types, or other Mementos
@@ -39,7 +40,6 @@ export class CohortMemento extends PersonaMemento {
    constructor(persistenceDetails: PersistenceDetailsMemento,
       personaDetails: PersonaDetailsMemento,
       business: BusinessMemento,
-      name: NameMemento, 
       creationTimestamp: number,
       cohortType: ECohortType) {
 
@@ -49,7 +49,6 @@ export class CohortMemento extends PersonaMemento {
 
       this._persistenceDetails = persistenceDetails;
       this._business = business;
-      this._name = name;
       this._creationTimestamp = creationTimestamp;
       this._cohortType = cohortType;
    }
@@ -57,7 +56,6 @@ export class CohortMemento extends PersonaMemento {
 
 export class Cohort extends Persona {
    private _business: Business; 
-   private _name: Name;
    private _creationTimestamp: number;
 
    private _cohortType: ECohortType;
@@ -76,7 +74,6 @@ export class Cohort extends Persona {
    constructor(persistenceDetails: PersistenceDetails,
       personaDetails: PersonaDetails,
       business: Business,
-      name: Name,
       creationTimestamp: number,
       cohortType: ECohortType);
    public constructor(memento: CohortMemento);
@@ -89,7 +86,6 @@ export class Cohort extends Persona {
          super(new PersistenceDetails(memento._persistenceDetails), new PersonaDetails(memento._personaDetails));
 
          this._business = new Business (memento._business);
-         this._name = new Name(memento._name._displayName);
          this._creationTimestamp = memento._creationTimestamp;
 
          this._cohortType = memento._cohortType;
@@ -99,9 +95,8 @@ export class Cohort extends Persona {
          super(params[0], params[1]);
 
          this._business = params[2];
-         this._name = params[3];
-         this._creationTimestamp = params[4];
-         this._cohortType = params[5];
+         this._creationTimestamp = params[3];
+         this._cohortType = params[4];
       }
    }
 
@@ -110,9 +105,6 @@ export class Cohort extends Persona {
    */
    get business(): Business {
       return this._business;
-   }
-   get name(): Name {
-      return this._name;
    }
    get creationTimestamp(): number {
       return this._creationTimestamp;
@@ -123,9 +115,6 @@ export class Cohort extends Persona {
 
    set business(business: Business) {
       this._business = business;
-   }
-   set name(name: Name) {
-      this._name = name;
    }
    set creationTimestamp(creationTimestamp: number) {
       this._creationTimestamp = creationTimestamp;
@@ -143,7 +132,6 @@ export class Cohort extends Persona {
       return new CohortMemento(this.persistenceDetails.memento(),
          this.personaDetails.memento(),
          this._business.memento(),
-         this._name.memento(),
          this._creationTimestamp,
          this._cohortType);
    }
@@ -157,9 +145,19 @@ export class Cohort extends Persona {
 
       return (super.equals(rhs) &&
          this._business.equals (rhs._business) &&
-         this._name.equals(rhs._name) &&
          this._cohortType === rhs._cohortType &&
          this._creationTimestamp === rhs._creationTimestamp);
+   }
+
+   // Create a new measurement with the right attributes to be associated with the Cohort
+   // Convenience method
+   createMeasurement(
+      quantity: Quantity, repeats: number, measurementType: MeasurementType,
+      subjectKey: string): Measurement {
+
+      return new Measurement(PersistenceDetails.newPersistenceDetails (Measurement.schemaVersion(), 0),
+         quantity, repeats, Timestamper.now(), measurementType,
+         subjectKey, this.persistenceDetails.key);
    }
 }
 

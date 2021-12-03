@@ -72,7 +72,7 @@ export class CohortDb implements ICohortStore {
             // same business, same name, same cohortType
             var whereClause = {
                '_businessId': memento._business._persistenceDetails._key,
-               '_name._displayName': memento._name._displayName,
+               '_personaDetails._name._displayName': memento._personaDetails._name._displayName,
                '_cohortType': memento._cohortType
             };
 
@@ -197,12 +197,6 @@ const cohortTypes: Array<string> = (Object.values(ECohortType));
 const cohortSchema = new mongoose.Schema({
    _persistenceDetails: persistenceDetailsSchema,
    _personaDetails: personaDetailsSchema,
-   _name: {
-      _displayName: {
-         type: String,
-         required: true
-      }
-   },
    _creationTimestamp: {
       type: Number,
       required: true

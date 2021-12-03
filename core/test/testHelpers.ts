@@ -35,6 +35,16 @@ export class PersonaTestHelper {
       return new PersonaDetails(new Name("XFit Dulwich"), new Url("https://xfit.thumbnails.com", false));
    }
 
+   static createOlyLiftDetails(): PersonaDetails {
+
+      return new PersonaDetails(new Name("Olympic Lifting"), new Url("https://xfit.thumbnails.com", false));
+   }
+
+   static createPowerLiftDetails(): PersonaDetails {
+
+      return new PersonaDetails(new Name("Power Lifting"), new Url("https://xfit.thumbnails.com", false));
+   }
+
    static createJoe(): Persona {
 
       return new Persona(PersistenceTestHelper.createKey1(), PersonaTestHelper.createJoeDetails());
