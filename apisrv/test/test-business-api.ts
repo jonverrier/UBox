@@ -41,7 +41,7 @@ describe("BusinessApi", function () {
 
       // Create and save a Business, with the Person as a Member
       try {
-         let savedBusiness = businessApi.save(business1);
+         let savedBusiness = await businessApi.save(business1);
          done();
       } catch (e) {
          done(e);

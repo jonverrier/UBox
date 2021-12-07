@@ -23,11 +23,11 @@ async function postProcessFromLoad(doc: any, codec: BusinessCodec): Promise <Bus
 
    var personDb: PersonDb = new PersonDb();
 
-   // Switch adminstrators from an array of Ids to an array of objects by loading them up 
+   // Switch adminstrators from an array of Ids to an array of objects by loading them up
    let adminIds = makeIdArray(doc._administratorIds);
    let admins = await personDb.loadMany(adminIds);
 
-   // Switch members from an array of Ids to an array of objects by loading them up 
+   // Switch members from an array of Ids to an array of objects by loading them up
    let memberIds = makeIdArray(doc._memberIds);
    let members = await personDb.loadMany(memberIds);
 
@@ -36,7 +36,7 @@ async function postProcessFromLoad(doc: any, codec: BusinessCodec): Promise <Bus
 
    newBusiness = codec.tryCreateFrom(doc);
 
-   newBusiness.administrators = admins ? admins : new Array<Person>();
+   newBusiness.administrators = admins ? admins : new Array<Person>();;
    newBusiness.members = members ? members : new Array<Person>();
 
    return newBusiness;
@@ -190,7 +190,7 @@ export class MyBusinessesDb implements IMyBusinessesStore {
       var ids: Array<string> = new Array<string>(results.length);
       var postProcessed: Array<Business> = new Array<Business>();
 
-      for (var i = 0; i < results.length; i++ ) {
+      for (var i = 0; i < results.length; i++) {
          ids.push(results[i]._persistenceDetails._key);
          postProcessed[i] = await postProcessFromLoad(results[i], this._codec);
       }
