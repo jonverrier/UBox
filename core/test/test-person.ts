@@ -162,6 +162,17 @@ describe("Person", function () {
       expect(person1.equals(newPerson)).to.equal(true);
    });
 
+
+   it("Needs to create PersonaMemento from itself.", function () {
+
+      var person: Person = PersonTestHelper.createJoeMember();
+      var memento1: PersonMemento = person.memento();
+      var memento2: PersonMemento = new PersonMemento(memento1);
+      var person2: Person = new Person(memento2);
+
+      expect(person.equals(person2)).to.equal(true);
+   });
+
 });
 
 describe("PersonLoader", function () {

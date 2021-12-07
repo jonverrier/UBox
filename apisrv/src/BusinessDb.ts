@@ -21,10 +21,6 @@ async function postProcessFromLoad(doc: any, codec: BusinessCodec): Promise <Bus
 
    var newBusiness: Business;
 
-   // If we saved a new document, copy the new Mongo ID to persistenceDetails
-   if(doc._persistenceDetails._key !== doc._id.toString())
-      doc._persistenceDetails._key = doc._id.toString();
-
    var personDb: PersonDb = new PersonDb();
 
    // Switch adminstrators from an array of Ids to an array of objects by loading them up 

@@ -33,4 +33,8 @@ personSchema.set('toObject', {
    }
 });
 
+// Additional indices - by name of the persona, and by email
+personSchema.index({ _email: 1 }); 
+personSchema.index({ '_personaDetails._name': 1 }); 
+
 export const personModel = mongoose.model("Person", personSchema);

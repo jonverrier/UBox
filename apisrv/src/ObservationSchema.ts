@@ -102,4 +102,8 @@ measurementSchema.set('toObject', {
    }
 });
 
+// Additional indices - by name of the persona, and by email
+measurementSchema.index({ _subjectKey: 1 });
+measurementSchema.index({ _cohortKey: 1 }); 
+
 export const measurementModel = mongoose.model("Measurement", measurementSchema);
