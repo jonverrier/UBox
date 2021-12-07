@@ -4,7 +4,7 @@
 import { Logger } from '../../core/src/Logger';
 import { Person, PersonMemento } from '../../core/src/Person';
 import { Business, BusinessMemento, IBusinessStore, IMyBusinessesStore } from '../../core/src/Business';
-import { BusinessCodec, BusinessesCodec} from '../../core/src/IOBusiness';
+import { BusinessCodec } from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
 import { businessModel } from './BusinessSchema';
 
