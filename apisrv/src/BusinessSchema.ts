@@ -11,10 +11,12 @@ export const businessSchema = new mongoose.Schema({
    _personaDetails: personaDetailsSchema,
    _administratorIds: {
       type: [String],
+      ref: 'Person',
       required: true
    },
    _memberIds: {
       type: [String],
+      ref: 'Person',
       required: true
    }
 },
