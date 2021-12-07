@@ -13,84 +13,6 @@ export enum ERoleType {
    Prospect = "Prospect", Member = "Member", Coach = "Coach"
 }
 
-export class EmailAddressMemento {
-   readonly _email: string;
-   readonly _isEmailVerified: boolean;
-
-   /**
-    * Create an EmailAddressMemento object
-    * @param email - user email
-    * @param isEmailVefified - boolean to say if we know it is their email
-    */
-   constructor(email: string, isEmailVerified: boolean) {
-
-      this._email = email;
-      this._isEmailVerified = isEmailVerified;
-   }
-}
-
-export class EmailAddress {
-   private _email: string;
-   private _isEmailVerified: boolean;
-
-   /**
-    * Create an EmailAddress object
-    * @param email - user email
-    * @param isEmailVefified - boolean to say if we know it is their email
-    */
-   constructor(email: string, isEmailVerified: boolean) {
-
-      if (!EmailAddress.isValidEmailAddress(email)) {
-         throw new InvalidParameterError("Email");
-      }
-      this._email = email;
-      this._isEmailVerified = isEmailVerified;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get email(): string {
-      return this._email;
-   }
-   get isEmailVerified(): boolean {
-      return this._isEmailVerified;
-   }
-
-   /**
-    * test for valid email address 
-    * @param email - the string to test 
-    */
-   static isValidEmailAddress(email: string): boolean {
-      if (email === null || email.length === 0)
-         return false;
-
-      if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) {
-         return (true);
-      }
-      return (false);
-   }
-
-   /**
-   * memento() returns a copy of internal state
-   */
-   memento(): EmailAddressMemento {
-      return new EmailAddressMemento(this._email, this._isEmailVerified);
-   }
-
-   /**
-    * test for equality - checks all fields are the same. 
-    * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
-    * @param rhs - the object to compare this one to.  
-    */
-   equals(rhs: EmailAddress): boolean {
-
-      return (
-         (this._email === rhs._email) &&
-         (this._isEmailVerified === rhs._isEmailVerified));
-   }
-}
-
 export class RolesMemento {
    readonly _roles: Array<ERoleType>;
 
@@ -193,7 +115,7 @@ export class Roles {
 export class PersonMemento extends PersonaMemento {
    _persistenceDetails: PersistenceDetailsMemento;
    _personaDetails: PersonaDetailsMemento;
-   _email: EmailAddressMemento;
+   _email: string;
    _roles: RolesMemento;
 
    /**
@@ -206,7 +128,7 @@ export class PersonMemento extends PersonaMemento {
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
       personaDetails: PersonaDetailsMemento,
-      email: EmailAddressMemento, roles: RolesMemento) {
+      email: string, roles: RolesMemento) {
 
       super(persistenceDetails, personaDetails);
 
@@ -218,7 +140,7 @@ export class PersonMemento extends PersonaMemento {
 }
 
 export class Person extends Persona {
-   private _email: EmailAddress ;
+   private _email: string ;
    private _roles: Roles ;
 
 /**
@@ -231,7 +153,7 @@ export class Person extends Persona {
    public constructor(
       persistenceDetails: PersistenceDetails,
       personaDetails: PersonaDetails,
-      email: EmailAddress, roles: Roles);
+      email: string, roles: Roles);
    public constructor(memento: PersonMemento);
    public constructor(...params: any[]) {
 
@@ -241,7 +163,7 @@ export class Person extends Persona {
 
          super(new PersistenceDetails (memento._persistenceDetails), new PersonaDetails (memento._personaDetails));
 
-         this._email = new EmailAddress(memento._email._email, memento._email._isEmailVerified);
+         this._email = memento._email;
          this._roles = new Roles(memento._roles._roles);
 
       } else {
@@ -251,19 +173,23 @@ export class Person extends Persona {
          this._email = params[2];
          this._roles = params[3];
       }
+
+      if (!Person.isValidEmailAddress(this._email)) {
+         throw new InvalidParameterError("Email");
+      }
    }
 
    /**
    * set of 'getters' for private variables
    */
-   get email(): EmailAddress {
+   get email(): string {
       return this._email;
    }
 
    get roles(): Roles {
       return this._roles;
    }
-   set email(email: EmailAddress) {
+   set email(email: string) {
       this._email = email;
    }
 
@@ -277,7 +203,7 @@ export class Person extends Persona {
    memento(): PersonMemento {
       return new PersonMemento(super.persistenceDetails.memento(),
          super.personaDetails.memento(),
-         this._email ? this.email.memento() : null,
+         this._email,
          this._roles ? this.roles.memento() : null);
    }
 
@@ -355,9 +281,23 @@ export class Person extends Persona {
     equals (rhs: Person) : boolean {
 
        return ((super.equals(rhs)) &&
-         (this._email.equals(rhs._email)) &&
+         (this._email === rhs._email) &&
          (this._roles.equals(rhs._roles))
          );
+   }
+
+   /**
+    * test for valid email address 
+    * @param email - the string to test 
+    */
+   static isValidEmailAddress(email: string): boolean {
+      if (email === null || email.length === 0)
+         return false;
+
+      if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) {
+         return (true);
+      }
+      return (false);
    }
 }
 

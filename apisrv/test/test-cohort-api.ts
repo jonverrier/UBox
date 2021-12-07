@@ -113,7 +113,7 @@ describe("CohortApi", function () {
 
       try {
 
-         const decoded = await myEmailCohortsApi.loadMany(savedPerson.email.email);
+         const decoded = await myEmailCohortsApi.loadMany(savedPerson.email);
 
          // test is that we at least one business back
          if (decoded.length > 0) {

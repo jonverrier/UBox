@@ -2,7 +2,7 @@
 import { InvalidParameterError } from './CoreError';
 import { PersistenceDetails, PersistenceDetailsMemento, ILoaderFor, ISaverFor, IKeyMultiLoaderFor} from './Persistence';
 import { Persona, PersonaDetails, PersonaMemento, PersonaDetailsMemento} from './Persona';
-import { EmailAddress, Person, PersonMemento } from './Person';
+import { Person, PersonMemento } from './Person';
 
 // Design note - classes derived from persona should have the same layout for IO. This means Persona classes can be constructed from wire/Db representations of derived classes.
 // This enables Personas to be used for Lists etc & saves duplicate classes/code for each derived type
@@ -152,15 +152,6 @@ export class Business extends Persona {
    }
 
    /**
-    * test if a cohort includes a person as an administrator 
-    * @param email - the person to check
-    */
-   includesAdministratorEmail(email: EmailAddress): boolean {
-
-      return this.includesEmail(email, this._administrators);
-   }
-
-   /**
     * test if a business includes a person as a member 
     * @param person - the person to check
     */
@@ -169,28 +160,6 @@ export class Business extends Persona {
       return (this._members.includes(person));
    }
 
-   /**
-    * test if a business includes a person as a member 
-    * @param email - the person to check
-    */
-   includesMemberEmail(email: EmailAddress): boolean {
-
-      return this.includesEmail(email, this._members);
-   }
-
-   /**
-    * internal function to test if array includes a person with the email.
-    * @param email - the person to check
-    * @param people - an array of person objects to look inside to see if email is present
-    */
-   private includesEmail(email: EmailAddress, people: Array<Person>): boolean {
-
-      for (let item of people) {
-         if (item.email.equals(email))
-            return true;
-      }
-      return false;
-   }
 }
 
 export interface IBusinessStore extends ILoaderFor<Business>, ISaverFor<Business> {

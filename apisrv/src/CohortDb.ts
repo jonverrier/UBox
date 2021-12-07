@@ -9,7 +9,7 @@ import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
 import { Person } from '../../core/src/Person';
 import { PersonDb, MyPersonDb } from './PersonDb';
 import { BusinessDb, MyBusinessesDb } from './BusinessDb';
-import { persistenceDetailsSchema } from './PersistenceDb';
+import { persistenceDetailsSchema } from './PersistenceSchema';
 import { personaDetailsSchema } from './PersonaSchema';
 
 export class CohortDb implements ICohortStore {

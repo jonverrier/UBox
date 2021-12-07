@@ -1,79 +1,12 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { Logger } from '../src/Logger';
-import { EmailAddress, Roles, Person, ERoleType, PersonMemento } from '../src/Person';
-import { EmailAddressCodec, RolesCodec, PersonCodec, PeopleCodec } from '../src/IOPerson';
+import { Roles, Person, ERoleType, PersonMemento } from '../src/Person';
+import { RolesCodec, PersonCodec, PeopleCodec } from '../src/IOPerson';
 
 import { PersonTestHelper } from './testHelpers';
 
 var expect = require("chai").expect;
-
-describe("IOEmail", function () {
-
-   var codec: EmailAddressCodec;
-
-   beforeEach(function () {
-      codec = new EmailAddressCodec();
-   });
-
-   it("Needs to decode a name from clean email & isEmailVerified input.", function () {
-
-      var caught: boolean = false;
-
-      try {
-         codec.decode ({ _email: "Joe", _isEmailVerified: true });
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-   });
-
-   it("Needs to throw exception if email is null.", function () {
-
-      var caught: boolean = false;
-
-      try {
-         codec.decode({ _email: null, _isEmailVerified: true });
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(true);
-   });
-
-   it("Needs to throw exception if isEmailVerified is null.", function () {
-
-      var caught: boolean = false;
-
-      try {
-         codec.decode({ _email: "Joe", _isEmailVerified: null });
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(true);
-   });
-
-   it("Needs to encode then decode an EmailAddress.", function () {
-
-      let initial = new EmailAddress ("Joe@mail.com", true);
-      let encoded = codec.encode (initial);
-      let decoded: EmailAddress;
-
-      var caught: boolean = false;
-
-      try {
-         decoded = codec.tryCreateFrom(encoded);
-      } catch (e) {
-         caught = true;
-      }
-
-      expect(caught).to.equal(false);
-      expect(decoded.equals(initial)).to.equal(true);
-   });
-
-});
 
 describe("IORoles", function () {
 
@@ -152,7 +85,7 @@ describe("IOPerson", function () {
                _name: "Joe" ,
                _thumbnailUrl: "https://jo.pics.com"
             },
-            _email: { _email: "Joe@mail.com", _isEmailVerified: false },
+            _email: "Joe@mail.com",
             _roles: roles 
          });
       } catch (e) {
