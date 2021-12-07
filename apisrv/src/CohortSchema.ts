@@ -38,4 +38,8 @@ cohortSchema.set('toObject', {
    }
 });
 
+// Additional indices - by name of the persona, and by email
+cohortSchema.index({ _businessId: 1 });
+cohortSchema.index({ '_personaDetails._name': 1 }); 
+
 export const cohortModel = mongoose.model("Cohort", cohortSchema);

@@ -136,3 +136,4 @@ export class KeyMultiApiHelper<Entity> {
       return this._codec.tryCreateFrom(response.data);
    }
 }
+

@@ -128,14 +128,30 @@ export class PersonMemento extends PersonaMemento {
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
       personaDetails: PersonaDetailsMemento,
-      email: string, roles: RolesMemento) {
+      email: string, roles: RolesMemento);
+   public constructor(memento: PersonMemento);
+   public constructor(...params: any[]) {
 
-      super(persistenceDetails, personaDetails);
+      if (params.length === 1) {
 
-      this._persistenceDetails = persistenceDetails; 
-      this._personaDetails = personaDetails;
-      this._email = email;
-      this._roles = roles;
+         let memento: PersonMemento = params[0];
+
+         super(memento._persistenceDetails, memento._personaDetails);
+
+         this._persistenceDetails = memento._persistenceDetails;
+         this._personaDetails = memento._personaDetails;
+         this._email = memento._email;
+         this._roles = memento._roles;
+
+      } else {
+
+         super(params[0], params[1]);
+
+         this._persistenceDetails = params[0];
+         this._personaDetails = params[1];
+         this._email = params[2];
+         this._roles = params[3];
+      }
    }
 }
 
@@ -204,7 +220,7 @@ export class Person extends Persona {
       return new PersonMemento(super.persistenceDetails.memento(),
          super.personaDetails.memento(),
          this._email,
-         this._roles ? this.roles.memento() : null);
+         this.roles.memento());
    }
 
    static mementos(people: Array<Person>): Array<PersonMemento> {

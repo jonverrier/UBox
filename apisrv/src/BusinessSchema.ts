@@ -30,4 +30,9 @@ businessSchema.set('toObject', {
    }
 });
 
+// Additional indices - by the name of the business, and by names of members and admins
+businessSchema.index({ '_personaDetails._name': 1});  
+businessSchema.index({ _administratorIds: 1}); 
+businessSchema.index({ _memberIds: 1 }); 
+
 export const businessModel = mongoose.model("Business", businessSchema);
