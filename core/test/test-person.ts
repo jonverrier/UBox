@@ -1,6 +1,6 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { EmailAddress, Roles, Person, PersonMemento, IPersonStore, ERoleType} from '../src/Person';
+import { Roles, Person, PersonMemento, IPersonStore, ERoleType} from '../src/Person';
 import { PersonTestHelper } from './testHelpers';
 
 var expect = require("chai").expect;
@@ -25,57 +25,6 @@ class StubLoader implements IPersonStore {
       return person;
    }
 }
-
-describe("EmailAddress", function () {
-   var email1: EmailAddress, email2: EmailAddress, email3: EmailAddress;
-
-   beforeEach(function () {
-      email1 = new EmailAddress("Joe@mail.com", true);
-      email2 = new EmailAddress("Joe@mail.com", false);
-      email3 = new EmailAddress("Joe@mail.com", false);
-   });
-
-   it("Needs to compare for equality and inequality", function () {
-
-      expect(email1.equals(email1)).to.equal(true);
-      expect(email1.equals(email2)).to.equal(false);
-      expect(email1.equals(email3)).to.equal(false);
-   });
-
-   it("Needs to catch invalid email address", function () {
-
-      let caught = false;
-
-      try {
-         let email4 = new EmailAddress("Joe", false);
-      }
-      catch {
-         caught = true;
-      }
-      expect(caught).to.equal(true);
-   });
-
-   it("Needs to catch empty email address", function () {
-
-      let caught = false;
-
-      try {
-         let email4 = new EmailAddress("", false);
-      }
-      catch {
-         caught = true;
-      }
-      expect(caught).to.equal(true);
-   });
-
-   it("Needs to correctly store attributes", function () {
-
-      expect(email1.email).to.equal("Joe@mail.com");
-      expect(email1.isEmailVerified).to.equal(true);
-      expect(email1.memento()._email).to.equal(email1.email);
-      expect(email1.memento()._isEmailVerified).to.equal(email1.isEmailVerified);
-   });
-});
 
 describe("Roles", function () {
    var roles1: Roles, roles2: Roles, roles3: Roles,
@@ -164,19 +113,19 @@ describe("Person", function () {
    it("Needs to correctly store attributes", function () {
          
       expect(person1.personaDetails.name === "Joe").to.equal(true);
-      expect(person1.email.equals(new EmailAddress("Joe@mail.com", true))).to.equal(true);
+      expect(person1.email === "Joe@mail.com").to.equal(true);
       expect(person1.personaDetails.thumbnailUrl === "https://joe.thumbnails.com").to.equal(true);
       expect(person1.isMember()).to.equal(true);
 
       expect(person1.memento()._personaDetails._name === person1.memento()._personaDetails._name).to.equal(true);
       expect(person1.memento()._personaDetails._thumbnailUrl === person1.personaDetails.thumbnailUrl).to.equal(true);
-      expect(person1.memento()._email._email === person1.email.memento()._email).to.equal(true);
+      expect(person1.memento()._email === person1.email).to.equal(true);
       expect(Roles.areEqual(person1.memento()._roles._roles, person1.roles.memento()._roles)).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
 
-      let newMail = new EmailAddress("new@New.com", false);
+      let newMail = "new@New.com";
       let newUrl = "https://jo.newpics.com";
       let newName = "NewJoe";
       let newRoles = new Roles([]);

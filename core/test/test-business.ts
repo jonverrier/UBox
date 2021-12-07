@@ -65,13 +65,9 @@ describe("Business", function () {
 
       expect(business1.includesAdministrator(person)).to.equal(true);
       expect(business1.includesAdministrator(person2)).to.equal(false);
-      expect(business1.includesAdministratorEmail(person.email)).to.equal(true);
-      expect(business1.includesAdministratorEmail(person2.email)).to.equal(false);
 
       expect(business1.includesMember(person)).to.equal(true);
       expect(business1.includesMember(person2)).to.equal(false);
-      expect(business1.includesMemberEmail(person.email)).to.equal(true);
-      expect(business1.includesMemberEmail(person2.email)).to.equal(false);
    });
 
    it("Needs to convert to and from memento()", function () {

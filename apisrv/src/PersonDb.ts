@@ -1,13 +1,11 @@
 'use strict';
 // Copyright TXPCo ltd, 2020, 2021
 
-import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
 import { Person, IPersonStore, IMyPersonStore } from '../../core/src/Person';
 import { ICodec } from '../../core/src/IOCommon';
 import { PersonCodec } from '../../core/src/IOPerson';
-import { persistenceDetailsSchema } from './PersistenceDb';
-import { personaDetailsSchema } from './PersonaSchema';
+import { personModel } from './PersonSchema';
 
 class StoreImplFor<T> {
    private _codec;
@@ -33,7 +31,7 @@ class StoreImplFor<T> {
 
    async loadOneFromEmail (email: string): Promise<T | null> {
 
-      const result = await personModel.findOne().where('_email._email').eq(email).exec();
+      const result = await personModel.findOne().where('_email').eq(email).exec();
 
       if (result) {
          // If we saved a new document, copy the new Mongo ID to persistenceDetails
@@ -92,7 +90,7 @@ export class PersonDb implements IPersonStore {
       try {
          if (! person.persistenceDetails.hasValidKey()) {
             // If the record has not already been saved, look to see if we have an existing record for same email
-            const existing = await personModel.findOne().where('_email._email').eq(person.email.email).exec();
+            const existing = await personModel.findOne().where('_email').eq(person.email).exec();
 
             // if the saved version has a later or equal sequence number, do not overwrite it
             if (existing && existing._doc._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
@@ -137,30 +135,3 @@ export class MyPersonDb implements IMyPersonStore {
    }
 }
 
-const personSchema = new mongoose.Schema({
-   _persistenceDetails: persistenceDetailsSchema,
-   _personaDetails: personaDetailsSchema,
-   _email: {
-      _email: {
-         type: String,
-         required: false,
-         index: true
-      },
-      _isEmailVerified: {
-         type: Boolean,
-         required: false
-      }
-   },
-   _roles: {
-      _roles: {
-         type: [String],
-         enum: ["Prospect", "Member", "Coach"],
-         required: true
-      }
-   }
-},
-{  // Enable timestamps for archival 
-      timestamps: true
-});
-
-const personModel = mongoose.model("Person", personSchema);

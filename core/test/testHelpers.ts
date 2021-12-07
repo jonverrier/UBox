@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
 import { Persona, PersonaDetails } from "../src/Persona";
-import { EmailAddress, Roles, ERoleType, Person} from '../src/Person';
+import { Roles, ERoleType, Person} from '../src/Person';
 
 export class PersistenceTestHelper {
 
@@ -69,7 +69,7 @@ export class PersonTestHelper {
 
       return new Person(new PersistenceDetails("1", 1, 1),
                         new PersonaDetails ("Joe", "https://joe.thumbnails.com"),
-         new EmailAddress("Joe@mail.com", true), roles);
+         "Joe@mail.com", roles);
    }
 
    static createJoeMember2(): Person {
@@ -77,7 +77,7 @@ export class PersonTestHelper {
 
       return new Person(new PersistenceDetails("2", 1, 1),
             new PersonaDetails("Joe2", "https://joe2.thumbnails.com"),
-         new EmailAddress("Joe2@mail.com", true), roles);
+         "Joe2@mail.com", roles);
    }
 
    static createJoeCoachMember(): Person {
@@ -85,7 +85,7 @@ export class PersonTestHelper {
 
       return new Person(new PersistenceDetails("1", 1, 1),
             new PersonaDetails("Joe", "https://joe.thumbnails.com"),
-         new EmailAddress("Joe@mail.com", true), roles);
+         "Joe@mail.com", roles);
    }
 
    static createMeForInsert (): Person {
@@ -94,7 +94,7 @@ export class PersonTestHelper {
       return new Person(
          new PersistenceDetails(null, 1, 1),
          new PersonaDetails("Jon V", "https://jonv.pics.com"),
-         new EmailAddress("jonathanverrier@hotmail.com", true),
+         "jonathanverrier@hotmail.com",
          new Roles(Array<ERoleType>(ERoleType.Member)));
    }
 
@@ -103,7 +103,7 @@ export class PersonTestHelper {
 
       return new Person(new PersistenceDetails(null, 1, 1),
          new PersonaDetails("Joe", "https://joe.thumbnails.com"),
-         new EmailAddress("Joe@mail.com", true), roles);
+         "Joe@mail.com", roles);
    }
 }
 

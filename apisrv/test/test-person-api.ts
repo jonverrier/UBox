@@ -55,7 +55,7 @@ describe("PersonApi", function () {
       try {
          var emailApi: MyPersonApi = new MyPersonApi(root);
          const savedPerson = await api.save(person1);
-         const response2 = await emailApi.loadOne(savedPerson.email.email);
+         const response2 = await emailApi.loadOne(savedPerson.email);
 
          done();
       } catch (e) {

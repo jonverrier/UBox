@@ -9,7 +9,7 @@ import { EMeasurementType, EPositiveTrend } from '../../core/src/ObservationType
 import { MeasurementTypes } from '../../core/src/ObservationTypeDictionary';
 import { Measurement, IMeasurementStore } from '../../core/src/Observation';
 import { MeasurementCodec } from '../../core/src/IOObservation';
-import { persistenceDetailsSchema } from './PersistenceDb';
+import { persistenceDetailsSchema } from './PersistenceSchema';
 
 export class MeasurementDb implements IMeasurementStore {
    private _codec: MeasurementCodec;

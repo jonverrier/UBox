@@ -8,7 +8,7 @@ import { Person, PersonMemento } from '../../core/src/Person';
 import { Business, BusinessMemento, IBusinessStore, IMyBusinessesStore } from '../../core/src/Business';
 import { BusinessCodec, BusinessesCodec} from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
-import { persistenceDetailsSchema } from './PersistenceDb';
+import { persistenceDetailsSchema } from './PersistenceSchema';
 import { personaDetailsSchema } from './PersonaSchema';
 
 

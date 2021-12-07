@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { EmailAddress, Roles, Person, PersonMemento, ERoleType } from "./Person";
+import { Roles, Person, PersonMemento, ERoleType } from "./Person";
 import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 import { personaDetailsIoType } from '../src/IOPersona';
 
@@ -12,29 +12,6 @@ import * as IoTs from 'io-ts';
 // - has a Codec class, which can transform to and from the Memento format.
 // - Memento versions are transmitted over the wire, and stored in the database.
 
-
-// Email Codec
-// ==========
-const emailIoType = IoTs.type({
-   _email: IoTs.string, // email must be non-null
-   _isEmailVerified: IoTs.boolean
-});
-
-export class EmailAddressCodec implements ICodec<EmailAddress> {
-
-   decode(data: any): any {
-      return decodeWith(emailIoType)(data);
-   }
-
-   encode(data: EmailAddress): any {
-      return encodeWith(emailIoType)(data.memento());
-   }
-
-   tryCreateFrom(data: any): EmailAddress {
-      let temp = this.decode(data); // If types dont match an exception will be thrown here
-      return new EmailAddress(temp._email, temp._isEmailVerified);
-   }
-}
 
 // Roles Codec
 // ==========
@@ -65,7 +42,7 @@ export class RolesCodec implements ICodec<Roles> {
 export const personIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
    _personaDetails: personaDetailsIoType,
-   _email: emailIoType,
+   _email: IoTs.string,
    _roles: rolesIoType
 });
 
