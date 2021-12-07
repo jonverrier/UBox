@@ -2,30 +2,35 @@
 // Copyright TXPCo ltd, 2020, 2021
 
 import mongoose from "mongoose";
+import { ECohortType } from '../../core/src/Cohort';
 import { persistenceDetailsSchema } from './PersistenceSchema';
 import { personaDetailsSchema } from './PersonaSchema';
 
-export const personSchema = new mongoose.Schema({
+
+const cohortTypes: Array<string> = (Object.values(ECohortType));
+
+export const cohortSchema = new mongoose.Schema({
    _persistenceDetails: persistenceDetailsSchema,
    _personaDetails: personaDetailsSchema,
-   _email: {
-      type: String,
-      required: false,
-      index: true
+   _creationTimestamp: {
+      type: Number,
+      required: true
    },
-   _roles: {
-      _roles: {
-         type: [String],
-         enum: ["Prospect", "Member", "Coach"],
-         required: true
-      }
+   _businessId: {
+      type: String,
+      required: true
+   },
+   _cohortType: {
+      type: String,
+      enum: cohortTypes,
+      required: true
    }
 },
 {  // Enable timestamps for archival 
       timestamps: true
 });
 
-personSchema.set('toObject', {
+cohortSchema.set('toObject', {
    transform: function (doc, ret) {
       // Copy the _id into the persistenceCetails structure. 
       ret._persistenceDetails._key = doc._id.toString();
@@ -33,4 +38,4 @@ personSchema.set('toObject', {
    }
 });
 
-export const personModel = mongoose.model("Person", personSchema);
+export const cohortModel = mongoose.model("Cohort", cohortSchema);

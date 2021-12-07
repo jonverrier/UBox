@@ -5,27 +5,24 @@ import mongoose from "mongoose";
 import { persistenceDetailsSchema } from './PersistenceSchema';
 import { personaDetailsSchema } from './PersonaSchema';
 
-export const personSchema = new mongoose.Schema({
+
+export const businessSchema = new mongoose.Schema({
    _persistenceDetails: persistenceDetailsSchema,
    _personaDetails: personaDetailsSchema,
-   _email: {
-      type: String,
-      required: false,
-      index: true
+   _administratorIds: {
+      type: [String],
+      required: true
    },
-   _roles: {
-      _roles: {
-         type: [String],
-         enum: ["Prospect", "Member", "Coach"],
-         required: true
-      }
+   _memberIds: {
+      type: [String],
+      required: true
    }
 },
 {  // Enable timestamps for archival 
       timestamps: true
 });
 
-personSchema.set('toObject', {
+businessSchema.set('toObject', {
    transform: function (doc, ret) {
       // Copy the _id into the persistenceCetails structure. 
       ret._persistenceDetails._key = doc._id.toString();
@@ -33,4 +30,4 @@ personSchema.set('toObject', {
    }
 });
 
-export const personModel = mongoose.model("Person", personSchema);
+export const businessModel = mongoose.model("Business", businessSchema);

@@ -88,9 +88,12 @@
     <TypeScriptCompile Include="src\ApiUrls.ts" />
     <TypeScriptCompile Include="src\BusinessDb.ts" />
     <TypeScriptCompile Include="src\BusinessApi.ts" />
+    <TypeScriptCompile Include="src\BusinessSchema.ts" />
     <TypeScriptCompile Include="src\CohortDb.ts" />
+    <TypeScriptCompile Include="src\CohortSchema.ts" />
     <TypeScriptCompile Include="src\ContactDb.ts" />
     <TypeScriptCompile Include="src\ObservationDb.ts" />
+    <TypeScriptCompile Include="src\ObservationSchema.ts" />
     <TypeScriptCompile Include="src\PersistenceSchema.ts" />
     <TypeScriptCompile Include="src\PersonaApi.ts" />
     <TypeScriptCompile Include="src\PersonaSchema.ts" />

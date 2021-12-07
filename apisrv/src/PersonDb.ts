@@ -18,12 +18,10 @@ class StoreImplFor<T> {
 
       const result = await personModel.findOne().where('_id').eq(id).exec();
 
-      if (result) {
-         // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
-            result._doc._persistenceDetails._key = result._doc._id.toString();
+      if (result && result._doc) {
+         var doc = result.toObject({ transform: true });
 
-         return this._codec.tryCreateFrom(result._doc);
+         return this._codec.tryCreateFrom(doc);
       } else {
          return null;
       }
@@ -34,11 +32,9 @@ class StoreImplFor<T> {
       const result = await personModel.findOne().where('_email').eq(email).exec();
 
       if (result) {
-         // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
-            result._doc._persistenceDetails._key = result._doc._id.toString();
+         var doc = result.toObject({ transform: true });
 
-         return this._codec.tryCreateFrom(result._doc);
+         return this._codec.tryCreateFrom(doc);
       } else {
          return null;
       }
@@ -53,11 +49,10 @@ class StoreImplFor<T> {
          var people: Array<T> = new Array<T>();
 
          for (i = 0; i < result.length; i++) {
-            // If we saved a new document, copy the new Mongo ID up to persistenceDetails
-            if (result[i]._doc._persistenceDetails._key !== result[i]._doc._id.toString())
-               result[i]._doc._persistenceDetails._key = result[i]._doc._id.toString();
 
-            people.push(this._codec.tryCreateFrom(result[i]._doc));
+            var doc = result[i].toObject({ transform: true });
+
+            people.push(this._codec.tryCreateFrom(doc));
          }
 
          return people;
@@ -95,22 +90,18 @@ export class PersonDb implements IPersonStore {
             // if the saved version has a later or equal sequence number, do not overwrite it
             if (existing && existing._doc._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
 
-               // If we have an existing document, copy the new Mongo ID to persistenceDetails
-               if (existing._doc._persistenceDetails._key !== existing._doc._id.toString())
-                  existing._doc._persistenceDetails._key = existing._doc._id.toString();
+               var doc = existing.toObject({ transform: true });
 
-               return this._personCodec.tryCreateFrom(existing._doc);
+               return this._personCodec.tryCreateFrom(doc);
             }
          }
 
          // only save if we are a later sequence number 
          let result = await (new personModel(this._personCodec.encode(person))).save ({ isNew: person.persistenceDetails.key ? true : false });
 
-         // If we saved a new document, copy the new Mongo ID to persistenceDetails
-         if (result._doc._persistenceDetails._key !== result._doc._id.toString())
-            result._doc._persistenceDetails._key = result._doc._id.toString();
+         var doc = result.toObject({ transform: true });
+         return this._personCodec.tryCreateFrom(doc);
 
-         return this._personCodec.tryCreateFrom(result._doc);
       } catch (err) {
          let logger: Logger = new Logger();
          logger.logError("PersonDb", "save", "Error:", err);

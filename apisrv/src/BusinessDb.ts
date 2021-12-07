@@ -1,16 +1,12 @@
 'use strict';
 // Copyright TXPCo ltd, 2020, 2021
 
-import mongoose from "mongoose";
 import { Logger } from '../../core/src/Logger';
-import { Persona } from '../../core/src/Persona';
 import { Person, PersonMemento } from '../../core/src/Person';
 import { Business, BusinessMemento, IBusinessStore, IMyBusinessesStore } from '../../core/src/Business';
 import { BusinessCodec, BusinessesCodec} from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
-import { persistenceDetailsSchema } from './PersistenceSchema';
-import { personaDetailsSchema } from './PersonaSchema';
-
+import { businessModel } from './BusinessSchema';
 
 function makeIdArray(input: Array<any>) : Array < string > {
    var output: Array<string> = new Array<string>(input.length);
@@ -57,6 +53,24 @@ export class BusinessDb implements IBusinessStore {
       this._codec = new BusinessCodec();
    }
 
+
+   postProcessFromSave(doc,
+      prevAdmins: Array<Person>, prevMembers: Array<Person>): Business {
+
+      var newBusiness: Business;
+
+      doc._administrators = new Array();
+      doc._members = new Array();
+
+      newBusiness = this._codec.tryCreateFrom(doc);
+
+      // Restore the object arrays before sending back to client
+      newBusiness.administrators = prevAdmins;
+      newBusiness.members = prevMembers;
+
+      return newBusiness;
+   }
+
    private makePersonIds(people: Array<Person>): Array<string> {
       var ids: Array<string> = new Array<string>();
       var i: number;
@@ -73,7 +87,8 @@ export class BusinessDb implements IBusinessStore {
       const result = await businessModel.findOne().where('_id').eq(id).exec();
 
       if (result) {
-         return postProcessFromLoad(result._doc, this._codec);
+         var docPost = result.toObject({ transform: true });
+         return postProcessFromLoad(docPost, this._codec);
 
       } else {
          return null;
@@ -122,15 +137,16 @@ export class BusinessDb implements IBusinessStore {
 
             // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
             if (existing && existing._doc._persistenceDetails._sequenceNumber >= business.persistenceDetails.sequenceNumber) {
-
-               return this.postProcessFromSave(existing._doc, prevAdmins, prevMembers);
+               var docPost = existing.toObject({ transform: true });
+               return this.postProcessFromSave(docPost, prevAdmins, prevMembers);
             }
          }
 
          let doc = new businessModel(memento);
          let result = await (doc).save({ isNew : business.persistenceDetails.key ? true : false});
 
-         return this.postProcessFromSave(result._doc, prevAdmins, prevMembers);
+         var docPost = result.toObject({ transform: true });
+         return this.postProcessFromSave(docPost, prevAdmins, prevMembers);
 
       } catch (err) {
          let logger: Logger = new Logger();
@@ -138,27 +154,6 @@ export class BusinessDb implements IBusinessStore {
          return null;
       }
 
-   }
-
-   postProcessFromSave(doc,
-      prevAdmins: Array<Person>, prevMembers: Array<Person>): Business {
-
-      var newBusiness: Business;
-
-      // If we saved a new document, copy the new Mongo ID to persistenceDetails
-      if (doc._persistenceDetails._key !== doc._id.toString())
-         doc._persistenceDetails._key = doc._id.toString();
-      
-      doc._administrators = new Array();
-      doc._members = new Array();
-
-      newBusiness = this._codec.tryCreateFrom(doc);
-
-      // Restore the object arrays before sending back to client
-      newBusiness.administrators = prevAdmins;
-      newBusiness.members = prevMembers;
-
-      return newBusiness;
    }
 }
 
@@ -177,10 +172,8 @@ export class MyBusinessesDb implements IMyBusinessesStore {
          var i: number;
 
          for (i = 0; i < results.length; i++) {
-            // If we saved a new document, copy the new Mongo ID up to persistenceDetails
-            if (results[i]._doc._persistenceDetails._key !== results[i]._doc._id.toString())
-               results[i]._doc._persistenceDetails._key = results[i]._doc._id.toString();
-            businesses.push(results[i]);
+            var docPost = results[i].toObject({ transform: true });
+            businesses.push(docPost);
          }
       }
       return businesses;
@@ -216,20 +209,3 @@ export class MyBusinessesDb implements IMyBusinessesStore {
    }
 }
 
-const businessSchema = new mongoose.Schema({
-   _persistenceDetails: persistenceDetailsSchema,
-   _personaDetails: personaDetailsSchema,
-   _administratorIds: {
-      type: [String],
-      required: true
-   },
-   _memberIds: {
-      type: [String],
-      required: true
-   }
-},
-{  // Enable timestamps for archival 
-      timestamps: true
-});
-
-const businessModel = mongoose.model("Business", businessSchema);
