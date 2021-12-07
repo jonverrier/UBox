@@ -38,8 +38,8 @@ describe("IOBusiness", function () {
                _sequenceNumber: 1
             },
             _personaDetails: {
-               _name: { _displayName: 'Joe' },
-               _thumbnailUrl: { _url: 'https://jo.pics.com', _isUrlVerified: false }
+               _name: 'Joe' ,
+               _thumbnailUrl:'https://jo.pics.com' 
             },
             _administrators: peopleMementos,
             _members: peopleMementos

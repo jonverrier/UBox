@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { PersistenceDetails } from "../src/Persistence";
-import { Url, Name, Persona, PersonaDetails } from "../src/Persona";
+import { Persona, PersonaDetails } from "../src/Persona";
 import { EmailAddress, Roles, ERoleType, Person} from '../src/Person';
 
 export class PersistenceTestHelper {
@@ -22,27 +22,27 @@ export class PersonaTestHelper {
 
    static createJoeDetails(): PersonaDetails {
 
-      return new PersonaDetails(new Name("Joe"), new Url("https://joe.thumbnails.com", false));
+      return new PersonaDetails("Joe", "https://joe.thumbnails.com");
    }
 
    static createJoe2Details(): PersonaDetails {
 
-      return new PersonaDetails(new Name("Joe2"), new Url("https://joe2.thumbnails.com", false));
+      return new PersonaDetails("Joe2", "https://joe2.thumbnails.com");
    }
 
    static createXFitDulwichDetails(): PersonaDetails {
 
-      return new PersonaDetails(new Name("XFit Dulwich"), new Url("https://xfit.thumbnails.com", false));
+      return new PersonaDetails("XFit Dulwich", "https://xfit.thumbnails.com");
    }
 
    static createOlyLiftDetails(): PersonaDetails {
 
-      return new PersonaDetails(new Name("Olympic Lifting"), new Url("https://xfit.thumbnails.com", false));
+      return new PersonaDetails("Olympic Lifting", "https://xfit.thumbnails.com");
    }
 
    static createPowerLiftDetails(): PersonaDetails {
 
-      return new PersonaDetails(new Name("Power Lifting"), new Url("https://xfit.thumbnails.com", false));
+      return new PersonaDetails("Power Lifting", "https://xfit.thumbnails.com");
    }
 
    static createJoe(): Persona {
@@ -68,7 +68,7 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(new PersistenceDetails("1", 1, 1),
-                        new PersonaDetails (new Name("Joe"), new Url("https://joe.thumbnails.com", false)),
+                        new PersonaDetails ("Joe", "https://joe.thumbnails.com"),
          new EmailAddress("Joe@mail.com", true), roles);
    }
 
@@ -76,7 +76,7 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(new PersistenceDetails("2", 1, 1),
-            new PersonaDetails(new Name("Joe2"), new Url("https://joe2.thumbnails.com", false)),
+            new PersonaDetails("Joe2", "https://joe2.thumbnails.com"),
          new EmailAddress("Joe2@mail.com", true), roles);
    }
 
@@ -84,7 +84,7 @@ export class PersonTestHelper {
       let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
 
       return new Person(new PersistenceDetails("1", 1, 1),
-            new PersonaDetails(new Name("Joe"), new Url("https://joe.thumbnails.com", false)),
+            new PersonaDetails("Joe", "https://joe.thumbnails.com"),
          new EmailAddress("Joe@mail.com", true), roles);
    }
 
@@ -93,7 +93,7 @@ export class PersonTestHelper {
 
       return new Person(
          new PersistenceDetails(null, 1, 1),
-         new PersonaDetails(new Name("Jon V"), new Url("https://jonv.pics.com", false)),
+         new PersonaDetails("Jon V", "https://jonv.pics.com"),
          new EmailAddress("jonathanverrier@hotmail.com", true),
          new Roles(Array<ERoleType>(ERoleType.Member)));
    }
@@ -102,7 +102,7 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(new PersistenceDetails(null, 1, 1),
-         new PersonaDetails(new Name("Joe"), new Url("https://joe.thumbnails.com", false)),
+         new PersonaDetails("Joe", "https://joe.thumbnails.com"),
          new EmailAddress("Joe@mail.com", true), roles);
    }
 }

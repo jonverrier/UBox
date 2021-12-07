@@ -7,7 +7,7 @@ import { Person, IPersonStore, IMyPersonStore } from '../../core/src/Person';
 import { ICodec } from '../../core/src/IOCommon';
 import { PersonCodec } from '../../core/src/IOPerson';
 import { persistenceDetailsSchema } from './PersistenceDb';
-import { personaDetailsSchema } from './PersonaDb';
+import { personaDetailsSchema } from './PersonaSchema';
 
 class StoreImplFor<T> {
    private _codec;

@@ -93,7 +93,7 @@
     <TypeScriptCompile Include="src\ObservationDb.ts" />
     <TypeScriptCompile Include="src\PersistenceDb.ts" />
     <TypeScriptCompile Include="src\PersonaApi.ts" />
-    <TypeScriptCompile Include="src\PersonaDb.ts" />
+    <TypeScriptCompile Include="src\PersonaSchema.ts" />
     <TypeScriptCompile Include="src\PersonDb.ts" />
     <TypeScriptCompile Include="src\ApiHelp.ts" />
     <TypeScriptCompile Include="src\ObservationApi.ts" />

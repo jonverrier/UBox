@@ -9,7 +9,7 @@ import { Business, BusinessMemento, IBusinessStore, IMyBusinessesStore } from '.
 import { BusinessCodec, BusinessesCodec} from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
 import { persistenceDetailsSchema } from './PersistenceDb';
-import { personaDetailsSchema } from './PersonaDb';
+import { personaDetailsSchema } from './PersonaSchema';
 
 
 function makeIdArray(input: Array<any>) : Array < string > {
@@ -115,7 +115,7 @@ export class BusinessDb implements IBusinessStore {
             // Records are the same if they are: 
             //    same name 
             var whereClause = {
-               '_personaDetails._name._displayName': business.personaDetails.name.displayName
+               '_personaDetails._name': business.personaDetails.name
             };
 
             const existing = await businessModel.findOne(whereClause).exec();

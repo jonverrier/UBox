@@ -4,8 +4,7 @@ import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
-import { Name, Url, Persona } from "../../core/src/Persona";
-import { EmailAddress, Roles, ERoleType, Person } from "../../core/src/Person";
+import { Person } from "../../core/src/Person";
 import { Business } from "../../core/src/Business";
 import { PersonApi } from '../src/PersonApi';
 import { BusinessApi } from '../src/BusinessApi';

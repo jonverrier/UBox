@@ -10,7 +10,7 @@ import { Person } from '../../core/src/Person';
 import { PersonDb, MyPersonDb } from './PersonDb';
 import { BusinessDb, MyBusinessesDb } from './BusinessDb';
 import { persistenceDetailsSchema } from './PersistenceDb';
-import { personaDetailsSchema } from './PersonaDb';
+import { personaDetailsSchema } from './PersonaSchema';
 
 export class CohortDb implements ICohortStore {
    private _codec;
@@ -72,7 +72,7 @@ export class CohortDb implements ICohortStore {
             // same business, same name, same cohortType
             var whereClause = {
                '_businessId': memento._business._persistenceDetails._key,
-               '_personaDetails._name._displayName': memento._personaDetails._name._displayName,
+               '_personaDetails._name': memento._personaDetails._name,
                '_cohortType': memento._cohortType
             };
 
