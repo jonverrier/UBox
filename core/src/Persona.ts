@@ -5,57 +5,91 @@ import { URL } from 'url'
 import { InvalidParameterError } from './CoreError';
 import { PersistenceDetails, PersistenceDetailsMemento, Persistence, IMultiLoaderFor } from "./Persistence";
 
-export class NameMemento {
-   readonly _displayName: string;
+
+export class PersonaDetailsMemento {
+   _name: string;
+   _thumbnailUrl: string;
 
    /**
-    * Create a NameMemento object
-    * @param displayName - user name for a Person, or the name of Business.
-    * Design - all memento classes must depend only on base types, value types, or other Mementos**
+    * Create a PersonMemento object
+    * @param name - plain text user name.
+    * @param thumbnailUrl - URL to thumbnail image.
+    * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
-   constructor(displayName: string) {
+   constructor(name: string,
+      thumbnailUrl: string) {
 
-      this._displayName = displayName;
+      this._name = name;
+      this._thumbnailUrl = thumbnailUrl;
    }
 }
 
-export class Name {
-   private _displayName: string;
+// PersonaDetails - really just aggregates name & URL to reduce number of parameters for setup of new objects
+export class PersonaDetails  {
+   private _name: string;
+   private _thumbnailUrl: string;
 
    /**
-    * Create a Name object
-    * @param displayName - user name for a Person, or the name of business.
+    * Create a PersonaDetails object
+    * @param name - plain text user name.
+    * @param thumbnailUrl - URL to thumbnail image.
     */
-   public constructor(displayName: string) {
+   public constructor(name: string, thumbnailUrl: string)
+   public constructor(memento: PersonaDetailsMemento);
+   public constructor(...params: any[]) {
 
-      if (!Name.isValidName(displayName)) {
-            throw new InvalidParameterError("Name");
-         }
-      this._displayName = displayName;
+      if (params.length === 1) {
+         let memento: PersonaDetailsMemento = params[0];
+         this._name = memento._name;
+         this._thumbnailUrl = memento._thumbnailUrl;
+      }
+      else {
+         this._name = params[0];
+         this._thumbnailUrl = params[1];
+      }
+
+      if (!PersonaDetails.isValidUrl(this._thumbnailUrl)) {
+         throw new InvalidParameterError("Url");
+      }
+
+      if (!PersonaDetails.isValidName(this._name)) {
+         throw new InvalidParameterError("Name");
+      }
    }
 
    /**
    * set of 'getters' for private variables
    */
-   get displayName(): string {
-      return this._displayName;
+   get name(): string {
+      return this._name;
+   }
+   get thumbnailUrl(): string {
+      return this._thumbnailUrl;
+   }
+   set name(name: string) {
+      this._name = name;
+   }
+   set thumbnailUrl(thumbnailUrl: string) {
+      this._thumbnailUrl = thumbnailUrl;
+   }
+
+   /**
+    * test for equality - checks all fields are the same. 
+    * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
+    * @param rhs - the object to compare this one to.  
+    */
+   equals(rhs: PersonaDetails): boolean {
+
+      return (this._name === rhs._name) &&
+         (this._thumbnailUrl === rhs._thumbnailUrl);
    }
 
    /**
    * memento() returns a copy of internal state
    */
-   memento(): NameMemento {
-      return new NameMemento(this._displayName);
-   }
-
-   /**
- * test for equality - checks all fields are the same. 
- * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
- * @param rhs - the object to compare this one to.  
- */
-   equals(rhs: Name): boolean {
-
-      return (this._displayName === rhs._displayName);
+   memento(): PersonaDetailsMemento {
+      return new PersonaDetailsMemento(this.name,
+         this.thumbnailUrl);
    }
 
    /**
@@ -67,62 +101,6 @@ export class Name {
          return true;
 
       return (false);
-   }
-}
-
-export class UrlMemento {
-   _url: string;
-   _isUrlVerified: boolean;
-
-   /**
-    * Create a UrlMemento object
-    * @param url - user email
-    * @param isUrlVerified - boolean to say if we know URL is valid i.e we have retrieved it
-    * Design - all memento classes must depend only on base types, value types, or other Mementos*
-    */
-   constructor(url: string, isUrlVerified: boolean) {
-
-      this._url = url;
-      this._isUrlVerified = isUrlVerified;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get url(): string {
-      return this._url;
-   }
-   get isUrlVerified(): boolean {
-      return this._isUrlVerified;
-   }
-}
-
-export class Url {
-   private _url: string;
-   private _isUrlVerified: boolean;
-
-   /**
-    * Create a Url object
-    * @param url - user email
-    * @param isUrlVerified - boolean to say if we know URL is valid i.e we have retrieved it
-    */
-   constructor(url: string, isUrlVerified: boolean) {
-
-      if (!Url.isValidUrl(url)) {
-         throw new InvalidParameterError("Url");
-      }
-      this._url = url;
-      this._isUrlVerified = isUrlVerified;
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get url(): string {
-      return this._url;
-   }
-   get isUrlVerified(): boolean {
-      return this._isUrlVerified;
    }
 
    /**
@@ -141,104 +119,6 @@ export class Url {
          return false;
       }
       return (true);
-   }
-
-   /**
-   * memento() returns a copy of internal state
-   */
-   memento(): UrlMemento {
-      return new UrlMemento(this._url, this._isUrlVerified);
-   }
-
-   /**
-    * test for equality - checks all fields are the same. 
-    * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
-    * @param rhs - the object to compare this one to.  
-    */
-   equals(rhs: Url): boolean {
-
-      return (
-         (this._url === rhs._url) &&
-         (this._isUrlVerified === rhs._isUrlVerified));
-   }
-}
-
-export class PersonaDetailsMemento {
-   _name: NameMemento;
-   _thumbnailUrl: UrlMemento;
-
-   /**
-    * Create a PersonMemento object
-    * @param name - plain text user name.
-    * @param thumbnailUrl - URL to thumbnail image.
-    * Design - all memento classes must depend only on base types, value types, or other Mementos
-    */
-   constructor(name: NameMemento,
-      thumbnailUrl: UrlMemento) {
-
-      this._name = name;
-      this._thumbnailUrl = thumbnailUrl;
-   }
-}
-
-// PersonaDetails - really just aggregates name & URL to reduce number of parameters for setup of new objects
-export class PersonaDetails  {
-   private _name: Name;
-   private _thumbnailUrl: Url;
-
-   /**
-    * Create a PersonaDetails object
-    * @param name - plain text user name.
-    * @param thumbnailUrl - URL to thumbnail image.
-    */
-   public constructor(name: Name, thumbnailUrl: Url)
-   public constructor(memento: PersonaDetailsMemento);
-   public constructor(...params: any[]) {
-
-      if (params.length === 1) {
-         let memento: PersonaDetailsMemento = params[0];
-         this._name = new Name(memento._name._displayName);
-         this._thumbnailUrl = new Url(memento._thumbnailUrl._url, memento._thumbnailUrl._isUrlVerified);
-      }
-      else {
-         this._name = params[0];
-         this._thumbnailUrl = params[1];
-      }
-   }
-
-   /**
-   * set of 'getters' for private variables
-   */
-   get name(): Name {
-      return this._name;
-   }
-   get thumbnailUrl(): Url {
-      return this._thumbnailUrl;
-   }
-   set name(name: Name) {
-      this._name = name;
-   }
-   set thumbnailUrl(thumbnailUrl: Url) {
-      this._thumbnailUrl = thumbnailUrl;
-   }
-
-   /**
-    * test for equality - checks all fields are the same. 
-    * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
-    * @param rhs - the object to compare this one to.  
-    */
-   equals(rhs: PersonaDetails): boolean {
-
-      return (this._name.equals(rhs._name)) &&
-         (this._thumbnailUrl.equals(rhs._thumbnailUrl));
-   }
-
-   /**
-   * memento() returns a copy of internal state
-   */
-   memento(): PersonaDetailsMemento {
-      return new PersonaDetailsMemento(this.name.memento(),
-         this.thumbnailUrl.memento());
    }
 }
 
@@ -282,8 +162,8 @@ export class Persona extends Persistence {
             memento._persistenceDetails._schemaVersion,
             memento._persistenceDetails._sequenceNumber));
 
-         this._personaDetails = new PersonaDetails (new Name(memento._personaDetails._name._displayName),
-                                                    new Url(memento._personaDetails._thumbnailUrl._url, memento._personaDetails._thumbnailUrl._isUrlVerified));
+         this._personaDetails = new PersonaDetails (memento._personaDetails._name,
+                                                    memento._personaDetails._thumbnailUrl);
       }
       else {
          super(params[0]);

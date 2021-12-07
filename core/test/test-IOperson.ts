@@ -149,8 +149,8 @@ describe("IOPerson", function () {
          codec.decode({
             _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
             _personaDetails : {
-               _name: { _displayName: "Joe" },
-               _thumbnailUrl: { _url: "https://jo.pics.com", _isUrlVerified: true }
+               _name: "Joe" ,
+               _thumbnailUrl: "https://jo.pics.com"
             },
             _email: { _email: "Joe@mail.com", _isEmailVerified: false },
             _roles: roles 

@@ -39,11 +39,11 @@ describe("Business", function () {
    
    it("Needs to correctly store attributes", function () {
 
-      expect(business1.personaDetails.name.equals(business1.personaDetails.name)).to.equal(true);
-      expect(business1.personaDetails.thumbnailUrl.equals(business1.personaDetails.thumbnailUrl)).to.equal(true);
+      expect(business1.personaDetails.name === business1.personaDetails.name).to.equal(true);
+      expect(business1.personaDetails.thumbnailUrl === business1.personaDetails.thumbnailUrl).to.equal(true);
 
-      expect(business1.personaDetails.name.equals(business2.personaDetails.name)).to.equal(false);
-      expect(business1.personaDetails.thumbnailUrl.equals(business2.personaDetails.thumbnailUrl)).to.equal(false);
+      expect(business1.personaDetails.name === business2.personaDetails.name).to.equal(false);
+      expect(business1.personaDetails.thumbnailUrl === business2.personaDetails.thumbnailUrl).to.equal(false);
 
       expect(Person.areEqual(business1.administrators, business2.administrators)).to.equal(true);
       expect(Person.areEqual(business1.members, business2.members)).to.equal(true);

@@ -1,6 +1,5 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { Url, Name } from "../src/Persona";
 import { EmailAddress, Roles, Person, PersonMemento, IPersonStore, ERoleType} from '../src/Person';
 import { PersonTestHelper } from './testHelpers';
 
@@ -164,13 +163,13 @@ describe("Person", function () {
    
    it("Needs to correctly store attributes", function () {
          
-      expect(person1.personaDetails.name.equals(new Name("Joe"))).to.equal(true);
+      expect(person1.personaDetails.name === "Joe").to.equal(true);
       expect(person1.email.equals(new EmailAddress("Joe@mail.com", true))).to.equal(true);
-      expect(person1.personaDetails.thumbnailUrl.equals(new Url("https://joe.thumbnails.com", false))).to.equal(true);
+      expect(person1.personaDetails.thumbnailUrl === "https://joe.thumbnails.com").to.equal(true);
       expect(person1.isMember()).to.equal(true);
 
-      expect(person1.memento()._personaDetails._name._displayName === person1.memento()._personaDetails._name._displayName).to.equal(true);
-      expect(person1.memento()._personaDetails._thumbnailUrl.url === person1.personaDetails.thumbnailUrl.memento().url).to.equal(true);
+      expect(person1.memento()._personaDetails._name === person1.memento()._personaDetails._name).to.equal(true);
+      expect(person1.memento()._personaDetails._thumbnailUrl === person1.personaDetails.thumbnailUrl).to.equal(true);
       expect(person1.memento()._email._email === person1.email.memento()._email).to.equal(true);
       expect(Roles.areEqual(person1.memento()._roles._roles, person1.roles.memento()._roles)).to.equal(true);
    });
@@ -178,8 +177,8 @@ describe("Person", function () {
    it("Needs to correctly change attributes", function () {
 
       let newMail = new EmailAddress("new@New.com", false);
-      let newUrl = new Url("https://jo.newpics.com", false);
-      let newName = new Name("NewJoe");
+      let newUrl = "https://jo.newpics.com";
+      let newName = "NewJoe";
       let newRoles = new Roles([]);
 
       person1.email = newMail;
