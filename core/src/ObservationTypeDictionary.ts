@@ -66,6 +66,39 @@ class CleanAndJerkMeasurementType extends LiftMeasurementType {
 
 }
 
+class BenchMeasurementType extends LiftMeasurementType {
+
+   /**
+    * Create a BenchMeasurementType object - contains the static elements that characterise measurement of a clean & jerk
+    */
+   constructor() {
+      super(EMeasurementType.Bench, 0, 150);
+   }
+
+}
+
+class DeadliftMeasurementType extends LiftMeasurementType {
+
+   /**
+    * Create a DeadliftMeasurementType object - contains the static elements that characterise measurement of a clean & jerk
+    */
+   constructor() {
+      super(EMeasurementType.Deadlift, 0, 500);
+   }
+
+}
+
+class BacksquatMeasurementType extends LiftMeasurementType {
+
+   /**
+    * Create a BacksquatMeasurementType object - contains the static elements that characterise measurement of a clean & jerk
+    */
+   constructor() {
+      super(EMeasurementType.Backsquat, 0, 350);
+   }
+
+}
+
 // ====================
 // Speed Measurements
 // ====================
@@ -113,6 +146,11 @@ export class MeasurementTypes {
    public static readonly _clean: MeasurementType = new CleanMeasurementType();
    public static readonly _jerk: MeasurementType = new JerkMeasurementType();
    public static readonly _cleanAndJerk: MeasurementType = new CleanAndJerkMeasurementType();
+
+   public static readonly _bench: MeasurementType = new BenchMeasurementType();
+   public static readonly _deadlift: MeasurementType = new DeadliftMeasurementType();
+   public static readonly _backsquat: MeasurementType = new BacksquatMeasurementType();
+
    public static readonly _run800: MeasurementType = new Run800mMeasurementType();
    public static readonly _row250: MeasurementType = new Row250mMeasurementType();
    /**
@@ -123,6 +161,7 @@ export class MeasurementTypes {
       this._measurementTypes = new Array<MeasurementType>();
 
       this.addOlympicObservationTypes();
+      this.addPowerObservationTypes();
       this.addConditioningObservationTypes();
    }
 
@@ -136,6 +175,18 @@ export class MeasurementTypes {
 
    static get jerk(): MeasurementType {
       return this._jerk;
+   }
+
+   static get bench(): MeasurementType {
+      return this._bench;
+   }
+
+   static get backsquat(): MeasurementType {
+      return this._backsquat;
+   }
+
+   static get deadlift(): MeasurementType {
+      return this._deadlift;
    }
 
    static get cleanAndJerk(): MeasurementType {
@@ -175,6 +226,13 @@ export class MeasurementTypes {
       this._measurementTypes.push(MeasurementTypes._jerk);
       this._measurementTypes.push(MeasurementTypes._cleanAndJerk);
    }
+
+   private addPowerObservationTypes(): void {
+      this._measurementTypes.push(MeasurementTypes._bench);
+      this._measurementTypes.push(MeasurementTypes._backsquat);
+      this._measurementTypes.push(MeasurementTypes._deadlift);
+   }
+
    private addConditioningObservationTypes(): void {
       this._measurementTypes.push(MeasurementTypes._run800);
       this._measurementTypes.push(MeasurementTypes._row250);
