@@ -29,12 +29,11 @@ ApiRoutes.put(EApiUrls.QueryPersonas, function (req, res) {
       let db = new PersonDb();
 
       let idCodec = new IdListCodec();
-
       var ids: IdList = idCodec.decode(req.body);
 
       let result = db.loadMany(ids._ids);
       result.then(data => {
-         res.send(personasCodec.encode(data));
+         res.send(data ? personasCodec.encode(data) : null);
       });
 
    } catch (e) {
@@ -56,7 +55,7 @@ ApiRoutes.get(EApiUrls.QueryPerson, function (req, res) {
 
       let result = db.loadOne(params.get('_key'));
       result.then(data => {
-         res.send(codec.encode(data ? data : null));
+         res.send(data ? codec.encode(data) : null);
       });
 
    } catch (e) {
@@ -78,7 +77,7 @@ ApiRoutes.get(EApiUrls.QueryPersonByEmail, function (req, res) {
 
       let result = db.loadOne(params.get('_key'));
       result.then(data => {
-         res.send(codec.encode(data ? data : null));
+         res.send(data? codec.encode(data) : null);
       });
 
    } catch (e) {
@@ -101,7 +100,7 @@ ApiRoutes.put(EApiUrls.QueryPeople, function (req, res) {
 
       let result = db.loadMany(ids._ids);
       result.then(data => {
-         res.send(peopleCodec.encode(data));
+         res.send(data ? peopleCodec.encode(data) : null);
       });
 
    } catch (e) {
@@ -123,7 +122,7 @@ ApiRoutes.put(EApiUrls.SavePerson, function (req, res) {
 
       let result = db.save(decoded);
       result.then(data => {
-         res.send(codec.encode(data ? data : null));
+         res.send(data ? codec.encode(data) : null);
       });
    } catch (e) {
       var logger = new Logger();
@@ -145,7 +144,7 @@ ApiRoutes.get(EApiUrls.QueryMeasurement, function (req, res) {
       let result = db.loadOne (params.get('_key'));
       result.then(data => {
          if (data) {
-            res.send(codec.encode(data));
+            res.send(data ? codec.encode(data) : null);
          }
          else {
             res.send(null);
@@ -172,7 +171,7 @@ ApiRoutes.put(EApiUrls.SaveMeasurement, function (req, res) {
       let result = db.save(decoded);
       result.then(data => {
          if (data) {
-            res.send(codec.encode(data));
+            res.send(data ? codec.encode(data) : null);
          }
          else {
             res.send(null);
@@ -198,7 +197,7 @@ ApiRoutes.put(EApiUrls.QueryMeasurements, function (req, res) {
 
       let result = db.loadMany(ids._ids);
       result.then(data => {
-         res.send(measurementsCodec.encode(data));
+         res.send(data ? measurementsCodec.encode(data) : null);
       });
 
    } catch (e) {
@@ -221,7 +220,7 @@ ApiRoutes.put(EApiUrls.QueryMeasurementsForPeople, function (req, res) {
 
       let result = db.loadManyForPeople (ids._ids);
       result.then(data => {
-         res.send(measurementsCodec.encode(data));
+         res.send(data ? measurementsCodec.encode(data) : null);
       });
 
    } catch (e) {
@@ -240,7 +239,7 @@ ApiRoutes.put(EApiUrls.QueryMeasurementsForCohort, function (req, res) {
 
       let result = db.loadManyForCohort(req.body.key);
       result.then(data => {
-         res.send(measurementsCodec.encode(data));
+         res.send(data ? measurementsCodec.encode(data) : null);
       });
 
    } catch (e) {
@@ -284,7 +283,7 @@ ApiRoutes.put(EApiUrls.SaveCohort, function (req, res) {
 
       let result = db.save(decoded);
       result.then(data => {
-         res.send(codec.encode(data ? data : null));
+         res.send(data ? codec.encode(data) : null);
       });
    } catch (e) {
       var logger = new Logger();
@@ -367,7 +366,7 @@ ApiRoutes.put(EApiUrls.SaveBusiness, function (req, res) {
 
       let result = db.save(decoded);
       result.then(data => {
-         res.send(codec.encode(data ? data : null));
+         res.send(data ? codec.encode(data) : null);
       });
    } catch (e) {
       var logger = new Logger();

@@ -71,7 +71,10 @@ export class Roles {
     * @param roles - the list to test 
     */
    static isValidRoleList(roles: Array<ERoleType>): boolean {
-      if (new Set(roles).size !== roles.length)
+      if (! roles || roles.length === 0) // Must be non-zero length
+         return false;
+
+      if (new Set(roles).size !== roles.length) // No duplicates
          return false;
 
       return (true);

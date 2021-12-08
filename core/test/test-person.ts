@@ -35,7 +35,7 @@ describe("Roles", function () {
       roles2 = new Roles([ERoleType.Coach]);
       roles3 = new Roles([ERoleType.Member]);
       rolesMulti1 = new Roles([ERoleType.Member, ERoleType.Coach]);
-      rolesNull = new Roles([]);
+      rolesNull = null;
    });
 
    it("Needs to compare for equality and inequality", function () {
@@ -44,7 +44,19 @@ describe("Roles", function () {
       expect(roles1.equals(roles2)).to.equal(false);
       expect(roles1.equals(roles3)).to.equal(true);
       expect(roles1.equals(rolesMulti1)).to.equal(false);
-      expect(roles1.equals(rolesNull)).to.equal(false);
+   });
+
+   it("Needs to catch null role list", function () {
+
+      let caught = false;
+
+      try {
+         let roles4 = new Roles(null);
+      }
+      catch {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
    });
 
    it("Needs to catch invalid role list", function () {
@@ -126,9 +138,7 @@ describe("Person", function () {
    it("Needs to correctly change attributes", function () {
 
       let newMail = "new@New.com";
-      let newUrl = "https://jo.newpics.com";
-      let newName = "NewJoe";
-      let newRoles = new Roles([]);
+      let newRoles = new Roles([ERoleType.Member, ERoleType.Coach]);
 
       person1.email = newMail;
       person1.roles = newRoles;

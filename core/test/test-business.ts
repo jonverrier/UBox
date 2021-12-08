@@ -13,13 +13,14 @@ describe("Business", function () {
    let person: Person; 
    let person2: Person; 
 
+   person = PersonTestHelper.createJoeMember();
+   person2 = PersonTestHelper.createJoeMember2();
+
+   let people = new Array<Person>();
+   people.push(person);
+
    beforeEach(function () {
 
-      person = PersonTestHelper.createJoeMember();
-      person2 = PersonTestHelper.createJoeMember2();
-
-      let people = new Array<Person>();
-      people.push(person);
 
       business1 = new Business(PersistenceTestHelper.createKey1(),
          PersonaTestHelper.createXFitDulwichDetails(),
@@ -59,6 +60,48 @@ describe("Business", function () {
 
       expect(Person.areEqual(business1.administrators, people)).to.equal(true);
       expect(Person.areEqual(business1.members, people)).to.equal(true);
+   });
+
+   it("Needs to trap null Adminstrator list", function () {
+
+      var caught: boolean = false;
+
+      try {
+         business2 = new Business(PersistenceTestHelper.createKey2(),
+            PersonaTestHelper.createJoeDetails(),
+            null, people);
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
+   it("Needs to trap zero length Adminstrator list", function () {
+
+      var caught: boolean = false;
+
+      try {
+         business2 = new Business(PersistenceTestHelper.createKey2(),
+            PersonaTestHelper.createJoeDetails(),
+            new Array<Person>(), people);
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
+   it("Needs to trap null Member list", function () {
+
+      var caught: boolean = false;
+
+      try {
+         business2 = new Business(PersistenceTestHelper.createKey2(),
+            PersonaTestHelper.createJoeDetails(),
+            people, null);
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
    });
 
    it("Needs to test membership", function () {

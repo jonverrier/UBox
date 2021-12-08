@@ -6,6 +6,7 @@ import { personaDetailsIoType} from '../src/IOPersona';
 import { peopleIoType, } from '../src/IOPerson';
 
 import * as IoTs from 'io-ts';
+import { Person } from "./Person";
 
 // Rule summary for a Persistent Object: 
 // - derives from IPersistence, which contains a PersistentDetails member object. 
@@ -37,7 +38,7 @@ export class BusinessCodec implements ICodec<Business> {
 
    tryCreateFrom(data: any): Business {
 
-      let temp = this.decode (data); // If types dont match an exception will be thrown here
+      let temp: BusinessMemento = this.decode(data); // If types dont match an exception will be thrown here
 
       return new Business(temp);
    }

@@ -35,6 +35,11 @@ export class PersonaTestHelper {
       return new PersonaDetails("XFit Dulwich", "https://xfit.thumbnails.com");
    }
 
+   static createXFitDulwichDetailsErr(): PersonaDetails {
+
+      return new PersonaDetails("XFit Dulwich - Error Paths", "https://xfit.thumbnails.com");
+   }
+
    static createOlyLiftDetails(): PersonaDetails {
 
       return new PersonaDetails("Olympic Lifting", "https://xfit.thumbnails.com");
@@ -96,6 +101,14 @@ export class PersonTestHelper {
          new PersonaDetails("Jon V", "https://jonv.pics.com"),
          "jonathanverrier@hotmail.com",
          new Roles(Array<ERoleType>(ERoleType.Member)));
+   }
+
+   static createJoeForInsertRIError (): Person {
+      let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
+
+      return new Person(new PersistenceDetails("61af3bcd0f1b01355cc36f2c", 1, 1),
+         new PersonaDetails("Joe", "https://joe.thumbnails.com"),
+         "Joe@mail.com", roles);
    }
 
    static createJoeForInsert(): Person {

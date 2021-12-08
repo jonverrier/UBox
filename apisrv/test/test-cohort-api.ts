@@ -32,16 +32,17 @@ describe("CohortApi", function () {
    var myEmailCohortsApi: MyEmailCohortsApi = new MyEmailCohortsApi(root);
    var cohortMeasurementApi: CohortMeasurementApi = new CohortMeasurementApi(root);
 
-   let cohort1:Cohort;
+   let cohort1: Cohort;
    let period = 1;
 
    let person = PersonTestHelper.createMeForInsert();
    var savedPerson: Person;
+   var people: Array<Person>;
 
    beforeEach(async function () {
 
       savedPerson = await personApi.save(person);
-      let people = new Array<Person>();
+      people = new Array<Person>();
       people.push(savedPerson);
 
       let business = new Business(new PersistenceDetails(null, 0, 0),
@@ -141,7 +142,8 @@ describe("CohortApi", function () {
 
          // Save a new Measurement object 
          var quantity = new Quantity(50, BaseUnits.kilogram);
-         var measurement: Measurement = savedCohort.createMeasurement(quantity, 1, MeasurementTypes.clean, "1234");
+         var measurement: Measurement = savedCohort.createMeasurement(quantity, 1, MeasurementTypes.clean,
+            savedPerson.persistenceDetails.key);
 
          // Save it
          let api: MeasurementApi = new MeasurementApi(root);
@@ -165,6 +167,23 @@ describe("CohortApi", function () {
          var logger = new Logger();
          logger.logError("CohortApi", "LoadManyForCohort", "Error", e.toString());
          done(e);
+      }
+
+   });
+
+   it("Needs to trap referential integrity issue with Business", async function (done) {
+
+      cohort1.business = new Business(new PersistenceDetails("ForceRIIssue", 0, 0),
+         PersonaTestHelper.createXFitDulwichDetails(),
+         people, people);
+
+      // Create and save a Cohort, should create error as have an RI issue 
+      try {
+         let savedCohort = await cohortApi.save(cohort1);
+         done(new Error("Did not catch RI issue"));
+      } catch (e) {
+         console.log(e);
+         done();
       }
 
    });
