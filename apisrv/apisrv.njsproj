@@ -103,6 +103,7 @@
     <TypeScriptCompile Include="src\CohortApi.ts" />
     <TypeScriptCompile Include="src\PersonApi.ts" />
     <TypeScriptCompile Include="src\PersonSchema.ts" />
+    <TypeScriptCompile Include="test\demo-setup.ts" />
     <TypeScriptCompile Include="test\test-business-api.ts" />
     <TypeScriptCompile Include="test\test-cohort-api.ts" />
     <TypeScriptCompile Include="test\test-measurement-api.ts" />

@@ -11,6 +11,7 @@ export enum EPositiveTrend { Up = "Up", Down = "Down"}
 // Whenever this is changed, the schema in ObservationDb must be changed to match
 export enum EMeasurementType {
    Snatch = "Snatch", Clean = "Clean", Jerk = "Jerk", CleanAndJerk = "Clean & Jerk",
+   Bench = "Bench", Backsquat = "BackSquat", Deadlift = "Deadlift",
    Row250="Row 250m", Run800="Run 800m"
 }
 

@@ -94,13 +94,33 @@ export class PersonTestHelper {
    }
 
    static createMeForInsert (): Person {
-      let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
+      let roles = new Roles(new Array<ERoleType>(ERoleType.Member, ERoleType.Coach));
 
       return new Person(
          new PersistenceDetails(null, 1, 1),
          new PersonaDetails("Jon V", "https://jonv.pics.com"),
          "jonathanverrier@hotmail.com",
-         new Roles(Array<ERoleType>(ERoleType.Member)));
+         roles);
+   }
+
+   static createHarryForInsert(): Person {
+      let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
+
+      return new Person(
+         new PersistenceDetails(null, 1, 1),
+         new PersonaDetails("Harry V", "https://harryv.pics.com"),
+         "madeupmailforharry@gmail.com",
+         roles);
+   }
+
+   static createAlexForInsert(): Person {
+      let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
+
+      return new Person(
+         new PersistenceDetails(null, 1, 1),
+         new PersonaDetails("Alex V", "https://alexv.pics.com"),
+         "madeupmailforalexvy@gmail.com",
+         roles);
    }
 
    static createJoeForInsertRIError (): Person {

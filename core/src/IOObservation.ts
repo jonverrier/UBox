@@ -141,7 +141,7 @@ export class MeasurementsCodec implements ICodec<Array<Measurement>> {
          if (measurementTypes.isValid(temp[i]._measurementType)) {
             measurements[i] = new Measurement(temp[i]);
          } else {
-            throw new InvalidUnitError("Expected valid measurement type.");
+            throw new InvalidUnitError("Expected valid measurement type. (" + temp[i]._measurementType + ")");
          }
       }
 
