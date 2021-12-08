@@ -4,20 +4,8 @@
 
 import axios from 'axios';
 
+import { InvalidServerResponseError } from '../../core/src/CoreError'
 import { IdListCodec, IdList, ICodec} from '../../core/src/IOCommon';
-
-const getCircularReplacer = () => {
-   const seen = new WeakSet();
-   return (key, value) => {
-      if (typeof value === "object" && value !== null) {
-         if (seen.has(value)) {
-            return;
-         }
-         seen.add(value);
-      }
-      return value;
-   };
-};
 
 export class LoadApiHelper<Entity> {
    private _codec: ICodec<Entity>;
@@ -38,12 +26,11 @@ export class LoadApiHelper<Entity> {
 
       var response;
 
-      try {
-         response = await axios.get(this._queryUrl, { params: { _key: id } });
+      response = await axios.get(this._queryUrl, { params: { _key: id } });
+      if (response.data)
          return this._codec.tryCreateFrom(response.data);
-      } catch (e) {
-         throw (e);
-      }
+      else
+         throw new InvalidServerResponseError();
    }
 }
 
@@ -68,12 +55,11 @@ export class SaveApiHelper<Entity> {
       var encoded = this._codec.encode(entity);
       var response;
 
-      try {
-         response = await axios.put(this._saveUrl, encoded);
+      response = await axios.put(this._saveUrl, encoded);
+      if (response.data)
          return this._codec.tryCreateFrom(response.data);
-      } catch (e) {
-         throw (e);
-      }
+      else
+         throw new InvalidServerResponseError();
    }
 }
 
@@ -106,7 +92,10 @@ export class MultiApiHelper<Entity> {
       const response = await axios.put(this._queryManyUrl, encoded);
 
       // reconstruct proper objects & return
-      return this._codec.tryCreateFrom(response.data);
+      if (response.data)
+         return this._codec.tryCreateFrom(response.data);
+      else
+         throw new InvalidServerResponseError();
    }
 }
 
@@ -133,7 +122,10 @@ export class KeyMultiApiHelper<Entity> {
       const response = await axios.put(this._queryManyUrl, { key: id });
 
       // reconstruct proper objects & return
-      return this._codec.tryCreateFrom(response.data);
+      if (response.data)
+         return this._codec.tryCreateFrom(response.data);
+      else
+         throw new InvalidServerResponseError();
    }
 }
 

@@ -100,6 +100,15 @@ export class Business extends Persona {
          this._administratorIds = new Array<string>();
          this._memberIds = new Array<string>();
       }
+
+      if (!Business.isValidAdministratorList(this._administrators)) {
+         throw new InvalidParameterError("Administrators");
+      }
+
+      if (!Business.isValidMemberList(this._members)) {
+         throw new InvalidParameterError("Members");
+      }
+
    }
 
    /**
@@ -160,6 +169,27 @@ export class Business extends Persona {
       return (this._members.includes(person));
    }
 
+   /**
+    * test for valid list of people as Administrators
+    * @param people - the list to test 
+    */
+   static isValidAdministratorList(people: Array<Person>): boolean {
+      if (!people || people.length === 0) // Must be non-zero length
+         return false;
+
+      return (true);
+   }
+
+   /**
+    * test for valid list of people as Administrators
+    * @param people - the list to test 
+    */
+   static isValidMemberList(people: Array<Person>): boolean {
+      if (!people) // Must be an array
+         return false;
+
+      return (true);
+   }
 }
 
 export interface IBusinessStore extends ILoaderFor<Business>, ISaverFor<Business> {

@@ -5,12 +5,21 @@ import mongoose from "mongoose";
 import { persistenceDetailsSchema } from './PersistenceSchema';
 import { personaDetailsSchema } from './PersonaSchema';
 
+// Check the entries refer to an entry in Person collection 
+export async function checkPersonReference(item: string): Promise<boolean> {
+   var rec = await personModel.findById(item);
+
+   var ok: boolean = (rec !== null);
+
+   return ok;
+};
+
 export const personSchema = new mongoose.Schema({
    _persistenceDetails: persistenceDetailsSchema,
    _personaDetails: personaDetailsSchema,
    _email: {
       type: String,
-      required: false,
+      required: true,
       index: true
    },
    _roles: {

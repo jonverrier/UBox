@@ -4,7 +4,7 @@
 import { Logger } from '../../core/src/Logger';
 import { Person, PersonMemento } from '../../core/src/Person';
 import { Business, BusinessMemento, IBusinessStore, IMyBusinessesStore } from '../../core/src/Business';
-import { BusinessCodec, BusinessesCodec} from '../../core/src/IOBusiness';
+import { BusinessCodec } from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
 import { businessModel } from './BusinessSchema';
 
@@ -31,13 +31,13 @@ async function postProcessFromLoad(doc: any, codec: BusinessCodec): Promise <Bus
    let memberIds = makeIdArray(doc._memberIds);
    let members = await personDb.loadMany(memberIds);
 
-   doc._administrators = new Array();
-   doc._members = new Array();
+   doc._administrators = Person.mementos(admins);
+   doc._members = Person.mementos(members);
 
    newBusiness = codec.tryCreateFrom(doc);
 
-   newBusiness.administrators = admins ? admins : new Array<Person>();;
-   newBusiness.members = members ? members : new Array<Person>();
+   //newBusiness.administrators = admins ? admins : new Array<Person>();;
+   //newBusiness.members = members ? members : new Array<Person>();
 
    return newBusiness;
 }
@@ -55,14 +55,10 @@ export class BusinessDb implements IBusinessStore {
 
       var newBusiness: Business;
 
-      doc._administrators = new Array();
-      doc._members = new Array();
+      doc._administrators = Person.mementos(prevAdmins);
+      doc._members = Person.mementos(prevMembers);
 
       newBusiness = this._codec.tryCreateFrom(doc);
-
-      // Restore the object arrays before sending back to client
-      newBusiness.administrators = prevAdmins;
-      newBusiness.members = prevMembers;
 
       return newBusiness;
    }

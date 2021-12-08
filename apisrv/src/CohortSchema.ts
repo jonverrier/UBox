@@ -5,9 +5,19 @@ import mongoose from "mongoose";
 import { ECohortType } from '../../core/src/Cohort';
 import { persistenceDetailsSchema } from './PersistenceSchema';
 import { personaDetailsSchema } from './PersonaSchema';
+import { checkBusinessReference } from './BusinessSchema';
 
 
 const cohortTypes: Array<string> = (Object.values(ECohortType));
+
+// Check the entries refer to an entry in Person collection 
+export async function checkCohortReference(item: string): Promise<boolean> {
+   var rec = await cohortModel.findById(item);
+
+   var ok: boolean = (rec !== null);
+
+   return ok;
+};
 
 export const cohortSchema = new mongoose.Schema({
    _persistenceDetails: persistenceDetailsSchema,
@@ -18,7 +28,13 @@ export const cohortSchema = new mongoose.Schema({
    },
    _businessId: {
       type: String,
-      required: true
+      ref: 'Business',
+      required: true,
+
+      validate: {
+         validator: async function (v) { return checkBusinessReference(v) },
+         message: 'Invalid ID reference for Business'
+      }
    },
    _cohortType: {
       type: String,
@@ -32,7 +48,7 @@ export const cohortSchema = new mongoose.Schema({
 
 cohortSchema.set('toObject', {
    transform: function (doc, ret) {
-      // Copy the _id into the persistenceCetails structure. 
+      // Copy the _id into the persistenceDetails structure. 
       ret._persistenceDetails._key = doc._id.toString();
       return ret;
    }

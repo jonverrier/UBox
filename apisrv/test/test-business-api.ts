@@ -21,14 +21,16 @@ describe("BusinessApi", function () {
    var personApi: PersonApi = new PersonApi(root);
    var businessApi: BusinessApi = new BusinessApi(root);
 
-   let business1;
+   var people: Array<Person>;
+   var business1:Business;
 
    let person = PersonTestHelper.createMeForInsert();
    var savedPerson: Person;
 
+
    beforeEach(async function () {
 
-      let people = new Array<Person>();
+      people = new Array<Person>();
       savedPerson = await personApi.save(person);
       people.push(savedPerson);
 
@@ -83,6 +85,46 @@ describe("BusinessApi", function () {
          var logger = new Logger();
          logger.logError("BusinessApi", "LoadMany", "Error", e.toString());
          done(e);
+      }
+
+   });
+
+   it("Needs to trap referential integrity issue with Administrators", async function (done) {
+
+      var peopleMess = new Array<Person>();
+      peopleMess.push(PersonTestHelper.createJoeForInsertRIError());
+
+      let business2:Business = new Business(new PersistenceDetails(null, 0, 1),
+         PersonaTestHelper.createXFitDulwichDetailsErr(),
+         peopleMess, people);
+
+      // Create and save a Business, should create error as have an RI issue 
+      try {
+         let savedBusiness = await businessApi.save(business2);
+         done(new Error ("Did not catch RI issue"));
+      } catch (e) {
+         console.log(e);
+         done();
+      }
+
+   });
+
+   it("Needs to trap referential integrity issue with Members", async function (done) {
+
+      var peopleMess = new Array<Person>();
+      peopleMess.push(PersonTestHelper.createJoeForInsertRIError());
+
+      let business2: Business = new Business(new PersistenceDetails(null, 0, 1),
+         PersonaTestHelper.createXFitDulwichDetailsErr(),
+         people, peopleMess);
+
+      // Create and save a Business, should create error as have an RI issue 
+      try {
+         let savedBusiness = await businessApi.save(business2);
+         done(new Error("Did not catch RI issue"));
+      } catch (e) {
+         console.log(e);
+         done();
       }
 
    });

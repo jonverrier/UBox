@@ -6,7 +6,8 @@ import mongoose from "mongoose";
 import { EBaseUnitDimension, EBaseUnit } from '../../core/src/Unit';
 import { EMeasurementType, EPositiveTrend } from '../../core/src/ObservationType';
 import { persistenceDetailsSchema } from './PersistenceSchema';
-
+import { checkPersonReference } from './PersonSchema';
+import { checkCohortReference } from './CohortSchema';
 
 const measurementTypeValues: Array<string> = (Object.values(EMeasurementType));
 const measurementUnitTypeValues: Array<string> = (Object.values(EBaseUnitDimension));
@@ -83,11 +84,23 @@ export const measurementSchema = new mongoose.Schema({
    },
    _subjectKey: {
       type: String,
-      required: true
+      ref: 'Person',
+      required: true,
+
+      validate: {
+         validator: async function (v) { return checkPersonReference(v) },
+         message: 'Invalid ID reference for Subject'
+      }
    },
    _cohortKey: {
       type: String,
-      required: true
+      ref: 'Cohort',
+      required: true,
+
+      validate: {
+         validator: async function (v) { return checkCohortReference(v) },
+         message: 'Invalid ID reference for Cohort'
+      }
    }
 },
 {  // Enable timestamps for archival 
