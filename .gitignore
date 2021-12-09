@@ -25,6 +25,7 @@ apisrv/src/*.js
 apisrv/src/*.js.map
 apisrv/test/*.js
 apisrv/test/*.js.map
+apisrv/public/*.js.map
 apisrv/coverage/*
 apisrv/.nyc_output/*
 uiapp/node_modules/*
