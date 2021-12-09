@@ -3,7 +3,7 @@
 // Implements IMeasurementStore over a Mongo DB schema
 
 import { Logger } from '../../core/src/Logger';
-import { MeasurementTypes } from '../../core/src/ObservationTypeDictionary';
+import { PersistenceDetails } from '../../core/src/Persistence';
 import { Measurement, IMeasurementStore } from '../../core/src/Observation';
 import { MeasurementCodec } from '../../core/src/IOObservation';
 import { measurementModel } from './ObservationSchema';
@@ -150,6 +150,11 @@ export class MeasurementDb implements IMeasurementStore {
             }
          }
          let doc = new measurementModel(measurement.memento());
+
+         // Set schema version if it is currently clear
+         if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
+            doc._persistenceDetails._schemaVersion = 0;
+
          let result = await doc.save({ isNew: measurement.persistenceDetails.key ? true : false});
 
          var docPost = result.toObject({ transform: true });

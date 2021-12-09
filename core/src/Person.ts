@@ -209,6 +209,10 @@ export class Person extends Persona {
       return this._roles;
    }
    set email(email: string) {
+      if (!Person.isValidEmailAddress(email)) {
+         throw new InvalidParameterError("Email");
+      }
+
       this._email = email;
    }
 

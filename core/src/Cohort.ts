@@ -155,7 +155,7 @@ export class Cohort extends Persona {
       quantity: Quantity, repeats: number, measurementType: MeasurementType,
       subjectKey: string): Measurement {
 
-      return new Measurement(PersistenceDetails.newPersistenceDetails (Measurement.schemaVersion(), 0),
+      return new Measurement(PersistenceDetails.newPersistenceDetails (),
          quantity, repeats, Timestamper.now(), measurementType,
          subjectKey, this.persistenceDetails.key);
    }

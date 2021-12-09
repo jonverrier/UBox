@@ -85,7 +85,7 @@ describe("IOMeasurement", function () {
    var repeats = 1;
    var codec: MeasurementCodec = new MeasurementCodec();
    var measurementType: MeasurementType = MeasurementTypes.clean;
-   var measurement: Measurement = new Measurement(new PersistenceDetails("id", 1, 2), quantity, repeats, 0, measurementType, "1234", "1234");
+   var measurement: Measurement = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, 0, measurementType, "1234", "1234");
 
    it("Needs to decode a Measurement from clean input.", function () {
 
@@ -94,7 +94,7 @@ describe("IOMeasurement", function () {
       try {
 
          codec.decode({
-            _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
+            _persistenceDetails: { _key: "id", _schemaVersion: 0, _sequenceNumber: 0 },
             _quantity: quantity,
             _repeats: repeats,
             _timestamp: 1,

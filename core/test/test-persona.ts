@@ -1,6 +1,6 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { Persona, PersonaMemento} from '../src/Persona';
+import { Persona, PersonaDetails, PersonaMemento} from '../src/Persona';
 import { PersistenceTestHelper, PersonaTestHelper } from './testHelpers';
 
 var expect = require("chai").expect;
@@ -14,6 +14,39 @@ describe("Persona", function () {
 
    person2 = new Persona(PersistenceTestHelper.createKey2(), PersonaTestHelper.createJoe2Details());
   
+   it("Needs to detect invalid name", function () {
+
+      var caught: boolean = true;
+      try {
+         person1 = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("", "https://pics.com"));
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
+   it("Needs to detect null URL", function () {
+
+      var caught: boolean = true;
+      try {
+         person1 = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", ""));
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
+
+   it("Needs to detect invalid URL", function () {
+
+      var caught: boolean = true;
+      try {
+         person1 = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", "xx"));
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
 
    it("Needs to compare for equality and inequality", function () {
       

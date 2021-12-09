@@ -34,7 +34,7 @@ describe("BusinessApi", function () {
       savedPerson = await personApi.save(person);
       people.push(savedPerson);
 
-      business1 = new Business(new PersistenceDetails (null, 0, 0),
+      business1 = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetails(),
          people, people);
    });
@@ -94,7 +94,7 @@ describe("BusinessApi", function () {
       var peopleMess = new Array<Person>();
       peopleMess.push(PersonTestHelper.createJoeForInsertRIError());
 
-      let business2:Business = new Business(new PersistenceDetails(null, 0, 1),
+      let business2: Business = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetailsErr(),
          peopleMess, people);
 
@@ -114,7 +114,7 @@ describe("BusinessApi", function () {
       var peopleMess = new Array<Person>();
       peopleMess.push(PersonTestHelper.createJoeForInsertRIError());
 
-      let business2: Business = new Business(new PersistenceDetails(null, 0, 1),
+      let business2: Business = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetailsErr(),
          people, peopleMess);
 

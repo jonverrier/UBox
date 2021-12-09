@@ -2,6 +2,7 @@
 // Copyright TXPCo ltd, 2020, 2021
 
 import { Logger } from '../../core/src/Logger';
+import { PersistenceDetails } from '../../core/src/Persistence';
 import { Person, PersonMemento } from '../../core/src/Person';
 import { Business, BusinessMemento, IBusinessStore, IMyBusinessesStore } from '../../core/src/Business';
 import { BusinessCodec } from '../../core/src/IOBusiness';
@@ -31,13 +32,10 @@ async function postProcessFromLoad(doc: any, codec: BusinessCodec): Promise <Bus
    let memberIds = makeIdArray(doc._memberIds);
    let members = await personDb.loadMany(memberIds);
 
-   doc._administrators = Person.mementos(admins);
-   doc._members = Person.mementos(members);
+   doc._administrators = admins ? Person.mementos(admins) : new Array<Person>();
+   doc._members = members ? Person.mementos(members) : new Array<Person>();
 
    newBusiness = codec.tryCreateFrom(doc);
-
-   //newBusiness.administrators = admins ? admins : new Array<Person>();;
-   //newBusiness.members = members ? members : new Array<Person>();
 
    return newBusiness;
 }
@@ -135,6 +133,11 @@ export class BusinessDb implements IBusinessStore {
          }
 
          let doc = new businessModel(memento);
+
+         // Set schema version if it is currently clear
+         if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
+            doc._persistenceDetails._schemaVersion = 0;
+
          let result = await (doc).save({ isNew : business.persistenceDetails.key ? true : false});
 
          var docPost = result.toObject({ transform: true });

@@ -65,7 +65,7 @@ describe("Demo Setup", function () {
       athlete2 = await personApi.save(person);
       people.push(coach);
 
-      let business:Business = new Business(new PersistenceDetails(null, 0, 0),
+      let business: Business = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetails(),
          people, people);
 
@@ -74,7 +74,7 @@ describe("Demo Setup", function () {
 
    it("Needs to setup Olympic Lifting", async function (done) {
       
-      let newCohort: Cohort = new Cohort(new PersistenceDetails(null, 0, 0),
+      let newCohort: Cohort = new Cohort(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createOlyLiftDetails(),
          savedBusiness,
          Timestamper.now(),
@@ -94,7 +94,7 @@ describe("Demo Setup", function () {
 
    it("Needs to setup Power Lifting", async function (done) {
 
-      let newCohort: Cohort = new Cohort(new PersistenceDetails(null, 0, 0),
+      let newCohort: Cohort = new Cohort(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createPowerLiftDetails(),
          savedBusiness,
          Timestamper.now(),
