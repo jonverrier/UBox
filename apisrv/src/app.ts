@@ -88,6 +88,22 @@ if (inDevelopment) {
 // Routes for API endpoints
 app.use('/', ApiRoutes);
 
+app.get('/cohorts', (req, res) => {
+   var options = {
+      root: path.join(__dirname, '../public')
+   };
+
+   res.sendFile('/whiteboard.html', options);
+});
+
+app.get('/cohort', (req, res) => {
+   var options = {
+      root: path.join(__dirname, '../public')
+   };
+
+   res.sendFile('/whiteboard.html', options);
+});
+
 app.post('/contact', (req, res) => {
 
    const params = {
