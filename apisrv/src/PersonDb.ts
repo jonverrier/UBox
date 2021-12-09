@@ -2,6 +2,7 @@
 // Copyright TXPCo ltd, 2020, 2021
 
 import { Logger } from '../../core/src/Logger';
+import { PersistenceDetails } from '../../core/src/Persistence';
 import { Person, IPersonStore, IMyPersonStore } from '../../core/src/Person';
 import { ICodec } from '../../core/src/IOCommon';
 import { PersonCodec } from '../../core/src/IOPerson';
@@ -90,17 +91,22 @@ export class PersonDb implements IPersonStore {
             // if the saved version has a later or equal sequence number, do not overwrite it
             if (existing && existing._doc._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
 
-               var doc = existing.toObject({ transform: true });
+               var docPost = existing.toObject({ transform: true });
 
-               return this._personCodec.tryCreateFrom(doc);
+               return this._personCodec.tryCreateFrom(docPost);
             }
          }
 
-         // only save if we are a later sequence number 
-         let result = await (new personModel(this._personCodec.encode(person))).save ({ isNew: person.persistenceDetails.key ? true : false });
+         let doc = new personModel(this._personCodec.encode(person));
 
-         var doc = result.toObject({ transform: true });
-         return this._personCodec.tryCreateFrom(doc);
+         // Set schema version if it is currently clear
+         if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
+            doc._persistenceDetails._schemaVersion = 0;
+
+         let result = await (doc.save ({ isNew: person.persistenceDetails.key ? true : false }));
+
+         var docPost = result.toObject({ transform: true });
+         return this._personCodec.tryCreateFrom(docPost);
 
       } catch (err) {
          let logger: Logger = new Logger();

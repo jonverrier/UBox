@@ -36,13 +36,13 @@ describe("Cohort", function () {
          PersonaTestHelper.createXFitDulwichDetails(),
          people, people);
 
-      cohort1 = new Cohort(new PersistenceDetails("id", 1, 1),
+      cohort1 = new Cohort(new PersistenceDetails("id", 0, 0),
          PersonaTestHelper.createXFitDulwichDetails(),
          business,
          period,
          ECohortType.OlympicLifting);
          
-      cohort2 = new Cohort(new PersistenceDetails("id2", 1, 1),
+      cohort2 = new Cohort(new PersistenceDetails("id2", 0, 0),
          PersonaTestHelper.createXFitDulwichDetails(),
          business,
          period,

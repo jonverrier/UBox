@@ -32,16 +32,16 @@ describe("IOPersistenceDetails", function () {
 
    it("Needs to encode PersistenceDetails.", function () {
 
-      let encoded = codec.encode(new PersistenceDetails("Joe", 0, 0));
+      let encoded = codec.encode(new PersistenceDetails("id", 0, 0));
 
-      expect(encoded._key).to.equal("Joe");
+      expect(encoded._key).to.equal("id");
       expect(encoded._schemaVersion).to.equal(0);
       expect(encoded._sequenceNumber).to.equal(0);
    });
 
    it("Needs to encode then decode PersistenceDetails.", function () {
 
-      let initial = new PersistenceDetails("Joe", 0, 0);
+      let initial = new PersistenceDetails("id", 0, 0);
       let encoded = codec.encode(initial);
       let decoded: PersistenceDetails;
 

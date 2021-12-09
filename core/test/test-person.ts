@@ -116,6 +116,28 @@ describe("Person", function () {
       expect(roleperson.isProspect()).to.equal(false);
    });
 
+   it("Needs to detect invalid email", function () {
+
+      var caught: boolean = true;
+      try {
+         person1.email = "xx";
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
+   it("Needs to detect null email", function () {
+
+      var caught: boolean = true;
+      try {
+         person1.email = "";
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
    it("Needs to compare for equality and inequality", function () {
       
       expect(person1.equals(person1)).to.equal(true);

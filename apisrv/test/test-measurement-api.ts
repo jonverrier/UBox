@@ -56,13 +56,13 @@ describe("MeasurementApi", function () {
       savedPerson = await personApi.save(person);
       people.push(savedPerson);
 
-      let business = new Business(new PersistenceDetails(null, 0, 0),
+      let business = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetails(),
          people, people);
 
       let newBusiness: Business = await businessApi.save(business);
 
-      let newCohort:Cohort = new Cohort(new PersistenceDetails(null, 1, 1),
+      let newCohort: Cohort = new Cohort(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createOlyLiftDetails(),
          newBusiness,
          1,
@@ -70,7 +70,9 @@ describe("MeasurementApi", function () {
       let savedCohort = await cohortApi.save(newCohort);
 
       measurement1 = new Measurement(
-         new PersistenceDetails(null, 1, 2), quantity, repeats, Timestamper.now(), measurementType, savedPerson.persistenceDetails.key, savedCohort.persistenceDetails.key);
+         PersistenceDetails.newPersistenceDetails(),
+         quantity, repeats, Timestamper.now(), measurementType,
+         savedPerson.persistenceDetails.key, savedCohort.persistenceDetails.key);
    });
 
    it("Needs to save a new Measurement", async function (done) {
@@ -165,7 +167,9 @@ describe("MeasurementApi", function () {
    it("Needs to trap referential integrity issue with SubjectKey", async function (done) {
       // Create and save a Measurement, should create error as have an RI issue 
       let measurement2 = new Measurement(
-         new PersistenceDetails(null, 1, 2), quantity, repeats, Timestamper.now(), measurementType, "ForceRIError", measurement1.cohortKey);
+         PersistenceDetails.newPersistenceDetails(),
+         quantity, repeats, Timestamper.now(), measurementType,
+         "ForceRIError", measurement1.cohortKey);
 
       try {
          const response = await api.save(measurement2);
@@ -180,7 +184,9 @@ describe("MeasurementApi", function () {
    it("Needs to trap referential integrity issue with CohortKey", async function (done) {
       // Create and save a Measurement, should create error as have an RI issue 
       let measurement2 = new Measurement(
-         new PersistenceDetails(null, 1, 2), quantity, repeats, Timestamper.now(), measurementType, measurement1.subjectKey, "ForceRIError");
+         PersistenceDetails.newPersistenceDetails(),
+         quantity, repeats, Timestamper.now(), measurementType,
+         measurement1.subjectKey, "ForceRIError");
 
       try {
          const response = await api.save(measurement2);
@@ -225,13 +231,13 @@ describe("MeasurementApi - heterogenous", function () {
       savedPerson = await personApi.save(person);
       people.push(savedPerson);
 
-      let business = new Business(new PersistenceDetails(null, 0, 0),
+      let business = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetails(),
          people, people);
 
       let newBusiness: Business = await businessApi.save(business);
 
-      let newCohort: Cohort = new Cohort(new PersistenceDetails(null, 1, 1),
+      let newCohort: Cohort = new Cohort(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createOlyLiftDetails(),
          newBusiness,
          1,
@@ -239,11 +245,13 @@ describe("MeasurementApi - heterogenous", function () {
       let savedCohort = await cohortApi.save(newCohort);
 
       timeMeasurement = new Measurement(
-         new PersistenceDetails(null, 1, 2), quantityOfTime, repeats, Timestamper.now(), timeMeasurementType,
+         PersistenceDetails.newPersistenceDetails(),
+         quantityOfTime, repeats, Timestamper.now(), timeMeasurementType,
          savedPerson.persistenceDetails.key, savedCohort.persistenceDetails.key);
 
       weightMeasurement = new Measurement(
-         new PersistenceDetails(null, 1, 2), quantityOfWeight, repeats, Timestamper.now(), weightMeasurementType,
+         PersistenceDetails.newPersistenceDetails(),
+         quantityOfWeight, repeats, Timestamper.now(), weightMeasurementType,
          savedPerson.persistenceDetails.key, savedCohort.persistenceDetails.key);
    });
 

@@ -6,8 +6,6 @@ import { Persistence, PersistenceDetails, PersistenceDetailsMemento, ILoaderFor,
 import { EMeasurementType, MeasurementType } from './ObservationType';
 import { MeasurementTypes } from './ObservationTypeDictionary';
 
-const measurementSchemaVersion = 0;
-
 export class MeasurementMemento {
    readonly _persistenceDetails: PersistenceDetailsMemento;
    readonly _quantity: QuantityMemento;
@@ -150,10 +148,6 @@ export class Measurement extends Persistence {
          this._measurementType.equals(rhs.measurementType) &&
          this._subjectKey === rhs._subjectKey &&
          this._cohortKey === rhs._cohortKey);
-   }
-
-   static schemaVersion(): number {
-      return measurementSchemaVersion;
    }
 }
 

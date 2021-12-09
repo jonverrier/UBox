@@ -72,7 +72,7 @@ export class PersonTestHelper {
    static createJoeMember(): Person {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
-      return new Person(new PersistenceDetails("1", 1, 1),
+      return new Person(PersistenceDetails.newPersistenceDetails(),
                         new PersonaDetails ("Joe", "https://joe.thumbnails.com"),
          "Joe@mail.com", roles);
    }
@@ -80,7 +80,7 @@ export class PersonTestHelper {
    static createJoeMember2(): Person {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
-      return new Person(new PersistenceDetails("2", 1, 1),
+      return new Person(PersistenceDetails.newPersistenceDetails(),
             new PersonaDetails("Joe2", "https://joe2.thumbnails.com"),
          "Joe2@mail.com", roles);
    }
@@ -88,7 +88,7 @@ export class PersonTestHelper {
    static createJoeCoachMember(): Person {
       let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
 
-      return new Person(new PersistenceDetails("1", 1, 1),
+      return new Person(PersistenceDetails.newPersistenceDetails(),
             new PersonaDetails("Joe", "https://joe.thumbnails.com"),
          "Joe@mail.com", roles);
    }
@@ -97,7 +97,7 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member, ERoleType.Coach));
 
       return new Person(
-         new PersistenceDetails(null, 1, 1),
+         PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Jon V", "https://jonv.pics.com"),
          "jonathanverrier@hotmail.com",
          roles);
@@ -107,7 +107,7 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(
-         new PersistenceDetails(null, 1, 1),
+         PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Harry V", "https://harryv.pics.com"),
          "madeupmailforharry@gmail.com",
          roles);
@@ -117,7 +117,7 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(
-         new PersistenceDetails(null, 1, 1),
+         PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Alex V", "https://alexv.pics.com"),
          "madeupmailforalexvy@gmail.com",
          roles);
@@ -126,7 +126,7 @@ export class PersonTestHelper {
    static createJoeForInsertRIError (): Person {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
-      return new Person(new PersistenceDetails("61af3bcd0f1b01355cc36f2c", 1, 1),
+      return new Person(new PersistenceDetails("61af3bcd0f1b01355cc36f2c", 0, 0),
          new PersonaDetails("Joe", "https://joe.thumbnails.com"),
          "Joe@mail.com", roles);
    }
@@ -134,7 +134,7 @@ export class PersonTestHelper {
    static createJoeForInsert(): Person {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
-      return new Person(new PersistenceDetails(null, 1, 1),
+      return new Person(PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Joe", "https://joe.thumbnails.com"),
          "Joe@mail.com", roles);
    }

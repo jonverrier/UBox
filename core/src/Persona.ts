@@ -67,9 +67,17 @@ export class PersonaDetails  {
       return this._thumbnailUrl;
    }
    set name(name: string) {
+      if (!PersonaDetails.isValidName(name)) {
+         throw new InvalidParameterError("Name");
+      }
+
       this._name = name;
    }
    set thumbnailUrl(thumbnailUrl: string) {
+      if (!PersonaDetails.isValidUrl(thumbnailUrl)) {
+         throw new InvalidParameterError("Url");
+      }
+
       this._thumbnailUrl = thumbnailUrl;
    }
 

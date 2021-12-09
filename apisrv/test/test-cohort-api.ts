@@ -45,13 +45,13 @@ describe("CohortApi", function () {
       people = new Array<Person>();
       people.push(savedPerson);
 
-      let business = new Business(new PersistenceDetails(null, 0, 0),
+      let business = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetails(),
          people, people);
 
       let newBusiness:Business = await businessApi.save(business);
 
-      cohort1 = new Cohort(new PersistenceDetails(null, 1, 1),
+      cohort1 = new Cohort(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createOlyLiftDetails(),
          newBusiness,
          period,

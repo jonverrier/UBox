@@ -2,6 +2,7 @@
 // Copyright TXPCo ltd, 2020, 2021
 
 import { Logger } from '../../core/src/Logger';
+import { PersistenceDetails } from '../../core/src/Persistence';
 import { ECohortType, Cohort, ICohortStore, IMyCohortsStore } from '../../core/src/Cohort';
 import { Business } from '../../core/src/Business';
 import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
@@ -88,6 +89,11 @@ export class CohortDb implements ICohortStore {
          }
 
          let doc = new cohortModel(memento);
+
+         // Set schema version if it is currently clear
+         if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
+            doc._persistenceDetails._schemaVersion = 0;
+
          let result = await doc.save({ isNew: cohort.persistenceDetails.key ? true : false });
 
          var docPost = result.toObject({ transform: true });
@@ -145,8 +151,12 @@ export class MyCohortsDb implements IMyCohortsStore {
             var docPost = result[i].toObject({ transform: true });
 
             // Put the full Business object on the Cohort
-            docPost._business = businesses[i].memento();
-
+            for (var j = 0; j < businesses.length; j++) {
+               if (businesses[j].persistenceDetails.key === docPost._businessId) {
+                  docPost._business = businesses[j].memento();
+                  break;
+               }
+            }
             cohorts.push(this._codec.tryCreateFrom(docPost));
          }
 

@@ -80,7 +80,7 @@ describe("IOPerson", function () {
 
       try {
          codec.decode({
-            _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
+            _persistenceDetails: { _key: "id", _schemaVersion: 0, _sequenceNumber: 0 },
             _personaDetails : {
                _name: "Joe" ,
                _thumbnailUrl: "https://jo.pics.com"
@@ -97,11 +97,12 @@ describe("IOPerson", function () {
 
    it("Needs to encode Person.", function () {
 
-      let encoded: PersonMemento = codec.encode(PersonTestHelper.createJoeMember());
+      let Joe = PersonTestHelper.createJoeMember();
+      let encoded: PersonMemento = codec.encode(Joe);
 
-      expect(encoded._persistenceDetails._key).to.equal("1");
-      expect(encoded._persistenceDetails._schemaVersion).to.equal(1);
-      expect(encoded._persistenceDetails._sequenceNumber).to.equal(1);
+      expect(encoded._persistenceDetails._key).to.equal(Joe.persistenceDetails.key);
+      expect(encoded._persistenceDetails._schemaVersion).to.equal(Joe.persistenceDetails.schemaVersion);
+      expect(encoded._persistenceDetails._sequenceNumber).to.equal(Joe.persistenceDetails.sequenceNumber);
    });
 
    it("Needs to encode then decode Person.", function () {

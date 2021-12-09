@@ -17,10 +17,14 @@ export class PersistenceDetailsMemento {
    }
 }
 
+
+// This value is used to indicate an object was created in memery. Once it is saved in the DB, the schema value is set from the DB layer.
+const _newSchemaIndicator: number = -1;
+
 export class PersistenceDetails {
-   private _key: string;
-   private _schemaVersion: number;
-   private _sequenceNumber: number;
+   private _key: string; // Primary key for the stored object
+   private _schemaVersion: number; // Schema version - allows the DB layer to patch objects stored before a schema upgrade. 
+   private _sequenceNumber: number; // Object version - later sequenceNumbers override earlier onces in save conflicts. 
 
    /**
     * Create a PersistenceDetails object - all persistence objects derive from this.
@@ -84,13 +88,31 @@ export class PersistenceDetails {
       return this._key !== null;
    }
 
-   static newPersistenceDetails(schemaVersion: number, sequenceNumber: number): PersistenceDetails {
-      return new PersistenceDetails(null, schemaVersion, sequenceNumber);
+   /**
+   * incrementSequence - call this if an object is amended to force saving in DB layer
+   * @returns the new sequenceNumber
+   */
+   incrementSequence(): number {
+      this._sequenceNumber = this._sequenceNumber + 1;
+      return this._sequenceNumber;
+   }
+
+   static newSchemaIndicator(): number {
+
+      return _newSchemaIndicator;
+   }
+
+   // Create persistenceDetails for a newly created object:
+   // key is null, schema version is undefined, and sequence is 0 since it is new 
+   static newPersistenceDetails(): PersistenceDetails {
+      return new PersistenceDetails(null, _newSchemaIndicator, 0); 
    }
 }
 
+
 export class Persistence {
    private _persistenceDetails: PersistenceDetails;
+
 
 /**
  * Create a Persistence object - all persistence objects derive from this. 
@@ -116,8 +138,7 @@ export class Persistence {
     equals (rhs: Persistence) : boolean {
 
        return (this._persistenceDetails.equals (rhs._persistenceDetails));
-   }
-   
+   }   
 }
 
 export interface ILoaderFor<T> {
