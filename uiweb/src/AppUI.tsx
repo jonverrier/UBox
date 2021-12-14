@@ -6,11 +6,10 @@ import * as React from 'react';
 
 
 // Additional packages
-import { BrowserRouter, Route, Navigate, Routes } from 'react-router-dom'; 
+import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
+import { Provider, teamsTheme } from '@fluentui/react-northstar';
+import { ComposeIcon } from '@fluentui/react-icons-northstar'
 
-   //<Route path = "/" >
-   //<Navigate to="/cohorts" />  
-   //</Route > 
 export class Cohorts extends React.Component {
    render() {
       return (
@@ -21,21 +20,24 @@ export class Cohorts extends React.Component {
 export class Cohort extends React.Component {
    render() {
       return (
-         <p>Cohort</p>);
+         <div><p>Cohort</p> <ComposeIcon /></div>);
+         
    }
 }
 
 export class PageSwitcher extends React.Component {
    render() {
       return ( 
-         <BrowserRouter>   
-            <Routes>
-               <Route path="/">
-                  <Route path="cohorts" element={<Cohorts />} />
-                  <Route path="cohort" element={<Cohort />} />
-               </Route>
-            </Routes>  
-         </BrowserRouter>  
+         <Provider theme={teamsTheme}>
+            <BrowserRouter>   
+               <Routes>
+                  <Route path="/">
+                     <Route path="cohorts" element={<Cohorts />} />
+                     <Route path="cohort" element={<Cohort />} />
+                  </Route>
+               </Routes>  
+            </BrowserRouter>  
+         </Provider>
       );
    }
 }
