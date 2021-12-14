@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31410.357
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9F7EF013-A82D-4926-B6B7-3FCCFF8515F3}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,10 +15,21 @@ EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "core", "core\core.njsproj", "{C1A8C623-73F8-43E2-90FF-979FA2111A07}"
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "apisrv", "apisrv\apisrv.njsproj", "{66A054D2-B4BB-4F2D-82EE-DBBE28739DB5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1A8C623-73F8-43E2-90FF-979FA2111A07} = {C1A8C623-73F8-43E2-90FF-979FA2111A07}
+		{77E37E2D-CEBC-4F5B-8035-8950F997D1E7} = {77E37E2D-CEBC-4F5B-8035-8950F997D1E7}
+	EndProjectSection
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "uiapp", "uiapp\uiapp.njsproj", "{D4FCCC93-4FCE-4AB5-8860-CBC2325E549B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1A8C623-73F8-43E2-90FF-979FA2111A07} = {C1A8C623-73F8-43E2-90FF-979FA2111A07}
+		{66A054D2-B4BB-4F2D-82EE-DBBE28739DB5} = {66A054D2-B4BB-4F2D-82EE-DBBE28739DB5}
+	EndProjectSection
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "uiweb", "uiweb\uiweb.njsproj", "{77E37E2D-CEBC-4F5B-8035-8950F997D1E7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1A8C623-73F8-43E2-90FF-979FA2111A07} = {C1A8C623-73F8-43E2-90FF-979FA2111A07}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

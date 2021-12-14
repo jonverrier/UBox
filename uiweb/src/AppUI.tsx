@@ -7,20 +7,41 @@ import * as React from 'react';
 
 // Additional packages
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
-import { Provider, teamsTheme } from '@fluentui/react-northstar';
-import { ComposeIcon } from '@fluentui/react-icons-northstar'
+import { Provider, teamsTheme, mergeThemes } from '@fluentui/react-northstar';
+import { ComposeIcon } from '@fluentui/react-icons-northstar';
+
+import { appTheme } from './Theme';
+import { Navbar } from './Navbar';
+import { PersonaDetails } from '../../core/src/Persona';
+import { CohortCard } from './CohortCard';
 
 export class Cohorts extends React.Component {
+   _personaDetails: PersonaDetails;
+
+   constructor(props) {
+      super(props);
+
+      this._personaDetails = new PersonaDetails("Olympic Lifting", "assets/img/weightlifter-b-128x128.png");
+
+   }
+
    render() {
-      return (
-         <p>Cohorts</p>);
+      return (<div>
+         <Navbar />
+         <p>Cohorts</p>
+         <CohortCard personaDetails={this._personaDetails}></CohortCard>
+         <CohortCard personaDetails={this._personaDetails}></CohortCard>
+         </div>);
    }
 }
 
 export class Cohort extends React.Component {
    render() {
       return (
-         <div><p>Cohort</p> <ComposeIcon /></div>);
+         <div>
+            <Navbar />
+            <p>Cohort</p> <ComposeIcon />
+         </div>);
          
    }
 }
@@ -28,7 +49,7 @@ export class Cohort extends React.Component {
 export class PageSwitcher extends React.Component {
    render() {
       return ( 
-         <Provider theme={teamsTheme}>
+         <Provider theme={mergeThemes(teamsTheme, appTheme)}>
             <BrowserRouter>   
                <Routes>
                   <Route path="/">

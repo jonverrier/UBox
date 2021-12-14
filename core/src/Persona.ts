@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 // Party contains things that are common across a Person and a Business - currently just Name and Url
 
-import { URL } from 'url'
+import { URL } from 'url';
 import { InvalidParameterError } from './CoreError';
 import { PersistenceDetails, PersistenceDetailsMemento, Persistence, IMultiLoaderFor } from "./Persistence";
 

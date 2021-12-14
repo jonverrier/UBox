@@ -40,6 +40,9 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\AppUI.tsx" />
+    <TypeScriptCompile Include="src\Navbar.tsx" />
+    <TypeScriptCompile Include="src\CohortCard.tsx" />
+    <TypeScriptCompile Include="src\Theme.tsx" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
