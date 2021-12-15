@@ -1,8 +1,12 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
+// React
 import * as React from 'react';
-import { Flex, Text, Avatar, Card, AcceptIcon} from '@fluentui/react-northstar';
 
+// Fluent-UI
+import { Flex, Text, Avatar, Card, AcceptIcon, Button} from '@fluentui/react-northstar';
+
+// Local App 
 import { PersonaDetails } from '../../core/src/Persona';
 
 export interface ICohortCardProps {
@@ -31,8 +35,8 @@ export class CohortCard extends React.Component<ICohortCardProps, ICohortCardSta
 
    render() {
       return (
-         <Card aria-roledescription="card avatar">
-            <Card.Header fitted>
+         <Card aria-roledescription="card avatar" fluid={true}>
+            <Card.Header>
                <Flex gap="gap.medium">
                   <Avatar
                      image={this._personaDetails.thumbnailUrl}
@@ -45,12 +49,21 @@ export class CohortCard extends React.Component<ICohortCardProps, ICohortCardSta
                         title: 'Available',
                      }}
                   />
-                  <Flex gap="gap.medium" column>
+                  <Flex gap="gap.medium" column vAlign="center" >
                      <Text content={this._personaDetails.name} weight="bold" size="medium" />
-                     <Text content="Olympic lifting squad, Feb-May 2022" size="medium" />
                   </Flex>
                </Flex>
-             </Card.Header>
+            </Card.Header>
+            <Card.Body>
+               <Flex column gap="gap.medium">
+                  <Text content="Olympic lifting squad, Feb-May 2022" size="medium" />
+               </Flex>
+            </Card.Body>
+            <Card.Footer>
+               <Flex column gap="gap.medium" space="between">
+                  <Button content="Open" />
+               </Flex>
+            </Card.Footer>
          </Card>);
    }
 }

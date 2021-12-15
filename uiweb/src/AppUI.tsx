@@ -1,19 +1,19 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-// Core React
+// React
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
-
-
-// Additional packages
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
-import { Provider, teamsTheme, mergeThemes } from '@fluentui/react-northstar';
-import { ComposeIcon } from '@fluentui/react-icons-northstar';
 
+// Fluent-UI
+import { Flex, Provider, teamsTheme, mergeThemes } from '@fluentui/react-northstar';
+
+// Local App 
 import { appTheme } from './Theme';
 import { Navbar } from './Navbar';
 import { PersonaDetails } from '../../core/src/Persona';
 import { CohortCard } from './CohortCard';
+import { CohortView } from './Cohort';
 
 export class Cohorts extends React.Component {
    _personaDetails: PersonaDetails;
@@ -26,20 +26,35 @@ export class Cohorts extends React.Component {
    }
 
    render() {
-      return (<div>
-         <Navbar />
-         <CohortCard personaDetails={this._personaDetails}></CohortCard>
-         <CohortCard personaDetails={this._personaDetails}></CohortCard>
-         </div>);
+      return (
+         <div>
+            <Navbar />
+            <Flex gap="gap.medium" column={true}>
+               <CohortCard personaDetails={this._personaDetails}></CohortCard>
+               <CohortCard personaDetails={this._personaDetails}></CohortCard>
+            </Flex>
+         </div>
+      );
    }
 }
 
 export class Cohort extends React.Component {
+   _personaDetails: PersonaDetails;
+
+   constructor(props) {
+      super(props);
+
+      this._personaDetails = new PersonaDetails("Olympic Lifting", "assets/img/weightlifter-b-128x128.png");
+
+   }
+
    render() {
       return (
          <div>
             <Navbar />
-            <p>Cohort</p> <ComposeIcon />
+            <Flex gap="gap.medium" column={true}>
+               <CohortView personaDetails={this._personaDetails}></CohortView>
+            </Flex>
          </div>);
          
    }
