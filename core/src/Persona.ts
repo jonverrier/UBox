@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 // Party contains things that are common across a Person and a Business - currently just Name and Url
 
-import { URL } from 'url';
+import { Url } from './Url';
 import { InvalidParameterError } from './CoreError';
 import { PersistenceDetails, PersistenceDetailsMemento, Persistence, IMultiLoaderFor } from "./Persistence";
 
@@ -122,7 +122,7 @@ export class PersonaDetails  {
       let parsed;
 
       try {
-         parsed = new URL(url);
+         parsed = new Url(url);
       } catch (_) {
          return false;
       }

@@ -1,10 +1,22 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
+export const brandForeground = '#fff';
+export const brandHighlight = '#2dc997';
+export const brandBackground = '#666666';
+
 export const appTheme = {
    siteVariables: {
-      brandForeground: '#fff',
-      brandHighlight: '#2dc997',
-      brandBackground: '#666666'
+      brandForeground: brandForeground,
+      brandHighlight: brandHighlight,
+      brandBackground: brandBackground
+   } 
+}
+
+export const appThemeDark = {
+   siteVariables: {
+      brandForeground: brandForeground,
+      brandHighlight: brandHighlight,
+      brandBackground: brandBackground
    },
    componentVariables: {
       Flex: ({ colorScheme }) => ({
@@ -19,7 +31,6 @@ export const appTheme = {
             backgroundColor: variables.backgroundColor,
          }),
       },
-   },
+   }
 }
-
 

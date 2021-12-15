@@ -8,7 +8,7 @@ var expect = require("chai").expect;
 
 describe("Persona", function () {
 
-   var person1: Persona, person2: Persona;
+   var person1: Persona, person2: Persona, personErr:Persona;
 
    person1 = new Persona (PersistenceTestHelper.createKey1(), PersonaTestHelper.createJoeDetails());
 
@@ -16,9 +16,9 @@ describe("Persona", function () {
   
    it("Needs to detect invalid name", function () {
 
-      var caught: boolean = true;
+      var caught: boolean = false;
       try {
-         person1 = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("", "https://pics.com"));
+         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("", "https://pics.com"));
       } catch (e) {
          caught = true;
       }
@@ -27,9 +27,9 @@ describe("Persona", function () {
 
    it("Needs to detect null URL", function () {
 
-      var caught: boolean = true;
+      var caught: boolean = false;
       try {
-         person1 = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", ""));
+         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", ""));
       } catch (e) {
          caught = true;
       }
@@ -39,13 +39,24 @@ describe("Persona", function () {
 
    it("Needs to detect invalid URL", function () {
 
-      var caught: boolean = true;
+      var caught: boolean = false;
       try {
-         person1 = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", "xx"));
+         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", "xx"));
       } catch (e) {
          caught = true;
       }
       expect(caught).to.equal(true);
+   });
+
+   it("Needs to detect valid relative URL", function () {
+
+      var caught: boolean = false;
+      try {
+         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", "xx/xx"));
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(false);
    });
 
    it("Needs to compare for equality and inequality", function () {

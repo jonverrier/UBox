@@ -28,7 +28,6 @@ export class Cohorts extends React.Component {
    render() {
       return (<div>
          <Navbar />
-         <p>Cohorts</p>
          <CohortCard personaDetails={this._personaDetails}></CohortCard>
          <CohortCard personaDetails={this._personaDetails}></CohortCard>
          </div>);

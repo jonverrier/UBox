@@ -68,6 +68,7 @@
     <TypeScriptCompile Include="src\Persistence.ts" />
     <TypeScriptCompile Include="src\Timestamp.ts" />
     <TypeScriptCompile Include="src\Unit.ts" />
+    <TypeScriptCompile Include="src\Url.ts" />
     <TypeScriptCompile Include="test\test-business.ts" />
     <TypeScriptCompile Include="test\test-cohort.ts">
       <TestFramework>Mocha</TestFramework>
