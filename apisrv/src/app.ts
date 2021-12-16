@@ -88,6 +88,14 @@ if (inDevelopment) {
 // Routes for API endpoints
 app.use('/', ApiRoutes);
 
+app.get('/login', (req, res) => {
+   var options = {
+      root: path.join(__dirname, '../public')
+   };
+
+   res.sendFile('/whiteboard.html', options);
+});
+
 app.get('/cohorts', (req, res) => {
    var options = {
       root: path.join(__dirname, '../public')
