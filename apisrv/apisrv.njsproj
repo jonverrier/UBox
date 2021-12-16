@@ -59,6 +59,9 @@
     <Content Include="public\assets\vendor\isotope-layout\isotope.pkgd.js" />
     <Content Include="public\assets\vendor\isotope-layout\isotope.pkgd.min.js" />
     <Content Include="public\assets\vendor\purecounter\purecounter.js" />
+    <Content Include="public\client-bundle.js" />
+    <Content Include="public\client-bundle.min.js" />
+    <Content Include="public\client-bundle.min.js.LICENSE.txt" />
     <Content Include="public\whiteboard.html" />
     <Content Include="public\index.html" />
     <Content Include="README.md" />
