@@ -14,6 +14,7 @@ import { Navbar } from './Navbar';
 import { PersonaDetails } from '../../core/src/Persona';
 import { CohortCard } from './CohortCard';
 import { CohortView } from './Cohort';
+import { LoginView } from './Login';
 
 export class Cohorts extends React.Component {
    _personaDetails: PersonaDetails;
@@ -60,6 +61,28 @@ export class Cohort extends React.Component {
    }
 }
 
+export class Login extends React.Component {
+   _personaDetails: PersonaDetails;
+
+   constructor(props) {
+      super(props);
+
+      this._personaDetails = new PersonaDetails("Olympic Lifting", "assets/img/weightlifter-b-128x128.png");
+
+   }
+
+   render() {
+      return (
+         <div>
+            <Navbar />
+            <Flex gap="gap.medium" column={true}>
+               <LoginView personaDetails={this._personaDetails}></LoginView>
+            </Flex>
+         </div>);
+
+   }
+}
+
 export class PageSwitcher extends React.Component {
    render() {
       return ( 
@@ -69,6 +92,7 @@ export class PageSwitcher extends React.Component {
                   <Route path="/">
                      <Route path="cohorts" element={<Cohorts />} />
                      <Route path="cohort" element={<Cohort />} />
+                     <Route path="login" element={<Login />} />
                   </Route>
                </Routes>  
             </BrowserRouter>  

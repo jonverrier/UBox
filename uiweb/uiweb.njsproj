@@ -41,6 +41,8 @@
   <ItemGroup>
     <TypeScriptCompile Include="src\AppUI.tsx" />
     <TypeScriptCompile Include="src\Cohort.tsx" />
+    <TypeScriptCompile Include="src\Login.tsx" />
+    <TypeScriptCompile Include="src\Media.ts" />
     <TypeScriptCompile Include="src\Navbar.tsx" />
     <TypeScriptCompile Include="src\CohortCard.tsx" />
     <TypeScriptCompile Include="src\Theme.tsx" />
