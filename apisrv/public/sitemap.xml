@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
    <url>
-      <loc>http://ultrabox.herokuapp.com/index.html</loc>
+      <loc>https://ultrabox.herokuapp.com/index.html</loc>
       <lastmod>2021-12-17</lastmod>
    </url>
    <url>
-      <loc>http://ultrabox.herokuapp.com/login</loc>
+      <loc>https://ultrabox.herokuapp.com/login</loc>
       <lastmod>2021-12-17</lastmod>
    </url>   
    <url>
-      <loc>http://ultrabox.herokuapp.com/cohorts</loc>
+      <loc>https://ultrabox.herokuapp.com/cohorts</loc>
       <lastmod>2021-12-17</lastmod>
    </url>
    <url>
-      <loc>http://ultrabox.herokuapp.com/cohort</loc>
+      <loc>https://ultrabox.herokuapp.com/cohort</loc>
       <lastmod>2021-12-17</lastmod>
    </url>
 </urlset>
