@@ -31,6 +31,8 @@
       "io-ts-types": "^0.5.16",
       "loglevel": "^1.8.0",
       "mongoose": "5.10.10",
+      "passport": "^0.5.2",
+      "passport-google-oauth20": "^2.0.0",
       "path": "^0.12.7",
       "qs": "^6.10.1",
       "ts-node": "^10.4.0",

@@ -61,6 +61,9 @@
     <Content Include="public\assets\vendor\isotope-layout\isotope.pkgd.js" />
     <Content Include="public\assets\vendor\isotope-layout\isotope.pkgd.min.js" />
     <Content Include="public\assets\vendor\purecounter\purecounter.js" />
+    <Content Include="public\client-bundle.js" />
+    <Content Include="public\client-bundle.min.js" />
+    <Content Include="public\client-bundle.min.js.LICENSE.txt" />
     <Content Include="public\whiteboard.html" />
     <Content Include="public\index.html" />
     <Content Include="README.md" />
@@ -88,6 +91,8 @@
   <ItemGroup>
     <TypeScriptCompile Include="src\ApiRoutes.ts" />
     <TypeScriptCompile Include="src\ApiUrls.ts" />
+    <TypeScriptCompile Include="src\AuthController.ts" />
+    <TypeScriptCompile Include="src\AuthRoutes.ts" />
     <TypeScriptCompile Include="src\BusinessDb.ts" />
     <TypeScriptCompile Include="src\BusinessApi.ts" />
     <TypeScriptCompile Include="src\BusinessSchema.ts" />
