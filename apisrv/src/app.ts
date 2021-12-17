@@ -162,6 +162,14 @@ const port = process.env.PORT || 4000
 // Fix deprecation warning. This one is not a breaking change. 
 mongoose.set('useFindAndModify', false);
 
+//The 404 Route (ALWAYS Keep this as the last route)
+app.get('*', function (req, res) {
+   var options = {
+      root: path.join(__dirname, "../public")
+   };
+   res.sendFile('nofile.html', options);
+});
+
 const connect = async () => {
    const dbConnection = mongoose.connection;
 
