@@ -10,8 +10,10 @@ import session from 'express-session';
 import connectMongo from 'connect-mongo';
 import axios, { AxiosRequestConfig } from 'axios';
 import qs from 'qs';
+var passport = require('passport');
 
 // Internal classes
+import { AuthRoutes } from './AuthRoutes';
 import { ApiRoutes } from './ApiRoutes';
 import { ContactDb } from './ContactDb';
 
@@ -37,7 +39,7 @@ if (inDevelopment)
 
 // Insert versioning middleware before static
 var currentVersion = '0.1';
-// var versionator = require('versionator').create(currentVersion);
+// TODO var versionator = require('versionator').create(currentVersion);
 
 var app = express();
 
@@ -80,6 +82,11 @@ app.use(                    // Use Mongo session store
       ephemeral: true
    }));
 
+
+// Passport authentication
+app.use(passport.initialize());
+app.use(passport.session());
+
 if (inDevelopment) {
    // Set error handler. 
    app.use(errorHandler({ dumpExceptions: true, showStack: true }));
@@ -87,6 +94,10 @@ if (inDevelopment) {
 
 // Routes for API endpoints
 app.use('/', ApiRoutes);
+
+// Routes for auth pages
+app.use('/', AuthRoutes);
+
 
 app.get('/login', (req, res) => {
    var options = {

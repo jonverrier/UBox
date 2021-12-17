@@ -89,6 +89,8 @@
   <ItemGroup>
     <TypeScriptCompile Include="src\ApiRoutes.ts" />
     <TypeScriptCompile Include="src\ApiUrls.ts" />
+    <TypeScriptCompile Include="src\AuthController.ts" />
+    <TypeScriptCompile Include="src\AuthRoutes.ts" />
     <TypeScriptCompile Include="src\BusinessDb.ts" />
     <TypeScriptCompile Include="src\BusinessApi.ts" />
     <TypeScriptCompile Include="src\BusinessSchema.ts" />
