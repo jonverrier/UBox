@@ -64,6 +64,12 @@
     <Content Include="public\client-bundle.js" />
     <Content Include="public\client-bundle.min.js" />
     <Content Include="public\client-bundle.min.js.LICENSE.txt" />
+    <Content Include="public\internalerror.html" />
+    <Content Include="public\logonnotallowed.html" />
+    <Content Include="public\nofile.html" />
+    <Content Include="public\privacy.html" />
+    <Content Include="public\sitemap.xml" />
+    <Content Include="public\terms.html" />
     <Content Include="public\whiteboard.html" />
     <Content Include="public\index.html" />
     <Content Include="README.md" />
