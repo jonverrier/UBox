@@ -3,7 +3,7 @@
 
 import { Logger } from '../../core/src/Logger';
 import { Person } from "../../core/src/Person";
-import { PersonApi, MyPersonApi } from '../src/PersonApi';
+import { PersonApi, PersonByEmailApi, PersonByExternalIdApi } from '../src/PersonApi';
 import { PersonTestHelper } from '../../core/test/testHelpers';
 
 var expect = require("chai").expect;
@@ -53,7 +53,7 @@ describe("PersonApi", function () {
    it("Needs to save and then retrieve an existing Person by email", async function (done) {
 
       try {
-         var emailApi: MyPersonApi = new MyPersonApi(root);
+         var emailApi: PersonByEmailApi = new PersonByEmailApi(root);
          const savedPerson = await api.save(person1);
          const response2 = await emailApi.loadOne(savedPerson.email);
 
@@ -61,6 +61,22 @@ describe("PersonApi", function () {
       } catch (e) {
          var logger = new Logger();
          logger.logError("PersonApi", "Save-Load Email", "Error", e.toString());
+         done(e);
+      }
+
+   });
+
+   it("Needs to save and then retrieve an existing Person by externalID", async function (done) {
+
+      try {
+         var externalIdApi: PersonByExternalIdApi = new PersonByExternalIdApi(root);
+         const savedPerson = await api.save(person1);
+         const response2 = await externalIdApi.loadOne(savedPerson.loginContext.externalId);
+
+         done();
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("PersonApi", "Save-Load externalID", "Error", e.toString());
          done(e);
       }
 

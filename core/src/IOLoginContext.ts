@@ -7,9 +7,9 @@ import * as IoTs from 'io-ts';
 
 // LoginDetails Codec
 // ==========
-const loginIoType = IoTs.type({
+export const loginIoType = IoTs.type({
    _provider: createEnumType<ELoginProvider>(ELoginProvider, 'ELoginProvider'),
-   _token: IoTs.string // token must be non-null
+   _externalId: IoTs.string // token must be non-null
 });
 
 export class LoginContextCodec implements ICodec<LoginContext> {
@@ -24,7 +24,7 @@ export class LoginContextCodec implements ICodec<LoginContext> {
 
    tryCreateFrom(data: any): LoginContext {
       let temp = this.decode (data); // If types dont match an exception will be thrown here
-      return new LoginContext(temp._provider, temp._token);
+      return new LoginContext(temp._provider, temp._externalId);
    }
 }
 

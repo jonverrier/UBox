@@ -5,6 +5,7 @@ import { Roles, Person, ERoleType, PersonMemento } from '../src/Person';
 import { RolesCodec, PersonCodec, PeopleCodec } from '../src/IOPerson';
 
 import { PersonTestHelper } from './testHelpers';
+import { ELoginProvider } from '../src/LoginContext';
 
 var expect = require("chai").expect;
 
@@ -84,6 +85,10 @@ describe("IOPerson", function () {
             _personaDetails : {
                _name: "Joe" ,
                _thumbnailUrl: "https://jo.pics.com"
+            },
+            _loginContext: {
+               _provider: ELoginProvider.Private,
+               _externalId: "123"
             },
             _email: "Joe@mail.com",
             _roles: roles 

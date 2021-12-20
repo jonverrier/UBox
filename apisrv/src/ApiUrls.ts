@@ -5,6 +5,7 @@ export enum EApiUrls {
    QueryPersonas = "/api/queryPersonas",
    QueryPerson = "/api/queryPerson",
    QueryPersonByEmail = "/api/QueryPersonByEmail",
+   QueryPersonByExternalId = "/api/QueryPersonByExternalId",
    QueryPeople = "/api/queryPeople",
    SavePerson = "/api/savePerson",
    QueryMeasurement = "/api/queryMeasurement",
@@ -20,3 +21,4 @@ export enum EApiUrls {
    SaveBusiness = "/api/saveBusiness",
    QueryMyBusinesses = "/api/queryMyBusinesses"
 }
+

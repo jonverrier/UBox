@@ -3,6 +3,7 @@
 import { PersistenceDetails } from "../src/Persistence";
 import { Persona, PersonaDetails } from "../src/Persona";
 import { Roles, ERoleType, Person} from '../src/Person';
+import { ELoginProvider, LoginContext } from '../src/LoginContext';
 
 export class PersistenceTestHelper {
 
@@ -73,7 +74,8 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(PersistenceDetails.newPersistenceDetails(),
-                        new PersonaDetails ("Joe", "https://joe.thumbnails.com"),
+         new PersonaDetails("Joe", "https://joe.thumbnails.com"),
+         new LoginContext(ELoginProvider.Private, "makdeuptokenforjoe"),
          "Joe@mail.com", roles);
    }
 
@@ -81,7 +83,8 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(PersistenceDetails.newPersistenceDetails(),
-            new PersonaDetails("Joe2", "https://joe2.thumbnails.com"),
+         new PersonaDetails("Joe2", "https://joe2.thumbnails.com"),
+         new LoginContext(ELoginProvider.Private, "makdeuptokenforjoe2"),
          "Joe2@mail.com", roles);
    }
 
@@ -89,7 +92,8 @@ export class PersonTestHelper {
       let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
 
       return new Person(PersistenceDetails.newPersistenceDetails(),
-            new PersonaDetails("Joe", "https://joe.thumbnails.com"),
+         new PersonaDetails("Joe", "https://joe.thumbnails.com"),
+         new LoginContext(ELoginProvider.Private, "makdeuptokenforjoecoach"),
          "Joe@mail.com", roles);
    }
 
@@ -99,6 +103,7 @@ export class PersonTestHelper {
       return new Person(
          PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Jon V", "https://jonv.pics.com"),
+         new LoginContext(ELoginProvider.Private, "makdeuptokenforjonv"),
          "jonathanverrier@hotmail.com",
          roles);
    }
@@ -109,6 +114,7 @@ export class PersonTestHelper {
       return new Person(
          PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Harry V", "https://harryv.pics.com"),
+         new LoginContext(ELoginProvider.Private, "makdeuptokenforharry"),
          "madeupmailforharry@gmail.com",
          roles);
    }
@@ -119,6 +125,7 @@ export class PersonTestHelper {
       return new Person(
          PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Alex V", "https://alexv.pics.com"),
+         new LoginContext(ELoginProvider.Private, "makdeuptokenforalex"),
          "madeupmailforalexvy@gmail.com",
          roles);
    }
@@ -128,6 +135,7 @@ export class PersonTestHelper {
 
       return new Person(new PersistenceDetails("61af3bcd0f1b01355cc36f2c", 0, 0),
          new PersonaDetails("Joe", "https://joe.thumbnails.com"),
+         new LoginContext(ELoginProvider.Private, "makdeuptokenforjoe"),
          "Joe@mail.com", roles);
    }
 
@@ -136,6 +144,7 @@ export class PersonTestHelper {
 
       return new Person(PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Joe", "https://joe.thumbnails.com"),
+         new LoginContext(ELoginProvider.Private, "makdeuptokenforjoe"),
          "Joe@mail.com", roles);
    }
 }

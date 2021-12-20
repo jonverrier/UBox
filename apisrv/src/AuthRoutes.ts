@@ -5,16 +5,17 @@ var path = require('path');
 var express = require('express');
 var passport = require('passport');
 
-// Not directly used here, but passport needs to be initialised with a Strategy
+// Not directly used in this file, but passport needs to be initialised with a Strategy so the module has to be loaded
 var authController = require("./AuthController.js");
 
-import { PersonDb } from './PersonDb';
+import { PersonByExternalIdDb } from './PersonDb';
+import { EAuthUrls} from './AuthUrls';
 
 export var AuthRoutes = express.Router();
 
-AuthRoutes.get("/auth/google", (req, res, next) => {
+AuthRoutes.get(EAuthUrls.GoogleRoot, (req, res, next) => {
 
-   return passport.authenticate("Google")(req, res, next);
+   return passport.authenticate("google")(req, res, next);
 });
 
 var options = {
@@ -22,32 +23,36 @@ var options = {
 };
 
 AuthRoutes.get(
-   "/auth/google/callback",
-   passport.authenticate("Google", {
-      successRedirect: "/successg",
-      failureRedirect: "/failg"
+   EAuthUrls.GoogleCallback,
+   passport.authenticate("google", {
+      successRedirect: EAuthUrls.GoogleSuccess,
+      failureRedirect: EAuthUrls.GoogleFail
    })
 );
 
-AuthRoutes.get("/failg", (req, res) => {
+AuthRoutes.get(EAuthUrls.GoogleFail, (req, res) => {
    res.sendFile('public/logonnotallowed.html', options);
 });
 
-AuthRoutes.get("/successg", (req, res) => {
+AuthRoutes.get(EAuthUrls.GoogleSuccess, (req, res) => {
 
-   let db = new PersonDb();
-   let result = db.loadOne(req.user.id);
+   let db = new PersonByExternalIdDb();
+   
+   let result = db.loadOne(req.user.loginContext.externalId);
 
    result.then (function (person) {
 
       if (person)
-         res.redirect("cohorts");
+         res.redirect("/cohorts");
       else
          res.sendFile('public/logonnotallowed.html', options);
-   });
+   })
+   .catch(err => {
+      res.sendFile('public/internalerror.html', options);
+   })
 });
 
-AuthRoutes.post("/auth/logout", (req, res) => {
+AuthRoutes.post(EAuthUrls.GoogleLogout, (req, res) => {
 
    if (req.user)
       req.logout();

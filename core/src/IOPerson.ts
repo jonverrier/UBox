@@ -1,8 +1,9 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import { Roles, Person, PersonMemento, ERoleType } from "./Person";
-import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
-import { personaDetailsIoType } from '../src/IOPersona';
+import { decodeWith, encodeWith, createEnumType, ICodec, persistenceDetailsIoType} from './IOCommon';
+import { personaDetailsIoType } from './IOPersona';
+import { loginIoType } from './IOLoginContext';
 
 import * as IoTs from 'io-ts';
 
@@ -42,6 +43,7 @@ export class RolesCodec implements ICodec<Roles> {
 export const personIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
    _personaDetails: personaDetailsIoType,
+   _loginContext: loginIoType,
    _email: IoTs.string,
    _roles: rolesIoType
 });
