@@ -1,10 +1,10 @@
 module.exports = {
    devtool: 'source-map',
    entry: "./src/AppUI.tsx",
-   mode: "development",
+   mode: "production",
    target: 'node',
    output: {
-      filename: "../../apisrv/public/client-bundle.js",
+      filename: "../../apisrv/public/client-bundle.min.js",
       devtoolModuleFilenameTemplate: '[resource-path]',  // removes the webpack:/// prefix
       libraryTarget: 'commonjs'
    },
