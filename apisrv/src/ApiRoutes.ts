@@ -8,7 +8,7 @@ import { Logger } from '../../core/src/Logger';
 import { IdListCodec, IdList } from '../../core/src/IOCommon';
 import { PersonasCodec } from '../../core/src/IOPersona';
 import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
-import { PersonDb, MyPersonDb} from './PersonDb';
+import { PersonDb, PersonByEmailDb, PersonByExternalIdDb} from './PersonDb';
 import { MeasurementCodec, MeasurementsCodec } from '../../core/src/IOObservation';
 import { MeasurementDb } from './ObservationDb';
 import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
@@ -65,12 +65,12 @@ ApiRoutes.get(EApiUrls.QueryPerson, function (req, res) {
    }
 })
 
-// Retrieve a Person
+// Retrieve a Person by Email
 ApiRoutes.get(EApiUrls.QueryPersonByEmail, function (req, res) {
 
    try {
       let codec = new PersonCodec();
-      let db = new MyPersonDb();
+      let db = new PersonByEmailDb();
 
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
@@ -82,7 +82,29 @@ ApiRoutes.get(EApiUrls.QueryPersonByEmail, function (req, res) {
 
    } catch (e) {
       var logger = new Logger();
-      logger.logError("Person", "QueryByEmail", "Error", e.toString());
+      logger.logError("Person", "QueryPersonByEmail", "Error", e.toString());
+      res.send(null);
+   }
+})
+
+// Retrieve a Person by externalId
+ApiRoutes.get(EApiUrls.QueryPersonByExternalId, function (req, res) {
+
+   try {
+      let codec = new PersonCodec();
+      let db = new PersonByExternalIdDb();
+
+      let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
+      let params = new URLSearchParams(url.search);
+
+      let result = db.loadOne(params.get('_key'));
+      result.then(data => {
+         res.send(data ? codec.encode(data) : null);
+      });
+
+   } catch (e) {
+      var logger = new Logger();
+      logger.logError("Person", "QueryPersonByExternalId", "Error", e.toString());
       res.send(null);
    }
 })

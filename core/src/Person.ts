@@ -1,7 +1,8 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { InvalidParameterError } from './CoreError';
 import { PersistenceDetails, PersistenceDetailsMemento, ILoaderFor, ISaverFor, IMultiLoaderFor } from "./Persistence";
-import { Persona, PersonaDetails, PersonaDetailsMemento, PersonaMemento} from './Persona';
+import { Persona, PersonaDetails, PersonaDetailsMemento, PersonaMemento } from './Persona';
+import { LoginContextMemento, LoginContext } from './LoginContext';
 
 // Rule summary for a Persistent Object: 
 // - derives from IPersistence, which contains a PersistentDetails member object. 
@@ -118,6 +119,7 @@ export class Roles {
 export class PersonMemento extends PersonaMemento {
    _persistenceDetails: PersistenceDetailsMemento;
    _personaDetails: PersonaDetailsMemento;
+   _loginContext: LoginContextMemento;
    _email: string;
    _roles: RolesMemento;
 
@@ -125,12 +127,14 @@ export class PersonMemento extends PersonaMemento {
     * Create a PersonMemento object
     * @param persistenceDetails - (from Persistence) for the database layer to use and assign. Cannot be null, may have null values.* 
     * @param personaDetails - agrregate of information to represent a Persona 
+    * @param loginContext - details of how the user is represented in external login system (Apple, Google)
     * @param email - user email, can be null if not provided
     * @param roles - list of roles the Person plays
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
       personaDetails: PersonaDetailsMemento,
+      _loginContext: LoginContextMemento, 
       email: string, roles: RolesMemento);
    public constructor(memento: PersonMemento);
    public constructor(...params: any[]) {
@@ -143,6 +147,7 @@ export class PersonMemento extends PersonaMemento {
 
          this._persistenceDetails = memento._persistenceDetails;
          this._personaDetails = memento._personaDetails;
+         this._loginContext = memento._loginContext;
          this._email = memento._email;
          this._roles = memento._roles;
 
@@ -152,13 +157,15 @@ export class PersonMemento extends PersonaMemento {
 
          this._persistenceDetails = params[0];
          this._personaDetails = params[1];
-         this._email = params[2];
-         this._roles = params[3];
+         this._loginContext = params[2];
+         this._email = params[3];
+         this._roles = params[4];
       }
    }
 }
 
 export class Person extends Persona {
+   private _loginContext: LoginContext;
    private _email: string ;
    private _roles: Roles ;
 
@@ -166,12 +173,14 @@ export class Person extends Persona {
  * Create a Person object
  * @param persistenceDetails - details for the DB layer to save/load entities
  * @param personaDetails - plain text user name, profile picture.
+ * @param loginContext - details of how the user is represented in external login system (Apple, Google)* 
  * @param email - user email
  * @param roles - list of roles the Person plays, can be null
  */
    public constructor(
       persistenceDetails: PersistenceDetails,
       personaDetails: PersonaDetails,
+      loginContext: LoginContext, 
       email: string, roles: Roles);
    public constructor(memento: PersonMemento);
    public constructor(...params: any[]) {
@@ -182,15 +191,16 @@ export class Person extends Persona {
 
          super(new PersistenceDetails (memento._persistenceDetails), new PersonaDetails (memento._personaDetails));
 
+         this._loginContext = new LoginContext (memento._loginContext);
          this._email = memento._email;
          this._roles = new Roles(memento._roles._roles);
 
       } else {
 
          super(params[0], params[1]);
-
-         this._email = params[2];
-         this._roles = params[3];
+         this._loginContext = params[2];
+         this._email = params[3];
+         this._roles = params[4];
       }
 
       if (!Person.isValidEmailAddress(this._email)) {
@@ -201,13 +211,20 @@ export class Person extends Persona {
    /**
    * set of 'getters' for private variables
    */
+   get loginContext (): LoginContext {
+      return this._loginContext;
+   }
    get email(): string {
       return this._email;
    }
-
    get roles(): Roles {
       return this._roles;
    }
+
+   set loginContext(loginContext: LoginContext) {
+      this._loginContext = loginContext;
+   }
+
    set email(email: string) {
       if (!Person.isValidEmailAddress(email)) {
          throw new InvalidParameterError("Email");
@@ -226,6 +243,7 @@ export class Person extends Persona {
    memento(): PersonMemento {
       return new PersonMemento(super.persistenceDetails.memento(),
          super.personaDetails.memento(),
+         this._loginContext.memento(),
          this._email,
          this.roles.memento());
    }
@@ -304,6 +322,7 @@ export class Person extends Persona {
     equals (rhs: Person) : boolean {
 
        return ((super.equals(rhs)) &&
+          (this._loginContext.equals(rhs._loginContext)) &&
          (this._email === rhs._email) &&
          (this._roles.equals(rhs._roles))
          );
@@ -328,6 +347,10 @@ export interface IPersonStore extends ILoaderFor<Person>, ISaverFor<Person>, IMu
 
 }
 
-export interface IMyPersonStore extends ILoaderFor<Person> {
+export interface IPersonByEmailStore extends ILoaderFor<Person> {
+
+}
+
+export interface IPersonByExternalIdStore extends ILoaderFor<Person> {
 
 }

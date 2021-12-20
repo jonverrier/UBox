@@ -7,38 +7,56 @@ export enum ELoginProvider {
 
 export class LoginContextMemento {
    readonly _provider: ELoginProvider;
-   readonly _token: string;
+   readonly _externalId: string;
 
    /**
     * Create a LoginDetailsMemento object
     * @param name - user first name
     * @param surname - user family name, can be null
     */
-   constructor(provider: ELoginProvider, token: string) {
+   constructor(provider: ELoginProvider, token: string)
+   public constructor(memento: LoginContextMemento);
+   public constructor(...params: any[]) {
 
-      this._provider = provider;
-      this._token = token;
+      if (params.length === 1) {
+         var memento: LoginContextMemento = params[0];
+
+         this._provider = memento._provider;
+         this._externalId = memento._externalId;
+      }
+      else {
+
+         this._provider = params[0];
+         this._externalId = params[1];
+      }
    }
 }
 
 export class LoginContext {
    private _provider: ELoginProvider;
-   private _token: string;
+   private _externalId: string;
 
    /**
-    * Create a LoginDetails object
+    * Create a LoginContext object
     * @param provider - which login provider was used 
-    * @param token - token provided by the external provider 
+    * @param externalId - token provided by the external provider 
     */
-   constructor(provider: ELoginProvider, token: string) {
+   constructor(provider: ELoginProvider, externalId: string);
+   public constructor(memento: LoginContextMemento);
+   public constructor(...params: any[]) {
 
-      if (!LoginContext.isValidLoginDetails(token)) {
-         throw new InvalidParameterError("LoginDetails");
+      if (params.length === 1) {
+         var memento: LoginContextMemento = params[0];
+
+         this._provider = memento._provider;
+         this._externalId = memento._externalId;
       }
+      else {
 
-      this._provider = provider;
-      this._token = token;
-   }
+         this._provider = params[0];
+         this._externalId = params[1];
+      }
+   } 
 
    /**
    * set of 'getters' for private variables
@@ -46,15 +64,15 @@ export class LoginContext {
    get provider(): ELoginProvider {
       return this._provider;
    }
-   get token(): string {
-      return this._token;
+   get externalId(): string {
+      return this._externalId;
    }
 
    /**
    * memento() returns a copy of internal state
    */
    memento(): LoginContextMemento {
-      return new LoginContextMemento(this._provider, this._token);
+      return new LoginContextMemento(this._provider, this._externalId);
    }
 
    /**
@@ -66,7 +84,7 @@ export class LoginContext {
 
       return (
          (this._provider === rhs._provider) &&
-         (this._token === rhs._token));
+         (this._externalId === rhs._externalId));
    }
 
    /**

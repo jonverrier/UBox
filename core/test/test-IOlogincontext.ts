@@ -20,7 +20,7 @@ describe("IOLoginContext", function () {
       var caught: boolean = false;
 
       try {
-         codec.decode({ _provider: ELoginProvider.Apple, _token: "123" });
+         codec.decode({ _provider: ELoginProvider.Apple, _externalId: "123" });
       } catch (e) {
          caught = true;
       }
@@ -46,7 +46,7 @@ describe("IOLoginContext", function () {
       let encoded = codec.encode(new LoginContext(ELoginProvider.Apple, "123"));
 
       expect(encoded._provider).to.equal(ELoginProvider.Apple);
-      expect(encoded._token).to.equal("123");
+      expect(encoded._externalId).to.equal("123");
    });
 
    it("Needs to encode then decode LoginDetails.", function () {

@@ -7,7 +7,7 @@ import { ECohortType, Cohort, ICohortStore, IMyCohortsStore } from '../../core/s
 import { Business } from '../../core/src/Business';
 import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
 import { Person } from '../../core/src/Person';
-import { PersonDb, MyPersonDb } from './PersonDb';
+import { PersonDb, PersonByEmailDb } from './PersonDb';
 import { BusinessDb, MyBusinessesDb } from './BusinessDb';
 import { cohortModel } from './CohortSchema';
 
@@ -174,11 +174,11 @@ export class MyCohortsDb implements IMyCohortsStore {
 // Aapter to load Cohorts associated with an email ID
 // First loads the person, then loads Cohorts using the ID
 export class MyEmailCohortsDb implements IMyCohortsStore {
-   private _myPersonDb:MyPersonDb;
+   private _myPersonDb:PersonByEmailDb;
    private _myCohortsDb:MyCohortsDb;
 
    constructor() {
-      this._myPersonDb = new MyPersonDb();
+      this._myPersonDb = new PersonByEmailDb();
       this._myCohortsDb = new MyCohortsDb();
    }
 

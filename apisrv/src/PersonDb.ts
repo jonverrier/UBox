@@ -3,10 +3,12 @@
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from '../../core/src/Persistence';
-import { Person, IPersonStore, IMyPersonStore } from '../../core/src/Person';
+import { Person, IPersonStore, IPersonByEmailStore, IPersonByExternalIdStore} from '../../core/src/Person';
 import { ICodec } from '../../core/src/IOCommon';
 import { PersonCodec } from '../../core/src/IOPerson';
 import { personModel } from './PersonSchema';
+
+var ObjectID = require("mongodb").ObjectID;
 
 class StoreImplFor<T> {
    private _codec;
@@ -16,6 +18,9 @@ class StoreImplFor<T> {
    }
 
    async loadOne(id: string): Promise<T | null> {
+
+      if (!ObjectID.isValid(id))
+         return null;
 
       const result = await personModel.findOne().where('_id').eq(id).exec();
 
@@ -31,6 +36,19 @@ class StoreImplFor<T> {
    async loadOneFromEmail (email: string): Promise<T | null> {
 
       const result = await personModel.findOne().where('_email').eq(email).exec();
+
+      if (result) {
+         var doc = result.toObject({ transform: true });
+
+         return this._codec.tryCreateFrom(doc);
+      } else {
+         return null;
+      }
+   }
+
+   async loadOneFromExternalId(externalId: string): Promise<T | null> {
+
+      const result = await personModel.findOne().where('_loginContext._externalId').eq(externalId).exec();
 
       if (result) {
          var doc = result.toObject({ transform: true });
@@ -117,7 +135,7 @@ export class PersonDb implements IPersonStore {
    }
 }
 
-export class MyPersonDb implements IMyPersonStore {
+export class PersonByEmailDb implements IPersonByEmailStore {
    private _personCodec: PersonCodec;
    private _personStore: StoreImplFor<Person>;
 
@@ -132,3 +150,17 @@ export class MyPersonDb implements IMyPersonStore {
    }
 }
 
+export class PersonByExternalIdDb implements IPersonByExternalIdStore {
+   private _personCodec: PersonCodec;
+   private _personStore: StoreImplFor<Person>;
+
+   constructor() {
+      this._personCodec = new PersonCodec();
+      this._personStore = new StoreImplFor<Person>(this._personCodec);
+   }
+
+   loadOne(externalId: string): Promise<Person | null> {
+
+      return this._personStore.loadOneFromExternalId(externalId);
+   }
+}
