@@ -15,6 +15,7 @@ var passport = require('passport');
 // Internal classes
 import { AuthRoutes } from './AuthRoutes';
 import { ApiRoutes } from './ApiRoutes';
+import { AppRoutes } from './AppRoutes';
 import { ContactDb } from './ContactDb';
 
 // Control variables for development / production
@@ -95,33 +96,11 @@ if (inDevelopment) {
 // Routes for API endpoints
 app.use('/', ApiRoutes);
 
-// Routes for auth pages
+// Routes for Auth pages
 app.use('/', AuthRoutes);
 
-
-app.get('/login', (req, res) => {
-   var options = {
-      root: path.join(__dirname, '../public')
-   };
-
-   res.sendFile('/whiteboard.html', options);
-});
-
-app.get('/cohorts', (req, res) => {
-   var options = {
-      root: path.join(__dirname, '../public')
-   };
-
-   res.sendFile('/whiteboard.html', options);
-});
-
-app.get('/cohort', (req, res) => {
-   var options = {
-      root: path.join(__dirname, '../public')
-   };
-
-   res.sendFile('/whiteboard.html', options);
-});
+// Routes for App pages
+app.use('/', AppRoutes);
 
 app.post('/contact', (req, res) => {
 

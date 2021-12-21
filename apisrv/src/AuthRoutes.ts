@@ -9,7 +9,8 @@ var passport = require('passport');
 var authController = require("./AuthController.js");
 
 import { PersonByExternalIdDb } from './PersonDb';
-import { EAuthUrls} from './AuthUrls';
+import { EAuthUrls } from './AuthUrls';
+import { EAppUrls } from './AppUrls';
 
 export var AuthRoutes = express.Router();
 
@@ -43,7 +44,7 @@ AuthRoutes.get(EAuthUrls.GoogleSuccess, (req, res) => {
    result.then (function (person) {
 
       if (person)
-         res.redirect("/cohorts");
+         res.redirect(EAppUrls.Cohorts);
       else
          res.sendFile('public/logonnotallowed.html', options);
    })
@@ -52,7 +53,7 @@ AuthRoutes.get(EAuthUrls.GoogleSuccess, (req, res) => {
    })
 });
 
-AuthRoutes.post(EAuthUrls.GoogleLogout, (req, res) => {
+AuthRoutes.put (EAuthUrls.GoogleLogout, (req, res) => {
 
    if (req.user)
       req.logout();

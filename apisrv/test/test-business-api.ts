@@ -1,6 +1,5 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import axios from 'axios';
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
@@ -9,10 +8,6 @@ import { Business } from "../../core/src/Business";
 import { PersonApi } from '../src/PersonApi';
 import { BusinessApi } from '../src/BusinessApi';
 import { PersonaTestHelper, PersonTestHelper } from '../../core/test/testHelpers';
-
-var expect = require("chai").expect;
-
-import { EApiUrls } from '../src/ApiUrls';
 
 var root: string = 'http://localhost:4000';
 

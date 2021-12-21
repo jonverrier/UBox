@@ -8,6 +8,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // Fluent-UI
 import { Flex, Provider, teamsTheme, mergeThemes } from '@fluentui/react-northstar';
 
+// Server URLs
+import { EAppUrls } from '../../apisrv/src/AppUrls';
+
 // Local App 
 import { appTheme } from './Theme';
 import { Navbar } from './Navbar';
@@ -22,7 +25,7 @@ export class Cohorts extends React.Component {
    constructor(props) {
       super(props);
 
-      this._personaDetails = new PersonaDetails("Olympic Lifting", "assets/img/weightlifter-b-128x128.png");
+      this._personaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
 
    }
 
@@ -45,7 +48,7 @@ export class Cohort extends React.Component {
    constructor(props) {
       super(props);
 
-      this._personaDetails = new PersonaDetails("Olympic Lifting", "assets/img/weightlifter-b-128x128.png");
+      this._personaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
 
    }
 
@@ -67,7 +70,7 @@ export class Login extends React.Component {
    constructor(props) {
       super(props);
 
-      this._personaDetails = new PersonaDetails("Olympic Lifting", "assets/img/weightlifter-b-128x128.png");
+      this._personaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
 
    }
 
@@ -85,14 +88,15 @@ export class Login extends React.Component {
 
 export class PageSwitcher extends React.Component {
    render() {
+      // URLs need to be relative in switcher, so trim the leading '/'
       return ( 
          <Provider theme={mergeThemes(teamsTheme, appTheme)}>
             <BrowserRouter>   
                <Routes>
-                  <Route path="/">
-                     <Route path="cohorts" element={<Cohorts />} />
-                     <Route path="cohort" element={<Cohort />} />
-                     <Route path="login" element={<Login />} />
+                  <Route path="/">                    
+                     <Route path={EAppUrls.Cohorts.substr(1)} element={<Cohorts />} />
+                     <Route path={EAppUrls.Cohort.substr(1)} element={<Cohort />} />
+                     <Route path={EAppUrls.Login.substr(1)} element={<Login />} />
                   </Route>
                </Routes>  
             </BrowserRouter>  

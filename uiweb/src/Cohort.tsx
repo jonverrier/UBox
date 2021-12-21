@@ -24,7 +24,7 @@ const items: Array<ChatItemProps> = [
    {
       contentPosition: "start",
       gutter: <Avatar
-         image='assets/img/weightlifter-b-128x128.png'
+         image='/assets/img/weightlifter-b-128x128.png'
          label="John"
          name="John"
          status={{
@@ -38,7 +38,7 @@ const items: Array<ChatItemProps> = [
    {
       contentPosition: "end",
       gutter: <Avatar
-         image='assets/img/weightlifter-b-128x128.png'
+         image='/assets/img/weightlifter-b-128x128.png'
          label="Jane"
          name="Jane"
          status={{
