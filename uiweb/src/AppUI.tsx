@@ -20,22 +20,23 @@ import { CohortView } from './Cohort';
 import { LoginView } from './Login';
 
 export class Cohorts extends React.Component {
-   _personaDetails: PersonaDetails;
+   _cohortPersona: PersonaDetails;
+   _athletePersona: PersonaDetails;
 
    constructor(props) {
       super(props);
 
-      this._personaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
-
+      this._cohortPersona = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
+      this._athletePersona = new PersonaDetails("Joe", "/assets/img/person-w-512x512.png");
    }
 
    render() {
       return (
          <div>
-            <Navbar />
+            <Navbar personaDetails={this._athletePersona}/>
             <Flex gap="gap.medium" column={true}>
-               <CohortCard personaDetails={this._personaDetails}></CohortCard>
-               <CohortCard personaDetails={this._personaDetails}></CohortCard>
+               <CohortCard personaDetails={this._cohortPersona}></CohortCard>
+               <CohortCard personaDetails={this._cohortPersona}></CohortCard>
             </Flex>
          </div>
       );
@@ -43,21 +44,22 @@ export class Cohorts extends React.Component {
 }
 
 export class Cohort extends React.Component {
-   _personaDetails: PersonaDetails;
+   _cohortPersona: PersonaDetails;
+   _athletePersona: PersonaDetails;
 
    constructor(props) {
       super(props);
 
-      this._personaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
-
+      this._cohortPersona = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
+      this._athletePersona = new PersonaDetails("Joe", "/assets/img/person-w-512x512.png");
    }
 
    render() {
       return (
          <div>
-            <Navbar />
+            <Navbar personaDetails={this._athletePersona}/>
             <Flex gap="gap.medium" column={true}>
-               <CohortView personaDetails={this._personaDetails}></CohortView>
+               <CohortView personaDetails={this._cohortPersona}></CohortView>
             </Flex>
          </div>);
          
@@ -65,21 +67,23 @@ export class Cohort extends React.Component {
 }
 
 export class Login extends React.Component {
-   _personaDetails: PersonaDetails;
+   _cohortPersona: PersonaDetails;
+   _athletePersona: PersonaDetails;
 
    constructor(props) {
+
       super(props);
 
-      this._personaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
-
+      this._cohortPersona = new PersonaDetails("Joe", "/assets/img/weightlifter-b-128x128.png");
+      this._athletePersona = new PersonaDetails("Joe", "/assets/img/person-w-512x512.png");
    }
 
    render() {
       return (
          <div>
-            <Navbar />
+            <Navbar personaDetails={this._athletePersona}/>
             <Flex gap="gap.medium" column={true}>
-               <LoginView personaDetails={this._personaDetails}></LoginView>
+               <LoginView personaDetails={this._cohortPersona}></LoginView>
             </Flex>
          </div>);
 
