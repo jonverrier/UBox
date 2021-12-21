@@ -11,6 +11,9 @@ var authController = require("./AuthController.js");
 import { PersonByExternalIdDb } from './PersonDb';
 import { EAuthUrls } from './AuthUrls';
 import { EAppUrls } from './AppUrls';
+import { Logger } from '../../core/src/Logger';
+
+var logger = new Logger(false);
 
 export var AuthRoutes = express.Router();
 
@@ -31,26 +34,57 @@ AuthRoutes.get(
    })
 );
 
+AuthRoutes.get(EAuthUrls.GooglePersona, (req, res) => {
+
+   try {
+      let db = new PersonByExternalIdDb();
+      let result = db.loadOne(req.user.loginContext.externalId);
+
+      result.then(function (person) {
+
+         if (person)
+            res.send(person.personaDetails);
+         else
+            res.send(false);
+      })
+      .catch(err => {
+         logger.logError("AuthRoutes", EAuthUrls.GooglePersona, "Error:", err);
+         res.send(false);
+      })
+   }
+   catch (err) {
+      logger.logError("AuthRoutes", EAuthUrls.GooglePersona, "Error:", err);      
+      res.send(false);
+   };
+});
+
 AuthRoutes.get(EAuthUrls.GoogleFail, (req, res) => {
    res.sendFile('public/logonnotallowed.html', options);
 });
 
 AuthRoutes.get(EAuthUrls.GoogleSuccess, (req, res) => {
 
-   let db = new PersonByExternalIdDb();
-   
-   let result = db.loadOne(req.user.loginContext.externalId);
+   try {
 
-   result.then (function (person) {
+      let db = new PersonByExternalIdDb();
+      let result = db.loadOne(req.user.loginContext.externalId);
 
-      if (person)
-         res.redirect(EAppUrls.Cohorts);
-      else
-         res.sendFile('public/logonnotallowed.html', options);
-   })
-   .catch(err => {
-      res.sendFile('public/internalerror.html', options);
-   })
+      result.then(function (person) {
+
+         if (person)
+            res.redirect(EAppUrls.Cohorts);
+         else
+            res.sendFile('public/logonnotallowed.html', options);
+      })
+         .catch(err => {
+            logger.logError("AuthRoutes", EAuthUrls.GoogleSuccess, "Error:", err);
+            res.sendFile('public/internalerror.html', options);
+         })
+   }
+   catch (err) {
+      logger.logError("AuthRoutes", EAuthUrls.GoogleSuccess, "Error:", err);      
+      res.send(false);
+   }
 });
 
 AuthRoutes.put (EAuthUrls.GoogleLogout, (req, res) => {

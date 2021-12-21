@@ -20,6 +20,8 @@ import { EApiUrls } from './ApiUrls';
 
 export var ApiRoutes = express.Router();
 
+var logger = new Logger();
+
 // Retrieve multiple Persona objects
 // This uses the fact that Personas are a compatible subset of Person in wire/Db format, so you can just restore a Persona from a saved representation of a Person
 ApiRoutes.put(EApiUrls.QueryPersonas, function (req, res) {
@@ -37,8 +39,8 @@ ApiRoutes.put(EApiUrls.QueryPersonas, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("People", "Query", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryPersonas, "Error", e.toString());
       res.send(null);
    }
 })
@@ -59,8 +61,8 @@ ApiRoutes.get(EApiUrls.QueryPerson, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Person", "Query", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryPerson, "Error", e.toString());
       res.send(null);
    }
 })
@@ -81,8 +83,8 @@ ApiRoutes.get(EApiUrls.QueryPersonByEmail, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Person", "QueryPersonByEmail", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryPersonByEmail, "Error", e.toString());
       res.send(null);
    }
 })
@@ -103,8 +105,8 @@ ApiRoutes.get(EApiUrls.QueryPersonByExternalId, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Person", "QueryPersonByExternalId", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryPersonByExternalId, "Error", e.toString());
       res.send(null);
    }
 })
@@ -126,8 +128,8 @@ ApiRoutes.put(EApiUrls.QueryPeople, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("People", "Query", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryPeople, "Error", e.toString());
       res.send(null);
    }
 })
@@ -147,8 +149,8 @@ ApiRoutes.put(EApiUrls.SavePerson, function (req, res) {
          res.send(data ? codec.encode(data) : null);
       });
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Person", "Save", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.SavePerson, "Error", e.toString());
       res.send(null);
    }
 });
@@ -174,8 +176,8 @@ ApiRoutes.get(EApiUrls.QueryMeasurement, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Measurement", "QueryMeasurement", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryMeasurement, "Error", e.toString());
       res.send(null);
    }
 })
@@ -200,8 +202,8 @@ ApiRoutes.put(EApiUrls.SaveMeasurement, function (req, res) {
          }
       });
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Measurement", "SaveMeasurement", "Error:", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.SaveMeasurement, "Error:", e.toString());
       res.send(null);
    }
 });
@@ -223,8 +225,8 @@ ApiRoutes.put(EApiUrls.QueryMeasurements, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Measurements", "QueryMeasurements", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryMeasurements, "Error", e.toString());
       res.send(null);
    }
 })
@@ -246,8 +248,8 @@ ApiRoutes.put(EApiUrls.QueryMeasurementsForPeople, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Measurements", "QueryMeasurementsForPeople", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryMeasurementsForPeople, "Error", e.toString());
       res.send(null);
    }
 })
@@ -265,8 +267,8 @@ ApiRoutes.put(EApiUrls.QueryMeasurementsForCohort, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Measurements", "QueryMeasurementsForCohort", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryMeasurementsForCohort, "Error", e.toString());
       res.send(null);
    }
 })
@@ -287,8 +289,8 @@ ApiRoutes.get(EApiUrls.QueryCohort, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Cohort", "Load", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryCohort, "Error", e.toString());
       res.send(null);
    }
 })
@@ -308,8 +310,8 @@ ApiRoutes.put(EApiUrls.SaveCohort, function (req, res) {
          res.send(data ? codec.encode(data) : null);
       });
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Cohort", "Save", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.SaveCohort, "Error", e.toString());
       res.send(null);
    }
 });
@@ -328,8 +330,8 @@ ApiRoutes.put(EApiUrls.QueryMyCohorts, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Cohort", "QueryMany", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryMyCohorts, "Error", e.toString());
       res.send(null);
    }
 })
@@ -348,8 +350,8 @@ ApiRoutes.put(EApiUrls.QueryMyCohortsByEmail, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Cohort", "QueryManyByEmail", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryMyCohortsByEmail, "Error", e.toString());
       res.send(null);
    }
 })
@@ -370,8 +372,8 @@ ApiRoutes.get(EApiUrls.QueryBusiness, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Business", "Load", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryBusiness, "Error", e.toString());
       res.send(null);
    }
 })
@@ -391,8 +393,8 @@ ApiRoutes.put(EApiUrls.SaveBusiness, function (req, res) {
          res.send(data ? codec.encode(data) : null);
       });
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Business", "Save", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.SaveBusiness, "Error", e.toString());
       res.send(null);
    }
 });
@@ -411,8 +413,8 @@ ApiRoutes.put(EApiUrls.QueryMyBusinesses, function (req, res) {
       });
 
    } catch (e) {
-      var logger = new Logger();
-      logger.logError("Businesses", "QueryMany", "Error", e.toString());
+
+      logger.logError("ApiRoutes", EApiUrls.QueryMyBusinesses, "Error", e.toString());
       res.send(null);
    }
 })

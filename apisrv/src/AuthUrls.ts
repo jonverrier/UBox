@@ -6,5 +6,6 @@ export enum EAuthUrls {
    GoogleCallback = "/auth/google/callback",
    GoogleSuccess = "/auth/google/success",
    GoogleFail = "/auth/google/fail",
-   GoogleLogout = "/auth/google/logout"
+   GoogleLogout = "/auth/google/logout",
+   GooglePersona = "/auth/google/persona"
 }
