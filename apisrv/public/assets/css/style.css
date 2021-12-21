@@ -836,3 +836,48 @@ section {
 .grecaptcha-badge:hover {
    width: 256px !important;
 }
+
+/*--------------------------------------------------------------
+# Custom style for 'Sign in with Google'
+--------------------------------------------------------------*/
+.customGoogleSignInBtn {
+   display: inline-block;
+   background: white;
+   color: #444;
+   width: 190px;
+   border-radius: 5px;
+   border: thin solid #888;
+   box-shadow: 1px 1px 1px grey;
+   white-space: nowrap;
+}
+
+.customGoogleSignInBtn:hover {
+   cursor: pointer;
+}
+
+.customGoogleSignInBtn span.label {
+   font-family: serif;
+   font-weight: normal;
+}
+
+/*
+.customGoogleSignInBtn span.icon {
+   background: url('/assets/img/g-logo.png') transparent 5px 50% no-repeat;
+   background-size: cover;
+   background-repeat: no-repeat;
+   background-position: 50% 50%;
+   display: inline-block;
+   vertical-align: middle;
+   width: 21px;
+   height: 21px;
+}
+
+.customGoogleSignInBtn span.buttonText {
+   display: inline-block;
+   vertical-align: middle;
+   padding-left: 42px;
+   padding-right: 42px;
+   font-size: 14px;
+   font-weight: bold;
+}
+*/

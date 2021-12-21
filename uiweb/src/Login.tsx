@@ -4,9 +4,10 @@
 import * as React from 'react';
 
 // Fluent-UI
-import { Flex, Box, Image, Divider, Text } from '@fluentui/react-northstar';
+import { Flex, Box, Image, Divider, Text, Button } from '@fluentui/react-northstar';
 
 // Local App 
+import { EAuthUrls } from '../../apisrv/src/AuthUrls';
 import { PersonaDetails } from '../../core/src/Persona';
 import { Media } from './Media';
 
@@ -37,6 +38,9 @@ export class LoginView extends React.Component<ILoginViewProps, ILoginViewState>
       };
    }
 
+   signIn(): void {
+      window.location.href = EAuthUrls.GoogleRoot;
+   }
 
    render() {
       var small: boolean = this._media.isSmallFormFactor();
@@ -55,8 +59,8 @@ export class LoginView extends React.Component<ILoginViewProps, ILoginViewState>
                      <Flex gap="gap.large" padding="padding.medium" column={false} vAlign="center" hAlign="center">
                         <Flex.Item size="size.medium">
                            <Flex gap="gap.medium" column={true} vAlign="center" hAlign="center">
-                              <Text content="Sign in securely with Apple or Google to see your squads." size="medium" />
-                              <div className="g-signin2" data-onsuccess="onSignIn"></div>
+                              <Text content="Sign in with Google to see your squads." size="medium" />
+                              <Button icon={<Image fluid src='/assets/img/g-logo.png' />} content="Sign in with Google" onClick={this.signIn.bind(this)}/>
                            </Flex>
                         </Flex.Item>
                      </Flex>
@@ -78,15 +82,15 @@ export class LoginView extends React.Component<ILoginViewProps, ILoginViewState>
                      <Flex gap="gap.large" padding="padding.medium" column={false} vAlign="center" hAlign="center">
                         <Flex.Item size="size.medium">
                            <Flex gap="gap.medium" column={true} vAlign="center" hAlign="center">
-                              <Text content="Sign in securely with Apple or Google to see your squads." size="medium" />
-                              <div className="g-signin2" data-onsuccess="onSignIn"></div>
+                              <Text content="Sign in with Google to see your squads." size="medium" />
+                              <Button icon={<Image fluid src='/assets/img/g-logo.png' />} content="Sign in with Google" onClick={this.signIn.bind(this)}/>
                            </Flex>
                         </Flex.Item>
                         <Divider vertical color='#666666' size={4} />
                         <Flex.Item size="size.medium">
-                           <Image fluid src="assets/img/login.jpg" />
+                           <Image fluid src="/assets/img/login.jpg" />
                         </Flex.Item>
-                     </Flex>
+                      </Flex>
                   </Flex>
                </Box>
             </Flex>
