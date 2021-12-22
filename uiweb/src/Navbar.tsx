@@ -49,7 +49,7 @@ export class Navbar extends React.Component<INavbarProps, INavbarState> {
       });
    }  
 
-   render() {
+   render() : JSX.Element {
 
       var statusAvatar;
 
@@ -81,7 +81,7 @@ export class Navbar extends React.Component<INavbarProps, INavbarState> {
          />;
       }
 
-      return (
+      return  (
          <div>
             <Provider theme={mergeThemes(teamsTheme, appThemeDark)}>
                <Flex gap="gap.medium" vAlign="center" padding="padding.medium">

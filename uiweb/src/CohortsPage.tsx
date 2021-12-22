@@ -37,13 +37,28 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
       this.props.onSignIn(user);
    }
 
-   render() {
+   listCohorts(): JSX.Element {
+      let items = this.props.personaCohorts._cohorts;
+
+      return (
+         <ul>
+            {
+               items.map((val, index) => {
+                  return (
+                     <CohortCard personaDetails={new PersonaDetails(val)}></CohortCard>
+                  );
+               })
+            }
+         </ul>
+      );
+   }
+
+   render() : JSX.Element {
       return (
          <div>
             <Navbar personaDetails={new PersonaDetails(this.props.personaCohorts._personaDetails)} />
-            <Flex gap="gap.medium" column={true}>
-               <CohortCard personaDetails={new PersonaDetails(this.props.personaCohorts._cohorts[0])}></CohortCard>
-               <CohortCard personaDetails={new PersonaDetails(this.props.personaCohorts._cohorts[1])}></CohortCard>
+            <Flex gap="gap.medium" column={true}>               
+               {this.listCohorts ()}
             </Flex>
          </div>
       );

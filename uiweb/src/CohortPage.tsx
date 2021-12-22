@@ -27,7 +27,7 @@ export class CohortPage extends React.Component<ICohortPageProps, ICohortPageSta
       this.state = {};
    }
 
-   render() {
+   render(): JSX.Element {
       return (
          <div>
             <Navbar personaDetails={new PersonaDetails(this.props.personaCohorts._personaDetails)} />

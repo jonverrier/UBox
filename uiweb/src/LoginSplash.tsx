@@ -37,7 +37,7 @@ export class LoginSplash extends React.Component<ILoginSplashProps, ILoginSplash
       window.location.href = EAuthUrls.GoogleRoot;
    }
 
-   render() {
+   render(): JSX.Element {
       var small: boolean = this._media.isSmallFormFactor();
 
       if (small) {

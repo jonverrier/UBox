@@ -27,7 +27,7 @@ export class CohortCard extends React.Component<ICohortCardProps, PersonaDetails
       this.state = this._personaDetails;
    }
 
-   render() {
+   render(): JSX.Element {
       return (
          <Card aria-roledescription="card avatar" fluid={true}>
             <Card.Header>
