@@ -6,101 +6,62 @@ import * as React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; 
 
 // Fluent-UI
-import { Flex, Provider, teamsTheme, mergeThemes } from '@fluentui/react-northstar';
+import { Provider, teamsTheme, mergeThemes } from '@fluentui/react-northstar';
+
+import { PersonaDetails, PersonaDetailsMemento } from '../../core/src/Persona';
+import { PersonCohortsMemento } from '../../core/src/PersonCohorts';
 
 // Server URLs
 import { EAppUrls } from '../../apisrv/src/AppUrls';
 
 // Local App 
 import { appTheme } from './Theme';
-import { Navbar } from './Navbar';
-import { PersonaDetails } from '../../core/src/Persona';
-import { CohortCard } from './CohortCard';
-import { CohortView } from './Cohort';
-import { LoginView } from './Login';
+import { CohortsPage, ICohortsPageProps } from './CohortsPage';
+import { CohortPage} from './CohortPage';
+import { LoginPage } from './LoginPage';
 
-export class Cohorts extends React.Component {
-   _cohortPersona: PersonaDetails;
-   _athletePersona: PersonaDetails;
+export interface IAppProps {
 
-   constructor(props) {
-      super(props);
-
-      this._cohortPersona = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
-      this._athletePersona = new PersonaDetails("Joe", "/assets/img/person-w-512x512.png");
-   }
-
-   render() {
-      return (
-         <div>
-            <Navbar personaDetails={this._athletePersona}/>
-            <Flex gap="gap.medium" column={true}>
-               <CohortCard personaDetails={this._cohortPersona}></CohortCard>
-               <CohortCard personaDetails={this._cohortPersona}></CohortCard>
-            </Flex>
-         </div>
-      );
-   }
 }
 
-export class Cohort extends React.Component {
-   _cohortPersona: PersonaDetails;
-   _athletePersona: PersonaDetails;
-
-   constructor(props) {
-      super(props);
-
-      this._cohortPersona = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
-      this._athletePersona = new PersonaDetails("Joe", "/assets/img/person-w-512x512.png");
-   }
-
-   render() {
-      return (
-         <div>
-            <Navbar personaDetails={this._athletePersona}/>
-            <Flex gap="gap.medium" column={true}>
-               <CohortView personaDetails={this._cohortPersona}></CohortView>
-            </Flex>
-         </div>);
-         
-   }
+interface IAppState {
+   personaCohorts: PersonCohortsMemento;
 }
 
-export class Login extends React.Component {
-   _cohortPersona: PersonaDetails;
-   _athletePersona: PersonaDetails;
+export class PageSwitcher extends React.Component<IAppProps, IAppState> {
 
-   constructor(props) {
+   constructor(props: IAppProps) {
 
       super(props);
 
-      this._cohortPersona = new PersonaDetails("Joe", "/assets/img/weightlifter-b-128x128.png");
-      this._athletePersona = new PersonaDetails("Joe", "/assets/img/person-w-512x512.png");
+      var user: PersonaDetails = PersonaDetails.notLoggedIn();
+      var cohort1: PersonaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/person-w-512x512.png");
+      var cohort2: PersonaDetails = new PersonaDetails("Power Lifting", "/assets/img/person-w-512x512.png");
+      var cohorts = new Array<PersonaDetailsMemento>();
+      cohorts.push(cohort1.memento());
+      cohorts.push(cohort2.memento());
+
+      var personaCohorts: PersonCohortsMemento = new PersonCohortsMemento(user.memento(), cohorts);
+
+      this.state = { personaCohorts: personaCohorts };
    }
 
-   render() {
-      return (
-         <div>
-            <Navbar personaDetails={this._athletePersona}/>
-            <Flex gap="gap.medium" column={true}>
-               <LoginView personaDetails={this._cohortPersona}></LoginView>
-            </Flex>
-         </div>);
+   onSignIn (persona: PersonaDetails) : void {
 
+      this.setState({ personaCohorts: new PersonCohortsMemento(persona.memento(), this.state.personaCohorts._cohorts) });
+      this.forceUpdate();
    }
-}
 
-export class PageSwitcher extends React.Component {
    render() {
       // URLs need to be relative in switcher, so trim the leading '/'
       return ( 
          <Provider theme={mergeThemes(teamsTheme, appTheme)}>
             <BrowserRouter>   
                <Routes>
-                  <Route path="/">                    
-                     <Route path={EAppUrls.Cohorts.substr(1)} element={<Cohorts />} />
-                     <Route path={EAppUrls.Cohort.substr(1)} element={<Cohort />} />
-                     <Route path={EAppUrls.Login.substr(1)} element={<Login />} />
+                  <Route path="/">
+                     <Route path={EAppUrls.Cohorts.substr(1)} element={<CohortsPage personaCohorts={this.state.personaCohorts} onSignIn={this.onSignIn.bind (this)} />} />
+                     <Route path={EAppUrls.Cohort.substr(1)} element={<CohortPage personaCohorts={this.state.personaCohorts} />} />
+                     <Route path={EAppUrls.Login.substr(1)} element={<LoginPage personaDetails={new PersonaDetails(this.state.personaCohorts._personaDetails)}/>} />
                   </Route>
                </Routes>  
             </BrowserRouter>  

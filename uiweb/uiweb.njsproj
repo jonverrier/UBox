@@ -40,8 +40,11 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\AppUI.tsx" />
-    <TypeScriptCompile Include="src\Cohort.tsx" />
-    <TypeScriptCompile Include="src\Login.tsx" />
+    <TypeScriptCompile Include="src\CohortChat.tsx" />
+    <TypeScriptCompile Include="src\CohortPage.tsx" />
+    <TypeScriptCompile Include="src\CohortsPage.tsx" />
+    <TypeScriptCompile Include="src\LoginPage.tsx" />
+    <TypeScriptCompile Include="src\LoginSplash.tsx" />
     <TypeScriptCompile Include="src\Media.ts" />
     <TypeScriptCompile Include="src\Navbar.tsx" />
     <TypeScriptCompile Include="src\CohortCard.tsx" />

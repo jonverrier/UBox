@@ -62,6 +62,7 @@
     <TypeScriptCompile Include="src\Persona.ts" />
     <TypeScriptCompile Include="src\Person.ts" />
     <TypeScriptCompile Include="src\IOPerson.ts" />
+    <TypeScriptCompile Include="src\PersonCohorts.ts" />
     <TypeScriptCompile Include="src\Quantity.ts" />
     <TypeScriptCompile Include="src\Range.ts" />
     <TypeScriptCompile Include="src\CoreError.ts" />
@@ -94,6 +95,7 @@
       <TestFramework>mocha</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-persona.ts" />
+    <TypeScriptCompile Include="test\test-personacohorts.ts" />
     <TypeScriptCompile Include="test\test-range.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
