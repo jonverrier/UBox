@@ -52,7 +52,7 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
       this.forceUpdate();
    }
 
-   render() {
+   render(): JSX.Element {
       // URLs need to be relative in switcher, so trim the leading '/'
       return ( 
          <Provider theme={mergeThemes(teamsTheme, appTheme)}>

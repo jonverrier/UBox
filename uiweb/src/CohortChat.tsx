@@ -56,7 +56,7 @@ export class CohortChat extends React.Component<ICohortViewProps, PersonaDetails
    }
 
 
-   render() {
+   render(): JSX.Element {
 
       for (var i in items) {
          (items[i] as any).key = i;

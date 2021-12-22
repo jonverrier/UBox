@@ -24,7 +24,7 @@ export class LoginPage extends React.Component<ILoginSplashProps, ILoginPageStat
       this.state = {};
    }
 
-   render() {
+   render(): JSX.Element {
       var personaDetails: PersonaDetails = new PersonaDetails(this.props.personaDetails.name, this.props.personaDetails.thumbnailUrl);
 
       return (
