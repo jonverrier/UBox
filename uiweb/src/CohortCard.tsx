@@ -14,12 +14,8 @@ export interface ICohortCardProps {
    personaDetails: PersonaDetails;
 }
 
-interface ICohortCardState {
 
-   personaDetails: PersonaDetails;
-}
-
-export class CohortCard extends React.Component<ICohortCardProps, ICohortCardState> {
+export class CohortCard extends React.Component<ICohortCardProps, PersonaDetails> {
 
    _personaDetails: PersonaDetails;
 
@@ -28,9 +24,7 @@ export class CohortCard extends React.Component<ICohortCardProps, ICohortCardSta
 
       this._personaDetails = props.personaDetails;
 
-      this.state = {
-         personaDetails: this._personaDetails
-      };
+      this.state = this._personaDetails;
    }
 
    render() {

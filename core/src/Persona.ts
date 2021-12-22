@@ -128,6 +128,24 @@ export class PersonaDetails  {
       }
       return (true);
    }
+
+   static _notSignedIn: PersonaDetails = new PersonaDetails("Not signed in", "/assets/img/person-w-512x512.png");
+
+   /**
+    * return persona details for 'not logged in'
+    */
+   static notLoggedIn(): PersonaDetails {
+      return PersonaDetails._notSignedIn;
+   }
+
+   /**
+    * test if the persona details are the status 'not logged in'
+    * @param persona - the persona to test 
+    */
+   static isNotLoggedIn(persona: PersonaDetails): boolean {
+      return (persona === PersonaDetails._notSignedIn) ||
+         (persona && persona.equals(PersonaDetails._notSignedIn));
+   }
 }
 
 // Design note - classes derived from persona should have the same layout for IO. This means Persona classes can be constructed from wire/Db representations of derived classes.

@@ -5,7 +5,7 @@ import * as React from 'react';
 import axios from 'axios';
 
 // Fluent-UI
-import { Provider, Image, Flex, FlexItem, teamsTheme, mergeThemes, Avatar, AcceptIcon, MenuButton } from '@fluentui/react-northstar';
+import { Provider, Image, Flex, FlexItem, teamsTheme, mergeThemes, Avatar, AcceptIcon, BanIcon, MenuButton } from '@fluentui/react-northstar';
 
 // Local App 
 import { appThemeDark } from './Theme';
@@ -21,22 +21,14 @@ export interface INavbarProps {
 
 interface INavbarState {
 
-   personaDetails: PersonaDetails;
 }
 
-
 export class Navbar extends React.Component<INavbarProps, INavbarState> {
-
-   _personaDetails: PersonaDetails;
 
    constructor(props: INavbarProps) {
       super(props);
 
-      this._personaDetails = props.personaDetails;
-
-      this.state = {
-         personaDetails: this._personaDetails
-      };
+      this.state = {};
    }
 
    navigateToHome(): void {
@@ -58,6 +50,37 @@ export class Navbar extends React.Component<INavbarProps, INavbarState> {
    }  
 
    render() {
+
+      var statusAvatar;
+
+      if (PersonaDetails.isNotLoggedIn(this.props.personaDetails)) {
+
+         statusAvatar = <Avatar
+            image={this.props.personaDetails.thumbnailUrl}
+            label={this.props.personaDetails.name}
+            name={this.props.personaDetails.name}
+            size="small"
+            status={{
+               color: 'grey',
+               icon: <BanIcon />,
+               title: 'Not available'
+            }}
+         />;
+      } else {
+
+         statusAvatar = <Avatar
+            image={this.props.personaDetails.thumbnailUrl}
+            label={this.props.personaDetails.name}
+            name={this.props.personaDetails.name}
+            size="small"
+            status={{
+               color: 'green',
+               icon: <AcceptIcon />,
+               title: 'Available'
+            }}
+         />;
+      }
+
       return (
          <div>
             <Provider theme={mergeThemes(teamsTheme, appThemeDark)}>
@@ -65,17 +88,7 @@ export class Navbar extends React.Component<INavbarProps, INavbarState> {
                   <Image src="/assets/img/tesseract.png" width="32" height="32" alt="UltraBox Home" title="UltraBox Home"
                   onClick={this.navigateToHome.bind(this)}                  />
                   <FlexItem push> 
-                     <Avatar
-                        image={this._personaDetails.thumbnailUrl}
-                        label={this._personaDetails.name}
-                        name={this._personaDetails.name}
-                        size="small"
-                        status={{
-                           color: 'green',
-                           icon: <AcceptIcon />,
-                           title: 'Available',
-                        }}
-                     />
+                     {statusAvatar}
                   </FlexItem>
                   <Image src="/assets/img/chat-multi-w-512x512.png" width="32" height="32" alt="Squads" title="Squads"
                      onClick={this.navigateToCohorts.bind(this)} />
