@@ -32,7 +32,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
    }
 
    componentDidMount() {
-      var user: PersonaDetails = new PersonaDetails('Joe', '/assets/img/person-w-512x512.png');
+      var user: PersonaDetails = new PersonaDetails('Joe', '/assets/img/person-o-512x512.png');
 
       this.props.onSignIn(user);
    }
@@ -45,7 +45,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
             {
                items.map((val, index) => {
                   return (
-                     <CohortCard personaDetails={new PersonaDetails(val)}></CohortCard>
+                     <CohortCard key={index} personaDetails={new PersonaDetails(val)}></CohortCard>
                   );
                })
             }

@@ -129,7 +129,7 @@ export class PersonaDetails  {
       return (true);
    }
 
-   static _notSignedIn: PersonaDetails = new PersonaDetails("Not signed in", "/assets/img/person-w-512x512.png");
+   static _notSignedIn: PersonaDetails = new PersonaDetails("Not signed in", "/assets/img/person-o-512x512.png");
 
    /**
     * return persona details for 'not logged in'

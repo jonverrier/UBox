@@ -35,8 +35,8 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
       super(props);
 
       var user: PersonaDetails = PersonaDetails.notLoggedIn();
-      var cohort1: PersonaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/person-w-512x512.png");
-      var cohort2: PersonaDetails = new PersonaDetails("Power Lifting", "/assets/img/person-w-512x512.png");
+      var cohort1: PersonaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
+      var cohort2: PersonaDetails = new PersonaDetails("Power Lifting", "/assets/img/weightlifter-b-128x128.png");
       var cohorts = new Array<PersonaDetailsMemento>();
       cohorts.push(cohort1.memento());
       cohorts.push(cohort2.memento());

@@ -12,19 +12,19 @@ import { PersonaDetails } from '../../core/src/Persona';
 export interface ICohortCardProps {
 
    personaDetails: PersonaDetails;
+   key: number;
 }
 
+interface ICohortCardState {
 
-export class CohortCard extends React.Component<ICohortCardProps, PersonaDetails> {
+}
 
-   _personaDetails: PersonaDetails;
+export class CohortCard extends React.Component<ICohortCardProps, ICohortCardState> {
 
    constructor(props: ICohortCardProps) {
       super(props);
 
-      this._personaDetails = props.personaDetails;
-
-      this.state = this._personaDetails;
+      this.state = {};
    }
 
    render(): JSX.Element {
@@ -33,9 +33,9 @@ export class CohortCard extends React.Component<ICohortCardProps, PersonaDetails
             <Card.Header>
                <Flex gap="gap.medium">
                   <Avatar
-                     image={this._personaDetails.thumbnailUrl}
-                     label={this._personaDetails.name}
-                     name={this._personaDetails.name}
+                     image={this.props.personaDetails.thumbnailUrl}
+                     label={this.props.personaDetails.name}
+                     name={this.props.personaDetails.name}
                      size="larger"
                      status={{
                         color: 'green',
@@ -44,7 +44,7 @@ export class CohortCard extends React.Component<ICohortCardProps, PersonaDetails
                      }}
                   />
                   <Flex gap="gap.medium" column vAlign="center" >
-                     <Text content={this._personaDetails.name} weight="bold" size="medium" />
+                     <Text content={this.props.personaDetails.name} weight="bold" size="medium" />
                   </Flex>
                </Flex>
             </Card.Header>
