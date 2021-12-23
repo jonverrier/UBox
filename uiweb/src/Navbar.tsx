@@ -5,7 +5,7 @@ import * as React from 'react';
 import axios from 'axios';
 
 // Fluent-UI
-import { Provider, Image, Flex, FlexItem, teamsTheme, mergeThemes, Avatar, AcceptIcon, BanIcon, MenuButton } from '@fluentui/react-northstar';
+import { Provider, Image, Flex, FlexItem, teamsTheme, mergeThemes, Avatar, AcceptIcon, BanIcon, Button } from '@fluentui/react-northstar';
 
 // Local App 
 import { appThemeDark } from './Theme';
@@ -52,21 +52,9 @@ export class Navbar extends React.Component<INavbarProps, INavbarState> {
    render() : JSX.Element {
 
       var statusAvatar;
+      var signedIn: Boolean = !PersonaDetails.isNotLoggedIn(this.props.personaDetails);
 
-      if (PersonaDetails.isNotLoggedIn(this.props.personaDetails)) {
-
-         statusAvatar = <Avatar
-            image={this.props.personaDetails.thumbnailUrl}
-            label={this.props.personaDetails.name}
-            name={this.props.personaDetails.name}
-            size="small"
-            status={{
-               color: 'grey',
-               icon: <BanIcon />,
-               title: 'Not available'
-            }}
-         />;
-      } else {
+      if (signedIn) {
 
          statusAvatar = <Avatar
             image={this.props.personaDetails.thumbnailUrl}
@@ -79,6 +67,21 @@ export class Navbar extends React.Component<INavbarProps, INavbarState> {
                title: 'Available'
             }}
          />;
+
+      } else {
+
+         statusAvatar = <Avatar
+            image={this.props.personaDetails.thumbnailUrl}
+            label={this.props.personaDetails.name}
+            name={this.props.personaDetails.name}
+            size="small"
+            status={{
+               color: 'grey',
+               icon: <BanIcon />,
+               title: 'Not available'
+            }}
+         />;
+
       }
 
       return  (
@@ -90,10 +93,12 @@ export class Navbar extends React.Component<INavbarProps, INavbarState> {
                   <FlexItem push> 
                      {statusAvatar}
                   </FlexItem>
-                  <Image src="/assets/img/chat-multi-w-512x512.png" width="32" height="32" alt="Squads" title="Squads"
-                     onClick={this.navigateToCohorts.bind(this)} />
-                  <Image src="/assets/img/signout-w-512x512.png" width="32" height="32" alt="Sign out" title="Sign out"
-                     onClick={this.signOut.bind(this)} />
+                  <Button content={
+                     <Image src="/assets/img/chat-multi-o-512x512.png" width="32" height="32" alt="Squads" />}
+                     iconOnly title="Squads" onClick={this.navigateToCohorts.bind(this)} disabled={!signedIn}/>
+                  <Button content={
+                     <Image src="/assets/img/signout-o-512x512.png" width="32" height="32" alt="Sign out" />}
+                     iconOnly title="Sign out" onClick={this.signOut.bind(this)} disabled={!signedIn}/>
                </Flex>
             </Provider>
          </div>);
