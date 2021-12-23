@@ -3,7 +3,7 @@
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from '../../core/src/Persistence';
-import { Person, IPersonStore, IPersonByEmailStore, IPersonByExternalIdStore} from '../../core/src/Person';
+import { Person, IPersonStore, IPersonStoreByEmail, IPersonStoreByExternalId} from '../../core/src/Person';
 import { ICodec } from '../../core/src/IOCommon';
 import { PersonCodec } from '../../core/src/IOPerson';
 import { personModel } from './PersonSchema';
@@ -106,8 +106,9 @@ export class PersonDb implements IPersonStore {
             // If the record has not already been saved, look to see if we have an existing record for same email
             const existing = await personModel.findOne().where('_email').eq(person.email).exec();
 
-            // if the saved version has a later or equal sequence number, do not overwrite it
-            if (existing && existing._doc._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
+            // if the saved version has same email & later or equal sequence number, do not overwrite it
+            if (existing &&
+               existing._doc._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
 
                var docPost = existing.toObject({ transform: true });
 
@@ -135,7 +136,7 @@ export class PersonDb implements IPersonStore {
    }
 }
 
-export class PersonByEmailDb implements IPersonByEmailStore {
+export class PersonByEmailDb implements IPersonStoreByEmail {
    private _personCodec: PersonCodec;
    private _personStore: StoreImplFor<Person>;
 
@@ -150,7 +151,7 @@ export class PersonByEmailDb implements IPersonByEmailStore {
    }
 }
 
-export class PersonByExternalIdDb implements IPersonByExternalIdStore {
+export class PersonByExternalIdDb implements IPersonStoreByExternalId {
    private _personCodec: PersonCodec;
    private _personStore: StoreImplFor<Person>;
 

@@ -107,6 +107,12 @@ export class PersistenceDetails {
    static newPersistenceDetails(): PersistenceDetails {
       return new PersistenceDetails(null, _newSchemaIndicator, 0); 
    }
+
+   // Create persistenceDetails for a newly created object:
+   // key is null, schema version is undefined, and sequence is 0 since it is new 
+   static incrementSequenceNo(old: PersistenceDetails): PersistenceDetails {
+      return new PersistenceDetails(old.key, old.schemaVersion, old.sequenceNumber + 1);
+   }
 }
 
 
@@ -155,4 +161,8 @@ export interface IMultiLoaderFor<T> {
 
 export interface IKeyMultiLoaderFor<T> {
    loadMany(id: string): Promise<Array<T>>;
+}
+
+export interface ISessionMultiLoaderFor<T> {
+   loadMany(): Promise<Array<T>>;
 }

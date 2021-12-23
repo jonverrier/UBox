@@ -8,11 +8,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // Fluent-UI
 import { Provider, teamsTheme, mergeThemes } from '@fluentui/react-northstar';
 
-import { PersonaDetails, PersonaDetailsMemento } from '../../core/src/Persona';
+import { Persona, PersonaDetails, PersonaDetailsMemento } from '../../core/src/Persona';
 import { PersonCohortsMemento } from '../../core/src/PersonCohorts';
 
 // Server URLs
 import { EAppUrls } from '../../apisrv/src/AppUrls';
+import { MySessionCohortsApi } from '../../apisrv/src/CohortApi';
 
 // Local App 
 import { appTheme } from './Theme';
@@ -30,6 +31,9 @@ interface IAppState {
 
 export class PageSwitcher extends React.Component<IAppProps, IAppState> {
 
+
+   private _mySessionCohortsApi: MySessionCohortsApi; 
+
    constructor(props: IAppProps) {
 
       super(props);
@@ -44,12 +48,24 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
       var personaCohorts: PersonCohortsMemento = new PersonCohortsMemento(user.memento(), cohorts);
 
       this.state = { personaCohorts: personaCohorts };
+
+      var url: string = window.location.origin;
+      this._mySessionCohortsApi = new MySessionCohortsApi(url);
    }
 
    onSignIn (persona: PersonaDetails) : void {
 
-      this.setState({ personaCohorts: new PersonCohortsMemento(persona.memento(), this.state.personaCohorts._cohorts) });
-      this.forceUpdate();
+      // Pull back the cohort personas for cohorts asscoated with our session
+      var result = this._mySessionCohortsApi.loadMany();
+      var myCohortPersonaDetails = new Array<PersonaDetailsMemento>();
+
+      result.then(personas => {
+         for (var item of personas) {
+            myCohortPersonaDetails.push(item.personaDetails.memento());
+         }
+
+         this.setState({ personaCohorts: new PersonCohortsMemento(persona.memento(), myCohortPersonaDetails) });
+      });
    }
 
    render(): JSX.Element {

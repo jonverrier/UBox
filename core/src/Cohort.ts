@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
-import { PersistenceDetailsMemento, PersistenceDetails, ILoaderFor, ISaverFor, IKeyMultiLoaderFor } from "./Persistence";
+import { PersistenceDetailsMemento, PersistenceDetails, ILoaderFor, ISaverFor, IKeyMultiLoaderFor, ISessionMultiLoaderFor} from "./Persistence";
 import { Timestamper } from './Timestamp';
 import { Quantity } from './Quantity';
 import { Measurement } from './Observation';
@@ -164,8 +164,11 @@ export class Cohort extends Persona {
 export interface ICohortStore extends ILoaderFor<Cohort>, ISaverFor<Cohort> {
 }
 
-export interface IMyCohortsStore extends IKeyMultiLoaderFor<Cohort> {
+export interface ICohortStoreById extends IKeyMultiLoaderFor<Cohort> {
 }
 
-export interface IMyEmailCohortsStore extends IKeyMultiLoaderFor<Cohort> {
+export interface ICohortStoreByEmail extends IKeyMultiLoaderFor<Cohort> {
+}
+
+export interface ICohortPersonasStoreBySession extends ISessionMultiLoaderFor<Persona> {
 }

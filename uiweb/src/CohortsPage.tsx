@@ -4,11 +4,10 @@
 import * as React from 'react';
 
 // Fluent-UI
-import { Flex } from '@fluentui/react-northstar';
+import { Flex, Text } from '@fluentui/react-northstar';
 
 import { PersonaDetails } from '../../core/src/Persona';
 import { PersonCohortsMemento } from '../../core/src/PersonCohorts';
-
 
 // Local App 
 import { Navbar } from './Navbar';
@@ -24,6 +23,7 @@ interface ICohortsPageState {
 }
 
 export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPageState> {
+
 
    constructor(props: ICohortsPageProps) {
       super(props);
@@ -53,14 +53,28 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
       );
    }
 
-   render() : JSX.Element {
-      return (
-         <div>
-            <Navbar personaDetails={new PersonaDetails(this.props.personaCohorts._personaDetails)} />
-            <Flex gap="gap.medium" column={true}>               
-               {this.listCohorts ()}
-            </Flex>
-         </div>
-      );
+   render(): JSX.Element {
+
+      var length: number = this.props.personaCohorts._cohorts.length;
+
+      if (length === 0) {
+         return (
+            <div>
+               <Navbar personaDetails={new PersonaDetails(this.props.personaCohorts._personaDetails)} />
+               <Flex gap="gap.medium" column={true}>
+                  <Text content="It doesnt look like you are a member of any squads." size="medium" />
+               </Flex>
+            </div>
+         );
+      } else {
+         return (
+            <div>
+               <Navbar personaDetails={new PersonaDetails(this.props.personaCohorts._personaDetails)} />
+               <Flex gap="gap.medium" column={true}>
+                  {this.listCohorts()}
+               </Flex>
+            </div>
+         );
+      }
    }
 }

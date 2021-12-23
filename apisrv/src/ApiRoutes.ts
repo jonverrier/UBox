@@ -2,6 +2,7 @@
 // Copyright TXPCo ltd, 2020, 2021
 
 import express from 'express';
+var passport = require('passport');
 import { URL, URLSearchParams} from 'url';
 
 import { Logger } from '../../core/src/Logger';
@@ -12,9 +13,9 @@ import { PersonDb, PersonByEmailDb, PersonByExternalIdDb} from './PersonDb';
 import { MeasurementCodec, MeasurementsCodec } from '../../core/src/IOObservation';
 import { MeasurementDb } from './ObservationDb';
 import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
-import { CohortDb, MyCohortsDb, MyEmailCohortsDb} from './CohortDb';
+import { CohortDb, CohortDbById, CohortDbByEmail} from './CohortDb';
 import { BusinessCodec, BusinessesCodec } from '../../core/src/IOBusiness';
-import { BusinessDb, MyBusinessesDb} from './BusinessDb';
+import { BusinessDb, BusinesDbById} from './BusinessDb';
 
 import { EApiUrls } from './ApiUrls';
 
@@ -322,7 +323,7 @@ ApiRoutes.put(EApiUrls.QueryMyCohorts, function (req, res) {
 
    try {
       let codec = new CohortsCodec();
-      let db = new MyCohortsDb();
+      let db = new CohortDbById();
 
       let result = db.loadMany(req.body.key);
       result.then(data => {
@@ -342,7 +343,7 @@ ApiRoutes.put(EApiUrls.QueryMyCohortsByEmail, function (req, res) {
 
    try {
       let codec = new CohortsCodec();
-      let db = new MyEmailCohortsDb();
+      let db = new CohortDbByEmail();
 
       let result = db.loadMany(req.body.key);
       result.then(data => {
@@ -352,6 +353,32 @@ ApiRoutes.put(EApiUrls.QueryMyCohortsByEmail, function (req, res) {
    } catch (e) {
 
       logger.logError("ApiRoutes", EApiUrls.QueryMyCohortsByEmail, "Error", e.toString());
+      res.send(null);
+   }
+})
+
+// Retrieve Personas for multiple Cohort objects
+// This version uses the session to get user email, - query looks up the person, then inside each business object to see of the supplied id is a member or an admin.
+ApiRoutes.put(EApiUrls.QueryMyCohortPersonasFromSession, (req: any, res) => {
+
+   if ((!req.user) || (!req.user.loginContext)) {
+      logger.logError("ApiRoutes", EApiUrls.QueryMyCohortPersonasFromSession, "Error - no user session.", '');
+      res.send(null);
+      return;
+   }
+
+   try {
+      let codec = new PersonasCodec();
+      let db = new CohortDbByEmail();
+
+      let result = db.loadMany(req.user.email);
+      result.then(data => {
+         res.send(data ? codec.encode(data) : null);
+      });
+
+   } catch (e) {
+
+      logger.logError("ApiRoutes", EApiUrls.QueryMyCohortPersonasFromSession, "Error", e.toString());
       res.send(null);
    }
 })
@@ -405,7 +432,7 @@ ApiRoutes.put(EApiUrls.QueryMyBusinesses, function (req, res) {
 
    try {
       let codec = new BusinessesCodec();
-      let db = new MyBusinessesDb();
+      let db = new BusinesDbById();
 
       let result = db.loadMany(req.body.key);
       result.then(data => {

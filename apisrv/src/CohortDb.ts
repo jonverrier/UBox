@@ -3,12 +3,12 @@
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from '../../core/src/Persistence';
-import { ECohortType, Cohort, ICohortStore, IMyCohortsStore } from '../../core/src/Cohort';
+import { Cohort, ICohortStore, ICohortStoreById, ICohortStoreByEmail } from '../../core/src/Cohort';
 import { Business } from '../../core/src/Business';
-import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
+import { CohortCodec } from '../../core/src/IOCohort';
 import { Person } from '../../core/src/Person';
 import { PersonDb, PersonByEmailDb } from './PersonDb';
-import { BusinessDb, MyBusinessesDb } from './BusinessDb';
+import { BusinessDb, BusinesDbById } from './BusinessDb';
 import { cohortModel } from './CohortSchema';
 
 export class CohortDb implements ICohortStore {
@@ -118,7 +118,7 @@ export class CohortDb implements ICohortStore {
    }
 }
 
-export class MyCohortsDb implements IMyCohortsStore {
+export class CohortDbById implements ICohortStoreById {
    private _codec;
 
    constructor() {
@@ -132,8 +132,12 @@ export class MyCohortsDb implements IMyCohortsStore {
       // For the moment we keep the simpler / more encapsulated version
 
       // Step 1 - load all businesses where the provided ID is an administrator or member
-      var businessesDb: MyBusinessesDb = new MyBusinessesDb()
+      var businessesDb: BusinesDbById = new BusinesDbById()
       var businesses: Array<Business> = await businessesDb.loadMany(id);
+
+      if (!businesses) {
+         return null;
+      }
 
       // Step 2 - build a list of IDs
       var businessIds: Array<string> = new Array<string>();
@@ -164,22 +168,18 @@ export class MyCohortsDb implements IMyCohortsStore {
       } else {
          return null;
       }
-
-      var cohorts: Array<Cohort> = new Array<Cohort>();
-
-      return null;
    }
 }
 
 // Aapter to load Cohorts associated with an email ID
 // First loads the person, then loads Cohorts using the ID
-export class MyEmailCohortsDb implements IMyCohortsStore {
+export class CohortDbByEmail implements ICohortStoreByEmail {
    private _myPersonDb:PersonByEmailDb;
-   private _myCohortsDb:MyCohortsDb;
+   private _myCohortsDb:CohortDbById;
 
    constructor() {
       this._myPersonDb = new PersonByEmailDb();
-      this._myCohortsDb = new MyCohortsDb();
+      this._myCohortsDb = new CohortDbById();
    }
 
    async loadMany(id: string): Promise<Array<Cohort>> {

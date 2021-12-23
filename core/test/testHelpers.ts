@@ -23,32 +23,32 @@ export class PersonaTestHelper {
 
    static createJoeDetails(): PersonaDetails {
 
-      return new PersonaDetails("Joe", "https://joe.thumbnails.com");
+      return new PersonaDetails("Joe", "/assets/img/person-o-512x512.png");
    }
 
    static createJoe2Details(): PersonaDetails {
 
-      return new PersonaDetails("Joe2", "https://joe2.thumbnails.com");
+      return new PersonaDetails("Joe2", "/assets/img/person-o-512x512.png");
    }
 
    static createXFitDulwichDetails(): PersonaDetails {
 
-      return new PersonaDetails("XFit Dulwich", "https://xfit.thumbnails.com");
+      return new PersonaDetails("XFit Dulwich", "/assets/img/weightlifter-b-128x128.png");
    }
 
    static createXFitDulwichDetailsErr(): PersonaDetails {
 
-      return new PersonaDetails("XFit Dulwich - Error Paths", "https://xfit.thumbnails.com");
+      return new PersonaDetails("XFit Dulwich - Error Paths", "/assets/img/weightlifter-b-128x128.png");
    }
 
    static createOlyLiftDetails(): PersonaDetails {
 
-      return new PersonaDetails("Olympic Lifting", "https://xfit.thumbnails.com");
+      return new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
    }
 
    static createPowerLiftDetails(): PersonaDetails {
 
-      return new PersonaDetails("Power Lifting", "https://xfit.thumbnails.com");
+      return new PersonaDetails("Power Lifting", "/assets/img/weightlifter-b-128x128.png");
    }
 
    static createJoe(): Persona {
@@ -74,7 +74,7 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(PersistenceDetails.newPersistenceDetails(),
-         new PersonaDetails("Joe", "https://joe.thumbnails.com"),
+         new PersonaDetails("Joe", "/assets/img/person-o-512x512.png"),
          new LoginContext(ELoginProvider.Private, "makdeuptokenforjoe"),
          "Joe@mail.com", roles);
    }
@@ -83,7 +83,7 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(PersistenceDetails.newPersistenceDetails(),
-         new PersonaDetails("Joe2", "https://joe2.thumbnails.com"),
+         new PersonaDetails("Joe2", "/assets/img/person-o-512x512.png"),
          new LoginContext(ELoginProvider.Private, "makdeuptokenforjoe2"),
          "Joe2@mail.com", roles);
    }
@@ -92,7 +92,7 @@ export class PersonTestHelper {
       let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
 
       return new Person(PersistenceDetails.newPersistenceDetails(),
-         new PersonaDetails("Joe", "https://joe.thumbnails.com"),
+         new PersonaDetails("Joe", "/assets/img/person-o-512x512.png"),
          new LoginContext(ELoginProvider.Private, "makdeuptokenforjoecoach"),
          "Joe@mail.com", roles);
    }
@@ -102,9 +102,9 @@ export class PersonTestHelper {
 
       return new Person(
          PersistenceDetails.newPersistenceDetails(),
-         new PersonaDetails("Jon V", "https://jonv.pics.com"),
-         new LoginContext(ELoginProvider.Private, "makdeuptokenforjonv"),
-         "jonathanverrier@hotmail.com",
+         new PersonaDetails("Jon V", "/assets/img/person-o-512x512.png"),
+         new LoginContext(ELoginProvider.Private, "1155683527294382246834"),
+         "jonathanpverrier@gmail.com",
          roles);
    }
 
@@ -113,7 +113,7 @@ export class PersonTestHelper {
 
       return new Person(
          PersistenceDetails.newPersistenceDetails(),
-         new PersonaDetails("Harry V", "https://harryv.pics.com"),
+         new PersonaDetails("Harry V", "/assets/img/person-o-512x512.png"),
          new LoginContext(ELoginProvider.Private, "makdeuptokenforharry"),
          "madeupmailforharry@gmail.com",
          roles);
@@ -124,7 +124,7 @@ export class PersonTestHelper {
 
       return new Person(
          PersistenceDetails.newPersistenceDetails(),
-         new PersonaDetails("Alex V", "https://alexv.pics.com"),
+         new PersonaDetails("Alex V", "/assets/img/person-o-512x512.png"),
          new LoginContext(ELoginProvider.Private, "makdeuptokenforalex"),
          "madeupmailforalexvy@gmail.com",
          roles);
@@ -134,7 +134,7 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(new PersistenceDetails("61af3bcd0f1b01355cc36f2c", 0, 0),
-         new PersonaDetails("Joe", "https://joe.thumbnails.com"),
+         new PersonaDetails("Joe", "/assets/img/person-o-512x512.png"),
          new LoginContext(ELoginProvider.Private, "makdeuptokenforjoe"),
          "Joe@mail.com", roles);
    }
@@ -143,7 +143,7 @@ export class PersonTestHelper {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
 
       return new Person(PersistenceDetails.newPersistenceDetails(),
-         new PersonaDetails("Joe", "https://joe.thumbnails.com"),
+         new PersonaDetails("Joe", "/assets/img/person-o-512x512.png"),
          new LoginContext(ELoginProvider.Private, "makdeuptokenforjoe"),
          "Joe@mail.com", roles);
    }

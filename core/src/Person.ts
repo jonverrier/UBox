@@ -347,10 +347,10 @@ export interface IPersonStore extends ILoaderFor<Person>, ISaverFor<Person>, IMu
 
 }
 
-export interface IPersonByEmailStore extends ILoaderFor<Person> {
+export interface IPersonStoreByEmail extends ILoaderFor<Person> {
 
 }
 
-export interface IPersonByExternalIdStore extends ILoaderFor<Person> {
+export interface IPersonStoreByExternalId extends ILoaderFor<Person> {
 
 }

@@ -4,7 +4,7 @@
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from '../../core/src/Persistence';
 import { Person, PersonMemento } from '../../core/src/Person';
-import { Business, BusinessMemento, IBusinessStore, IMyBusinessesStore } from '../../core/src/Business';
+import { Business, BusinessMemento, IBusinessStore, IBusinessesStoreById } from '../../core/src/Business';
 import { BusinessCodec } from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
 import { businessModel } from './BusinessSchema';
@@ -153,7 +153,7 @@ export class BusinessDb implements IBusinessStore {
 }
 
 
-export class MyBusinessesDb implements IMyBusinessesStore {
+export class BusinesDbById implements IBusinessesStoreById {
    private _codec;
 
    constructor() {

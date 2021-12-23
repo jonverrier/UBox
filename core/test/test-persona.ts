@@ -68,7 +68,7 @@ describe("Persona", function () {
    it("Needs to correctly store attributes", function () {
          
       expect(person1.personaDetails.name === "Joe").to.equal(true);
-      expect(person1.personaDetails.thumbnailUrl === "https://joe.thumbnails.com").to.equal(true);
+      expect(person1.personaDetails.thumbnailUrl === "/assets/img/person-o-512x512.png").to.equal(true);
 
       expect(person1.memento()._personaDetails._name === person1.memento()._personaDetails._name).to.equal(true);
       expect(person1.memento()._personaDetails._thumbnailUrl === person1.personaDetails.thumbnailUrl).to.equal(true);
