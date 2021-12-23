@@ -2,8 +2,10 @@
 // Copyright TXPCo ltd, 2021
 // Implements IMeasurementStore over a web API
 
-import { Cohort, ICohortStore, IMyCohortsStore, IMyEmailCohortsStore} from '../../core/src/Cohort';
-import { CohortCodec, CohortsCodec} from '../../core/src/IOCohort';
+import { Cohort, ICohortStore, ICohortStoreById, ICohortStoreByEmail, ICohortPersonasStoreBySession} from '../../core/src/Cohort';
+import { CohortCodec, CohortsCodec } from '../../core/src/IOCohort';
+import { PersonasCodec } from '../../core/src/IOPersona';
+import { Persona } from '../../core/src/Persona';
 import { LoadApiHelper, SaveApiHelper, KeyMultiApiHelper} from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
@@ -42,7 +44,7 @@ export class CohortApi implements ICohortStore {
 
 }
 
-export class MyCohortsApi implements IMyCohortsStore {
+export class MyCohortsApi implements ICohortStoreById {
    private _multiApiHelper: KeyMultiApiHelper<Cohort>;
 
    constructor(serverUrl: string) {
@@ -63,7 +65,7 @@ export class MyCohortsApi implements IMyCohortsStore {
 }
 
 
-export class MyEmailCohortsApi implements IMyEmailCohortsStore {
+export class MyEmailCohortsApi implements ICohortStoreByEmail {
    private _multiApiHelper: KeyMultiApiHelper<Cohort>;
 
    constructor(serverUrl: string) {
@@ -79,6 +81,25 @@ export class MyEmailCohortsApi implements IMyEmailCohortsStore {
    async loadMany(email: string): Promise<Array<Cohort>> {
 
       return this._multiApiHelper.loadMany(email);
+   }
+
+}
+
+export class MySessionCohortsApi implements ICohortPersonasStoreBySession {
+   private _multiApiHelper: KeyMultiApiHelper<Persona>;
+
+   constructor(serverUrl: string) {
+      this._multiApiHelper = new KeyMultiApiHelper<Persona>(serverUrl, EApiUrls.QueryMyCohortPersonasFromSession, new PersonasCodec());
+   }
+
+
+   /**
+    * load multiple Cohort Persona objects
+    * @returns - an array of constructed object or null if not found.
+    */
+   async loadMany(): Promise<Array<Persona>> {
+
+      return this._multiApiHelper.loadMany(null);
    }
 
 }

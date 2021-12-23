@@ -22,24 +22,11 @@ var expect = require("chai").expect;
 
 var root: string = 'http://localhost:4000';
 
-const getCircularReplacer = () => {
-   const seen = new WeakSet();
-   return (key, value) => {
-      if (typeof value === "object" && value !== null) {
-         if (seen.has(value)) {
-            return;
-         }
-         seen.add(value);
-      }
-      return value;
-   };
-};
 
 describe("Demo Setup", function () {
 
    let quantity = new Quantity(60, BaseUnits.kilogram);
-   let repeats = 1;
-   let measurementType = MeasurementTypes.snatch;
+
    let measurementApi: MeasurementApi = new MeasurementApi(root);
    var personApi: PersonApi = new PersonApi(root);
    var businessApi: BusinessApi = new BusinessApi(root);

@@ -16,7 +16,6 @@ async function save(user, accessToken): Promise<Person | null> {
    const email = user.email;
    const name = user.name;
    const thumbnailUrl = user.picture;
-   const lastAuthCode = accessToken;
    const externalId = user.sub;
 
    let myDb = new PersonByEmailDb();
@@ -24,8 +23,13 @@ async function save(user, accessToken): Promise<Person | null> {
    let person = await myDb.loadOne(email);
 
    if (person) {
+      // Person record found in DB - increment version and overwrite
+      person = new Person(PersistenceDetails.incrementSequenceNo(person.persistenceDetails),
+         new PersonaDetails(name, thumbnailUrl),
+         new LoginContext(ELoginProvider.Google, externalId),
+         email,
+         person.roles);
 
-      // TODO - what if the profile differs from what we have - name, thumbnailUrl??
       return person;
    }
    else {

@@ -196,5 +196,5 @@ export interface IBusinessStore extends ILoaderFor<Business>, ISaverFor<Business
 
 }
 
-export interface IMyBusinessesStore extends IKeyMultiLoaderFor<Business> {
+export interface IBusinessesStoreById extends IKeyMultiLoaderFor<Business> {
 }
