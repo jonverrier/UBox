@@ -112,6 +112,32 @@ ApiRoutes.get(EApiUrls.QueryPersonByExternalId, function (req, res) {
    }
 })
 
+// Retrieve a Person from the session
+// This version uses the session to get user email, query looks up the person
+ApiRoutes.get(EApiUrls.QueryPersonFromSession, (req: any, res) => {
+
+   if ((!req.user) || (!req.user.loginContext)) {
+      logger.logError("ApiRoutes", EApiUrls.QueryPersonFromSession, "Error - no user session.", '');
+      res.send(null);
+      return;
+   }
+
+   try {
+      let codec = new PersonCodec();
+      let db = new PersonByEmailDb();
+
+      let result = db.loadOne(req.user.email);
+      result.then(data => {
+         res.send(data ? codec.encode(data) : null);
+      });
+
+   } catch (e) {
+
+      logger.logError("ApiRoutes", EApiUrls.QueryPersonFromSession, "Error", e.toString());
+      res.send(null);
+   }
+})
+
 // Retrieve multiple Person objects
 ApiRoutes.put(EApiUrls.QueryPeople, function (req, res) {
 

@@ -3,7 +3,7 @@
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from '../../core/src/Persistence';
-import { Person, IPersonStore, IPersonStoreByEmail, IPersonStoreByExternalId} from '../../core/src/Person';
+import { Person, PersonMemento, IPersonStore, IPersonStoreByEmail, IPersonStoreByExternalId} from '../../core/src/Person';
 import { ICodec } from '../../core/src/IOCommon';
 import { PersonCodec } from '../../core/src/IOPerson';
 import { personModel } from './PersonSchema';
@@ -102,27 +102,39 @@ export class PersonDb implements IPersonStore {
 
    async save(person: Person): Promise<Person | null> {
       try {
-         if (! person.persistenceDetails.hasValidKey()) {
-            // If the record has not already been saved, look to see if we have an existing record for same email
-            const existing = await personModel.findOne().where('_email').eq(person.email).exec();
+         // Look to see if we have an existing record for same email
+         const existing = await personModel.findOne().where('_email').eq(person.email).exec();
 
-            // if the saved version has same email & later or equal sequence number, do not overwrite it
-            if (existing &&
-               existing._doc._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
+         // if the saved version has same email & later or equal sequence number, do not overwrite it
+         if (existing &&
+            existing._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
 
-               var docPost = existing.toObject({ transform: true });
+            var docPost = existing.toObject({ transform: true });
 
-               return this._personCodec.tryCreateFrom(docPost);
-            }
+            return this._personCodec.tryCreateFrom(docPost);
          }
 
-         let doc = new personModel(this._personCodec.encode(person));
+         var result;
+         let encoded:PersonMemento = this._personCodec.encode(person);
 
-         // Set schema version if it is currently clear
-         if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
-            doc._persistenceDetails._schemaVersion = 0;
-
-         let result = await (doc.save ({ isNew: person.persistenceDetails.key ? true : false }));
+         if (existing) {
+            // Copy across fields to update (excl email), with incremented sequence number
+            existing._persistenceDetails = PersistenceDetails.incrementSequenceNo(
+               new PersistenceDetails(existing._persistenceDetails._key,
+                  existing._persistenceDetails._schemaVersion,
+                  existing._persistenceDetails._sequenceNumber));
+            existing._personaDetails = encoded._personaDetails;
+            existing._loginContext = encoded._loginContext;
+            existing._roles = encoded._roles;
+            result = await (existing.save({ isNew: false }));
+         }
+         else {
+            let doc = new personModel(encoded);
+            // Set schema version if it is currently clear
+            if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
+               doc._persistenceDetails._schemaVersion = 0;
+            result = await (doc.save({ isNew: true }));
+         }
 
          var docPost = result.toObject({ transform: true });
          return this._personCodec.tryCreateFrom(docPost);

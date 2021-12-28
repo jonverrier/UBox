@@ -94,7 +94,10 @@ export class CohortDb implements ICohortStore {
          if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
             doc._persistenceDetails._schemaVersion = 0;
 
-         let result = await doc.save({ isNew: cohort.persistenceDetails.key ? true : false });
+         // Copy key to where Mongo expects it
+         doc._id = cohort.persistenceDetails.key;
+
+         let result = await doc.save({ isNew: cohort.persistenceDetails.key ? false : true });
 
          var docPost = result.toObject({ transform: true });
 

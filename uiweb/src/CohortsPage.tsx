@@ -9,6 +9,7 @@ import { Flex, Text } from '@fluentui/react-northstar';
 import { PersistenceDetails } from '../../core/src/Persistence';
 import { Persona, PersonaDetails } from '../../core/src/Persona';
 import { PersonCohorts } from '../../core/src/PersonCohorts';
+import { PersonApiFromSession } from '../../apisrv/src/PersonApi';
 
 // Local App 
 import { Navbar } from './Navbar';
@@ -25,24 +26,30 @@ interface ICohortsPageState {
 
 export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPageState> {
 
+   private _mySessionPersonApi: PersonApiFromSession; 
 
    constructor(props: ICohortsPageProps) {
       super(props);
 
       this.state = {};
+
+      var url: string = window.location.origin;
+      this._mySessionPersonApi = new PersonApiFromSession(url);
    }
 
    componentDidMount() {
-      // TODO - replace with query of actual user
-      var user: PersonaDetails = new PersonaDetails('Joe', '/assets/img/person-o-512x512.png');
+      // Pull back the user asscoated with our session
+      var result = this._mySessionPersonApi.loadOne();
 
-      this.props.onSignIn(new Persona (PersistenceDetails.newPersistenceDetails(), user));
+      result.then(person => {
+         this.props.onSignIn(person);
+      });
    }
 
    navigateToCohort(key: string): void {
       // URL for a specific cohort is to pass the key in query parameter
       window.location.href = EAppUrls.Cohort + '?key=' + key;
-}
+   }
 
    listCohorts(): JSX.Element {
       let items = this.props.personaCohorts._cohorts;

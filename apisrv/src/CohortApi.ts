@@ -44,7 +44,7 @@ export class CohortApi implements ICohortStore {
 
 }
 
-export class MyCohortsApi implements ICohortStoreById {
+export class CohortsApiById implements ICohortStoreById {
    private _multiApiHelper: KeyMultiApiHelper<Cohort>;
 
    constructor(serverUrl: string) {
@@ -64,8 +64,7 @@ export class MyCohortsApi implements ICohortStoreById {
 
 }
 
-
-export class MyEmailCohortsApi implements ICohortStoreByEmail {
+export class CohortsApiByEmail implements ICohortStoreByEmail {
    private _multiApiHelper: KeyMultiApiHelper<Cohort>;
 
    constructor(serverUrl: string) {
@@ -85,7 +84,7 @@ export class MyEmailCohortsApi implements ICohortStoreByEmail {
 
 }
 
-export class MySessionCohortsApi implements ICohortPersonasStoreBySession {
+export class CohortsApiFromSession implements ICohortPersonasStoreBySession {
    private _multiApiHelper: KeyMultiApiHelper<Persona>;
 
    constructor(serverUrl: string) {

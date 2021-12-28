@@ -6,6 +6,7 @@ export enum EApiUrls {
    QueryPerson = "/api/queryPerson",
    QueryPersonByEmail = "/api/QueryPersonByEmail",
    QueryPersonByExternalId = "/api/QueryPersonByExternalId",
+   QueryPersonFromSession = '/api/QueryPersonFromSession',
    QueryPeople = "/api/queryPeople",
    SavePerson = "/api/savePerson",
    QueryMeasurement = "/api/queryMeasurement",

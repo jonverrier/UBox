@@ -12,7 +12,7 @@ import { PersonaDetails, Persona} from '../../core/src/Persona';
 
 export interface ICohortViewProps {
 
-   persona: Persona;
+   persona: Persona; // TODO - need a set of CohortMeasurements
 }
 
 const items: Array<ChatItemProps> = [

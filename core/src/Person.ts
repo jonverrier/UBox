@@ -1,6 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 import { InvalidParameterError } from './CoreError';
-import { PersistenceDetails, PersistenceDetailsMemento, ILoaderFor, ISaverFor, IMultiLoaderFor } from "./Persistence";
+import { PersistenceDetails, PersistenceDetailsMemento, ILoaderFor, ISaverFor, IMultiLoaderFor, ISessionLoaderFor } from "./Persistence";
 import { Persona, PersonaDetails, PersonaDetailsMemento, PersonaMemento } from './Persona';
 import { LoginContextMemento, LoginContext } from './LoginContext';
 
@@ -352,5 +352,9 @@ export interface IPersonStoreByEmail extends ILoaderFor<Person> {
 }
 
 export interface IPersonStoreByExternalId extends ILoaderFor<Person> {
+
+}
+
+export interface IPersonStoreFromSession extends ISessionLoaderFor<Person> {
 
 }

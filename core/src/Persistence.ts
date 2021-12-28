@@ -163,6 +163,10 @@ export interface IKeyMultiLoaderFor<T> {
    loadMany(id: string): Promise<Array<T>>;
 }
 
+export interface ISessionLoaderFor<T> {
+   loadOne(): Promise<T | null>;
+}
+
 export interface ISessionMultiLoaderFor<T> {
    loadMany(): Promise<Array<T>>;
 }

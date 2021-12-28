@@ -21,6 +21,7 @@ async function save(user, accessToken): Promise<Person | null> {
    let myDb = new PersonByEmailDb();
 
    let person = await myDb.loadOne(email);
+   let db = new PersonDb();
 
    if (person) {
       // Person record found in DB - increment version and overwrite
@@ -30,13 +31,14 @@ async function save(user, accessToken): Promise<Person | null> {
          email,
          person.roles);
 
+      db.save(person); 
+
       return person;
    }
    else {
       // Person is not found, create them as a prospect
       let roles = new Roles(new Array<ERoleType>(ERoleType.Prospect));
 
-      let db = new PersonDb();
       person = new Person(PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails(name, thumbnailUrl),
          new LoginContext(ELoginProvider.Google, externalId),
