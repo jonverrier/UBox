@@ -91,6 +91,7 @@ app.use(passport.session());
 if (inDevelopment) {
    // Set error handler. 
    app.use(errorHandler({ dumpExceptions: true, showStack: true }));
+   mongoose.set('debug', true);
 }
 
 // Routes for API endpoints

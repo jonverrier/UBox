@@ -14,7 +14,7 @@ import { PersonCohorts } from '../../core/src/PersonCohorts';
 
 // Server URLs
 import { EAppUrls } from '../../apisrv/src/AppUrls';
-import { MySessionCohortsApi } from '../../apisrv/src/CohortApi';
+import { CohortsApiFromSession } from '../../apisrv/src/CohortApi';
 
 // Local App 
 import { appTheme } from './Theme';
@@ -33,22 +33,15 @@ interface IAppState {
 export class PageSwitcher extends React.Component<IAppProps, IAppState> {
 
 
-   private _mySessionCohortsApi: MySessionCohortsApi; 
+   private _mySessionCohortsApi: CohortsApiFromSession; 
 
    constructor(props: IAppProps) {
 
       super(props);
 
+      // Initial status is the user not logged in, no cohorts
       var user: PersonaDetails = PersonaDetails.notLoggedIn();
-      var cohortPersistence: PersistenceDetails = PersistenceDetails.newPersistenceDetails();
-
-      var cohort1: PersonaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
-      var cohort2: PersonaDetails = new PersonaDetails("Power Lifting", "/assets/img/weightlifter-b-128x128.png");
       var cohorts = new Array<Persona>();
-      cohorts.push(new Persona(cohortPersistence,
-         cohort1));
-      cohorts.push(new Persona(cohortPersistence,
-         cohort2));
 
       var persona: Persona = new Persona(
          PersistenceDetails.newPersistenceDetails(),
@@ -59,7 +52,7 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
       this.state = { personaCohorts: personaCohorts };
 
       var url: string = window.location.origin;
-      this._mySessionCohortsApi = new MySessionCohortsApi(url);
+      this._mySessionCohortsApi = new CohortsApiFromSession(url);
    }
 
    onSignIn (persona: Persona) : void {

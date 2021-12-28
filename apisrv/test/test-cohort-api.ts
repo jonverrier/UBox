@@ -14,7 +14,7 @@ import { Cohort, ECohortType } from "../../core/src/Cohort";
 import { MeasurementApi, CohortMeasurementApi} from '../src/ObservationApi';
 import { PersonApi } from '../src/PersonApi';
 import { BusinessApi } from '../src/BusinessApi';
-import { CohortApi, MyCohortsApi, MyEmailCohortsApi } from '../src/CohortApi';
+import { CohortApi, CohortsApiById, CohortsApiByEmail } from '../src/CohortApi';
 import { PersonaTestHelper, PersonTestHelper } from '../../core/test/testHelpers';
 
 var expect = require("chai").expect;
@@ -28,8 +28,8 @@ describe("CohortApi", function () {
    var personApi: PersonApi = new PersonApi(root);
    var businessApi: BusinessApi = new BusinessApi(root);
    var cohortApi: CohortApi = new CohortApi(root);
-   var myCohortsApi: MyCohortsApi = new MyCohortsApi(root);
-   var myEmailCohortsApi: MyEmailCohortsApi = new MyEmailCohortsApi(root);
+   var myCohortsApi: CohortsApiById = new CohortsApiById(root);
+   var myEmailCohortsApi: CohortsApiByEmail = new CohortsApiByEmail(root);
    var cohortMeasurementApi: CohortMeasurementApi = new CohortMeasurementApi(root);
 
    let cohort1: Cohort;

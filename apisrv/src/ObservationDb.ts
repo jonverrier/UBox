@@ -155,7 +155,10 @@ export class MeasurementDb implements IMeasurementStore {
          if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
             doc._persistenceDetails._schemaVersion = 0;
 
-         let result = await doc.save({ isNew: measurement.persistenceDetails.key ? true : false});
+         // Copy key to where Mongo expects it
+         doc._id = measurement.persistenceDetails.key;
+
+         let result = await doc.save({ isNew: measurement.persistenceDetails.key ? false : true});
 
          var docPost = result.toObject({ transform: true });
 

@@ -138,7 +138,10 @@ export class BusinessDb implements IBusinessStore {
          if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
             doc._persistenceDetails._schemaVersion = 0;
 
-         let result = await (doc).save({ isNew : business.persistenceDetails.key ? true : false});
+         // Copy key to where Mongo expects it
+         doc._id = business.persistenceDetails.key;
+
+         let result = await (doc).save({ isNew : business.persistenceDetails.key ? false : true});
 
          var docPost = result.toObject({ transform: true });
          return this.postProcessFromSave(docPost, prevAdmins, prevMembers);
