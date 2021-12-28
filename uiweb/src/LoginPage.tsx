@@ -6,8 +6,6 @@ import * as React from 'react';
 // Fluent-UI
 import { Flex } from '@fluentui/react-northstar';
 
-import { PersonaDetails, PersonaDetailsMemento } from '../../core/src/Persona';
-
 // Local App 
 import { Navbar } from './Navbar';
 import { ILoginSplashProps, LoginSplash } from './LoginSplash';
@@ -25,13 +23,12 @@ export class LoginPage extends React.Component<ILoginSplashProps, ILoginPageStat
    }
 
    render(): JSX.Element {
-      var personaDetails: PersonaDetails = new PersonaDetails(this.props.personaDetails.name, this.props.personaDetails.thumbnailUrl);
 
       return (
          <div>
-            <Navbar personaDetails={personaDetails} />
+            <Navbar persona={this.props.persona} />
             <Flex gap="gap.medium" column={true}>
-               <LoginSplash personaDetails={personaDetails}></LoginSplash>
+               <LoginSplash persona={this.props.persona}></LoginSplash>
             </Flex>
          </div>);
 

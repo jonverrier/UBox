@@ -1,7 +1,8 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { PersonaDetails, PersonaDetailsMemento } from '../src/Persona';
-import { PersonCohortsMemento} from '../src/PersonCohorts';
+
+import { Persona} from '../src/Persona';
+import { PersonCohorts} from '../src/PersonCohorts';
 import { PersonaTestHelper } from './testHelpers';
 
 var expect = require("chai").expect;
@@ -9,24 +10,26 @@ var expect = require("chai").expect;
 
 describe("PersonCohortMemento", function () {
 
-   var person: PersonaDetails, cohort: PersonaDetails;
+   var person: Persona, cohort: Persona;
 
-   person = PersonaTestHelper.createJoeDetails();
+   person = PersonaTestHelper.createJoe();
 
-   cohort = PersonaTestHelper.createXFitDulwichDetails();
+   cohort = PersonaTestHelper.createXFitDulwich();
 
-   var personCohorts: PersonCohortsMemento = new PersonCohortsMemento(
-      person.memento(),
-      new Array<PersonaDetailsMemento>(cohort.memento()));
+   var personCohorts: PersonCohorts = new PersonCohorts(
+      person,
+      new Array<Persona>(cohort));
  
    
    it("Needs to correctly store attributes", function () {
 
-      expect(personCohorts._personaDetails._name === person.memento()._name).to.equal(true);
-      expect(personCohorts._personaDetails._thumbnailUrl === person.memento()._thumbnailUrl).to.equal(true);
+      expect(personCohorts._persona.persistenceDetails.key === person.persistenceDetails.memento()._key).to.equal(true);
+      expect(personCohorts._persona.personaDetails.name === person.personaDetails.memento()._name).to.equal(true);
+      expect(personCohorts._persona.personaDetails.thumbnailUrl === person.personaDetails.memento()._thumbnailUrl).to.equal(true);
 
-      expect(personCohorts._cohorts[0]._name === cohort.name).to.equal(true);
-      expect(personCohorts._cohorts[0]._thumbnailUrl === cohort.thumbnailUrl).to.equal(true);  
+      expect(personCohorts._cohorts[0].persistenceDetails.key === cohort.persistenceDetails.memento()._key).to.equal(true);
+      expect(personCohorts._cohorts[0].personaDetails.name === cohort.personaDetails.name).to.equal(true);
+      expect(personCohorts._cohorts[0].personaDetails.thumbnailUrl === cohort.personaDetails.thumbnailUrl).to.equal(true);  
    });
 
 });

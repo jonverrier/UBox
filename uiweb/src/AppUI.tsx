@@ -8,8 +8,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // Fluent-UI
 import { Provider, teamsTheme, mergeThemes } from '@fluentui/react-northstar';
 
-import { Persona, PersonaDetails, PersonaDetailsMemento } from '../../core/src/Persona';
-import { PersonCohortsMemento } from '../../core/src/PersonCohorts';
+import { PersistenceDetails } from '../../core/src/Persistence'; 
+import { Persona, PersonaDetails } from '../../core/src/Persona';
+import { PersonCohorts } from '../../core/src/PersonCohorts';
 
 // Server URLs
 import { EAppUrls } from '../../apisrv/src/AppUrls';
@@ -17,7 +18,7 @@ import { MySessionCohortsApi } from '../../apisrv/src/CohortApi';
 
 // Local App 
 import { appTheme } from './Theme';
-import { CohortsPage, ICohortsPageProps } from './CohortsPage';
+import { CohortsPage } from './CohortsPage';
 import { CohortPage} from './CohortPage';
 import { LoginPage } from './LoginPage';
 
@@ -26,7 +27,7 @@ export interface IAppProps {
 }
 
 interface IAppState {
-   personaCohorts: PersonCohortsMemento;
+   personaCohorts: PersonCohorts;
 }
 
 export class PageSwitcher extends React.Component<IAppProps, IAppState> {
@@ -39,13 +40,21 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
       super(props);
 
       var user: PersonaDetails = PersonaDetails.notLoggedIn();
+      var cohortPersistence: PersistenceDetails = PersistenceDetails.newPersistenceDetails();
+
       var cohort1: PersonaDetails = new PersonaDetails("Olympic Lifting", "/assets/img/weightlifter-b-128x128.png");
       var cohort2: PersonaDetails = new PersonaDetails("Power Lifting", "/assets/img/weightlifter-b-128x128.png");
-      var cohorts = new Array<PersonaDetailsMemento>();
-      cohorts.push(cohort1.memento());
-      cohorts.push(cohort2.memento());
+      var cohorts = new Array<Persona>();
+      cohorts.push(new Persona(cohortPersistence,
+         cohort1));
+      cohorts.push(new Persona(cohortPersistence,
+         cohort2));
 
-      var personaCohorts: PersonCohortsMemento = new PersonCohortsMemento(user.memento(), cohorts);
+      var persona: Persona = new Persona(
+         PersistenceDetails.newPersistenceDetails(),
+         user);
+
+      var personaCohorts: PersonCohorts = new PersonCohorts(persona, cohorts);
 
       this.state = { personaCohorts: personaCohorts };
 
@@ -53,18 +62,18 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
       this._mySessionCohortsApi = new MySessionCohortsApi(url);
    }
 
-   onSignIn (persona: PersonaDetails) : void {
+   onSignIn (persona: Persona) : void {
 
       // Pull back the cohort personas for cohorts asscoated with our session
       var result = this._mySessionCohortsApi.loadMany();
-      var myCohortPersonaDetails = new Array<PersonaDetailsMemento>();
+      var myCohortPersonas = new Array<Persona>();
 
       result.then(personas => {
          for (var item of personas) {
-            myCohortPersonaDetails.push(item.personaDetails.memento());
+            myCohortPersonas.push(item);
          }
 
-         this.setState({ personaCohorts: new PersonCohortsMemento(persona.memento(), myCohortPersonaDetails) });
+         this.setState({ personaCohorts: new PersonCohorts(persona, myCohortPersonas) });
       });
    }
 
@@ -77,7 +86,7 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
                   <Route path="/">
                      <Route path={EAppUrls.Cohorts.substr(1)} element={<CohortsPage personaCohorts={this.state.personaCohorts} onSignIn={this.onSignIn.bind (this)} />} />
                      <Route path={EAppUrls.Cohort.substr(1)} element={<CohortPage personaCohorts={this.state.personaCohorts} />} />
-                     <Route path={EAppUrls.Login.substr(1)} element={<LoginPage personaDetails={new PersonaDetails(this.state.personaCohorts._personaDetails)}/>} />
+                     <Route path={EAppUrls.Login.substr(1)} element={<LoginPage persona={this.state.personaCohorts._persona} />} />
                   </Route>
                </Routes>  
             </BrowserRouter>  

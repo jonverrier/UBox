@@ -12,11 +12,11 @@ import { appThemeDark } from './Theme';
 
 import { EAppUrls } from '../../apisrv/src/AppUrls';
 import { EAuthUrls } from '../../apisrv/src/AuthUrls';
-import { PersonaDetails } from '../../core/src/Persona';
+import { Persona, PersonaDetails } from '../../core/src/Persona';
 
 export interface INavbarProps {
 
-   personaDetails: PersonaDetails;
+   persona: Persona;
 }
 
 interface INavbarState {
@@ -52,14 +52,14 @@ export class Navbar extends React.Component<INavbarProps, INavbarState> {
    render() : JSX.Element {
 
       var statusAvatar;
-      var signedIn: Boolean = !PersonaDetails.isNotLoggedIn(this.props.personaDetails);
+      var signedIn: Boolean = !PersonaDetails.isNotLoggedIn(this.props.persona.personaDetails);
 
       if (signedIn) {
 
          statusAvatar = <Avatar
-            image={this.props.personaDetails.thumbnailUrl}
-            label={this.props.personaDetails.name}
-            name={this.props.personaDetails.name}
+            image={this.props.persona.personaDetails.thumbnailUrl}
+            label={this.props.persona.personaDetails.name}
+            name={this.props.persona.personaDetails.name}
             size="small"
             status={{
                color: 'green',
@@ -71,9 +71,9 @@ export class Navbar extends React.Component<INavbarProps, INavbarState> {
       } else {
 
          statusAvatar = <Avatar
-            image={this.props.personaDetails.thumbnailUrl}
-            label={this.props.personaDetails.name}
-            name={this.props.personaDetails.name}
+            image={this.props.persona.personaDetails.thumbnailUrl}
+            label={this.props.persona.personaDetails.name}
+            name={this.props.persona.personaDetails.name}
             size="small"
             status={{
                color: 'grey',
