@@ -6,17 +6,18 @@ import * as React from 'react';
 // Fluent-UI
 import { Flex, Text } from '@fluentui/react-northstar';
 
-import { PersonaDetails } from '../../core/src/Persona';
-import { PersonCohortsMemento } from '../../core/src/PersonCohorts';
+import { PersistenceDetails } from '../../core/src/Persistence';
+import { Persona, PersonaDetails } from '../../core/src/Persona';
+import { PersonCohorts } from '../../core/src/PersonCohorts';
 
 // Local App 
 import { Navbar } from './Navbar';
 import { CohortCard } from './CohortCard';
-
+import { EAppUrls } from '../../apisrv/src/AppUrls';
 
 export interface ICohortsPageProps {
-   personaCohorts: PersonCohortsMemento;
-   onSignIn: (persona: PersonaDetails) => void;
+   personaCohorts: PersonCohorts;
+   onSignIn: (persona: Persona) => void;
 }
 
 interface ICohortsPageState {
@@ -32,10 +33,16 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
    }
 
    componentDidMount() {
+      // TODO - replace with query of actual user
       var user: PersonaDetails = new PersonaDetails('Joe', '/assets/img/person-o-512x512.png');
 
-      this.props.onSignIn(user);
+      this.props.onSignIn(new Persona (PersistenceDetails.newPersistenceDetails(), user));
    }
+
+   navigateToCohort(key: string): void {
+      // URL for a specific cohort is to pass the key in query parameter
+      window.location.href = EAppUrls.Cohort + '?key=' + key;
+}
 
    listCohorts(): JSX.Element {
       let items = this.props.personaCohorts._cohorts;
@@ -45,7 +52,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
             {
                items.map((val, index) => {
                   return (
-                     <CohortCard key={index} personaDetails={new PersonaDetails(val)}></CohortCard>
+                     <CohortCard key={index} persona={val} onOpenCohort={this.navigateToCohort.bind(this)}></CohortCard>
                   );
                })
             }
@@ -60,7 +67,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
       if (length === 0) {
          return (
             <div>
-               <Navbar personaDetails={new PersonaDetails(this.props.personaCohorts._personaDetails)} />
+               <Navbar persona={this.props.personaCohorts._persona} />
                <Flex gap="gap.medium" column={true}>
                   <Text content="It doesnt look like you are a member of any squads." size="medium" />
                </Flex>
@@ -69,7 +76,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
       } else {
          return (
             <div>
-               <Navbar personaDetails={new PersonaDetails(this.props.personaCohorts._personaDetails)} />
+               <Navbar persona={this.props.personaCohorts._persona} />
                <Flex gap="gap.medium" column={true}>
                   {this.listCohorts()}
                </Flex>

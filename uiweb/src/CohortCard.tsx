@@ -4,15 +4,16 @@
 import * as React from 'react';
 
 // Fluent-UI
-import { Flex, Text, Avatar, Card, AcceptIcon, Button} from '@fluentui/react-northstar';
+import { Flex, Text, Avatar, Card, AcceptIcon, Button, ButtonProps} from '@fluentui/react-northstar';
 
 // Local App 
-import { PersonaDetails } from '../../core/src/Persona';
+import { Persona } from '../../core/src/Persona';
 
 export interface ICohortCardProps {
 
-   personaDetails: PersonaDetails;
+   persona: Persona;
    key: number;
+   onOpenCohort: (key: string) => void;
 }
 
 interface ICohortCardState {
@@ -27,15 +28,20 @@ export class CohortCard extends React.Component<ICohortCardProps, ICohortCardSta
       this.state = {};
    }
 
+   onOpenCohort(event: React.SyntheticEvent<HTMLElement>, data?: ButtonProps): void {
+
+      this.props.onOpenCohort(this.props.persona.persistenceDetails.key);
+   }
+
    render(): JSX.Element {
       return (
          <Card aria-roledescription="card avatar" fluid={true}>
             <Card.Header>
                <Flex gap="gap.medium">
                   <Avatar
-                     image={this.props.personaDetails.thumbnailUrl}
-                     label={this.props.personaDetails.name}
-                     name={this.props.personaDetails.name}
+                     image={this.props.persona.personaDetails.thumbnailUrl}
+                     label={this.props.persona.personaDetails.name}
+                     name={this.props.persona.personaDetails.name}
                      size="larger"
                      status={{
                         color: 'green',
@@ -44,7 +50,7 @@ export class CohortCard extends React.Component<ICohortCardProps, ICohortCardSta
                      }}
                   />
                   <Flex gap="gap.medium" column vAlign="center" >
-                     <Text content={this.props.personaDetails.name} weight="bold" size="medium" />
+                     <Text content={this.props.persona.personaDetails.name} weight="bold" size="medium" />
                   </Flex>
                </Flex>
             </Card.Header>
@@ -55,7 +61,7 @@ export class CohortCard extends React.Component<ICohortCardProps, ICohortCardSta
             </Card.Body>
             <Card.Footer>
                <Flex column gap="gap.medium" space="between">
-                  <Button content="Open" />
+                  <Button content="Open" onClick={ this.onOpenCohort.bind(this) }/>
                </Flex>
             </Card.Footer>
          </Card>);

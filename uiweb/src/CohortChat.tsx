@@ -8,11 +8,11 @@ import { Avatar, Chat, ChatItemProps} from '@fluentui/react-northstar';
 import { AcceptIcon } from '@fluentui/react-icons-northstar';
 
 // Local App 
-import { PersonaDetails } from '../../core/src/Persona';
+import { PersonaDetails, Persona} from '../../core/src/Persona';
 
 export interface ICohortViewProps {
 
-   personaDetails: PersonaDetails;
+   persona: Persona;
 }
 
 const items: Array<ChatItemProps> = [
@@ -46,13 +46,13 @@ const items: Array<ChatItemProps> = [
    }
 ];
 
-export class CohortChat extends React.Component<ICohortViewProps, PersonaDetails> {
+export class CohortChat extends React.Component<ICohortViewProps, Persona> {
 
 
    constructor(props: ICohortViewProps) {
       super(props);
 
-      this.state =props.personaDetails;
+      this.state =props.persona;
    }
 
 

@@ -8,12 +8,12 @@ import { Flex, Box, Image, Divider, Text, Button } from '@fluentui/react-northst
 
 // Local App 
 import { EAuthUrls } from '../../apisrv/src/AuthUrls';
-import { PersonaDetails } from '../../core/src/Persona';
+import { Persona, PersonaDetails} from '../../core/src/Persona';
 import { Media } from './Media';
 
 export interface ILoginSplashProps {
 
-   personaDetails: PersonaDetails;
+   persona: Persona;
 }
 
 export interface ILoginSplashState {
@@ -23,7 +23,6 @@ export interface ILoginSplashState {
 export class LoginSplash extends React.Component<ILoginSplashProps, ILoginSplashState> {
 
    _media: Media;
-   static _notSignedIn: PersonaDetails = new PersonaDetails("Not signed in", "/assets/img/person-w-512x512.png");
 
    constructor(props: ILoginSplashProps) {
       super(props);
