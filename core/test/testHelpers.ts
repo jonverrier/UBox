@@ -103,7 +103,7 @@ export class PersonTestHelper {
       return new Person(
          PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Jon V", "/assets/img/person-o-512x512.png"),
-         new LoginContext(ELoginProvider.Private, "1155683527294382246834"),
+         new LoginContext(ELoginProvider.Private, "115568352729438224683"),
          "jonathanpverrier@gmail.com",
          roles);
    }
@@ -114,7 +114,7 @@ export class PersonTestHelper {
       return new Person(
          PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Harry V", "/assets/img/person-o-512x512.png"),
-         new LoginContext(ELoginProvider.Private, "makdeuptokenforharry"),
+         new LoginContext(ELoginProvider.Private, "madeuptokenforharry"),
          "madeupmailforharry@gmail.com",
          roles);
    }
@@ -125,7 +125,7 @@ export class PersonTestHelper {
       return new Person(
          PersistenceDetails.newPersistenceDetails(),
          new PersonaDetails("Alex V", "/assets/img/person-o-512x512.png"),
-         new LoginContext(ELoginProvider.Private, "makdeuptokenforalex"),
+         new LoginContext(ELoginProvider.Private, "madeuptokenforalex"),
          "madeupmailforalexvy@gmail.com",
          roles);
    }

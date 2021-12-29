@@ -11,7 +11,6 @@ export class LoadApiHelper<Entity> {
    private _codec: ICodec<Entity>;
    private _queryUrl: string;
 
-
    constructor(serverUrl: string, loadUrl:string, codec: ICodec<Entity>) {
       this._codec = codec;
       this._queryUrl = serverUrl + loadUrl;
@@ -26,7 +25,7 @@ export class LoadApiHelper<Entity> {
 
       var response;
 
-      response = await axios.get(this._queryUrl, { params: { _key: id } });
+      response = await axios.get(this._queryUrl, { params: { key: id } });
       if (response.data)
          return this._codec.tryCreateFrom(response.data);
       else

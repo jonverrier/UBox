@@ -18,22 +18,34 @@ describe("BusinessApi", function () {
    var personApi: PersonApi = new PersonApi(root);
    var businessApi: BusinessApi = new BusinessApi(root);
 
-   var people: Array<Person>;
+   var admins: Array<Person>;
+   var members: Array<Person>;
    var business1:Business;
 
    let person = PersonTestHelper.createMeForInsert();
-   var savedPerson: Person;
+   var savedAdmin: Person, savedMember: Person;
+
+   let harry = PersonTestHelper.createHarryForInsert();
+   let alex = PersonTestHelper.createAlexForInsert();
 
 
    beforeEach(async function () {
 
-      people = new Array<Person>();
-      savedPerson = await personApi.save(person);
-      people.push(savedPerson);
+      admins = new Array<Person>();
+      members = new Array<Person>();
+
+      savedAdmin = await personApi.save(person);
+      admins.push(savedAdmin);
+
+      savedMember = await personApi.save(harry);
+      members.push(savedMember);
+
+      savedMember = await personApi.save(alex);
+      members.push(savedMember);
 
       business1 = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetails(),
-         people, people);
+         admins, admins);
    });
 
    it("Needs to save a new Business", async function (done) {
@@ -66,7 +78,7 @@ describe("BusinessApi", function () {
    it("Needs to retrieve Businesses using lists", async function (done) {
 
       try {
-         const decoded = await businessApi.loadMany(savedPerson.persistenceDetails.key);
+         const decoded = await businessApi.loadMany(savedAdmin.persistenceDetails.key);
 
          // test is that we at least one business back
          if (decoded.length > 0) {
@@ -93,7 +105,7 @@ describe("BusinessApi", function () {
 
       let business2: Business = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetailsErr(),
-         peopleMess, people);
+         peopleMess, admins);
 
       // Create and save a Business, should create error as have an RI issue 
       try {
@@ -113,7 +125,7 @@ describe("BusinessApi", function () {
 
       let business2: Business = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetailsErr(),
-         people, peopleMess);
+         admins, peopleMess);
 
       // Create and save a Business, should create error as have an RI issue 
       try {

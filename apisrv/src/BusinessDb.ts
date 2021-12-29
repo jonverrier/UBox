@@ -124,22 +124,15 @@ export class BusinessDb implements IBusinessStore {
 
          const existing = await businessModel.findOne(whereClause).exec();
 
-         // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
-         if (existing && existing._doc._persistenceDetails._sequenceNumber >= business.persistenceDetails.sequenceNumber) {
-
-            var docPost = existing.toObject({ transform: true });
-            return this.postProcessFromSave(docPost, prevAdmins, prevMembers);            
-         }
-
          var result;
 
          if (existing) {
 
             // Copy across fields to update, with incremented sequence number
             existing._persistenceDetails = PersistenceDetails.incrementSequenceNo(
-               new PersistenceDetails(existing._persistenceDetails._key,
+               new PersistenceDetails(existing._id,
                   existing._persistenceDetails._schemaVersion,
-                  existing._persistenceDetails._sequenceNumber));
+                  existing._persistenceDetails._sequenceNumber)).memento();
             existing._personaDetails = memento._personaDetails;
             existing._administrators = memento._administrators;
             existing._administratorIds = memento._administratorIds;
@@ -149,7 +142,7 @@ export class BusinessDb implements IBusinessStore {
             result = await existing.save({ isNew: false });
 
          } else {
-            let doc = new businessModel(business.memento());
+            let doc = new businessModel(memento);
 
             // Set schema version if it is currently clear
             if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())

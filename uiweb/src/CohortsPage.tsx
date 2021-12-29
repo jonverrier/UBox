@@ -14,6 +14,7 @@ import { PersonApiFromSession } from '../../apisrv/src/PersonApi';
 // Local App 
 import { Navbar } from './Navbar';
 import { CohortCard } from './CohortCard';
+import { EApiUrls } from '../../apisrv/src/ApiUrls';
 import { EAppUrls } from '../../apisrv/src/AppUrls';
 
 export interface ICohortsPageProps {
@@ -48,7 +49,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
 
    navigateToCohort(key: string): void {
       // URL for a specific cohort is to pass the key in query parameter
-      window.location.href = EAppUrls.Cohort + '?key=' + key;
+      window.location.href = EAppUrls.Cohort + '?' + EApiUrls.Key + '=' + key;
    }
 
    listCohorts(): JSX.Element {

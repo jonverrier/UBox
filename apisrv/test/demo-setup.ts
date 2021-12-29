@@ -40,21 +40,22 @@ describe("Demo Setup", function () {
 
    beforeEach(async function () {
       let person = PersonTestHelper.createMeForInsert();
-      let people = new Array<Person>();
+      let admins = new Array<Person>();
+      let members = new Array<Person>();
       coach = await personApi.save(person);
-      people.push(coach);
+      admins.push(coach);
 
       person = PersonTestHelper.createHarryForInsert();
       athlete1 = await personApi.save(person);
-      people.push(coach);
+      members.push(athlete1);
 
       person = PersonTestHelper.createAlexForInsert();
       athlete2 = await personApi.save(person);
-      people.push(coach);
+      members.push(athlete2);
 
       let business: Business = new Business(PersistenceDetails.newPersistenceDetails(),
          PersonaTestHelper.createXFitDulwichDetails(),
-         people, people);
+         admins, members);
 
       savedBusiness = await businessApi.save(business);
    });

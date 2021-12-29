@@ -105,24 +105,15 @@ export class PersonDb implements IPersonStore {
          // Look to see if we have an existing record for same email
          const existing = await personModel.findOne().where('_email').eq(person.email).exec();
 
-         // if the saved version has same email & later or equal sequence number, do not overwrite it
-         if (existing &&
-            existing._persistenceDetails._sequenceNumber >= person.persistenceDetails.sequenceNumber) {
-
-            var docPost = existing.toObject({ transform: true });
-
-            return this._personCodec.tryCreateFrom(docPost);
-         }
-
          var result;
          let encoded:PersonMemento = this._personCodec.encode(person);
 
          if (existing) {
             // Copy across fields to update (excl email), with incremented sequence number
             existing._persistenceDetails = PersistenceDetails.incrementSequenceNo(
-               new PersistenceDetails(existing._persistenceDetails._key,
+               new PersistenceDetails(existing._id,
                   existing._persistenceDetails._schemaVersion,
-                  existing._persistenceDetails._sequenceNumber));
+                  existing._persistenceDetails._sequenceNumber)).memento();
             existing._personaDetails = encoded._personaDetails;
             existing._loginContext = encoded._loginContext;
             existing._roles = encoded._roles;

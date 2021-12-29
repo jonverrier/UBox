@@ -18,6 +18,7 @@ import { BusinessCodec, BusinessesCodec } from '../../core/src/IOBusiness';
 import { BusinessDb, BusinesDbById} from './BusinessDb';
 
 import { EApiUrls } from './ApiUrls';
+import { EAppUrls } from './AppUrls';
 
 export var ApiRoutes = express.Router();
 
@@ -56,7 +57,7 @@ ApiRoutes.get(EApiUrls.QueryPerson, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.loadOne(params.get('_key'));
+      let result = db.loadOne(params.get(EApiUrls.Key));
       result.then(data => {
          res.send(data ? codec.encode(data) : null);
       });
@@ -78,7 +79,7 @@ ApiRoutes.get(EApiUrls.QueryPersonByEmail, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.loadOne(params.get('_key'));
+      let result = db.loadOne(params.get(EApiUrls.Key));
       result.then(data => {
          res.send(data? codec.encode(data) : null);
       });
@@ -100,7 +101,7 @@ ApiRoutes.get(EApiUrls.QueryPersonByExternalId, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.loadOne(params.get('_key'));
+      let result = db.loadOne(params.get(EApiUrls.Key));
       result.then(data => {
          res.send(data ? codec.encode(data) : null);
       });
@@ -192,7 +193,7 @@ ApiRoutes.get(EApiUrls.QueryMeasurement, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.loadOne (params.get('_key'));
+      let result = db.loadOne(params.get(EApiUrls.Key));
       result.then(data => {
          if (data) {
             res.send(data ? codec.encode(data) : null);
@@ -310,7 +311,7 @@ ApiRoutes.get(EApiUrls.QueryCohort, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.loadOne (params.get('_key'));
+      let result = db.loadOne(params.get(EApiUrls.Key));
       result.then(data => {
          res.send(data ? codec.encode(data) : null);
       });
@@ -419,7 +420,7 @@ ApiRoutes.get(EApiUrls.QueryBusiness, function (req, res) {
       let url = new URL(req.protocol + '://' + req.get('host') + req.originalUrl);
       let params = new URLSearchParams(url.search);
 
-      let result = db.loadOne(params.get('_key'));
+      let result = db.loadOne(params.get(EApiUrls.Key));
       result.then(data => {
          res.send(data ? codec.encode(data) : null);
       });

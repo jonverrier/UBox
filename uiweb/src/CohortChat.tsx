@@ -5,65 +5,61 @@ import * as React from 'react';
 
 // Fluent-UI
 import { Avatar, Chat, ChatItemProps} from '@fluentui/react-northstar';
-import { AcceptIcon } from '@fluentui/react-icons-northstar';
+import { QuestionCircleIcon } from '@fluentui/react-icons-northstar';
 
 // Local App 
-import { PersonaDetails, Persona} from '../../core/src/Persona';
+import { Measurement } from '../../core/src/Observation';
+import { Business } from '../../core/src/Business';
+import { MeasurementFormatter } from '../../core/src/LocaleFormatters';
 
 export interface ICohortViewProps {
 
-   persona: Persona; // TODO - need a set of CohortMeasurements
+   business: Business | null;
+   measurements: Array<Measurement>; 
 }
 
-const items: Array<ChatItemProps> = [
-   {
-      contentPosition: "start",
-      gutter: <Avatar
-         image='/assets/img/weightlifter-b-128x128.png'
-         label="John"
-         name="John"
-         status={{
-            color: 'green',
-            icon: <AcceptIcon />,
-            title: 'Available',
-         }}
-      />,
-      message: <Chat.Message content="Hello" author="John Doe" timestamp="Yesterday, 10:15 PM" />
-   },
-   {
-      contentPosition: "end",
-      gutter: <Avatar
-         image='/assets/img/weightlifter-b-128x128.png'
-         label="Jane"
-         name="Jane"
-         status={{
-            color: 'green',
-            icon: <AcceptIcon />,
-            title: 'Available',
-         }}
-      />,
-      message: <Chat.Message content="Hi" author="Jane Doe" timestamp="Yesterday, 10:15 PM" mine />
-   }
-];
+export interface ICohortViewState {
 
-export class CohortChat extends React.Component<ICohortViewProps, Persona> {
+}
+
+export class CohortChat extends React.Component<ICohortViewProps, ICohortViewState> {
 
 
    constructor(props: ICohortViewProps) {
       super(props);
 
-      this.state =props.persona;
+      this.state = {};
    }
-
 
    render(): JSX.Element {
 
-      for (var i in items) {
-         (items[i] as any).key = i;
+      var chatItems: Array<ChatItemProps> = new Array<ChatItemProps>();
+      var formatter: MeasurementFormatter = new MeasurementFormatter();
+
+      for (var i in this.props.measurements) {
+         let formatted = formatter.format(this.props.measurements[i], this.props.business);
+
+         var item = {
+            contentPosition: 'start',
+            gutter: <Avatar
+               image={formatted.persona.thumbnailUrl}
+               label={formatted.persona.name}
+               name={formatted.persona.name}
+               status={{
+                  color: 'grey',
+                  icon: <QuestionCircleIcon />,
+                  title: 'Unknown',
+               }}
+            />,
+            message: <Chat.Message content={formatted.measurement} author={formatted.persona.name} timestamp={formatted.timestamp} />,
+            key: i
+         };
+
+         (chatItems as any).push(item);
       }
 
       return (
-         <Chat items={items} />
+         <Chat items={chatItems} />
          );
    }
 }
