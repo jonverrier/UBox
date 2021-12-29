@@ -52,6 +52,7 @@
     <TypeScriptCompile Include="src\IOLoginContext.ts" />
     <TypeScriptCompile Include="src\IOObservation.ts" />
     <TypeScriptCompile Include="src\IOPersona.ts" />
+    <TypeScriptCompile Include="src\LocaleFormatters.ts" />
     <TypeScriptCompile Include="src\Localisation.ts" />
     <TypeScriptCompile Include="src\Logger.ts" />
     <TypeScriptCompile Include="src\LoginContext.ts" />

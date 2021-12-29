@@ -9,6 +9,7 @@ import { EPositiveTrend, EMeasurementType, MeasurementType, measurementTypeArray
 
 import { MeasurementTypes } from '../src/ObservationTypeDictionary';
 import { Measurement, IMeasurementStore } from '../src/Observation';
+import { MeasurementFormatter } from '../src/LocaleFormatters';
 
 var expect = require("chai").expect;
 
@@ -211,6 +212,24 @@ describe("Measurement", function () {
       expect(caught).to.equal(true);
    });
 
+   it("Needs to format successfully", function () {
+
+      let quantity = new Quantity(120, BaseUnits.second);
+      let repeats = 1;
+      let measurementType = MeasurementTypes.run800;
+      let stamp = Timestamper.now();
+      let measurement = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, stamp, measurementType, "1234", "1234");
+
+      let formatter = new MeasurementFormatter();
+
+      let output = formatter.format(measurement, null);
+
+      expect(output.measurement.length > 0).to.equal(true);
+      expect(output.timestamp.length > 0).to.equal(true);
+      expect(output.persona === null).to.equal(false);
+   });
+
+   // TODO - format with a real business to exercise more code
 });
 
 class StubStore implements IMeasurementStore {

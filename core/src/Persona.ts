@@ -130,7 +130,7 @@ export class PersonaDetails  {
    }
 
    static _notSignedIn: PersonaDetails = new PersonaDetails("Not signed in", "/assets/img/person-o-512x512.png");
-
+   static _unknown: PersonaDetails = new PersonaDetails("Unknown", "/assets/img/person-o-512x512.png");
    /**
     * return persona details for 'not logged in'
     */
@@ -145,6 +145,13 @@ export class PersonaDetails  {
    static isNotLoggedIn(persona: PersonaDetails): boolean {
       return (persona === PersonaDetails._notSignedIn) ||
          (persona && persona.equals(PersonaDetails._notSignedIn));
+   }
+
+   /**
+    * return persona details for 'unknown'
+    */
+   static unknown(): PersonaDetails {
+      return PersonaDetails._unknown;
    }
 }
 

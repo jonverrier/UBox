@@ -74,27 +74,15 @@ export class CohortDb implements ICohortStore {
 
          const existing = await cohortModel.findOne(whereClause).exec();
 
-         // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
-         if (existing && existing._doc._persistenceDetails._sequenceNumber >= cohort.persistenceDetails.sequenceNumber) {
-
-            var docPost = existing.toObject({ transform: true });
-
-            // Restore the object arrays before sending back to client
-            docPost._business = prevBusiness.memento();
-
-            // Return a constructed object via codec 
-            return this._codec.tryCreateFrom(docPost);
-         }
-
          var result;
 
          if (existing) {
 
             // Copy across fields to update, with incremented sequence number
             existing._persistenceDetails = PersistenceDetails.incrementSequenceNo(
-               new PersistenceDetails(existing._persistenceDetails._key,
+               new PersistenceDetails(existing._id,
                   existing._persistenceDetails._schemaVersion,
-                  existing._persistenceDetails._sequenceNumber));
+                  existing._persistenceDetails._sequenceNumber)).memento();
             existing._personaDetails = memento._personaDetails;
             existing._business = memento._business;
             existing._businessId = memento._businessId;
