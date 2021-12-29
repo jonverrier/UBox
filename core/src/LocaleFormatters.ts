@@ -60,7 +60,7 @@ export class MeasurementFormatter {
 
       var dateFormatter: DateFormatter = new DateFormatter();
 
-      var message: string = measurement.measurementType.measurementType + ', ' + measurement.quantity.amount + measurement.quantity.unit.name;
+      var message: string = measurement.measurementType.measurementType + ', ' + measurement.quantity.amount + ' ' + measurement.quantity.unit.name;
       var timestamp: string = dateFormatter.format(new Date(measurement.timestamp));
       var persona: PersonaDetails = this.lookupPersona(measurement.subjectKey, business);
 
