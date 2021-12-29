@@ -115,33 +115,48 @@ export class BusinessDb implements IBusinessStore {
          memento._memberIds = this.makePersonIds(prevMembers);
          memento._members = new Array<PersonMemento>();
 
-         if (!business.persistenceDetails.hasValidKey()) {
-            // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
-            // Records are the same if they are: 
-            //    same name 
-            var whereClause = {
-               '_personaDetails._name': business.personaDetails.name
-            };
+         // Look to see if we have an existing record that is otherwise the same
+         // Records are the same if they are: 
+         //    same name 
+         var whereClause = {
+            '_personaDetails._name': business.personaDetails.name
+         };
 
-            const existing = await businessModel.findOne(whereClause).exec();
+         const existing = await businessModel.findOne(whereClause).exec();
 
-            // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
-            if (existing && existing._doc._persistenceDetails._sequenceNumber >= business.persistenceDetails.sequenceNumber) {
-               var docPost = existing.toObject({ transform: true });
-               return this.postProcessFromSave(docPost, prevAdmins, prevMembers);
-            }
+         // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
+         if (existing && existing._doc._persistenceDetails._sequenceNumber >= business.persistenceDetails.sequenceNumber) {
+
+            var docPost = existing.toObject({ transform: true });
+            return this.postProcessFromSave(docPost, prevAdmins, prevMembers);            
          }
 
-         let doc = new businessModel(memento);
+         var result;
 
-         // Set schema version if it is currently clear
-         if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
-            doc._persistenceDetails._schemaVersion = 0;
+         if (existing) {
 
-         // Copy key to where Mongo expects it
-         doc._id = business.persistenceDetails.key;
+            // Copy across fields to update, with incremented sequence number
+            existing._persistenceDetails = PersistenceDetails.incrementSequenceNo(
+               new PersistenceDetails(existing._persistenceDetails._key,
+                  existing._persistenceDetails._schemaVersion,
+                  existing._persistenceDetails._sequenceNumber));
+            existing._personaDetails = memento._personaDetails;
+            existing._administrators = memento._administrators;
+            existing._administratorIds = memento._administratorIds;
+            existing._members = memento._members;
+            existing._memberIds = memento._memberIds;
 
-         let result = await (doc).save({ isNew : business.persistenceDetails.key ? false : true});
+            result = await existing.save({ isNew: false });
+
+         } else {
+            let doc = new businessModel(business.memento());
+
+            // Set schema version if it is currently clear
+            if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
+               doc._persistenceDetails._schemaVersion = 0;
+
+            result = await doc.save({ isNew: true });
+         }
 
          var docPost = result.toObject({ transform: true });
          return this.postProcessFromSave(docPost, prevAdmins, prevMembers);

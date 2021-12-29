@@ -15,6 +15,7 @@ import { CohortChat } from './CohortChat';
 
 export interface ICohortPageProps {
    personaCohorts: PersonCohorts;
+   onSignIn: (persona: Persona) => void;
 }
 
 interface ICohortPageState {
@@ -37,7 +38,7 @@ export class CohortPage extends React.Component<ICohortPageProps, ICohortPageSta
       var result = this._mySessionPersonApi.loadOne();
 
       result.then(person => {
-         // TODO - think what behavior is on this page if user sign-in has changed
+         this.props.onSignIn(person);
       });
 
       // TODO - pull back cohort data per the passed key in URL

@@ -187,6 +187,33 @@ describe("CohortApi", function () {
       }
 
    });
+
+   it("Needs to save and then update an existing Cohort", async function (done) {
+
+      try {
+         const savedCohort = await cohortApi.save(cohort1);
+
+         // Save with a new version number
+         let cohort2 = new Cohort(PersistenceDetails.incrementSequenceNo(savedCohort.persistenceDetails),
+            savedCohort.personaDetails,
+            savedCohort.business,
+            savedCohort.creationTimestamp,
+            savedCohort.cohortType);
+
+         const savedCohort2 = await cohortApi.save(cohort2);
+
+         // Read it back and check it is the same
+         const response2 = await cohortApi.loadOne(savedCohort2.persistenceDetails.key);
+         expect(response2.equals(cohort2)).to.equal(true);
+
+         done();
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("BusinessApi", "Save-Update", "Error", e.toString());
+         done(e);
+      }
+
+   });
 });
 
 

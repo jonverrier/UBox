@@ -4,7 +4,7 @@
 
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from '../../core/src/Persistence';
-import { Measurement, IMeasurementStore } from '../../core/src/Observation';
+import { Measurement, MeasurementMemento, IMeasurementStore } from '../../core/src/Observation';
 import { MeasurementCodec } from '../../core/src/IOObservation';
 import { measurementModel } from './ObservationSchema';
 
@@ -128,40 +128,52 @@ export class MeasurementDb implements IMeasurementStore {
     */
    async save(measurement: Measurement): Promise<Measurement | null> {
       try {
-         if (!measurement.persistenceDetails.hasValidKey()) {
-            // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
-            // Records are the same if they are: 
-            // same subject, same measurementType, same timestampRounded.
-            var whereClause = {
-               '_subjectKey': measurement.subjectKey,
-               '_measurementType': measurement.measurementType.measurementType,
-               '_timestampRounded': measurement.timestamp
-            };
+         // Look to see if we have an existing record that is otherwise the same
+         // Records are the same if they are: 
+         // same subject, same cohort, same measurementType, same timestampRounded.
+         var whereClause = {
+            '_subjectKey': measurement.subjectKey,
+            '_cohortKey': measurement.cohortKey,
+            '_measurementType': measurement.measurementType.measurementType,
+            '_timestamp': measurement.timestamp
+         };
 
-            const existing = await measurementModel.findOne(whereClause).exec();
+         const existing = await measurementModel.findOne(whereClause).exec();
 
-            // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
-            if (existing && existing._doc._persistenceDetails._sequenceNumber >= measurement.persistenceDetails.sequenceNumber) {
+         // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
+         if (existing && existing._doc._persistenceDetails._sequenceNumber >= measurement.persistenceDetails.sequenceNumber) {
+            var docPost = existing.toObject({ transform: true });
 
-               var docPost = existing.toObject({ transform: true });
-
-               // Return a constructed object via codec 
-               return this._codec.tryCreateFrom(docPost);
-            }
+            // Return a constructed object via codec 
+            return this._codec.tryCreateFrom(docPost);
          }
-         let doc = new measurementModel(measurement.memento());
 
-         // Set schema version if it is currently clear
-         if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
-            doc._persistenceDetails._schemaVersion = 0;
+         var result;
+         let encoded: MeasurementMemento = this._codec.encode(measurement);
 
-         // Copy key to where Mongo expects it
-         doc._id = measurement.persistenceDetails.key;
+         if (existing) {
 
-         let result = await doc.save({ isNew: measurement.persistenceDetails.key ? false : true});
+            // Copy across fields to update (excl those used to check for existence), with incremented sequence number
+            existing._persistenceDetails = PersistenceDetails.incrementSequenceNo(
+               new PersistenceDetails(existing._persistenceDetails._key,
+                  existing._persistenceDetails._schemaVersion,
+                  existing._persistenceDetails._sequenceNumber));
+            existing._quantity = encoded._quantity;
+            existing._repeats = encoded._repeats;
+
+            result = await existing.save({ isNew: false });
+
+         } else {
+            let doc = new measurementModel(measurement.memento());
+
+            // Set schema version if it is currently clear
+            if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
+               doc._persistenceDetails._schemaVersion = 0;
+
+            result = await doc.save({ isNew: true });
+         }
 
          var docPost = result.toObject({ transform: true });
-
          return this._codec.tryCreateFrom(docPost);
 
       } catch (err) {

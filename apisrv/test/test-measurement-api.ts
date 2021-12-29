@@ -192,8 +192,37 @@ describe("MeasurementApi", function () {
          const response = await api.save(measurement2);
          done(new Error("Did not catch RI issue"));
       } catch (e) {
-         console.log(e);
          done();
+      }
+
+   });
+
+
+   it("Needs to save and then update an existing Measurement", async function (done) {
+
+      try {
+         // Save a new object 
+         const firstSave = await api.save(measurement1);
+
+         // Save with a new version number
+         let measurement2 = new Measurement(PersistenceDetails.incrementSequenceNo(firstSave.persistenceDetails),
+            firstSave.quantity,
+            firstSave.repeats,
+            firstSave.timestamp,
+            firstSave.measurementType,
+            firstSave.subjectKey,
+            firstSave.cohortKey);
+         const savedMeasurement2 = await api.save(measurement2);
+
+         // Read it back and check it is the same
+         const response2 = await api.loadOne(savedMeasurement2.persistenceDetails.key);
+         expect(response2.equals(measurement2)).to.equal(true);
+
+         done();
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("MeasurementApi", "Save-Update", "Error", e.toString());
+         done(e);
       }
 
    });

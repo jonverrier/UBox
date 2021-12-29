@@ -63,44 +63,57 @@ export class CohortDb implements ICohortStore {
 
          memento._businessId = this.makeId(prevBusiness);
 
-         if (!cohort.persistenceDetails.hasValidKey()) {
-            // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
-            // Records are the same if they are: 
-            // same business, same name, same cohortType
-            var whereClause = {
-               '_businessId': memento._business._persistenceDetails._key,
-               '_personaDetails._name': memento._personaDetails._name,
-               '_cohortType': memento._cohortType
-            };
+         // If the record has not already been saved, look to see if we have an existing record that is otherwise the same
+         // Records are the same if they are: 
+         // same business, same name, same cohortType
+         var whereClause = {
+            '_businessId': memento._business._persistenceDetails._key,
+            '_personaDetails._name': memento._personaDetails._name,
+            '_cohortType': memento._cohortType
+         };
 
-            const existing = await cohortModel.findOne(whereClause).exec();
+         const existing = await cohortModel.findOne(whereClause).exec();
 
-            // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
-            if (existing && existing._doc._persistenceDetails._sequenceNumber >= cohort.persistenceDetails.sequenceNumber) {
+         // if the saved version has a later or equal sequence number, do not overwrite it, just return the existing one
+         if (existing && existing._doc._persistenceDetails._sequenceNumber >= cohort.persistenceDetails.sequenceNumber) {
 
-               var docPost = existing.toObject({ transform: true });
+            var docPost = existing.toObject({ transform: true });
 
-               // Restore the object arrays before sending back to client
-               docPost._business = prevBusiness.memento();
+            // Restore the object arrays before sending back to client
+            docPost._business = prevBusiness.memento();
 
-               // Return a constructed object via codec 
-               return this._codec.tryCreateFrom(docPost);
-            }
+            // Return a constructed object via codec 
+            return this._codec.tryCreateFrom(docPost);
          }
 
-         let doc = new cohortModel(memento);
+         var result;
 
-         // Set schema version if it is currently clear
-         if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
-            doc._persistenceDetails._schemaVersion = 0;
+         if (existing) {
 
-         // Copy key to where Mongo expects it
-         doc._id = cohort.persistenceDetails.key;
+            // Copy across fields to update, with incremented sequence number
+            existing._persistenceDetails = PersistenceDetails.incrementSequenceNo(
+               new PersistenceDetails(existing._persistenceDetails._key,
+                  existing._persistenceDetails._schemaVersion,
+                  existing._persistenceDetails._sequenceNumber));
+            existing._personaDetails = memento._personaDetails;
+            existing._business = memento._business;
+            existing._businessId = memento._businessId;
+            existing._cohortType = memento._cohortType;
+            existing._cohortType = memento._cohortType;
 
-         let result = await doc.save({ isNew: cohort.persistenceDetails.key ? false : true });
+            result = await existing.save({ isNew: false });
+
+         } else {
+            let doc = new cohortModel(memento);
+
+            // Set schema version if it is currently clear
+            if (doc._persistenceDetails._schemaVersion === PersistenceDetails.newSchemaIndicator())
+               doc._persistenceDetails._schemaVersion = 0;
+
+            result = await doc.save({ isNew: true });
+         }
 
          var docPost = result.toObject({ transform: true });
-
          return this.postProcessfromSave(docPost, prevBusiness);
 
       } catch (err) {

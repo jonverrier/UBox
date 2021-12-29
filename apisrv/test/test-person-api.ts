@@ -2,6 +2,7 @@
 // Copyright TXPCo ltd, 2021
 
 import { Logger } from '../../core/src/Logger';
+import { PersistenceDetails } from "../../core/src/Persistence";
 import { Person } from "../../core/src/Person";
 import { PersonApi, PersonApiByEmail, PersonApiByExternalId } from '../src/PersonApi';
 import { PersonTestHelper } from '../../core/test/testHelpers';
@@ -107,6 +108,32 @@ describe("PersonApi", function () {
       } catch (e) {
          var logger = new Logger();
          logger.logError("PersonApi", "Save-LoadMany", "Error", e.toString());
+         done(e);
+      }
+
+   });
+
+   it("Needs to save and then update an existing Person", async function (done) {
+
+      try {
+         const savedPerson = await api.save(person1);
+
+         // Save with a new version number
+         let person2 = new Person(PersistenceDetails.incrementSequenceNo(savedPerson.persistenceDetails),
+            savedPerson.personaDetails,
+            savedPerson.loginContext,
+            savedPerson.email,
+            savedPerson.roles); 
+         const savedPerson2 = await api.save(person2);
+
+         // Read it back and check it is the same
+         const response2 = await api.loadOne(savedPerson2.persistenceDetails.key);
+         expect(response2.equals(person2)).to.equal(true);
+
+         done();
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("PersonApi", "Save-Load", "Error", e.toString());
          done(e);
       }
 
