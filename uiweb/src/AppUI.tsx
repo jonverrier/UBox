@@ -78,7 +78,7 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
                <Routes>
                   <Route path="/">
                      <Route path={EAppUrls.Cohorts.substr(1)} element={<CohortsPage personaCohorts={this.state.personaCohorts} onSignIn={this.onSignIn.bind (this)} />} />
-                     <Route path={EAppUrls.Cohort.substr(1)} element={<CohortPage personaCohorts={this.state.personaCohorts} />} />
+                     <Route path={EAppUrls.Cohort.substr(1)} element={<CohortPage personaCohorts={this.state.personaCohorts} onSignIn={this.onSignIn.bind(this)}/>} />
                      <Route path={EAppUrls.Login.substr(1)} element={<LoginPage persona={this.state.personaCohorts._persona} />} />
                   </Route>
                </Routes>  

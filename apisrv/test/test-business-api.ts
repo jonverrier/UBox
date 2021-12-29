@@ -1,6 +1,8 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 
+var expect = require("chai").expect;
+
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from "../../core/src/Persistence";
 import { Person } from "../../core/src/Person";
@@ -120,6 +122,31 @@ describe("BusinessApi", function () {
       } catch (e) {
          console.log(e);
          done();
+      }
+
+   });
+
+   it("Needs to save and then update an existing Business", async function (done) {
+
+      try {
+         const savedBusiness = await businessApi.save(business1);
+
+         // Save with a new version number
+         let business2 = new Business(PersistenceDetails.incrementSequenceNo(savedBusiness.persistenceDetails),
+            savedBusiness.personaDetails,
+            savedBusiness.administrators,
+            savedBusiness.members);
+         const savedBusiness2 = await businessApi.save(business2);
+
+         // Read it back and check it is the same
+         const response2 = await businessApi.loadOne(savedBusiness2.persistenceDetails.key);
+         expect(response2.equals(business2)).to.equal(true);
+
+         done();
+      } catch (e) {
+         var logger = new Logger();
+         logger.logError("BusinessApi", "Save-Update", "Error", e.toString());
+         done(e);
       }
 
    });
