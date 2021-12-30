@@ -44,7 +44,7 @@ export class CohortCodec implements ICodec<Cohort> {
       let temp: CohortMemento = this.decode (data); // If types dont match an exception will be thrown here
 
       return new Cohort(new PersistenceDetails(temp._persistenceDetails._key, temp._persistenceDetails._schemaVersion, temp._persistenceDetails._sequenceNumber),
-         new PersonaDetails(temp._personaDetails._name, temp._personaDetails._thumbnailUrl),
+         new PersonaDetails(temp._personaDetails._name, temp._personaDetails._thumbnailUrl, temp._personaDetails._bio),
          new Business (temp._business),
          temp._creationTimestamp,
          temp._cohortType);

@@ -38,8 +38,9 @@ describe("IOBusiness", function () {
                _sequenceNumber: 1
             },
             _personaDetails: {
-               _name: 'Joe' ,
-               _thumbnailUrl:'https://jo.pics.com' 
+               _name: 'XFit Dulwich' ,
+               _thumbnailUrl: 'https://jo.pics.com',
+               _bio: "The garden workout experience."
             },
             _administrators: peopleMementos,
             _members: peopleMementos

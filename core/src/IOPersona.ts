@@ -19,7 +19,8 @@ import * as IoTs from 'io-ts';
 
 export const personaDetailsIoType = IoTs.type({
    _name: IoTs.string,
-   _thumbnailUrl: IoTs.string
+   _thumbnailUrl: IoTs.string,
+   _bio: IoTs.string
 })
 
 export const personaIoType = IoTs.type({

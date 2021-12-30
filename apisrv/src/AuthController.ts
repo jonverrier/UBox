@@ -26,7 +26,7 @@ async function save(user, accessToken): Promise<Person | null> {
    if (person) {
       // Person record found in DB - increment version and overwrite
       person = new Person(PersistenceDetails.incrementSequenceNo(person.persistenceDetails),
-         new PersonaDetails(name, thumbnailUrl),
+         new PersonaDetails(name, thumbnailUrl, person.personaDetails.bio),
          new LoginContext(ELoginProvider.Google, externalId),
          email,
          person.roles);
@@ -40,7 +40,7 @@ async function save(user, accessToken): Promise<Person | null> {
       let roles = new Roles(new Array<ERoleType>(ERoleType.Prospect));
 
       person = new Person(PersistenceDetails.newPersistenceDetails(),
-         new PersonaDetails(name, thumbnailUrl),
+         new PersonaDetails(name, thumbnailUrl, ""),
          new LoginContext(ELoginProvider.Google, externalId),
          email, roles);
 

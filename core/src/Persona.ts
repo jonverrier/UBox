@@ -9,32 +9,39 @@ import { PersistenceDetails, PersistenceDetailsMemento, Persistence, IMultiLoade
 export class PersonaDetailsMemento {
    _name: string;
    _thumbnailUrl: string;
+   _bio: string;
 
    /**
     * Create a PersonMemento object
     * @param name - plain text user name.
     * @param thumbnailUrl - URL to thumbnail image.
+    * @param bio - string to use as biography 
     * Design - all memento classes must depend only on base types, value types, or other Mementos
     */
    constructor(name: string,
-      thumbnailUrl: string) {
+      thumbnailUrl: string,
+      bio: string   ) {
 
       this._name = name;
       this._thumbnailUrl = thumbnailUrl;
+      this._bio = bio;
    }
 }
 
-// PersonaDetails - really just aggregates name & URL to reduce number of parameters for setup of new objects
+// PersonaDetails - really just aggregates name, URL & bio to reduce number of parameters for setup of new objects
+// excludes email and other PII so can be passed to client even when describing an individual.
 export class PersonaDetails  {
    private _name: string;
    private _thumbnailUrl: string;
+   _bio: string;
 
    /**
     * Create a PersonaDetails object
     * @param name - plain text user name.
     * @param thumbnailUrl - URL to thumbnail image.
+    * @param bio - string to use as biography * 
     */
-   public constructor(name: string, thumbnailUrl: string)
+   public constructor(name: string, thumbnailUrl: string, bio: string)
    public constructor(memento: PersonaDetailsMemento);
    public constructor(...params: any[]) {
 
@@ -42,10 +49,12 @@ export class PersonaDetails  {
          let memento: PersonaDetailsMemento = params[0];
          this._name = memento._name;
          this._thumbnailUrl = memento._thumbnailUrl;
+         this._bio = memento._bio;
       }
       else {
          this._name = params[0];
          this._thumbnailUrl = params[1];
+         this._bio = params[2];
       }
 
       if (!PersonaDetails.isValidUrl(this._thumbnailUrl)) {
@@ -63,9 +72,15 @@ export class PersonaDetails  {
    get name(): string {
       return this._name;
    }
+
    get thumbnailUrl(): string {
       return this._thumbnailUrl;
    }
+
+   get bio(): string {
+      return this._bio;
+   }
+
    set name(name: string) {
       if (!PersonaDetails.isValidName(name)) {
          throw new InvalidParameterError("Name");
@@ -73,12 +88,18 @@ export class PersonaDetails  {
 
       this._name = name;
    }
+
    set thumbnailUrl(thumbnailUrl: string) {
       if (!PersonaDetails.isValidUrl(thumbnailUrl)) {
          throw new InvalidParameterError("Url");
       }
 
       this._thumbnailUrl = thumbnailUrl;
+   }
+
+   set bio(bio: string) {
+
+      this._bio = bio;
    }
 
    /**
@@ -88,8 +109,9 @@ export class PersonaDetails  {
     */
    equals(rhs: PersonaDetails): boolean {
 
-      return (this._name === rhs._name) &&
-         (this._thumbnailUrl === rhs._thumbnailUrl);
+      return ((this._name === rhs._name) &&
+         (this._thumbnailUrl === rhs._thumbnailUrl) &&
+         (this._bio === rhs._bio));
    }
 
    /**
@@ -97,7 +119,7 @@ export class PersonaDetails  {
    */
    memento(): PersonaDetailsMemento {
       return new PersonaDetailsMemento(this.name,
-         this.thumbnailUrl);
+         this.thumbnailUrl, this._bio);
    }
 
    /**
@@ -129,8 +151,8 @@ export class PersonaDetails  {
       return (true);
    }
 
-   static _notSignedIn: PersonaDetails = new PersonaDetails("Not signed in", "/assets/img/person-o-512x512.png");
-   static _unknown: PersonaDetails = new PersonaDetails("Unknown", "/assets/img/person-o-512x512.png");
+   static _notSignedIn: PersonaDetails = new PersonaDetails("Not signed in", "/assets/img/person-o-512x512.png", "");
+   static _unknown: PersonaDetails = new PersonaDetails("Unknown", "/assets/img/person-o-512x512.png", "");
    /**
     * return persona details for 'not logged in'
     */
@@ -196,7 +218,8 @@ export class Persona extends Persistence {
             memento._persistenceDetails._sequenceNumber));
 
          this._personaDetails = new PersonaDetails (memento._personaDetails._name,
-                                                    memento._personaDetails._thumbnailUrl);
+            memento._personaDetails._thumbnailUrl,
+            memento._personaDetails._bio);
       }
       else {
          super(params[0]);

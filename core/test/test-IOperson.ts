@@ -84,7 +84,8 @@ describe("IOPerson", function () {
             _persistenceDetails: { _key: "id", _schemaVersion: 0, _sequenceNumber: 0 },
             _personaDetails : {
                _name: "Joe" ,
-               _thumbnailUrl: "https://jo.pics.com"
+               _thumbnailUrl: "https://jo.pics.com",
+               _bio: "bio"
             },
             _loginContext: {
                _provider: ELoginProvider.Private,

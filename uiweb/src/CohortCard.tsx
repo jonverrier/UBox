@@ -56,7 +56,7 @@ export class CohortCard extends React.Component<ICohortCardProps, ICohortCardSta
             </Card.Header>
             <Card.Body>
                <Flex column gap="gap.medium">
-                  <Text content="Olympic lifting squad, Feb-May 2022" size="medium" />
+                  <Text content={this.props.persona.personaDetails.bio} size="medium" />
                </Flex>
             </Card.Body>
             <Card.Footer>

@@ -26,7 +26,8 @@ describe("IOPersona", function () {
             _persistenceDetails: { _key: "Joe", _schemaVersion: 0, _sequenceNumber: 0 },
             _personaDetails: {
                _name: "Joe",
-               _thumbnailUrl:  "https://jo.pics.com"
+               _thumbnailUrl: "https://jo.pics.com",
+               _bio: "bio string"
             }
          });
       } catch (e) {

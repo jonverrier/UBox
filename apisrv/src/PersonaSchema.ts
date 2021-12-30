@@ -10,5 +10,10 @@ export const personaDetailsSchema = {
    _thumbnailUrl: {
       type: String,
       required: true
-   }
+   },
+   _bio: {
+      type: String,
+      required: false,
+      index: false
+   },
 };
