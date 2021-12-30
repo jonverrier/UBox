@@ -18,7 +18,7 @@ describe("Persona", function () {
 
       var caught: boolean = false;
       try {
-         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("", "https://pics.com"));
+         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("", "https://pics.com", ""));
       } catch (e) {
          caught = true;
       }
@@ -29,7 +29,7 @@ describe("Persona", function () {
 
       var caught: boolean = false;
       try {
-         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", ""));
+         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", "", "bio"));
       } catch (e) {
          caught = true;
       }
@@ -41,7 +41,7 @@ describe("Persona", function () {
 
       var caught: boolean = false;
       try {
-         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", "xx"));
+         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", "xx", "bio"));
       } catch (e) {
          caught = true;
       }
@@ -52,7 +52,7 @@ describe("Persona", function () {
 
       var caught: boolean = false;
       try {
-         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", "xx/xx"));
+         personErr = new Persona(PersistenceTestHelper.createKey1(), new PersonaDetails("name", "xx/xx", "bio"));
       } catch (e) {
          caught = true;
       }
@@ -72,18 +72,22 @@ describe("Persona", function () {
 
       expect(person1.memento()._personaDetails._name === person1.memento()._personaDetails._name).to.equal(true);
       expect(person1.memento()._personaDetails._thumbnailUrl === person1.personaDetails.thumbnailUrl).to.equal(true);
+      expect(person1.memento()._personaDetails._bio === person1.personaDetails.bio).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
 
       let newUrl = "https://jo.newpics.com";
       let newName = "NewJoe";
+      let newBio = "newBio";
 
       person1.personaDetails.name = newName;
       person1.personaDetails.thumbnailUrl = newUrl;
+      person1.personaDetails.bio = newBio;
 
       expect(person1.personaDetails.name === newName).to.equal(true);
       expect(person1.personaDetails.thumbnailUrl === newUrl).to.equal(true);
+      expect(person1.personaDetails.bio === newBio).to.equal(true);
    });
 
    it("Needs to compare arrays", function () {
