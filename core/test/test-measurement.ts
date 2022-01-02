@@ -10,6 +10,11 @@ import { EPositiveTrend, EMeasurementType, MeasurementType, measurementTypeArray
 import { MeasurementTypes } from '../src/ObservationTypeDictionary';
 import { Measurement, IMeasurementStore } from '../src/Observation';
 import { MeasurementFormatter } from '../src/LocaleFormatters';
+import { Persona } from '../src/Persona';
+import { Person } from '../src/Person';
+import { Business } from '../src/Business';
+
+import { PersistenceTestHelper, PersonaTestHelper, PersonTestHelper } from './testHelpers';
 
 var expect = require("chai").expect;
 
@@ -214,15 +219,50 @@ describe("Measurement", function () {
 
    it("Needs to format successfully", function () {
 
+      let business1: Business;
+      let person: Person;
+      let person2: Person;
+      let people: Array<Persona>;
+
+      person = PersonTestHelper.createJoeMember();
+      person2 = PersonTestHelper.createJoeMember2();
+
+      person = PersonTestHelper.createJoeMember();
+      person2 = PersonTestHelper.createJoeMember2();
+
+      people = new Array<Person>();
+      people.push(person);
+
+      business1 = new Business(PersistenceTestHelper.createKey1(),
+         PersonaTestHelper.createXFitDulwichDetails(),
+         people, people);
+
       let quantity = new Quantity(120, BaseUnits.second);
       let repeats = 1;
       let measurementType = MeasurementTypes.run800;
       let stamp = Timestamper.now();
-      let measurement = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, stamp, measurementType, "1234", "1234");
+      let stamp2 = Timestamper.round(new Date(1975, 12, 1));
+      let measurement1 = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, stamp, measurementType, person.persistenceDetails.key, "1234");
+      let measurement2 = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, stamp2, measurementType, person.persistenceDetails.key, "1234");
 
       let formatter = new MeasurementFormatter();
 
-      let output = formatter.format(measurement, null);
+      // test a measurement made today, no business to look up persona
+      let output = formatter.format(measurement1, null);
+
+      expect(output.measurement.length > 0).to.equal(true);
+      expect(output.timestamp.length > 0).to.equal(true);
+      expect(output.persona === null).to.equal(false);
+
+      // test a measurement made before today, no business to look up persona
+      output = formatter.format(measurement2, null);
+
+      expect(output.measurement.length > 0).to.equal(true);
+      expect(output.timestamp.length > 0).to.equal(true);
+      expect(output.persona === null).to.equal(false);
+
+      // test a measurement made before today, business to look up persona
+      output = formatter.format(measurement1, business1);
 
       expect(output.measurement.length > 0).to.equal(true);
       expect(output.timestamp.length > 0).to.equal(true);

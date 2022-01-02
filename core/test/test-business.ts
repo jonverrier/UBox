@@ -1,6 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { Person } from '../src/Person';
+import { Persona } from '../src/Persona';
 import { Business, BusinessMemento } from '../src/Business';
 
 import { PersistenceTestHelper, PersonaTestHelper, PersonTestHelper } from './testHelpers';
@@ -16,7 +17,7 @@ describe("Business", function () {
    person = PersonTestHelper.createJoeMember();
    person2 = PersonTestHelper.createJoeMember2();
 
-   let people = new Array<Person>();
+   let people = new Array<Persona>();
    people.push(person);
 
    beforeEach(function () {
@@ -46,20 +47,20 @@ describe("Business", function () {
       expect(business1.personaDetails.name === business2.personaDetails.name).to.equal(false);
       expect(business1.personaDetails.thumbnailUrl === business2.personaDetails.thumbnailUrl).to.equal(false);
 
-      expect(Person.areEqual(business1.administrators, business2.administrators)).to.equal(true);
-      expect(Person.areEqual(business1.members, business2.members)).to.equal(true);
+      expect(Persona.areEqual(business1.administrators, business2.administrators)).to.equal(true);
+      expect(Persona.areEqual(business1.members, business2.members)).to.equal(true);
    });
 
    it("Needs to correctly change attributes", function () {
 
-       let people = new Array<Person>();
+       let people = new Array<Persona>();
       people.push(person2);
 
       business1.administrators = people;
       business1.members = people;
 
-      expect(Person.areEqual(business1.administrators, people)).to.equal(true);
-      expect(Person.areEqual(business1.members, people)).to.equal(true);
+      expect(Persona.areEqual(business1.administrators, people)).to.equal(true);
+      expect(Persona.areEqual(business1.members, people)).to.equal(true);
    });
 
    it("Needs to trap null Adminstrator list", function () {
@@ -118,7 +119,7 @@ describe("Business", function () {
       let memento: BusinessMemento = business1.memento();
       let newBusiness = new Business (memento);
 
-      expect(business1.equals(newBusiness)).to.equal(true);
+      expect(newBusiness.equals(business1)).to.equal(true);
    });
 });
 

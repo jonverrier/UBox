@@ -87,7 +87,7 @@ describe("Cohort", function () {
       let memento: CohortMemento = cohort1.memento();
       let newCohort = new Cohort (memento);
 
-      expect(cohort1.equals(newCohort)).to.equal(true);
+      expect(newCohort.equals(cohort1)).to.equal(true);
    });
 
    it("Needs to create a Measurement", function () {

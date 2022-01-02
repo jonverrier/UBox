@@ -56,6 +56,9 @@ export class LoginContext {
          this._provider = params[0];
          this._externalId = params[1];
       }
+
+      if (!LoginContext.isValidLoginDetails(this.externalId))
+         throw new InvalidParameterError("externalId");
    } 
 
    /**

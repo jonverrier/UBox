@@ -6,14 +6,14 @@ export class Timestamper {
 
    // Returns a number that is timestamp rounded to nearest 15 mins
    // https://stackoverflow.com/questions/4968250/how-to-round-time-to-the-nearest-quarter-hour-in-javascript
-   static round (now: Date): number {
-      var minutes: number = now.getMinutes();
-      var hours: number = now.getHours();
+   static round (stamp: Date): number {
+      var minutes: number = stamp.getMinutes();
+      var hours: number = stamp.getHours();
 
       // round to nearest 15 minutes
       var m: number = (((minutes + 7.5) / 15 | 0) * 15) % 60;
       var h: number = ((((minutes / 105) + .5) | 0) + hours) % 24;
-      var date: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
+      var date: Date = new Date(stamp.getFullYear(), stamp.getMonth(), stamp.getDate(), h, m);
       return date.getTime();
    }
 

@@ -9,8 +9,8 @@ import { Person, PersonMemento } from './Person';
 export class BusinessMemento extends PersonaMemento {
    readonly _persistenceDetails: PersistenceDetailsMemento;
    readonly _personaDetails: PersonaDetailsMemento;
-   _administrators: Array<PersonMemento>; // Not readonly as database needs to manually set
-   _members: Array<PersonMemento>;        // Not readonly as database needs to manually set
+   _administrators: Array<PersonaMemento>; // Not readonly as database needs to manually set
+   _members: Array<PersonaMemento>;        // Not readonly as database needs to manually set
 
    // These are used to allow the Db layer to switch object references to string Ids on save, and the reverse on load
    // so separate documents/tables can be used in the DB
@@ -27,8 +27,8 @@ export class BusinessMemento extends PersonaMemento {
     */
    constructor(persistenceDetails: PersistenceDetailsMemento,
       personaDetails: PersonaDetailsMemento,
-      administrators: Array<PersonMemento>,
-      members: Array<PersonMemento>) {
+      administrators: Array<PersonaMemento>,
+      members: Array<PersonaMemento>) {
 
       super(persistenceDetails, personaDetails);
 
@@ -51,8 +51,8 @@ export class BusinessMemento extends PersonaMemento {
 }
 
 export class Business extends Persona {
-   private _administrators: Array<Person>;
-   private _members: Array<Person>;
+   private _administrators: Array<Persona>;
+   private _members: Array<Persona>;
 
    // These are used to allow the Db layer to swizzle object references to string Ids on save, and the reverse on load
    // so separate documents/tables can be used in the DB
@@ -68,8 +68,8 @@ export class Business extends Persona {
     */
    constructor(persistenceDetails: PersistenceDetails,
       personaDetails: PersonaDetails,
-      administrators: Array<Person>,
-      members: Array<Person>);
+      administrators: Array<Persona>,
+      members: Array<Persona>);
    public constructor(memento: BusinessMemento);
    public constructor(...params: any[]) {
 
@@ -79,13 +79,13 @@ export class Business extends Persona {
 
          super(new PersistenceDetails(memento._persistenceDetails), new PersonaDetails(memento._personaDetails));
 
-         this._administrators = new Array<Person>(memento._administrators.length);
+         this._administrators = new Array<Persona>(memento._administrators.length);
          for (i = 0; i < memento._administrators.length; i++)
-            this._administrators[i] = new Person(memento._administrators[i]);
+            this._administrators[i] = new Persona(memento._administrators[i]);
 
-         this._members = new Array<Person>(memento._members.length);
+         this._members = new Array<Persona>(memento._members.length);
          for (i = 0; i < memento._members.length; i++)
-            this._members[i] = new Person(memento._members[i]);
+            this._members[i] = new Persona(memento._members[i]);
 
          this._administratorIds = new Array<string>();
          this._memberIds = new Array<string>();
@@ -114,16 +114,16 @@ export class Business extends Persona {
    /**
    * set of 'getters' and setters for private variables
    */
-   get administrators(): Array<Person> {
+   get administrators(): Array<Persona> {
       return this._administrators;
    }
-   get members(): Array<Person> {
+   get members(): Array<Persona> {
       return this._members;
    }
-   set administrators(people: Array<Person>) {
+   set administrators(people: Array<Persona>) {
       this._administrators = people;
    }
-   set members(people: Array<Person>) {
+   set members(people: Array<Persona>) {
       this._members = people;
    }
 
@@ -135,8 +135,8 @@ export class Business extends Persona {
 
       return new BusinessMemento(super.persistenceDetails.memento(),
          super.personaDetails.memento(),
-         Person.mementos(this._administrators),
-         Person.mementos(this._members));
+         Persona.mementos(this._administrators),
+         Persona.mementos(this._members));
    }
 
    /**
@@ -147,8 +147,8 @@ export class Business extends Persona {
    equals(rhs: Business): boolean {
 
       return (super.equals(rhs) &&
-         Person.areEqual(this._administrators, rhs._administrators) &&
-         Person.areEqual(this._members, rhs._members));
+         Persona.areEqual(this._administrators, rhs._administrators) &&
+         Persona.areEqual(this._members, rhs._members));
    }
 
    /**
@@ -164,17 +164,17 @@ export class Business extends Persona {
     * test if a business includes a person as a member 
     * @param person - the person to check
     */
-   includesMember(person: Person): boolean {
+   includesMember(person: Persona): boolean {
 
       return (this._members.includes(person));
    }
 
    /**
     * test for valid list of people as Administrators
-    * @param people - the list to test 
+    * @param administrators - the list to test 
     */
-   static isValidAdministratorList(people: Array<Person>): boolean {
-      if (!people || people.length === 0) // Must be non-zero length
+   static isValidAdministratorList(administrators: Array<Persona>): boolean {
+      if (!administrators || administrators.length === 0) // Must be non-zero length
          return false;
 
       return (true);
@@ -182,10 +182,10 @@ export class Business extends Persona {
 
    /**
     * test for valid list of people as Administrators
-    * @param people - the list to test 
+    * @param members - the list to test 
     */
-   static isValidMemberList(people: Array<Person>): boolean {
-      if (!people) // Must be an array
+   static isValidMemberList(members: Array<Persona>): boolean {
+      if (!members) // Must be an array
          return false;
 
       return (true);
