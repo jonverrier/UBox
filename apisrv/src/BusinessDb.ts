@@ -4,6 +4,7 @@
 import { Logger } from '../../core/src/Logger';
 import { PersistenceDetails } from '../../core/src/Persistence';
 import { Person, PersonMemento } from '../../core/src/Person';
+import { Persona } from '../../core/src/Persona';
 import { Business, BusinessMemento, IBusinessStore, IBusinessesStoreById } from '../../core/src/Business';
 import { BusinessCodec } from '../../core/src/IOBusiness';
 import { PersonDb } from './PersonDb';
@@ -49,19 +50,19 @@ export class BusinessDb implements IBusinessStore {
 
 
    postProcessFromSave(doc,
-      prevAdmins: Array<Person>, prevMembers: Array<Person>): Business {
+      prevAdmins: Array<Persona>, prevMembers: Array<Persona>): Business {
 
       var newBusiness: Business;
 
-      doc._administrators = Person.mementos(prevAdmins);
-      doc._members = Person.mementos(prevMembers);
+      doc._administrators = Persona.mementos(prevAdmins);
+      doc._members = Persona.mementos(prevMembers);
 
       newBusiness = this._codec.tryCreateFrom(doc);
 
       return newBusiness;
    }
 
-   private makePersonIds(people: Array<Person>): Array<string> {
+   private makePersonIds(people: Array<Persona>): Array<string> {
       var ids: Array<string> = new Array<string>();
       var i: number;
 
@@ -87,24 +88,8 @@ export class BusinessDb implements IBusinessStore {
 
    async save(business: Business): Promise<Business | null> {
       try {
-         var prevAdmins: Array<Person> = business.administrators;
-         var prevMembers: Array<Person> = business.members;
-
-         var personDb: PersonDb = new PersonDb();
-
-         // For any Admins that do not have valid key, save them
-         for (var i = 0; i < prevAdmins.length; i++) {
-            if (!prevAdmins[i].persistenceDetails.hasValidKey()) {
-               prevAdmins[i] = await personDb.save(prevAdmins[i]);
-            }
-         }
-
-         // For any Members that do not have valid key, save them
-         for (var i = 0; i < prevMembers.length; i++) {
-            if (!prevMembers[i].persistenceDetails.hasValidKey()) {
-               prevMembers[i] = await personDb.save(prevMembers[i]);
-            }
-         }
+         var prevAdmins: Array<Persona> = business.administrators;
+         var prevMembers: Array<Persona> = business.members;
 
          // Before saving to DB, we convert object references to Ids, save the Ids on the memento, and remove object references from the Cohort.
          // We do the reverse on load.

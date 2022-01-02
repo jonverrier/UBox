@@ -85,6 +85,7 @@
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-logger.ts" />
+    <TypeScriptCompile Include="test\test-login-context.ts" />
     <TypeScriptCompile Include="test\test-measurement.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
