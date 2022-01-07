@@ -4,22 +4,20 @@
 import * as React from 'react';
 
 // Fluent-UI
-import { Flex, Text } from '@fluentui/react-northstar';
-
-import { PersistenceDetails } from '../../core/src/Persistence';
-import { Persona, PersonaDetails } from '../../core/src/Persona';
-import { CohortsPresenter } from '../../core/src/CohortsPresenter';
-import { PersonApiFromSession } from '../../apisrv/src/PersonApi';
+import { Flex, Alert } from '@fluentui/react-northstar';
 
 // Local App 
+import { CohortsPresenter } from '../../core/src/CohortsPresenter';
+import { CohortsPresenterApiFromSession } from '../../apisrv/src/CohortsPresenterApi';
 import { Navbar } from './Navbar';
 import { CohortCard } from './CohortCard';
+
 import { EApiUrls } from '../../apisrv/src/ApiUrls';
 import { EAppUrls } from '../../apisrv/src/AppUrls';
 
 export interface ICohortsPageProps {
    presenter: CohortsPresenter;
-   onSignIn: (persona: Persona) => void;
+   onSignIn: (presenter: CohortsPresenter) => void;
 }
 
 interface ICohortsPageState {
@@ -27,7 +25,7 @@ interface ICohortsPageState {
 
 export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPageState> {
 
-   private _mySessionPersonApi: PersonApiFromSession; 
+   private _mySessionPresenterApi: CohortsPresenterApiFromSession; 
 
    constructor(props: ICohortsPageProps) {
       super(props);
@@ -35,15 +33,15 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
       this.state = {};
 
       var url: string = window.location.origin;
-      this._mySessionPersonApi = new PersonApiFromSession(url);
+      this._mySessionPresenterApi = new CohortsPresenterApiFromSession(url);
    }
 
    componentDidMount() {
-      // Pull back the user asscoated with our session
-      var result = this._mySessionPersonApi.loadOne();
+      // Pull back the user + their cohorts asscoated with our session
+      var result = this._mySessionPresenterApi.loadOne(null);
 
-      result.then(person => {
-         this.props.onSignIn(person);
+      result.then(presenter => {
+         this.props.onSignIn(presenter);
       });
    }
 
@@ -77,7 +75,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
             <div>
                <Navbar persona={this.props.presenter.persona} />
                <Flex gap="gap.medium" column={true} vAlign="center" >
-                  <Text content="It doesnt look like you are a member of any squads. If you are a gym owner, you can contact us from the home page." size="medium" />
+                  <Alert content="It doesnt look like you are a member of any squads. If you are a gym owner, you can contact us from the home page." />
                </Flex>
             </div>
          );

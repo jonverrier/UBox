@@ -170,5 +170,3 @@ export interface ICohortStoreById extends IKeyMultiLoaderFor<Cohort> {
 export interface ICohortStoreByEmail extends IKeyMultiLoaderFor<Cohort> {
 }
 
-export interface ICohortPersonasStoreBySession extends ISessionMultiLoaderFor<Persona> {
-}

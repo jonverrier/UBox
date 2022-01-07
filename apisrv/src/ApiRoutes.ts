@@ -2,7 +2,7 @@
 // Copyright TXPCo ltd, 2020, 2021
 
 import express from 'express';
-var passport = require('passport');
+
 import { URL, URLSearchParams} from 'url';
 
 import { Logger } from '../../core/src/Logger';
@@ -18,7 +18,6 @@ import { BusinessCodec, BusinessesCodec } from '../../core/src/IOBusiness';
 import { BusinessDb, BusinesDbById} from './BusinessDb';
 
 import { EApiUrls } from './ApiUrls';
-import { EPresenterApiUrls } from './ApiUrls';
 
 export var ApiRoutes = express.Router();
 
@@ -109,32 +108,6 @@ ApiRoutes.get(EApiUrls.QueryPersonByExternalId, function (req, res) {
    } catch (e) {
 
       logger.logError("ApiRoutes", EApiUrls.QueryPersonByExternalId, "Error", e.toString());
-      res.send(null);
-   }
-})
-
-// Retrieve a Person from the session
-// This version uses the session to get user email, query looks up the person
-ApiRoutes.get(EApiUrls.QueryPersonFromSession, (req: any, res) => {
-
-   if ((!req.user) || (!req.user.loginContext)) {
-      logger.logError("ApiRoutes", EApiUrls.QueryPersonFromSession, "Error - no user session.", '');
-      res.send(null);
-      return;
-   }
-
-   try {
-      let codec = new PersonCodec();
-      let db = new PersonByEmailDb();
-
-      let result = db.loadOne(req.user.email);
-      result.then(data => {
-         res.send(data ? codec.encode(data) : null);
-      });
-
-   } catch (e) {
-
-      logger.logError("ApiRoutes", EApiUrls.QueryPersonFromSession, "Error", e.toString());
       res.send(null);
    }
 })
@@ -380,32 +353,6 @@ ApiRoutes.put(EApiUrls.QueryMyCohortsByEmail, function (req, res) {
    } catch (e) {
 
       logger.logError("ApiRoutes", EApiUrls.QueryMyCohortsByEmail, "Error", e.toString());
-      res.send(null);
-   }
-})
-
-// Retrieve Personas for multiple Cohort objects
-// This version uses the session to get user email, - query looks up the person, then inside each business object to see of the supplied id is a member or an admin.
-ApiRoutes.put(EPresenterApiUrls.QueryCohortsPresenterFromSession, (req: any, res) => {
-
-   if ((!req.user) || (!req.user.loginContext)) {
-      logger.logError("ApiRoutes", EPresenterApiUrls.QueryCohortsPresenterFromSession, "Error - no user session.", '');
-      res.send(null);
-      return;
-   }
-
-   try {
-      let codec = new PersonasCodec();
-      let db = new CohortDbByEmail();
-
-      let result = db.loadMany(req.user.email);
-      result.then(data => {
-         res.send(data ? codec.encode(data) : null);
-      });
-
-   } catch (e) {
-
-      logger.logError("ApiRoutes", EPresenterApiUrls.QueryCohortsPresenterFromSession, "Error", e.toString());
       res.send(null);
    }
 })
