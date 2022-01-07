@@ -14,7 +14,6 @@ import { CohortsPresenter} from '../../core/src/CohortsPresenter';
 
 // Server URLs
 import { EAppUrls } from '../../apisrv/src/AppUrls';
-import { CohortsApiFromSession } from '../../apisrv/src/CohortApi';
 
 // Local App 
 import { appTheme } from './Theme';
@@ -32,9 +31,6 @@ interface IAppState {
 
 export class PageSwitcher extends React.Component<IAppProps, IAppState> {
 
-
-   private _mySessionCohortsApi: CohortsApiFromSession; 
-
    constructor(props: IAppProps) {
 
       super(props);
@@ -50,24 +46,11 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
       var personaCohorts: CohortsPresenter = new CohortsPresenter(persona, cohorts);
 
       this.state = { presenter: personaCohorts };
-
-      var url: string = window.location.origin;
-      this._mySessionCohortsApi = new CohortsApiFromSession(url);
    }
 
-   onSignIn (persona: Persona) : void {
+   onSignIn(presenter: CohortsPresenter) : void {
 
-      // Pull back the cohort personas for cohorts asscoated with our session
-      var result = this._mySessionCohortsApi.loadMany();
-      var myCohortPersonas = new Array<Persona>();
-
-      result.then(personas => {
-         for (var item of personas) {
-            myCohortPersonas.push(item);
-         }
-
-         this.setState({ presenter: new CohortsPresenter(persona, myCohortPersonas) });
-      });
+      this.setState({ presenter: presenter });
    }
 
    render(): JSX.Element {

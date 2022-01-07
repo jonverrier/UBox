@@ -1,7 +1,7 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import { Persona, PersonaMemento } from './Persona';
-import { Cohort } from './Cohort';
+import { ILoaderFor } from './Persistence';
 
 // Represents a member or coach plus all the cohorts to which they belong - used to present summary information in UI
 export class CohortsPresenterMemento {
@@ -96,4 +96,7 @@ export class CohortsPresenter {
          (Persona.areEqual (this._cohorts, rhs._cohorts)) 
       );
    }
+}
+
+export interface ICohortsPresenterStoreBySession extends ILoaderFor<CohortsPresenter> {
 }

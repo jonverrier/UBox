@@ -103,6 +103,7 @@
     <TypeScriptCompile Include="src\BusinessDb.ts" />
     <TypeScriptCompile Include="src\BusinessApi.ts" />
     <TypeScriptCompile Include="src\BusinessSchema.ts" />
+    <TypeScriptCompile Include="src\CohortsPresenterApi.ts" />
     <TypeScriptCompile Include="src\CohortDb.ts" />
     <TypeScriptCompile Include="src\CohortSchema.ts" />
     <TypeScriptCompile Include="src\ContactDb.ts" />
@@ -118,6 +119,7 @@
     <TypeScriptCompile Include="src\CohortApi.ts" />
     <TypeScriptCompile Include="src\PersonApi.ts" />
     <TypeScriptCompile Include="src\PersonSchema.ts" />
+    <TypeScriptCompile Include="src\PresenterApiRoutes.ts" />
     <TypeScriptCompile Include="test\demo-setup.ts" />
     <TypeScriptCompile Include="test\test-business-api.ts" />
     <TypeScriptCompile Include="test\test-cohort-api.ts" />

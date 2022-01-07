@@ -15,6 +15,7 @@ var passport = require('passport');
 // Internal classes
 import { AuthRoutes } from './AuthRoutes';
 import { ApiRoutes } from './ApiRoutes';
+import { PresenterApiRoutes } from './PresenterApiRoutes';
 import { AppRoutes } from './AppRoutes';
 import { ContactDb } from './ContactDb';
 
@@ -96,6 +97,7 @@ if (inDevelopment) {
 
 // Routes for API endpoints
 app.use('/', ApiRoutes);
+app.use('/', PresenterApiRoutes);
 
 // Routes for Auth pages
 app.use('/', AuthRoutes);

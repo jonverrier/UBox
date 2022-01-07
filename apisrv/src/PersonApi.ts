@@ -7,6 +7,7 @@ import { PersonCodec, PeopleCodec } from '../../core/src/IOPerson';
 import { LoadApiHelper, SaveApiHelper, MultiApiHelper } from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
+import { EPresenterApiUrls } from './ApiUrls';
 
 export class PersonApi implements IPersonStore {
    private _loadApiHelper: LoadApiHelper<Person>;
@@ -82,7 +83,7 @@ export class PersonApiFromSession implements IPersonStoreFromSession {
    private _loadApiHelper: LoadApiHelper<Person>;
 
    constructor(serverUrl: string) {
-      this._loadApiHelper = new LoadApiHelper<Person>(serverUrl, EApiUrls.QueryPersonFromSession, new PersonCodec());
+      this._loadApiHelper = new LoadApiHelper<Person>(serverUrl, EPresenterApiUrls.QueryPersonFromSession, new PersonCodec());
    }
 
    loadOne(): Promise<Person | null> {

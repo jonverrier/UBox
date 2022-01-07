@@ -7,11 +7,9 @@ import * as React from 'react';
 import { Flex } from '@fluentui/react-northstar';
 
 import { Measurement } from '../../core/src/Observation';
-import { Persona } from '../../core/src/Persona';
 import { Business } from '../../core/src/Business';
-import { Cohort } from '../../core/src/Cohort';
 import { CohortsPresenter } from '../../core/src/CohortsPresenter';
-import { PersonApiFromSession } from '../../apisrv/src/PersonApi';
+import { CohortsPresenterApiFromSession } from '../../apisrv/src/CohortsPresenterApi';
 import { CohortMeasurementApi } from '../../apisrv/src/ObservationApi';
 import { CohortApi } from '../../apisrv/src/CohortApi';
 
@@ -21,7 +19,7 @@ import { EApiUrls } from '../../apisrv/src/ApiUrls';
 
 export interface ICohortPageProps {
    presenter: CohortsPresenter;
-   onSignIn: (persona: Persona) => void;
+   onSignIn: (presenter: CohortsPresenter) => void;
 }
 
 interface ICohortPageState {
@@ -45,7 +43,7 @@ function parseQueryString (queryString: string) : any {
 };
 
 export class CohortPage extends React.Component<ICohortPageProps, ICohortPageState> {
-   private _mySessionPersonApi: PersonApiFromSession; 
+   private _mySessionPresenterApi: CohortsPresenterApiFromSession; 
    private _myCohortMeasurementApi: CohortMeasurementApi;
    private _myCohortApi: CohortApi;
 
@@ -55,17 +53,17 @@ export class CohortPage extends React.Component<ICohortPageProps, ICohortPageSta
       this.state = { business: null, measurements: new Array <Measurement>() };
 
       var url: string = window.location.origin;
-      this._mySessionPersonApi = new PersonApiFromSession(url);
+      this._mySessionPresenterApi = new CohortsPresenterApiFromSession(url);
       this._myCohortMeasurementApi = new CohortMeasurementApi(url);
       this._myCohortApi = new CohortApi(url);
    }
 
    componentDidMount() {
       // Pull back the user asscoated with our session
-      var result = this._mySessionPersonApi.loadOne();
+      var result = this._mySessionPresenterApi.loadOne(null);
 
-      result.then(person => {
-         this.props.onSignIn(person);
+      result.then(presenter => {
+         this.props.onSignIn(presenter);
 
          let searchString = window.location.search;
          if (searchString.length <= 1)
