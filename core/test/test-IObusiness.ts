@@ -1,7 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
 import { Logger } from '../src/Logger';
-import { Roles, ERoleType, PersonMemento, Person } from '../src/Person';
+import { PersonMemento, Person } from '../src/Person';
 import { Business, BusinessMemento } from '../src/Business';
 import { BusinessCodec, BusinessesCodec } from '../src/IOBusiness';
 

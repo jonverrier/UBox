@@ -8,7 +8,7 @@ import { Flex, Text } from '@fluentui/react-northstar';
 
 import { PersistenceDetails } from '../../core/src/Persistence';
 import { Persona, PersonaDetails } from '../../core/src/Persona';
-import { PersonCohorts } from '../../core/src/PersonCohorts';
+import { CohortsPresenter } from '../../core/src/CohortsPresenter';
 import { PersonApiFromSession } from '../../apisrv/src/PersonApi';
 
 // Local App 
@@ -18,7 +18,7 @@ import { EApiUrls } from '../../apisrv/src/ApiUrls';
 import { EAppUrls } from '../../apisrv/src/AppUrls';
 
 export interface ICohortsPageProps {
-   personaCohorts: PersonCohorts;
+   presenter: CohortsPresenter;
    onSignIn: (persona: Persona) => void;
 }
 
@@ -53,7 +53,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
    }
 
    listCohorts(): JSX.Element {
-      let items = this.props.personaCohorts._cohorts;
+      let items = this.props.presenter.cohorts;
 
       return (
          <ul>
@@ -70,21 +70,21 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
 
    render(): JSX.Element {
 
-      var length: number = this.props.personaCohorts._cohorts.length;
+      var length: number = this.props.presenter.cohorts.length;
 
       if (length === 0) {
          return (
             <div>
-               <Navbar persona={this.props.personaCohorts._persona} />
-               <Flex gap="gap.medium" column={true}>
-                  <Text content="It doesnt look like you are a member of any squads." size="medium" />
+               <Navbar persona={this.props.presenter.persona} />
+               <Flex gap="gap.medium" column={true} vAlign="center" >
+                  <Text content="It doesnt look like you are a member of any squads. If you are a gym owner, you can contact us from the home page." size="medium" />
                </Flex>
             </div>
          );
       } else {
          return (
             <div>
-               <Navbar persona={this.props.personaCohorts._persona} />
+               <Navbar persona={this.props.presenter.persona} />
                <Flex gap="gap.medium" column={true}>
                   {this.listCohorts()}
                </Flex>

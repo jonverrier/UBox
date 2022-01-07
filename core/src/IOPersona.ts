@@ -44,7 +44,7 @@ export class PersonaCodec implements ICodec<Persona> {
    }
 }
 
-// Personas Codec
+// Personas (plural) Codec
 // ==========
 
 export const personasIoType = IoTs.array(personaIoType);

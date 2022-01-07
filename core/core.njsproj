@@ -48,6 +48,7 @@
     <TypeScriptCompile Include="src\Business.ts" />
     <TypeScriptCompile Include="src\Cohort.ts" />
     <TypeScriptCompile Include="src\IOBusiness.ts" />
+    <TypeScriptCompile Include="src\IOCohortsPresenter.ts" />
     <TypeScriptCompile Include="src\IOCohort.ts" />
     <TypeScriptCompile Include="src\IOLoginContext.ts" />
     <TypeScriptCompile Include="src\IOObservation.ts" />
@@ -63,7 +64,7 @@
     <TypeScriptCompile Include="src\Persona.ts" />
     <TypeScriptCompile Include="src\Person.ts" />
     <TypeScriptCompile Include="src\IOPerson.ts" />
-    <TypeScriptCompile Include="src\PersonCohorts.ts" />
+    <TypeScriptCompile Include="src\CohortsPresenter.ts" />
     <TypeScriptCompile Include="src\Quantity.ts" />
     <TypeScriptCompile Include="src\Range.ts" />
     <TypeScriptCompile Include="src\CoreError.ts" />
@@ -97,7 +98,7 @@
       <TestFramework>mocha</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="test\test-persona.ts" />
-    <TypeScriptCompile Include="test\test-personacohorts.ts" />
+    <TypeScriptCompile Include="test\test-cohortspresenter.ts" />
     <TypeScriptCompile Include="test\test-range.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>

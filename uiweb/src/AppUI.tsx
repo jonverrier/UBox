@@ -10,7 +10,7 @@ import { Provider, teamsTheme, mergeThemes } from '@fluentui/react-northstar';
 
 import { PersistenceDetails } from '../../core/src/Persistence'; 
 import { Persona, PersonaDetails } from '../../core/src/Persona';
-import { PersonCohorts } from '../../core/src/PersonCohorts';
+import { CohortsPresenter} from '../../core/src/CohortsPresenter';
 
 // Server URLs
 import { EAppUrls } from '../../apisrv/src/AppUrls';
@@ -27,7 +27,7 @@ export interface IAppProps {
 }
 
 interface IAppState {
-   personaCohorts: PersonCohorts;
+   presenter: CohortsPresenter;
 }
 
 export class PageSwitcher extends React.Component<IAppProps, IAppState> {
@@ -47,9 +47,9 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
          PersistenceDetails.newPersistenceDetails(),
          user);
 
-      var personaCohorts: PersonCohorts = new PersonCohorts(persona, cohorts);
+      var personaCohorts: CohortsPresenter = new CohortsPresenter(persona, cohorts);
 
-      this.state = { personaCohorts: personaCohorts };
+      this.state = { presenter: personaCohorts };
 
       var url: string = window.location.origin;
       this._mySessionCohortsApi = new CohortsApiFromSession(url);
@@ -66,7 +66,7 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
             myCohortPersonas.push(item);
          }
 
-         this.setState({ personaCohorts: new PersonCohorts(persona, myCohortPersonas) });
+         this.setState({ presenter: new CohortsPresenter(persona, myCohortPersonas) });
       });
    }
 
@@ -77,9 +77,9 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
             <BrowserRouter>   
                <Routes>
                   <Route path="/">
-                     <Route path={EAppUrls.Cohorts.substr(1)} element={<CohortsPage personaCohorts={this.state.personaCohorts} onSignIn={this.onSignIn.bind (this)} />} />
-                     <Route path={EAppUrls.Cohort.substr(1)} element={<CohortPage personaCohorts={this.state.personaCohorts} onSignIn={this.onSignIn.bind(this)}/>} />
-                     <Route path={EAppUrls.Login.substr(1)} element={<LoginPage persona={this.state.personaCohorts._persona} />} />
+                     <Route path={EAppUrls.Cohorts.substr(1)} element={<CohortsPage presenter={this.state.presenter} onSignIn={this.onSignIn.bind (this)} />} />
+                     <Route path={EAppUrls.Cohort.substr(1)} element={<CohortPage presenter={this.state.presenter} onSignIn={this.onSignIn.bind(this)}/>} />
+                     <Route path={EAppUrls.Login.substr(1)} element={<LoginPage persona={this.state.presenter.persona} />} />
                   </Route>
                </Routes>  
             </BrowserRouter>  

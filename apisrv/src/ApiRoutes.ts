@@ -18,7 +18,7 @@ import { BusinessCodec, BusinessesCodec } from '../../core/src/IOBusiness';
 import { BusinessDb, BusinesDbById} from './BusinessDb';
 
 import { EApiUrls } from './ApiUrls';
-import { EAppUrls } from './AppUrls';
+import { EPresenterApiUrls } from './ApiUrls';
 
 export var ApiRoutes = express.Router();
 
@@ -386,10 +386,10 @@ ApiRoutes.put(EApiUrls.QueryMyCohortsByEmail, function (req, res) {
 
 // Retrieve Personas for multiple Cohort objects
 // This version uses the session to get user email, - query looks up the person, then inside each business object to see of the supplied id is a member or an admin.
-ApiRoutes.put(EApiUrls.QueryMyCohortPersonasFromSession, (req: any, res) => {
+ApiRoutes.put(EPresenterApiUrls.QueryCohortsPresenterFromSession, (req: any, res) => {
 
    if ((!req.user) || (!req.user.loginContext)) {
-      logger.logError("ApiRoutes", EApiUrls.QueryMyCohortPersonasFromSession, "Error - no user session.", '');
+      logger.logError("ApiRoutes", EPresenterApiUrls.QueryCohortsPresenterFromSession, "Error - no user session.", '');
       res.send(null);
       return;
    }
@@ -405,7 +405,7 @@ ApiRoutes.put(EApiUrls.QueryMyCohortPersonasFromSession, (req: any, res) => {
 
    } catch (e) {
 
-      logger.logError("ApiRoutes", EApiUrls.QueryMyCohortPersonasFromSession, "Error", e.toString());
+      logger.logError("ApiRoutes", EPresenterApiUrls.QueryCohortsPresenterFromSession, "Error", e.toString());
       res.send(null);
    }
 })

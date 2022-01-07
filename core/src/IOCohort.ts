@@ -1,7 +1,6 @@
 /*! Copyright TXPCo, 2020, 2021 */
 
 import * as IoTs from 'io-ts';
-import * as IoTsTypes from 'io-ts-types';
 
 import { PersonaDetails } from './Persona';
 import { Business } from './Business';

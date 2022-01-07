@@ -18,10 +18,12 @@ export enum EApiUrls {
    SaveCohort = "/api/saveCohort",
    QueryMyCohorts = '/api/QueryMyCohorts',
    QueryMyCohortsByEmail = '/api/QueryMyCohortsByEmail',
-   QueryMyCohortPersonasFromSession = '/api/QueryMyCohortPersonasFromSession',
    QueryBusiness = "/api/queryBusiness",
    SaveBusiness = "/api/saveBusiness",
    QueryMyBusinesses = "/api/queryMyBusinesses",
    Key = "key"
 }
 
+export enum EPresenterApiUrls {
+   QueryCohortsPresenterFromSession = '/api/QueryCohortsPresenterFromSession'
+}
