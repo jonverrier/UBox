@@ -74,12 +74,12 @@ describe("Cohort", function () {
          people, people);
 
       cohort1.business = newBusiness;
-      cohort1.cohortType = ECohortType.Conditioning;
+      cohort1.cohortType = ECohortType.WorkoutForReps;
       cohort1.creationTimestamp = newPeriod;
 
       expect(cohort1.business.equals(newBusiness)).to.equal(true);
       expect(cohort1.creationTimestamp === newPeriod).to.equal(true);
-      expect(cohort1.cohortType).to.equal(ECohortType.Conditioning);
+      expect(cohort1.cohortType).to.equal(ECohortType.WorkoutForReps);
    });
 
    it("Needs to convert to and from memento()", function () {

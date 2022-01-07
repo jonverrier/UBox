@@ -11,7 +11,7 @@ import { Persona, PersonaDetails, PersonaMemento, PersonaDetailsMemento } from '
 export enum ECohortPeriod { Week = "One Week", TwoWeeks = "Two Weeks", ThreeWeeks = "Three Weeks", FourWeeks = "Four Weeks", Month = "One Month" }
 
 export enum ECohortType {
-    OlympicLifting = "Olympic Lifting", Powerlifting = "Power Lifting", Conditioning = "Conditioning",
+    OlympicLifting = "Olympic Lifting", Powerlifting = "Power Lifting", 
     WorkoutForReps = "Workout for Reps", WorkoutForTime = "Workout for Time", WorkoutForWeight = "Workout for Weight"
 }
 

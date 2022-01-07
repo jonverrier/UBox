@@ -10,7 +10,7 @@ import { Measurement } from '../../core/src/Observation';
 import { Persona } from '../../core/src/Persona';
 import { Business } from '../../core/src/Business';
 import { Cohort } from '../../core/src/Cohort';
-import { PersonCohorts } from '../../core/src/PersonCohorts';
+import { CohortsPresenter } from '../../core/src/CohortsPresenter';
 import { PersonApiFromSession } from '../../apisrv/src/PersonApi';
 import { CohortMeasurementApi } from '../../apisrv/src/ObservationApi';
 import { CohortApi } from '../../apisrv/src/CohortApi';
@@ -20,7 +20,7 @@ import { CohortChat } from './CohortChat';
 import { EApiUrls } from '../../apisrv/src/ApiUrls';
 
 export interface ICohortPageProps {
-   personaCohorts: PersonCohorts;
+   presenter: CohortsPresenter;
    onSignIn: (persona: Persona) => void;
 }
 
@@ -93,7 +93,7 @@ export class CohortPage extends React.Component<ICohortPageProps, ICohortPageSta
 
       return (
          <div>
-            <Navbar persona={(this.props.personaCohorts._persona)} />
+            <Navbar persona={(this.props.presenter.persona)} />
             <Flex gap="gap.medium" column={true}>
                <CohortChat business={ this.state.business} measurements={this.state.measurements}></CohortChat>
             </Flex>

@@ -35,7 +35,7 @@ describe("IOCohort", function () {
       PersonaTestHelper.createXFitDulwichDetails(),
       business,
       creationTimestamp,
-      ECohortType.Conditioning);
+      ECohortType.WorkoutForReps);
 
    it("Needs to decode a Cohort from clean input.", function () {
 

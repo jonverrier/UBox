@@ -9,6 +9,7 @@ import { Persona } from '../../core/src/Persona';
 import { LoadApiHelper, SaveApiHelper, KeyMultiApiHelper} from './ApiHelp';
 
 import { EApiUrls } from './ApiUrls';
+import { EPresenterApiUrls } from './ApiUrls';
 
 export class CohortApi implements ICohortStore {
    private _loadApiHelper: LoadApiHelper<Cohort>;
@@ -88,7 +89,7 @@ export class CohortsApiFromSession implements ICohortPersonasStoreBySession {
    private _multiApiHelper: KeyMultiApiHelper<Persona>;
 
    constructor(serverUrl: string) {
-      this._multiApiHelper = new KeyMultiApiHelper<Persona>(serverUrl, EApiUrls.QueryMyCohortPersonasFromSession, new PersonasCodec());
+      this._multiApiHelper = new KeyMultiApiHelper<Persona>(serverUrl, EPresenterApiUrls.QueryCohortsPresenterFromSession, new PersonasCodec());
    }
 
 

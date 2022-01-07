@@ -3,10 +3,8 @@
 import { BusinessMemento, Business } from "./Business";
 import { decodeWith, encodeWith, ICodec, persistenceDetailsIoType} from '../src/IOCommon';
 import { personaDetailsIoType, personasIoType} from '../src/IOPersona';
-import { peopleIoType, } from '../src/IOPerson';
 
 import * as IoTs from 'io-ts';
-import { Person } from "./Person";
 
 // Rule summary for a Persistent Object: 
 // - derives from IPersistence, which contains a PersistentDetails member object. 
