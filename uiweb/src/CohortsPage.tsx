@@ -7,6 +7,7 @@ import * as React from 'react';
 import { Flex, Alert } from '@fluentui/react-northstar';
 
 // Local App 
+import { SessionPresenter } from '../../core/src/SessionPresenter';
 import { CohortsPresenter } from '../../core/src/CohortsPresenter';
 import { CohortsPresenterApiFromSession } from '../../apisrv/src/CohortsPresenterApi';
 import { Navbar } from './Navbar';
@@ -16,11 +17,12 @@ import { EApiUrls } from '../../apisrv/src/ApiUrls';
 import { EAppUrls } from '../../apisrv/src/AppUrls';
 
 export interface ICohortsPageProps {
-   presenter: CohortsPresenter;
-   onSignIn: (presenter: CohortsPresenter) => void;
+   presenter: SessionPresenter;
+   onSignIn: (presenter: SessionPresenter) => void;
 }
 
 interface ICohortsPageState {
+   presenter: CohortsPresenter;
 }
 
 export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPageState> {
@@ -30,7 +32,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
    constructor(props: ICohortsPageProps) {
       super(props);
 
-      this.state = {};
+      this.state = { presenter: null };
 
       var url: string = window.location.origin;
       this._mySessionPresenterApi = new CohortsPresenterApiFromSession(url);
@@ -41,6 +43,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
       var result = this._mySessionPresenterApi.loadOne(null);
 
       result.then(presenter => {
+         this.setState({presenter: presenter});
          this.props.onSignIn(presenter);
       });
    }
@@ -51,7 +54,14 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
    }
 
    listCohorts(): JSX.Element {
-      let items = this.props.presenter.cohorts;
+      if (!this.state.presenter) {
+         return (
+            <ul>
+            </ul>
+         );
+      }
+
+      let items = this.state.presenter.cohorts;
 
       return (
          <ul>
@@ -68,7 +78,7 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
 
    render(): JSX.Element {
 
-      var length: number = this.props.presenter.cohorts.length;
+      var length: number = this.state.presenter ? this.state.presenter.cohorts.length : 0;
 
       if (length === 0) {
          return (

@@ -21,6 +21,7 @@ describe("CohortsPresenterMemento", function () {
 
    var presenterMemento: CohortsPresenterMemento = new CohortsPresenterMemento(
       person.memento(),
+      true,
       Persona.mementos(new Array<Persona>(cohort)));
  
    
@@ -29,6 +30,8 @@ describe("CohortsPresenterMemento", function () {
       expect(presenterMemento._persona._persistenceDetails._key === person.persistenceDetails.memento()._key).to.equal(true);
       expect(presenterMemento._persona._personaDetails._name === person.personaDetails.memento()._name).to.equal(true);
       expect(presenterMemento._persona._personaDetails._thumbnailUrl === person.personaDetails.memento()._thumbnailUrl).to.equal(true);
+
+      expect(presenterMemento._isAdministrator === true).to.equal(true);
 
       expect(presenterMemento._cohorts[0]._persistenceDetails._key === cohort.persistenceDetails.memento()._key).to.equal(true);
       expect(presenterMemento._cohorts[0]._personaDetails._name === cohort.personaDetails.name).to.equal(true);
@@ -48,6 +51,7 @@ describe("CohortsPresenter", function () {
 
    var presenter: CohortsPresenter = new CohortsPresenter(
       person,
+      true,
       new Array<Persona>(cohort));
 
 
@@ -73,17 +77,19 @@ describe("IOCohortsPresenter", function () {
 
    var presenter: CohortsPresenter = new CohortsPresenter(
       person,
+      true,
       new Array<Persona>(cohort));
 
    let codec: CohortsPresenterCodec = new CohortsPresenterCodec();
 
-   it("Needs to decode Business from clean input.", function () {
+   it("Needs to decode CohortsPresenter from clean input.", function () {
 
       var caught: boolean = false;
 
       try {
          let encoded = {
             _persona: person.memento(),
+            _isAdministrator: true,
             _cohorts: Persona.mementos(presenter.cohorts)
          };
 
@@ -97,7 +103,7 @@ describe("IOCohortsPresenter", function () {
       expect(caught).to.equal(false);
    });
 
-   it("Needs to encode Business.", function () {
+   it("Needs to encode CohortsPresenter.", function () {
 
       let encoded: CohortsPresenterMemento = codec.encode(presenter);
 
@@ -106,7 +112,7 @@ describe("IOCohortsPresenter", function () {
       expect(encoded._persona._persistenceDetails._sequenceNumber).to.equal(presenter.persona.persistenceDetails.sequenceNumber);
    });
 
-   it("Needs to encode then decode Business.", function () {
+   it("Needs to encode then decode CohortsPresenter.", function () {
 
       let encoded = codec.encode(presenter);
       let decoded: CohortsPresenter;

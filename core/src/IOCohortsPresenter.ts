@@ -17,6 +17,7 @@ import { personaIoType, personasIoType} from './IOPersona';
 
 const cohortsPresenterIoType = IoTs.type({
    _persona: personaIoType,
+   _isAdministrator: IoTs.boolean,
    _cohorts: personasIoType,
 });
 

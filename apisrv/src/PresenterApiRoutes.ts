@@ -61,6 +61,8 @@ PresenterApiRoutes.get(EPresenterApiUrls.QueryCohortsPresenterFromSession, (req:
 
       let cohortResult = cohortDb.loadMany(req.user.email);
       let personResult = personDb.loadOne(req.user.email);
+      var isAdministrator: boolean = false;
+
 
       cohortResult.then(cohorts => {
          personResult.then(person => {
@@ -70,7 +72,15 @@ PresenterApiRoutes.get(EPresenterApiUrls.QueryCohortsPresenterFromSession, (req:
                res.send(null);
             }
             else {
-               let cohortsPresenter: CohortsPresenterMemento = new CohortsPresenterMemento(personaCodec.encode(person), personasCodec.encode(cohorts));
+               for (var i in cohorts) {
+                  if (cohorts[i].business.includesAdministrator(person)) {
+                     isAdministrator = true;
+                     break;
+                  }
+               }
+               let cohortsPresenter: CohortsPresenterMemento = new CohortsPresenterMemento(personaCodec.encode(person),
+                  isAdministrator,
+                  personasCodec.encode(cohorts));
                res.send(cohortsPresenter);
             }
          });
