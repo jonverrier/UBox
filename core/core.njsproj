@@ -47,6 +47,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="src\Business.ts" />
     <TypeScriptCompile Include="src\Cohort.ts" />
+    <TypeScriptCompile Include="src\SessionPresenter.ts" />
     <TypeScriptCompile Include="src\IOBusiness.ts" />
     <TypeScriptCompile Include="src\IOCohortsPresenter.ts" />
     <TypeScriptCompile Include="src\IOCohort.ts" />

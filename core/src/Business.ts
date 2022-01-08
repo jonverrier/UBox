@@ -155,18 +155,18 @@ export class Business extends Persona {
     * test if a business includes a person as an administrator 
     * @param person - the person to check
     */
-   includesAdministrator(person: Person): boolean {
+   includesAdministrator(persona: Persona): boolean {
 
-      return (this._administrators.includes(person));
+      return (this._administrators.includes(persona));
    }
 
    /**
     * test if a business includes a person as a member 
     * @param person - the person to check
     */
-   includesMember(person: Persona): boolean {
+   includesMember(persona: Persona): boolean {
 
-      return (this._members.includes(person));
+      return (this._members.includes(persona));
    }
 
    /**

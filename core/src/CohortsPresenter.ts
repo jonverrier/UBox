@@ -2,40 +2,44 @@
 
 import { Persona, PersonaMemento } from './Persona';
 import { ILoaderFor } from './Persistence';
+import { SessionPresenterMemento, SessionPresenter } from './SessionPresenter';
 
 // Represents a member or coach plus all the cohorts to which they belong - used to present summary information in UI
-export class CohortsPresenterMemento {
-   readonly _persona: PersonaMemento;
+export class CohortsPresenterMemento extends SessionPresenterMemento {
    readonly _cohorts: Array<PersonaMemento>;
 
 
    /**
     * Create a CohortsPresenterMemento object
     * @param persona - agrregate of information to represent a Persona, in this case the Person logged in
+    * @param isAdministrator - are they an Admin or not? 
     * @param cohorts - personas of the cohorts to which the person belongs
     */
    constructor(
       persona: PersonaMemento,
+      isAdministrator: boolean,
       cohorts: Array<PersonaMemento>) {
 
-      this._persona = persona;
+      super(persona, isAdministrator)
+
       this._cohorts = cohorts;
    }
 }
 
 // Represents a member or coach plus all the cohorts to which they belong - used to present summary information in UI
-export class CohortsPresenter {
-   private _persona: Persona;
+export class CohortsPresenter extends SessionPresenter {
    private _cohorts: Array<Persona>;
 
 
    /**
     * Create a CohortsPresenterMemento object
     * @param persona - agrregate of information to represent a Persona, in this case the Person logged in
+    * @param isAdministrator - are they an Admin or not? * 
     * @param cohorts - personas of the cohorts to which the person belongs
     */
    constructor(
       persona: Persona,
+      isAdministrator: boolean,
       cohorts: Array<Persona>);
    public constructor(memento: CohortsPresenterMemento);
    public constructor(...params: any[]) {
@@ -44,7 +48,7 @@ export class CohortsPresenter {
 
          let memento: CohortsPresenterMemento = params[0];
 
-         this._persona = new Persona(memento._persona);
+         super(new Persona(memento._persona), memento._isAdministrator);
 
          this._cohorts = new Array<Persona>();
          for (var i in memento._cohorts) {
@@ -53,35 +57,21 @@ export class CohortsPresenter {
 
       } else {
 
-         this._persona = params[0];
-         this._cohorts = params[1];
+         super(params[0], params[1]);
+
+         this._cohorts = params[2];
       }
    }
 
    /**
    * set of 'getters' for private variables
    */
-   get persona(): Persona {
-      return this._persona;
-   }
    get cohorts(): Array<Persona> {
       return this._cohorts;
    }
 
-   /* TODO - should this be a flag set on the server? 
-   isPersonAdminForCohort(cohort: Cohort) : boolean {
-
-      for (var i in cohort.business.administrators) {
-         if (this._persona.persistenceDetails.key === cohort.business.administrators[i].persistenceDetails.key)
-            return true;
-      }
-
-      return false;
-   }
-   */
-
    memento(): CohortsPresenterMemento {
-      return new CohortsPresenterMemento(this._persona.memento(), Persona.mementos(this._cohorts));
+      return new CohortsPresenterMemento(super.persona.memento(), super.isAdministrator, Persona.mementos(this._cohorts));
    }
 
    /**
@@ -92,7 +82,7 @@ export class CohortsPresenter {
    equals(rhs: CohortsPresenter): boolean {
 
       return (
-         (this._persona.equals(rhs._persona)) &&
+         (super.equals(rhs)) &&
          (Persona.areEqual (this._cohorts, rhs._cohorts)) 
       );
    }

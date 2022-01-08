@@ -8,6 +8,7 @@ import { Flex } from '@fluentui/react-northstar';
 
 import { Measurement } from '../../core/src/Observation';
 import { Business } from '../../core/src/Business';
+import { SessionPresenter } from '../../core/src/SessionPresenter';
 import { CohortsPresenter } from '../../core/src/CohortsPresenter';
 import { CohortsPresenterApiFromSession } from '../../apisrv/src/CohortsPresenterApi';
 import { CohortMeasurementApi } from '../../apisrv/src/ObservationApi';
@@ -18,8 +19,8 @@ import { CohortChat } from './CohortChat';
 import { EApiUrls } from '../../apisrv/src/ApiUrls';
 
 export interface ICohortPageProps {
-   presenter: CohortsPresenter;
-   onSignIn: (presenter: CohortsPresenter) => void;
+   presenter: SessionPresenter;
+   onSignIn: (presenter: SessionPresenter) => void;
 }
 
 interface ICohortPageState {

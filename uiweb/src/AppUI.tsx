@@ -10,7 +10,7 @@ import { Provider, teamsTheme, mergeThemes } from '@fluentui/react-northstar';
 
 import { PersistenceDetails } from '../../core/src/Persistence'; 
 import { Persona, PersonaDetails } from '../../core/src/Persona';
-import { CohortsPresenter} from '../../core/src/CohortsPresenter';
+import { SessionPresenter } from '../../core/src/SessionPresenter';
 
 // Server URLs
 import { EAppUrls } from '../../apisrv/src/AppUrls';
@@ -26,7 +26,7 @@ export interface IAppProps {
 }
 
 interface IAppState {
-   presenter: CohortsPresenter;
+   presenter: SessionPresenter;
 }
 
 export class PageSwitcher extends React.Component<IAppProps, IAppState> {
@@ -37,18 +37,17 @@ export class PageSwitcher extends React.Component<IAppProps, IAppState> {
 
       // Initial status is the user not logged in, no cohorts
       var user: PersonaDetails = PersonaDetails.notLoggedIn();
-      var cohorts = new Array<Persona>();
 
       var persona: Persona = new Persona(
          PersistenceDetails.newPersistenceDetails(),
          user);
 
-      var personaCohorts: CohortsPresenter = new CohortsPresenter(persona, cohorts);
+      var personaCohorts: SessionPresenter = new SessionPresenter(persona, false);
 
       this.state = { presenter: personaCohorts };
    }
 
-   onSignIn(presenter: CohortsPresenter) : void {
+   onSignIn(presenter: SessionPresenter) : void {
 
       this.setState({ presenter: presenter });
    }
