@@ -84,7 +84,7 @@ export class CohortPage extends React.Component<ICohortPageProps, ICohortPageSta
             <div>
                <Navbar persona={this.props.presenter.persona} />
                <Flex gap="gap.medium" column={true} vAlign="center" >
-                  <Alert content="This squas does not have any measurements logged yet - add them below." />
+                  <Alert content="This squad does not have any measurements logged yet - add them below." />
                </Flex>
             </div>
          );
