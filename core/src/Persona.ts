@@ -246,6 +246,9 @@ export class Persona extends Persistence {
          this._personaDetails.memento());
    }
 
+   /**
+   * mementos() returns a copy of internal state for an array
+   */
    static mementos (people: Array<Persona>): Array<PersonaMemento> {
 
       let peopleMemento = new Array<PersonaMemento>(people.length);

@@ -32,7 +32,7 @@ export class CohortsPresenter extends SessionPresenter {
 
 
    /**
-    * Create a CohortsPresenterMemento object
+    * Create a CohortsPresenter object
     * @param persona - agrregate of information to represent a Persona, in this case the Person logged in
     * @param isAdministrator - are they an Admin or not? * 
     * @param cohorts - personas of the cohorts to which the person belongs

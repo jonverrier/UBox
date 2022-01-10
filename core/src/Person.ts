@@ -248,6 +248,9 @@ export class Person extends Persona {
          this.roles.memento());
    }
 
+   /**
+   * mementos() returns a copy of internal state for an array
+   */
    static mementos(people: Array<Person>): Array<PersonMemento> {
 
       let peopleMemento = new Array<PersonMemento>(people.length);

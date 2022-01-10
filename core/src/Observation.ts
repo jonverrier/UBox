@@ -135,6 +135,32 @@ export class Measurement extends Persistence {
    }
 
    /**
+   * mementos() returns a copy of internal state for an array
+   */
+   static mementos(measurements: Array<Measurement>): Array<MeasurementMemento> {
+
+      let measuementMementos = new Array<MeasurementMemento>(measurements.length);
+
+      for (var i: number = 0; i < measurements.length; i++)
+         measuementMementos[i] = measurements[i].memento();
+
+      return measuementMementos;
+   }
+
+   /**
+   * fromMementos() creates an array from an array of mementos
+   */
+   static fromMementos(mementos: Array<MeasurementMemento>): Array<Measurement> {
+
+      let measurements = new Array<Measurement>(mementos.length);
+
+      for (var i: number = 0; i < mementos.length; i++)
+         measurements[i] = new Measurement(mementos[i]);
+      
+      return measurements;
+   }
+
+   /**
     * test for equality - checks all fields are the same. 
     * Uses field values, not identity bcs if objects are streamed to/from JSON, field identities will be different. 
     * @param rhs - the object to compare this one to.  
@@ -148,6 +174,25 @@ export class Measurement extends Persistence {
          this._measurementType.equals(rhs.measurementType) &&
          this._subjectKey === rhs._subjectKey &&
          this._cohortKey === rhs._cohortKey);
+   }
+
+   static areEqual(lhs: Array<Measurement>, rhs: Array<Measurement>): boolean {
+
+      // if we have mis-matched false values, return false
+      if (lhs && !rhs || !lhs && rhs)
+         return false;
+
+      // if we have mis-matched sizes, return false
+      if (lhs.length !== rhs.length)
+         return false;
+
+      // lse compare all entries
+      for (var i = 0; i < lhs.length; i++) {
+         if (!lhs[i].equals(rhs[i])) {
+            return false;
+         }
+      }
+      return true;
    }
 }
 

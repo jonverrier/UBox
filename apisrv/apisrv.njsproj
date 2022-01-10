@@ -103,6 +103,7 @@
     <TypeScriptCompile Include="src\BusinessDb.ts" />
     <TypeScriptCompile Include="src\BusinessApi.ts" />
     <TypeScriptCompile Include="src\BusinessSchema.ts" />
+    <TypeScriptCompile Include="src\CohortPresenterApi.ts" />
     <TypeScriptCompile Include="src\CohortsPresenterApi.ts" />
     <TypeScriptCompile Include="src\CohortDb.ts" />
     <TypeScriptCompile Include="src\CohortSchema.ts" />
