@@ -25,5 +25,6 @@ export enum EApiUrls {
 
 export enum EPresenterApiUrls {
    QueryPersonFromSession = '/api/QueryPersonFromSession',
-   QueryCohortsPresenterFromSession = '/api/QueryCohortsPresenterFromSession'
+   QueryCohortsPresenterFromSession = '/api/QueryCohortsPresenterFromSession',
+   QueryCohortPresenterFromSession = '/api/QueryCohortPresenterFromSession'
 }

@@ -5,7 +5,6 @@ import { Logger } from '../src/Logger';
 import { Persona} from '../src/Persona';
 import { CohortsPresenter, CohortsPresenterMemento} from '../src/CohortsPresenter';
 import { PersonaTestHelper } from './testHelpers';
-import { Business, BusinessMemento } from '../src/Business';
 import { CohortsPresenterCodec } from '../src/IOCohortsPresenter';
 
 var expect = require("chai").expect;

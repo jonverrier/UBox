@@ -4,15 +4,13 @@
 import * as React from 'react';
 
 // Fluent-UI
-import { Flex } from '@fluentui/react-northstar';
+import { Flex, Alert } from '@fluentui/react-northstar';
 
+// Local App
 import { Measurement } from '../../core/src/Observation';
-import { Business } from '../../core/src/Business';
 import { SessionPresenter } from '../../core/src/SessionPresenter';
-import { CohortsPresenter } from '../../core/src/CohortsPresenter';
-import { CohortsPresenterApiFromSession } from '../../apisrv/src/CohortsPresenterApi';
-import { CohortMeasurementApi } from '../../apisrv/src/ObservationApi';
-import { CohortApi } from '../../apisrv/src/CohortApi';
+import { CohortPresenter } from '../../core/src/CohortPresenter';
+import { CohortPresenterApiFromSession } from '../../apisrv/src/CohortPresenterApi';
 
 import { Navbar } from './Navbar';
 import { CohortChat } from './CohortChat';
@@ -24,8 +22,7 @@ export interface ICohortPageProps {
 }
 
 interface ICohortPageState {
-   business: Business | null;
-   measurements: Array<Measurement>;
+   presenter: CohortPresenter;
 }
 
 function parseQueryString (queryString: string) : any {
@@ -44,59 +41,63 @@ function parseQueryString (queryString: string) : any {
 };
 
 export class CohortPage extends React.Component<ICohortPageProps, ICohortPageState> {
-   private _mySessionPresenterApi: CohortsPresenterApiFromSession; 
-   private _myCohortMeasurementApi: CohortMeasurementApi;
-   private _myCohortApi: CohortApi;
+   private _mySessionPresenterApi: CohortPresenterApiFromSession; 
 
    constructor(props: ICohortPageProps) {
       super(props);
 
-      this.state = { business: null, measurements: new Array <Measurement>() };
+      this.state = { presenter: null };
 
       var url: string = window.location.origin;
-      this._mySessionPresenterApi = new CohortsPresenterApiFromSession(url);
-      this._myCohortMeasurementApi = new CohortMeasurementApi(url);
-      this._myCohortApi = new CohortApi(url);
+      this._mySessionPresenterApi = new CohortPresenterApiFromSession(url);
+
    }
 
    componentDidMount() {
-      // Pull back the user asscoated with our session
-      var result = this._mySessionPresenterApi.loadOne(null);
 
-      result.then(presenter => {
+      let searchString = window.location.search;
+      if (searchString.length <= 1)
+         return;
+
+      let paramString = searchString.substring(1);
+      let params = parseQueryString(paramString);
+
+      var key: string = params[EApiUrls.Key];
+      if (!key)
+         return;
+
+      let presenterPromise = this._mySessionPresenterApi.loadOne(key);
+
+      presenterPromise.then(presenter => {
+            
+         this.setState({ presenter: presenter });
          this.props.onSignIn(presenter);
-
-         let searchString = window.location.search;
-         if (searchString.length <= 1)
-            return;
-
-         let paramString = searchString.substring(1);
-         let params = parseQueryString(paramString);
-
-         var key: string = params[EApiUrls.Key];
-         if (!key)
-            return;
-
-         let cohortPromise = this._myCohortApi.loadOne(key);
-         let measurementsPromise = this._myCohortMeasurementApi.loadMany(key);
-
-         cohortPromise.then(cohort => {
-            measurementsPromise.then(measurements => {
-               this.setState({ business: cohort.business, measurements: measurements });
-            })
-         });
       });
    }
 
    render(): JSX.Element {
 
-      return (
-         <div>
-            <Navbar persona={(this.props.presenter.persona)} />
-            <Flex gap="gap.medium" column={true}>
-               <CohortChat business={ this.state.business} measurements={this.state.measurements}></CohortChat>
-            </Flex>
-         </div>);
+      var length: number = this.state.presenter ? this.state.presenter.measurements.length : 0;
 
+      if (length === 0) {
+         return (
+            <div>
+               <Navbar persona={this.props.presenter.persona} />
+               <Flex gap="gap.medium" column={true} vAlign="center" >
+                  <Alert content="This squas does not have any measurements logged yet - add them below." />
+               </Flex>
+            </div>
+         );
+      } else {
+
+         return (
+            <div>
+               <Navbar persona={(this.props.presenter.persona)} />
+               <Flex gap="gap.medium" column={true}>
+                  <CohortChat business={this.state.presenter.cohort.business} measurements={this.state.presenter.measurements}></CohortChat>
+               </Flex>
+            </div>);
+
+      }
    }
 }

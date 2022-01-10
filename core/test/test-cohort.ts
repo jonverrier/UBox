@@ -7,7 +7,7 @@ import { Roles, ERoleType, Person } from '../src/Person';
 import { Measurement } from '../src/Observation';
 import { MeasurementTypes } from '../src/ObservationTypeDictionary';
 import { Business } from '../src/Business';
-import { ECohortType, Cohort, CohortMemento, ECohortPeriod } from '../src/Cohort';
+import { ECohortType, Cohort, CohortMemento } from '../src/Cohort';
 
 import { PersistenceTestHelper, PersonaTestHelper, PersonTestHelper } from './testHelpers';
 

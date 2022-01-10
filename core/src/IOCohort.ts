@@ -20,7 +20,7 @@ import { businessIoType } from './IOBusiness';
 // Cohort Codec
 // ==========
 
-const cohortIoType = IoTs.type({
+export const cohortIoType = IoTs.type({
    _persistenceDetails: persistenceDetailsIoType,
    _personaDetails: personaDetailsIoType,
    _business: businessIoType,
