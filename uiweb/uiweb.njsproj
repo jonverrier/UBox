@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\AppUI.tsx" />
+    <TypeScriptCompile Include="src\CohortDetails.tsx" />
     <TypeScriptCompile Include="src\CohortChat.tsx" />
     <TypeScriptCompile Include="src\CohortPage.tsx" />
     <TypeScriptCompile Include="src\CohortsPage.tsx" />
