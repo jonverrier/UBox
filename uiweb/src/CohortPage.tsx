@@ -7,7 +7,6 @@ import * as React from 'react';
 import { Flex, Alert } from '@fluentui/react-northstar';
 
 // Local App
-import { Measurement } from '../../core/src/Observation';
 import { SessionPresenter } from '../../core/src/SessionPresenter';
 import { CohortPresenter } from '../../core/src/CohortPresenter';
 import { CohortPresenterApiFromSession } from '../../apisrv/src/CohortPresenterApi';
