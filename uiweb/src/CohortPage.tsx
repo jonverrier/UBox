@@ -4,7 +4,7 @@
 import * as React from 'react';
 
 // Fluent-UI
-import { Flex, Alert } from '@fluentui/react-northstar';
+import { Flex, Alert, Header } from '@fluentui/react-northstar';
 
 // Local App
 import { SessionPresenter } from '../../core/src/SessionPresenter';
@@ -12,8 +12,10 @@ import { CohortPresenter } from '../../core/src/CohortPresenter';
 import { CohortPresenterApiFromSession } from '../../apisrv/src/CohortPresenterApi';
 
 import { Navbar } from './Navbar';
+import { CohortDetails } from './CohortDetails';
 import { CohortChat } from './CohortChat';
 import { EApiUrls } from '../../apisrv/src/ApiUrls';
+import { Media } from './Media';
 
 export interface ICohortPageProps {
    presenter: SessionPresenter;
@@ -41,6 +43,7 @@ function parseQueryString (queryString: string) : any {
 
 export class CohortPage extends React.Component<ICohortPageProps, ICohortPageState> {
    private _mySessionPresenterApi: CohortPresenterApiFromSession; 
+   private _media: Media;
 
    constructor(props: ICohortPageProps) {
       super(props);
@@ -49,7 +52,13 @@ export class CohortPage extends React.Component<ICohortPageProps, ICohortPageSta
 
       var url: string = window.location.origin;
       this._mySessionPresenterApi = new CohortPresenterApiFromSession(url);
+      this._media = new Media();
 
+      this._media.addMobileFormFactorChangeListener(this.onMediaChange.bind(this));
+   }
+
+   onMediaChange(small: boolean) {
+      this.forceUpdate();
    }
 
    componentDidMount() {
@@ -76,9 +85,9 @@ export class CohortPage extends React.Component<ICohortPageProps, ICohortPageSta
 
    render(): JSX.Element {
 
-      var length: number = this.state.presenter ? this.state.presenter.measurements.length : 0;
+      var small: boolean = this._media.isSmallFormFactor();
 
-      if (length === 0) {
+      if (! (this.state.presenter)) {
          return (
             <div>
                <Navbar persona={this.props.presenter.persona} />
@@ -87,16 +96,25 @@ export class CohortPage extends React.Component<ICohortPageProps, ICohortPageSta
                </Flex>
             </div>
          );
-      } else {
-
-         return (
-            <div>
-               <Navbar persona={(this.props.presenter.persona)} />
-               <Flex gap="gap.medium" column={true}>
-                  <CohortChat business={this.state.presenter.cohort.business} measurements={this.state.presenter.measurements}></CohortChat>
-               </Flex>
-            </div>);
-
       }
+
+      return (
+         <div>
+            <Navbar persona={(this.props.presenter.persona)} />
+            <Flex gap="gap.medium" column={small} vAlign="start" hAlign="center" fill={true}>
+               <Flex.Item size="size.half">
+                  <Flex gap="gap.small" column={true} vAlign="start" hAlign="center" fill={true} >
+                     <Header as="h2" content="Workout" />
+                     <CohortDetails cohort={this.state.presenter.cohort} isAdminstrator={this.state.presenter.isAdministrator}> </CohortDetails>
+                  </Flex>
+               </Flex.Item>
+               <Flex.Item size="size.half">
+                  <Flex gap="gap.small" column={true} vAlign="start" hAlign="center" fill={true}>
+                     <Header as="h2" content="Results" />
+                     <CohortChat business={this.state.presenter.cohort.business} measurements={this.state.presenter.measurements}></CohortChat>
+                  </Flex>
+               </Flex.Item>
+            </Flex>
+         </div>);
    }
 }

@@ -8,7 +8,7 @@ import { Flex, Box, Image, Divider, Text, Button } from '@fluentui/react-northst
 
 // Local App 
 import { EAuthUrls } from '../../apisrv/src/AuthUrls';
-import { Persona, PersonaDetails} from '../../core/src/Persona';
+import { Persona } from '../../core/src/Persona';
 import { Media } from './Media';
 
 export interface ILoginSplashProps {

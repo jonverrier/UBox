@@ -59,7 +59,7 @@ export class CohortChat extends React.Component<ICohortViewProps, ICohortViewSta
       }
 
       return (
-         <Chat items={chatItems} />
+         <Chat items={chatItems} styles={{width: "100%"}}/>
          );
    }
 }
