@@ -32,5 +32,17 @@ describe("LoginContext", function () {
 
       expect(context1.equals(newContext)).to.equal(true);
    });
+
+   it("Needs to catch errors on change attributes", function () {
+
+      var caught: boolean = false;
+      try {
+         context1 = new LoginContext(ELoginProvider.Private, "");
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+
+   });
 });
 

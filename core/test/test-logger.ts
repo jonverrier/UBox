@@ -23,6 +23,20 @@ describe("Logger", function () {
       expect(caught).to.equal(false);
    });
 
+   it("Needs to log info with no data", function () {
+
+      var caught: boolean = false;
+
+      try {
+         let logger: Logger = new Logger(false);
+         logger.logInfo("TestLogger", "LogInfo", "Data:");
+      } catch (ex) {
+         caught = true
+      }
+
+      expect(caught).to.equal(false);
+   });
+
    it("Needs to log error", function () {
 
       var caught: boolean = false;
@@ -37,6 +51,32 @@ describe("Logger", function () {
       expect(caught).to.equal(false);
    });
 
+   it("Needs to log error with no data", function () {
 
+      var caught: boolean = false;
+
+      try {
+         let logger: Logger = new Logger(false);
+         logger.logError("TestLogger", "LogError", "Data:");
+      } catch (ex) {
+         caught = true
+      }
+
+      expect(caught).to.equal(false);
+   });
+
+   it("Needs to log error to server", function () {
+
+      var caught: boolean = false;
+
+      try {
+         let logger: Logger = new Logger(true);
+         logger.logError("TestLogger", "LogError", "Data:", "Some Data");
+      } catch (ex) {
+         caught = true
+      }
+
+      expect(caught).to.equal(false);
+   });
 });
 

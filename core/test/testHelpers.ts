@@ -88,6 +88,15 @@ export class PersonTestHelper {
          "Joe2@mail.com", roles);
    }
 
+   static createJoeMember2Key2(): Person {
+      let roles = new Roles(new Array<ERoleType>(ERoleType.Member));
+
+      return new Person(new PersistenceDetails("2", PersistenceDetails.newPersistenceDetails().schemaVersion, PersistenceDetails.newPersistenceDetails().sequenceNumber),
+         new PersonaDetails("Joe2", "/assets/img/person-o-512x512.png", "A bit about Joe2"),
+         new LoginContext(ELoginProvider.Private, "makdeuptokenforjoe2"),
+         "Joe2@mail.com", roles);
+   }
+
    static createJoeCoachMember(): Person {
       let roles = new Roles([ERoleType.Member, ERoleType.Coach]);
 

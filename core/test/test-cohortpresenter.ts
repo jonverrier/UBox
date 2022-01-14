@@ -5,7 +5,8 @@ import { Logger } from '../src/Logger';
 import { PersistenceDetails } from "../src/Persistence";
 import { Persona } from '../src/Persona';
 import { Measurement } from '../src/Observation';
-import { ECohortType, Cohort} from '../src/Cohort';
+import { ECohortType, Cohort } from '../src/Cohort';
+import { SessionPresenter, SessionPresenterMemento } from '../src/SessionPresenter';
 import { CohortPresenter, CohortPresenterMemento} from '../src/CohortPresenter';
 import { PersistenceTestHelper, PersonaTestHelper } from './testHelpers';
 import { Business } from '../src/Business';
@@ -95,6 +96,22 @@ describe("CohortsPresenter", function () {
       expect(Measurement.areEqual(measurements, presenter.measurements)).to.equal(true);
    });
 
+   it("Needs to convert super to and from memento()", function () {
+
+      let memento: SessionPresenterMemento = presenter.memento();
+      let newPresenter = new SessionPresenter(memento);
+
+      expect(newPresenter.equals(presenter)).to.equal(true);
+   });
+
+   it("Needs to convert to and from memento()", function () {
+
+      let memento: CohortPresenterMemento = presenter.memento();
+      let newPresenter = new CohortPresenter(memento);
+
+      expect(presenter.equals(newPresenter)).to.equal(true);
+   });
+
 });
 
 describe("IOCohortPresenter", function () {
@@ -160,6 +177,14 @@ describe("IOCohortPresenter", function () {
 
       let measurementsCopy: Array<Measurement> = new Array<Measurement>();
       expect(Measurement.areEqual(measurements, measurementsCopy)).to.equal(true);
+   });
+
+   it("Needs to convert to and from memento()", function () {
+
+      let memento: CohortPresenterMemento = presenter.memento();
+      let newPresenter = new CohortPresenter (memento);
+
+      expect(presenter.equals(newPresenter)).to.equal(true);
    });
 
    it("Needs to encode then decode CohortPresenter.", function () {

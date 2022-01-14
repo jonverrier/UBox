@@ -2,7 +2,8 @@
 // Copyright TXPCo ltd, 2021
 
 import { Logger } from '../src/Logger';
-import { Persona} from '../src/Persona';
+import { Persona } from '../src/Persona';
+import { SessionPresenter, SessionPresenterMemento } from '../src/SessionPresenter';
 import { CohortsPresenter, CohortsPresenterMemento} from '../src/CohortsPresenter';
 import { PersonaTestHelper } from './testHelpers';
 import { CohortsPresenterCodec } from '../src/IOCohortsPresenter';
@@ -63,6 +64,22 @@ describe("CohortsPresenter", function () {
       expect(presenter.cohorts[0].persistenceDetails.key === cohort.persistenceDetails.key).to.equal(true);
       expect(presenter.cohorts[0].personaDetails.name === cohort.personaDetails.name).to.equal(true);
       expect(presenter.cohorts[0].personaDetails.thumbnailUrl === cohort.personaDetails.thumbnailUrl).to.equal(true);
+   });
+
+   it("Needs to convert super to and from memento()", function () {
+
+      let memento: SessionPresenterMemento = presenter.memento();
+      let newPresenter = new SessionPresenter(memento);
+
+      expect(newPresenter.equals(presenter)).to.equal(true);
+   });
+
+   it("Needs to convert to and from memento()", function () {
+
+      let memento: CohortsPresenterMemento = presenter.memento();
+      let newPresenter = new CohortsPresenter(memento);
+
+      expect(presenter.equals(newPresenter)).to.equal(true);
    });
 
 });

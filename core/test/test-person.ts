@@ -1,6 +1,7 @@
 'use strict';
 // Copyright TXPCo ltd, 2021
-import { Roles, Person, PersonMemento, IPersonStore, ERoleType} from '../src/Person';
+import { Roles, Person, PersonMemento, IPersonStore, ERoleType } from '../src/Person';
+import { ELoginProvider, LoginContext } from '../src/LoginContext';
 import { PersonTestHelper } from './testHelpers';
 
 var expect = require("chai").expect;
@@ -116,9 +117,26 @@ describe("Person", function () {
       expect(roleperson.isProspect()).to.equal(false);
    });
 
+   it("Needs to detect invalid email on construct", function () {
+
+      var caught: boolean = false;
+      try {
+         let roles = new Roles([ERoleType.Member]);
+         let person = new Person(person1.persistenceDetails,
+            person1.personaDetails,
+            new LoginContext(ELoginProvider.Private, "xx"),
+            "xx",
+            roles);
+
+      } catch (e) {
+         caught = true;
+      }
+      expect(caught).to.equal(true);
+   });
+
    it("Needs to detect invalid email", function () {
 
-      var caught: boolean = true;
+      var caught: boolean = false;
       try {
          person1.email = "xx";
       } catch (e) {
@@ -161,10 +179,13 @@ describe("Person", function () {
 
       let newMail = "new@New.com";
       let newRoles = new Roles([ERoleType.Member, ERoleType.Coach]);
+      let newLoginContext = new LoginContext(ELoginProvider.Private, "zz");
 
       person1.email = newMail;
       person1.roles = newRoles;
+      person1.loginContext = newLoginContext;
 
+      expect(person1.loginContext.equals(newLoginContext)).to.equal(true);
       expect(person1.email).to.equal(newMail);
       expect(person1.roles.equals(newRoles)).to.equal(true);
    });
@@ -194,6 +215,16 @@ describe("Person", function () {
       expect(person1.equals(newPerson)).to.equal(true);
    });
 
+   it("Needs to convert to and from mementos()", function () {
+
+      let people = new Array<Person>();
+      people.push(person1);
+      let personas = Person.mementos(people);
+
+      let newPerson = new Person(personas[0]);
+
+      expect(person1.equals(newPerson)).to.equal(true);
+   });
 
    it("Needs to create PersonaMemento from itself.", function () {
 
