@@ -19,7 +19,7 @@ export class Logger  {
    logError(component: string,
       method: string,
       message: string,
-      data: any
+      data: any = null
    ): void {
 
       let date = new Date();
@@ -29,14 +29,18 @@ export class Logger  {
       logging.error('Error:' + msg);
 
       if (this.shipToSever) {
-         axios.post('/api/error', { params: { message: msg } });
+         try {
+            axios.post('/api/error', { params: { message: msg } });
+         } catch (e) {
+            // swallow this exception case
+         }
       }
    }
 
    logInfo(component: string,
       method: string,
       message: string,
-      data: any
+      data: any = null
    ): void {
       let date = new Date();
       let timeString = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ':' + date.getMilliseconds();

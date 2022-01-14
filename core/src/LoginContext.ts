@@ -14,21 +14,10 @@ export class LoginContextMemento {
     * @param name - user first name
     * @param surname - user family name, can be null
     */
-   constructor(provider: ELoginProvider, token: string)
-   public constructor(memento: LoginContextMemento);
-   public constructor(...params: any[]) {
+   constructor(provider: ELoginProvider, token: string) {
 
-      if (params.length === 1) {
-         var memento: LoginContextMemento = params[0];
-
-         this._provider = memento._provider;
-         this._externalId = memento._externalId;
-      }
-      else {
-
-         this._provider = params[0];
-         this._externalId = params[1];
-      }
+      this._provider = provider;
+      this._externalId = token;
    }
 }
 

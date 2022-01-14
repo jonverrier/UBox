@@ -186,7 +186,7 @@ export class Measurement extends Persistence {
       if (lhs.length !== rhs.length)
          return false;
 
-      // lse compare all entries
+      // else compare all entries
       for (var i = 0; i < lhs.length; i++) {
          if (!lhs[i].equals(rhs[i])) {
             return false;

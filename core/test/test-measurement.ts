@@ -91,7 +91,7 @@ function testConstruct(quantity: Quantity,
                               measurementType: MeasurementType) {
 
    let stamp = Timestamper.now();
-   let measurement = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, stamp, measurementType, "1234", "1234");
+   let measurement = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, stamp, measurementType, "1234", "12345");
 
    expect(measurement.persistenceDetails.key).to.equal("id");
    expect(measurement.persistenceDetails.schemaVersion).to.equal(0);
@@ -102,15 +102,16 @@ function testConstruct(quantity: Quantity,
    expect(measurement.timestamp).to.equal(stamp);
    expect(measurement.measurementType.equals(measurementType)).to.equal(true);
    expect(measurement.subjectKey).to.equal("1234");
+   expect(measurement.cohortKey).to.equal("12345");
 }
 
 function testEquals(quantity: Quantity,
    repeats: number,
    measurementType: MeasurementType) {
 
-   let measurement1 = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, 0, measurementType, "1234", "1234");
-   let measurement2 = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, 1, measurementType, "1234", "1234");
-   let measurement3 = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, 0, measurementType, "1234", "1234");
+   let measurement1 = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, 0, measurementType, "1234", "12345");
+   let measurement2 = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, 1, measurementType, "1234", "12345");
+   let measurement3 = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, 0, measurementType, "1234", "12345");
 
    expect(measurement1.equals(measurement1)).to.equal(true);
    expect(measurement1.equals(measurement2)).to.equal(false);
@@ -151,6 +152,34 @@ describe("Measurement", function () {
       let quantity = new Quantity(120, BaseUnits.second);
       let repeats = 1;
       let measurement = MeasurementTypes.row250;
+      testConstruct(quantity, repeats, measurement);
+   });
+
+   it("Needs to construct Run800m correctly", function () {
+      let quantity = new Quantity(240, BaseUnits.second);
+      let repeats = 1;
+      let measurement = MeasurementTypes.run800;
+      testConstruct(quantity, repeats, measurement);
+   });
+
+   it("Needs to construct Bench correctly", function () {
+      let quantity = new Quantity(120, BaseUnits.second);
+      let repeats = 1;
+      let measurement = MeasurementTypes.bench;
+      testConstruct(quantity, repeats, measurement);
+   });
+
+   it("Needs to construct Backsquat correctly", function () {
+      let quantity = new Quantity(120, BaseUnits.second);
+      let repeats = 1;
+      let measurement = MeasurementTypes.backsquat;
+      testConstruct(quantity, repeats, measurement);
+   });
+
+   it("Needs to construct deadlift correctly", function () {
+      let quantity = new Quantity(120, BaseUnits.second);
+      let repeats = 1;
+      let measurement = MeasurementTypes.deadlift;
       testConstruct(quantity, repeats, measurement);
    });
 
@@ -217,25 +246,55 @@ describe("Measurement", function () {
       expect(caught).to.equal(true);
    });
 
+   it("Needs to compare arrays", function () {
+      let quantity = new Quantity(100, BaseUnits.kilogram);
+      let repeats = 1;
+      let measurementType = MeasurementTypes.snatch;
+
+      let measurement = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, 0, measurementType, "1234", "1234");
+      let measurement2 = new Measurement(new PersistenceDetails("id2", 0, 0), quantity, repeats, 0, measurementType, "1234", "1234");
+
+      let measurememts1 = new Array<Measurement>();
+      let measurememts2 = new Array<Measurement>();
+      measurememts1.push(measurement);
+
+      expect(Measurement.areEqual(null, measurememts2)).to.equal(false);
+      expect(Measurement.areEqual(measurememts2, null)).to.equal(false);
+
+      expect(Measurement.areEqual(measurememts1, measurememts2)).to.equal(false);
+      expect(Measurement.areEqual(measurememts2, measurememts1)).to.equal(false);
+
+      measurememts2.push(measurement);
+      expect(Measurement.areEqual(measurememts2, measurememts1)).to.equal(true);
+
+      measurememts2.push(measurement2);
+      expect(Measurement.areEqual(measurememts2, measurememts1)).to.equal(false);
+
+      measurememts2 = new Array<Measurement>();
+      measurememts2.push(measurement2);
+      expect(Measurement.areEqual(measurememts2, measurememts1)).to.equal(false);
+   });
+
+
    it("Needs to format successfully", function () {
 
       let business1: Business;
       let person: Person;
       let person2: Person;
-      let people: Array<Persona>;
+      let people: Array<Persona>, people2: Array<Persona>;
 
       person = PersonTestHelper.createJoeMember();
-      person2 = PersonTestHelper.createJoeMember2();
-
-      person = PersonTestHelper.createJoeMember();
-      person2 = PersonTestHelper.createJoeMember2();
+      person2 = PersonTestHelper.createJoeMember2Key2();
 
       people = new Array<Person>();
       people.push(person);
+      people2 = new Array<Person>();
+      people2.push(person2);
 
       business1 = new Business(PersistenceTestHelper.createKey1(),
          PersonaTestHelper.createXFitDulwichDetails(),
-         people, people);
+         people, people2);
+      console.log(people2);
 
       let quantity = new Quantity(120, BaseUnits.second);
       let repeats = 1;
@@ -243,7 +302,7 @@ describe("Measurement", function () {
       let stamp = Timestamper.now();
       let stamp2 = Timestamper.round(new Date(1975, 12, 1));
       let measurement1 = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, stamp, measurementType, person.persistenceDetails.key, "1234");
-      let measurement2 = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, stamp2, measurementType, person.persistenceDetails.key, "1234");
+      let measurement2 = new Measurement(new PersistenceDetails("id2", 0, 0), quantity, repeats, stamp2, measurementType, person2.persistenceDetails.key, "1234");
 
       let formatter = new MeasurementFormatter();
 
@@ -267,9 +326,35 @@ describe("Measurement", function () {
       expect(output.measurement.length > 0).to.equal(true);
       expect(output.timestamp.length > 0).to.equal(true);
       expect(output.persona === null).to.equal(false);
+
+      // test a measurement made before today, business to look up persona
+      console.log(measurement2);
+      output = formatter.format(measurement2, business1);
+
+      expect(output.measurement.length > 0).to.equal(true);
+      expect(output.timestamp.length > 0).to.equal(true);
+      expect(output.persona === null).to.equal(false);
    });
 
-   // TODO - format with a real business to exercise more code
+   it("Needs to convert to and from mementos()", function () {
+
+      let quantity = new Quantity(100, BaseUnits.kilogram); 
+      let repeats = 1;
+      let measurementType = MeasurementTypes.snatch;
+
+      let measurement = new Measurement(new PersistenceDetails("id", 0, 0), quantity, repeats, 0, measurementType, "1234", "1234");
+
+      let measurements = new Array<Measurement>();
+      measurements.push(measurement);
+      let mementos = Measurement.mementos(measurements);
+
+      let newMeasurement = new Measurement(mementos[0]);
+
+      expect(newMeasurement.equals(measurement)).to.equal(true);
+
+      let newPeople = Measurement.fromMementos(mementos);
+      expect(newPeople[0].equals(measurement)).to.equal(true);
+   });
 });
 
 class StubStore implements IMeasurementStore {
