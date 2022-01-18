@@ -4,9 +4,10 @@
 import * as React from 'react';
 
 // Fluent-UI
-import { Flex, Alert } from '@fluentui/react-northstar';
+import { Flex, Alert, Provider, teamsTheme, mergeThemes} from '@fluentui/react-northstar';
 
 // Local App 
+import { appThemeLight } from './Theme';
 import { SessionPresenter } from '../../core/src/SessionPresenter';
 import { CohortsPresenter } from '../../core/src/CohortsPresenter';
 import { CohortsPresenterApiFromSession } from '../../apisrv/src/CohortsPresenterApi';
@@ -84,18 +85,22 @@ export class CohortsPage extends React.Component<ICohortsPageProps, ICohortsPage
          return (
             <div>
                <Navbar persona={this.props.presenter.persona} />
-               <Flex gap="gap.medium" column={true} vAlign="center" >
-                  <Alert content="It doesnt look like you are a member of any squads. If you are a gym owner, you can contact us from the home page." />
-               </Flex>
+               <Provider theme={mergeThemes(teamsTheme, appThemeLight)} styles={{ width: "100%" }}>
+                  <Flex gap="gap.medium" column={true} vAlign="center" >
+                     <Alert content="It doesnt look like you are a member of any squads. If you are a gym owner, you can contact us from the home page." />
+                  </Flex>
+               </Provider>
             </div>
          );
       } else {
          return (
             <div>
                <Navbar persona={this.props.presenter.persona} />
-               <Flex gap="gap.medium" column={true}>
-                  {this.listCohorts()}
-               </Flex>
+               <Provider theme={mergeThemes(teamsTheme, appThemeLight)} styles={{ width: "100%" }}>
+                  <Flex gap="gap.medium" column={true}>
+                     {this.listCohorts()}
+                  </Flex>
+               </Provider>
             </div>
          );
       }

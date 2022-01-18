@@ -29,7 +29,7 @@ export class LoadApiHelper<Entity> {
       if (response.data)
          return this._codec.tryCreateFrom(response.data);
       else
-         throw new InvalidServerResponseError();
+         throw new InvalidServerResponseError(response.data);
    }
 }
 
@@ -58,7 +58,7 @@ export class SaveApiHelper<Entity> {
       if (response.data)
          return this._codec.tryCreateFrom(response.data);
       else
-         throw new InvalidServerResponseError();
+         throw new InvalidServerResponseError(response.data);
    }
 }
 
@@ -94,7 +94,7 @@ export class MultiApiHelper<Entity> {
       if (response.data)
          return this._codec.tryCreateFrom(response.data);
       else
-         throw new InvalidServerResponseError();
+         throw new InvalidServerResponseError(response.data);
    }
 }
 
@@ -124,7 +124,7 @@ export class KeyMultiApiHelper<Entity> {
       if (response.data)
          return this._codec.tryCreateFrom(response.data);
       else
-         throw new InvalidServerResponseError();
+         throw new InvalidServerResponseError(response.data);
    }
 }
 

@@ -69,11 +69,11 @@ describe("Demo Setup", function () {
          ECohortType.OlympicLifting);
       let savedCohort = await cohortApi.save(newCohort);
 
-      measurement = savedCohort.createMeasurement(quantity, Timestamper.now(), MeasurementTypes.clean,
+      measurement = savedCohort.createMeasurement(quantity, 1, MeasurementTypes.clean,
          athlete1.persistenceDetails.key);
       savedMeasurement = await measurementApi.save(measurement);
 
-      measurement = savedCohort.createMeasurement(quantity, Timestamper.now(), MeasurementTypes.clean,
+      measurement = savedCohort.createMeasurement(quantity, 1, MeasurementTypes.clean,
          athlete2.persistenceDetails.key);
       savedMeasurement = await measurementApi.save(measurement);
 
@@ -89,11 +89,11 @@ describe("Demo Setup", function () {
          ECohortType.Powerlifting);
       let savedCohort = await cohortApi.save(newCohort);
 
-      measurement = savedCohort.createMeasurement(quantity, Timestamper.now(), MeasurementTypes.backsquat,
+      measurement = savedCohort.createMeasurement(quantity, 1, MeasurementTypes.backsquat,
          athlete1.persistenceDetails.key);
       savedMeasurement = await measurementApi.save(measurement);
 
-      measurement = savedCohort.createMeasurement(quantity, Timestamper.now(), MeasurementTypes.bench,
+      measurement = savedCohort.createMeasurement(quantity, 1, MeasurementTypes.bench,
          athlete2.persistenceDetails.key);
       savedMeasurement = await measurementApi.save(measurement);
 

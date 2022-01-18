@@ -90,7 +90,7 @@ export class Measurement extends Persistence {
          super(params[0]);
 
          if (!params[4].range.includes(params[1])) {
-            throw RangeError();
+            throw RangeError(params[1]);
          }
          this._quantity = params[1];
          this._repeats = params[2];

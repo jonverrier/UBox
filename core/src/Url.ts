@@ -16,7 +16,7 @@ export class Url  {
    constructor(_stringUrl: string) {
 
       if (!AbsoluteUrlRegEx.test(_stringUrl) && !RelativeUrlRegExp.test(_stringUrl)) {
-         throw new InvalidParameterError("Url");
+         throw new InvalidParameterError("Url:" + _stringUrl + '.');
       }
 
 

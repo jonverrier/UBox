@@ -4,15 +4,17 @@
 import * as React from 'react';
 
 // Fluent-UI
-import { Flex, Alert, Header } from '@fluentui/react-northstar';
+import { Flex, Alert, Header, Provider, teamsTheme, mergeThemes} from '@fluentui/react-northstar';
 
 // Local App
+import { appThemeLight } from './Theme';
 import { SessionPresenter } from '../../core/src/SessionPresenter';
 import { CohortPresenter } from '../../core/src/CohortPresenter';
 import { CohortPresenterApiFromSession } from '../../apisrv/src/CohortPresenterApi';
 
 import { Navbar } from './Navbar';
 import { CohortDetails } from './CohortDetails';
+import { CohortAddMeasurement } from './CohortAddMeasurement';
 import { CohortChat } from './CohortChat';
 import { EApiUrls } from '../../apisrv/src/ApiUrls';
 import { Media } from './Media';
@@ -92,7 +94,7 @@ export class CohortPage extends React.Component<ICohortPageProps, ICohortPageSta
             <div>
                <Navbar persona={this.props.presenter.persona} />
                <Flex gap="gap.medium" column={true} vAlign="center" >
-                  <Alert content="This squad does not have any measurements logged yet - add them below." />
+                  <Alert content="Sorry, we can't load details for this squad. Please try again in a minute." />
                </Flex>
             </div>
          );
@@ -101,20 +103,23 @@ export class CohortPage extends React.Component<ICohortPageProps, ICohortPageSta
       return (
          <div>
             <Navbar persona={(this.props.presenter.persona)} />
-            <Flex gap="gap.medium" column={small} vAlign="start" hAlign="center" fill={true}>
-               <Flex.Item size="size.half">
-                  <Flex gap="gap.small" column={true} vAlign="start" hAlign="center" fill={true} >
-                     <Header as="h2" content="Workout" />
-                     <CohortDetails cohort={this.state.presenter.cohort} isAdminstrator={this.state.presenter.isAdministrator}> </CohortDetails>
-                  </Flex>
-               </Flex.Item>
-               <Flex.Item size="size.half">
-                  <Flex gap="gap.small" column={true} vAlign="start" hAlign="center" fill={true}>
-                     <Header as="h2" content="Results" />
-                     <CohortChat business={this.state.presenter.cohort.business} measurements={this.state.presenter.measurements}></CohortChat>
-                  </Flex>
-               </Flex.Item>
-            </Flex>
+            <Provider theme={mergeThemes(teamsTheme, appThemeLight)} styles={{ width: "100%" }}>
+               <Flex gap="gap.medium" column={small} vAlign="start" hAlign="center" fill={true}>
+                  <Flex.Item size="size.half">
+                     <Flex gap="gap.small" column={true} vAlign="start" hAlign="center" fill={true} >
+                        <Header as="h2" content="Workout" />
+                        <CohortDetails cohort={this.state.presenter.cohort} isAdminstrator={this.state.presenter.isAdministrator}> </CohortDetails>
+                     </Flex>
+                  </Flex.Item>
+                  <Flex.Item size="size.half">
+                     <Flex gap="gap.small" column={true} vAlign="start" hAlign="center" fill={true}>
+                        <Header as="h2" content="Results" />
+                        <CohortChat business={this.state.presenter.cohort.business} measurements={this.state.presenter.measurements}></CohortChat>
+                        <CohortAddMeasurement cohort={this.state.presenter.cohort} isAdminstrator={this.state.presenter.isAdministrator}> </CohortAddMeasurement>
+                     </Flex>
+                  </Flex.Item>
+               </Flex>
+            </Provider>
          </div>);
    }
 }

@@ -4,7 +4,7 @@
 import * as React from 'react';
 
 // Fluent-UI
-import { Avatar, Chat, ChatItemProps} from '@fluentui/react-northstar';
+import { Avatar, Chat, ChatItemProps } from '@fluentui/react-northstar';
 import { QuestionCircleIcon } from '@fluentui/react-icons-northstar';
 
 // Local App 
@@ -59,7 +59,7 @@ export class CohortChat extends React.Component<ICohortViewProps, ICohortViewSta
       }
 
       return (
-         <Chat items={chatItems} styles={{width: "100%"}}/>
+            <Chat items={chatItems} styles={{ width: "100%" }} />
          );
    }
 }

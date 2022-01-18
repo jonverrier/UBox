@@ -38,7 +38,7 @@ export class Roles {
    constructor(roles: Array<ERoleType>) {
 
       if (!Roles.isValidRoleList(roles)) {
-         throw new InvalidParameterError("Roles");
+         throw new InvalidParameterError("Roles:" + roles + '.');
       }
 
       // Sort the list as we do an item by item equality test
@@ -204,7 +204,7 @@ export class Person extends Persona {
       }
 
       if (!Person.isValidEmailAddress(this._email)) {
-         throw new InvalidParameterError("Email");
+         throw new InvalidParameterError("Email:" + this._email + '.');
       }
    }
 
@@ -227,7 +227,7 @@ export class Person extends Persona {
 
    set email(email: string) {
       if (!Person.isValidEmailAddress(email)) {
-         throw new InvalidParameterError("Email");
+         throw new InvalidParameterError("Email:" + this._email + '.');
       }
 
       this._email = email;

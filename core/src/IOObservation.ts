@@ -61,7 +61,7 @@ export class MeasurementTypeCodec implements ICodec<MeasurementType> {
       let temp = this.decode (data); // If types dont match an exception will be thrown here
 
       if (!(MeasurementType.isAllowedMeasurementUnitType(temp._unitType)))
-         throw new InvalidUnitError("Expected valid unit type.");
+         throw new InvalidUnitError("Expected valid unit type:" + temp._unitType + ".");
 
       return new MeasurementType(temp);
    }
@@ -99,7 +99,7 @@ export class MeasurementCodec implements ICodec<Measurement> {
 
       // for later - can this be moved to the IoTS type ?
       if (!dictionary.isValid (temp._measurementType))
-         throw new InvalidUnitError("Expected valid measurement type.");
+         throw new InvalidUnitError("Expected valid Measurement type:" + temp._measurementType + ".");
 
       return new Measurement(temp);
    }
@@ -141,7 +141,7 @@ export class MeasurementsCodec implements ICodec<Array<Measurement>> {
          if (measurementTypes.isValid(temp[i]._measurementType)) {
             measurements[i] = new Measurement(temp[i]);
          } else {
-            throw new InvalidUnitError("Expected valid measurement type. (" + temp[i]._measurementType + ")");
+            throw new InvalidUnitError("Expected valid measurement type:" + temp[i]._measurementType + ".");
          }
       }
 

@@ -58,11 +58,11 @@ export class PersonaDetails  {
       }
 
       if (!PersonaDetails.isValidUrl(this._thumbnailUrl)) {
-         throw new InvalidParameterError("Url");
+         throw new InvalidParameterError("Url:" + this._thumbnailUrl + '.');
       }
 
       if (!PersonaDetails.isValidName(this._name)) {
-         throw new InvalidParameterError("Name");
+         throw new InvalidParameterError("Name:" + this._name + '.');
       }
    }
 
@@ -83,7 +83,7 @@ export class PersonaDetails  {
 
    set name(name: string) {
       if (!PersonaDetails.isValidName(name)) {
-         throw new InvalidParameterError("Name");
+         throw new InvalidParameterError("Name:" + this._name + '.');
       }
 
       this._name = name;
@@ -91,7 +91,7 @@ export class PersonaDetails  {
 
    set thumbnailUrl(thumbnailUrl: string) {
       if (!PersonaDetails.isValidUrl(thumbnailUrl)) {
-         throw new InvalidParameterError("Url");
+         throw new InvalidParameterError("Url:" + this._thumbnailUrl + '.');
       }
 
       this._thumbnailUrl = thumbnailUrl;
