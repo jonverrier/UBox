@@ -35,7 +35,7 @@ export class CohortCard extends React.Component<ICohortCardProps, ICohortCardSta
 
    render(): JSX.Element {
       return (
-         <Card aria-roledescription="card avatar" fluid={true}>
+         <Card aria-roledescription={this.props.persona.personaDetails.name} fluid={true}>
             <Card.Header>
                <Flex gap="gap.medium">
                   <Avatar
